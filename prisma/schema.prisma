@@ -5,11 +5,215 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+// ===== ENUMS =====
+enum Municipality {
+  MEDELLIN
+  BELLO
+  ITAGUI
+  ENVIGADO
+  SABANETA
+  LA_ESTRELLA
+  CALDAS
+  COPACABANA
+  GIRARDOTA
+  BARBOSA
+}
+
+enum UserRole {
+  ADMIN
+  SHELTER
+  PROVIDER
+  ADOPTER
+}
+
+enum PetStatus {
+  AVAILABLE
+  IN_PROCESS
+  ADOPTED
+}
+
+enum AdoptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// ===== MODELS =====
+
+model User {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  email        String       @unique
+  password     String
+  name         String
+  role         UserRole     @default(ADOPTER)
+  phone        String
+  municipality Municipality
+  address      String
+  idNumber     String
+  birthDate    DateTime
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  shelter      Shelter?
+  provider     Provider?
+  adoptions    Adoption[]
+  orders       Order[]
+  
+  @@index([role])
+  @@index([email])
+  @@index([municipality])
+}
+
+model Shelter {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  municipality     Municipality
+  address          String
+  description      String?
+  verified         Boolean      @default(false)
+  contactWhatsApp  String?
+  contactInstagram String?
+  rejectionReason  String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String       @unique @db.ObjectId
+  pets             Pet[]
+  
+  @@index([verified])
+  @@index([municipality])
+}
+
+model Provider {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  businessName     String
+  businessPhone    String?
+  description      String?
+  logo             String?
+  municipality     Municipality
+  address          String
+  verified         Boolean      @default(false)
+  rejectionReason  String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String       @unique @db.ObjectId
+  products         Product[]
+  
+  @@index([verified])
+  @@index([municipality])
+}
+
+model Pet {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  species     String
+  breed       String?
+  age         Int?
+  sex         String?
+  status      PetStatus   @default(AVAILABLE)
+  description String
+  requirements String?
+  images      String[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  shelter     Shelter     @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+  shelterId   String      @db.ObjectId
+  adoptions   Adoption[]
+  
+  @@index([status])
+  @@index([species])
+  @@index([shelterId])
+  @@index([createdAt])
+}
+
+model Product {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Float
+  stock       Int       @default(0)
+  category    String
+  description String?
+  images      String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  provider    Provider    @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  providerId  String      @db.ObjectId
+  orderItems  OrderItem[]
+  
+  @@index([category])
+  @@index([providerId])
+  @@index([stock])
+}
+
+model Adoption {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  status    AdoptionStatus @default(PENDING)
+  message   String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  
+  adopter   User           @relation(fields: [adopterId], references: [id], onDelete: Cascade)
+  adopterId String         @db.ObjectId
+  pet       Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
+  petId     String         @db.ObjectId
+  
+  @@index([status])
+  @@index([adopterId])
+  @@index([petId])
+  @@unique([adopterId, petId])
+}
+
+model Order {
+  id                   String       @id @default(auto()) @map("_id") @db.ObjectId
+  status               OrderStatus  @default(PENDING)
+  total                Float
+  shippingMunicipality Municipality
+  shippingAddress      String
+  paymentMethod        String
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String       @db.ObjectId
+  items                OrderItem[]
+  
+  @@index([status])
+  @@index([userId])
+  @@index([shippingMunicipality])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  quantity  Int
+  price     Float
+  
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.ObjectId
+  
+  @@index([orderId])
+  @@index([productId])
 }
