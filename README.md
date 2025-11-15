@@ -13,13 +13,17 @@ Pawlig es una aplicación web moderna construida con el stack T3 (Next.js, TypeS
 
 ## Tecnologías Utilizadas
 
-- **Framework:** [Next.js](https://nextjs.org/)
-- **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
-- **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
-- **Autenticación:** [NextAuth.js](https://next-auth.js.org/)
-- **ORM:** [Prisma](https://www.prisma.io/)
-- **Validación de Datos:** [Zod](https://zod.dev/)
-- **Base de Datos:** PostgreSQL (o la de tu elección compatible con Prisma)
+## Tecnologías Utilizadas
+
+- **Framework:** Next.js 14 (App Router)
+- **Lenguaje:** TypeScript
+- **Estilos:** Tailwind CSS
+- **Autenticación:** NextAuth.js
+- **ORM:** Prisma
+- **Validación de Datos:** Zod
+- **Base de Datos:** MongoDB Atlas
+- **Almacenamiento:** Cloudinary
+- **Deployment:** Vercel
 
 ## Primeros Pasos
 
