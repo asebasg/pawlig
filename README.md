@@ -1,17 +1,21 @@
-# Pawlig - Plataforma Digital de Servicios para la Adopción de Mascotas
+# PawLig - Plataforma de Adopción de Mascotas
 
-Pawlig es una aplicación web moderna construida con el stack T3 (Next.js, TypeScript, Tailwind CSS), diseñada para simplificar la gestión de citas en clínicas veterinarias. Permite a los dueños de mascotas registrar a sus animales y agendar citas de manera eficiente, mientras que ofrece a los veterinarios una interfaz intuitiva para administrar su disponibilidad y confirmar solicitudes.
+Proyecto académico del SENA - Análisis y Desarrollo de Software  
+**Equipo:** Andrés Ospina (Líder), Mateo Úsuga, Santiago Lezcano  
+**Instructor:** Mateo Arroyave Quintero
+
+## 📋 Descripción
+
+PawLig es una plataforma web integral para la adopción responsable de mascotas y comercio electrónico de productos para animales en el Valle de Aburrá.
 
 ## Características Principales
 
-- **Autenticación Segura:** Inicio de sesión y registro para usuarios (dueños de mascotas) y administradores (personal de la clínica) utilizando NextAuth.js.
-- **Gestión de Perfiles:** Los usuarios pueden administrar la información de sus mascotas, incluyendo nombre, raza, edad y historial médico.
-- **Sistema de Citas Completo:** Funcionalidad para solicitar, confirmar, y cancelar citas, con notificaciones para mantener a ambas partes informadas.
-- **Panel de Administración:** Una vista dedicada para que el personal de la clínica gestione la disponibilidad, apruebe nuevas citas y visualice el calendario de actividades.
-- **Diseño Responsivo:** Interfaz de usuario limpia y adaptable a cualquier dispositivo, desarrollada con Tailwind CSS.
-- **Base de Datos Robusta:** Persistencia de datos gestionada con Prisma ORM, facilitando las operaciones de base de datos de manera segura y eficiente.
-
-## Tecnologías Utilizadas
+- **Autenticación Segura:** Sistema de login y registro con roles diferenciados (Admin, Albergue, Proveedor, Adoptante) usando NextAuth.js
+- **Gestión de Adopciones:** Módulo completo para publicar mascotas, búsqueda con filtros avanzados y sistema de postulaciones
+- **Tienda Virtual:** E-commerce de productos para el cuidado animal con gestión de inventario y checkout simulado
+- **Panel de Administración:** Dashboard para supervisión de usuarios, albergues, productos y métricas del sistema
+- **Comunicación Externa:** Integración con WhatsApp e Instagram para contacto directo entre adoptantes y albergues
+- **Diseño Responsivo:** Interfaz adaptable a dispositivos móviles, tablets y desktop desarrollada con Tailwind CSS
 
 ## Tecnologías Utilizadas
 
@@ -25,100 +29,184 @@ Pawlig es una aplicación web moderna construida con el stack T3 (Next.js, TypeS
 - **Almacenamiento:** Cloudinary
 - **Deployment:** Vercel
 
-## Primeros Pasos
-
-Sigue estas instrucciones para obtener una copia del proyecto en funcionamiento en tu máquina local para desarrollo y pruebas.
+## 📦 Instalación
 
 ### Prerrequisitos
 
-Asegúrate de tener instalado lo siguiente en tu sistema:
+- Node.js 18+ instalado
+- npm o yarn
+- Cuenta de MongoDB Atlas
+- Git configurado
 
-- [Node.js](https://nodejs.org/) (versión 18.x o superior)
-- [npm](https://www.npmjs.com/) (o [yarn](https://yarnpkg.com/))
-- Una instancia de base de datos en ejecución (ej. PostgreSQL, MySQL, SQLite).
+### Pasos de instalación
 
-### Instalación
+1. **Clonar el repositorio**
+```bash
+git clone https://github.com/tu-usuario/pawlig.git
+cd pawlig
+```
 
-1.  **Clona el repositorio:**
+2. **Instalar dependencias**
+```bash
+npm install
+```
 
-    ```bash
-    git clone https://github.com/tu-usuario/pawlig.git
-    cd pawlig
-    ```
+3. **Configurar variables de entorno**
+```bash
+cp .env.local.example .env.local
+```
 
-2.  **Instala las dependencias del proyecto:**
-    ```bash
-    npm install
-    ```
-    o si usas yarn:
-    ```bash
-    yarn install
-    ```
+Edita `.env.local` con tus credenciales:
+- `DATABASE_URL`: Connection string de MongoDB Atlas
+- `NEXTAUTH_SECRET`: Genera uno con `openssl rand -base64 32`
+- `NEXTAUTH_URL`: `http://localhost:3000`
 
-### Configuración del Entorno Local
+4. **Generar cliente de Prisma**
+```bash
+npx prisma generate
+```
 
-1.  **Crea un archivo `.env`** en la raíz del proyecto, puedes duplicar el archivo `.env.example` (si existe) o crearlo desde cero.
+5. **Sincronizar schema con MongoDB**
+```bash
+npx prisma db push
+```
 
-    ```bash
-    cp .env.example .env
-    ```
-
-2.  **Configura la URL de la base de datos** en tu archivo `.env`. Asegúrate de que apunte a tu instancia de base de datos.
-
-    ```
-    DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase"
-    ```
-
-3.  **Configura las variables de NextAuth.js** para la autenticación. Deberás generar un secreto.
-    ```
-    AUTH_SECRET="tu_secreto_super_secreto_aquí"
-    # Agrega aquí otras variables de entorno que necesites, como proveedores de OAuth, etc.
-    ```
-    Puedes generar un `AUTH_SECRET` adecuado con el siguiente comando en tu terminal:
-    ```bash
-    openssl rand -base64 32
-    ```
-
-### Migraciones de la Base de Datos
-
-Una vez que hayas configurado tu archivo `.env`, ejecuta las migraciones de Prisma para preparar tu base de datos.
-
-1.  **Genera el cliente de Prisma:**
-
-    ```bash
-    npx prisma generate
-    ```
-
-2.  **Aplica las migraciones a tu base de datos:**
-    ```bash
-    npx prisma db push
-    ```
-
-### Ejecutar la Aplicación
-
-Con la configuración completada, puedes iniciar el servidor de desarrollo.
-
+6. **Iniciar servidor de desarrollo**
 ```bash
 npm run dev
 ```
 
-o si usas yarn:
+La aplicación estará disponible en [http://localhost:3000](http://localhost:3000)
 
-```bash
-yarn dev
+## 🗂️ Estructura del Proyecto
+
+```
+pawlig/
+├── app/                      # Next.js App Router
+│   ├── (auth)/              # Rutas de autenticación
+│   ├── (dashboard)/         # Rutas protegidas
+│   ├── api/                 # API Routes
+│   │   └── auth/[...nextauth]/ # NextAuth endpoint
+│   ├── adopciones/          # Módulo público de adopción
+│   ├── productos/           # Módulo de tienda
+│   └── albergues/           # Información de albergues
+├── components/              # Componentes React
+│   ├── ui/                  # Componentes base
+│   ├── forms/               # Formularios
+│   ├── cards/               # Tarjetas
+│   ├── layout/              # Layout components
+│   └── providers/           # Context providers
+├── lib/                     # Lógica de negocio
+│   ├── auth/                # Autenticación
+│   ├── services/            # Servicios
+│   ├── validations/         # Schemas Zod
+│   └── utils/               # Utilidades
+├── hooks/                   # Custom hooks
+├── types/                   # TypeScript types
+├── prisma/                  # Prisma schema
+│   └── schema.prisma
+└── public/                  # Assets estáticos
 ```
 
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación en funcionamiento.
+## 🔑 Roles de Usuario
 
-## Scripts Disponibles
+- **ADMIN:** Control total del sistema
+- **SHELTER:** Gestión de albergues y mascotas
+- **PROVIDER:** Gestión de productos
+- **ADOPTER:** Usuario que puede adoptar
 
-En el `package.json`, encontrarás varios scripts para automatizar tareas comunes:
+## 🧪 Scripts Disponibles
 
-- `npm run dev`: Inicia el servidor de desarrollo.
-- `npm run build`: Compila la aplicación para producción.
-- `npm run start`: Inicia un servidor de producción.
-- `npm run lint`: Ejecuta el linter para identificar problemas en el código.
+```bash
+# Desarrollo
+npm run dev              # Inicia servidor de desarrollo
 
----
+# Build
+npm run build            # Construye para producción
+npm start                # Inicia servidor de producción
 
-Desarrollado con ❤️ para los amantes de las mascotas.
+# Prisma
+npx prisma studio        # Interfaz visual de base de datos
+npx prisma generate      # Genera cliente Prisma
+npx prisma db push       # Sincroniza schema con MongoDB
+
+# Linting
+npm run lint             # Ejecuta ESLint
+```
+
+## 📚 Documentación del Proyecto
+
+Ver carpeta `/docs` para:
+- Acta de Constitución
+- Requerimientos funcionales
+- Historias de usuario
+- Arquitectura del software
+- Casos de uso
+- Diagramas UML
+
+## 🔄 Flujo de Trabajo Git
+
+### Crear nueva feature
+
+```bash
+git checkout -b feature/nombre-feature
+# Desarrollar...
+git add .
+git commit -m "feat(modulo): descripción del cambio"
+git push origin feature/nombre-feature
+```
+
+### Convención de commits
+
+- `feat`: Nueva funcionalidad
+- `fix`: Corrección de bug
+- `docs`: Cambios en documentación
+- `style`: Formato de código (no afecta funcionalidad)
+- `refactor`: Refactorización de código
+- `test`: Agregar o modificar tests
+- `chore`: Cambios en build/config
+
+### Pull Requests
+
+1. Crear PR desde tu rama hacia `main`
+2. Esperar revisión del líder (Andrés)
+3. Resolver comentarios si los hay
+4. Merge después de aprobación
+
+## 🛠️ Configuración de MongoDB Atlas
+
+1. Crear cuenta en [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Crear cluster gratuito (M0)
+3. Configurar usuario de base de datos
+4. Whitelist IP: `0.0.0.0/0` (todas las IPs)
+5. Obtener connection string
+6. Reemplazar `<username>`, `<password>` y `<dbname>` en `.env.local`
+
+## 🔐 NextAuth Configuration
+
+El proyecto usa NextAuth.js con:
+- Strategy: JWT (stateless)
+- Provider: Credentials (email/password)
+- Session: 24 horas
+- Password hashing: bcrypt (12 rounds)
+
+## 🚧 Estado del Proyecto
+
+**Sprint actual:** Sprint 1 - Infraestructura y Autenticación  
+**Duración:** 14-18 de noviembre, 2025  
+**Progreso:** Configuración inicial completada
+
+## 👥 Equipo
+
+- **Andrés Sebastián Ospina Guzmán** - Líder y Desarrollador Backend
+- **Mateo Úsuga Vasco** - Desarrollador y Analista
+- **Santiago Lezcano Escobar** - Diseñador y Tester
+
+## 📞 Contacto
+
+Para dudas o sugerencias, contactar al líder del proyecto:  
+📧 asebasg07@gmail.com
+
+## 📝 Licencia
+
+Proyecto académico - SENA 2025. Todos los derechos reservados.
