@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pawlig - Plataforma Digital de Servicios para la Adopción de Mascotas
 
-## Getting Started
+Pawlig es una aplicación web moderna construida con el stack T3 (Next.js, TypeScript, Tailwind CSS), diseñada para simplificar la gestión de citas en clínicas veterinarias. Permite a los dueños de mascotas registrar a sus animales y agendar citas de manera eficiente, mientras que ofrece a los veterinarios una interfaz intuitiva para administrar su disponibilidad y confirmar solicitudes.
 
-First, run the development server:
+## Características Principales
+
+- **Autenticación Segura:** Inicio de sesión y registro para usuarios (dueños de mascotas) y administradores (personal de la clínica) utilizando NextAuth.js.
+- **Gestión de Perfiles:** Los usuarios pueden administrar la información de sus mascotas, incluyendo nombre, raza, edad y historial médico.
+- **Sistema de Citas Completo:** Funcionalidad para solicitar, confirmar, y cancelar citas, con notificaciones para mantener a ambas partes informadas.
+- **Panel de Administración:** Una vista dedicada para que el personal de la clínica gestione la disponibilidad, apruebe nuevas citas y visualice el calendario de actividades.
+- **Diseño Responsivo:** Interfaz de usuario limpia y adaptable a cualquier dispositivo, desarrollada con Tailwind CSS.
+- **Base de Datos Robusta:** Persistencia de datos gestionada con Prisma ORM, facilitando las operaciones de base de datos de manera segura y eficiente.
+
+## Tecnologías Utilizadas
+
+- **Framework:** [Next.js](https://nextjs.org/)
+- **Lenguaje:** [TypeScript](https://www.typescriptlang.org/)
+- **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
+- **Autenticación:** [NextAuth.js](https://next-auth.js.org/)
+- **ORM:** [Prisma](https://www.prisma.io/)
+- **Validación de Datos:** [Zod](https://zod.dev/)
+- **Base de Datos:** PostgreSQL (o la de tu elección compatible con Prisma)
+
+## Primeros Pasos
+
+Sigue estas instrucciones para obtener una copia del proyecto en funcionamiento en tu máquina local para desarrollo y pruebas.
+
+### Prerrequisitos
+
+Asegúrate de tener instalado lo siguiente en tu sistema:
+
+- [Node.js](https://nodejs.org/) (versión 18.x o superior)
+- [npm](https://www.npmjs.com/) (o [yarn](https://yarnpkg.com/))
+- Una instancia de base de datos en ejecución (ej. PostgreSQL, MySQL, SQLite).
+
+### Instalación
+
+1.  **Clona el repositorio:**
+
+    ```bash
+    git clone https://github.com/tu-usuario/pawlig.git
+    cd pawlig
+    ```
+
+2.  **Instala las dependencias del proyecto:**
+    ```bash
+    npm install
+    ```
+    o si usas yarn:
+    ```bash
+    yarn install
+    ```
+
+### Configuración del Entorno Local
+
+1.  **Crea un archivo `.env`** en la raíz del proyecto, puedes duplicar el archivo `.env.example` (si existe) o crearlo desde cero.
+
+    ```bash
+    cp .env.example .env
+    ```
+
+2.  **Configura la URL de la base de datos** en tu archivo `.env`. Asegúrate de que apunte a tu instancia de base de datos.
+
+    ```
+    DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase"
+    ```
+
+3.  **Configura las variables de NextAuth.js** para la autenticación. Deberás generar un secreto.
+    ```
+    AUTH_SECRET="tu_secreto_super_secreto_aquí"
+    # Agrega aquí otras variables de entorno que necesites, como proveedores de OAuth, etc.
+    ```
+    Puedes generar un `AUTH_SECRET` adecuado con el siguiente comando en tu terminal:
+    ```bash
+    openssl rand -base64 32
+    ```
+
+### Migraciones de la Base de Datos
+
+Una vez que hayas configurado tu archivo `.env`, ejecuta las migraciones de Prisma para preparar tu base de datos.
+
+1.  **Genera el cliente de Prisma:**
+
+    ```bash
+    npx prisma generate
+    ```
+
+2.  **Aplica las migraciones a tu base de datos:**
+    ```bash
+    npx prisma db push
+    ```
+
+### Ejecutar la Aplicación
+
+Con la configuración completada, puedes iniciar el servidor de desarrollo.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+o si usas yarn:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la aplicación en funcionamiento.
 
-## Learn More
+## Scripts Disponibles
 
-To learn more about Next.js, take a look at the following resources:
+En el `package.json`, encontrarás varios scripts para automatizar tareas comunes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `npm run dev`: Inicia el servidor de desarrollo.
+- `npm run build`: Compila la aplicación para producción.
+- `npm run start`: Inicia un servidor de producción.
+- `npm run lint`: Ejecuta el linter para identificar problemas en el código.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Desarrollado con ❤️ para los amantes de las mascotas.
