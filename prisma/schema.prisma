@@ -73,6 +73,7 @@ model User {
   vendor    Vendor?
   adoptions Adoption[]
   orders    Order[]
+  favorites Favorite[]
 
   @@index([role])
   @@index([municipality])
@@ -140,6 +141,7 @@ model Pet {
   shelterId String  @db.ObjectId
 
   adoptions Adoption[]
+  favorites Favorite[]
 
   @@index([status])
   @@index([species])
