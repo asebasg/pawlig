@@ -30,7 +30,7 @@ enum Municipality {
 enum UserRole {
   ADMIN
   SHELTER
-  PROVIDER
+  VENDOR
   ADOPTER
 }
 
@@ -70,7 +70,7 @@ model User {
   updatedAt DateTime     @updatedAt
 
   shelter   Shelter?
-  provider  Provider?
+  vendor    Vendor?
   adoptions Adoption[]
   orders    Order[]
 
@@ -100,7 +100,7 @@ model Shelter {
   @@index([municipality])
 }
 
-model Provider {
+model Vendor {
   id              String       @id @default(auto()) @map("_id") @db.ObjectId
   businessName    String
   businessPhone   String?
@@ -158,13 +158,13 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  provider   Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
-  providerId String   @db.ObjectId
+  vendor      Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId    String @db.ObjectId
 
   orderItems OrderItem[]
 
   @@index([category])
-  @@index([providerId])
+  @@index([vendorId])
   @@index([stock])
 }
 
@@ -221,4 +221,18 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+model Favorite {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String   @db.ObjectId
+  pet        Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  petId      String   @db.ObjectId
+
+  @@unique([userId, petId])
+  @@index([userId])
+  @@index([petId])
+  @@index([createdAt])
 }

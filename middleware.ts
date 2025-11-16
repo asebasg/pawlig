@@ -18,7 +18,7 @@ const publicRoutes = [
 const roleBasedRoutes: Record<UserRole, string[]> = {
   ADMIN: ['/admin'],
   SHELTER: ['/shelter'],
-  PROVIDER: ['/vendor'],
+  PROVIDER: ['/provider'],
   ADOPTER: ['/user'],
 };
 
