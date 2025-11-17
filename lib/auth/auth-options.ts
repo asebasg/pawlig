@@ -1,8 +1,7 @@
-import { NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/utils/db';
 import { verifyPassword } from '@/lib/auth/password';
-import { UserRole } from '@prisma/client';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -22,7 +21,7 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
           include: {
             shelter: true,
-            provider: true,
+            vendor: true,
           },
         });
 
@@ -56,7 +55,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role as UserRole;
+        token.role = user.role;
       }
       return token;
     },
@@ -65,7 +64,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as UserRole;
+        session.user.role = token.role as string;
       }
       return session;
     },
