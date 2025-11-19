@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Municipality } from '@prisma/client'
 
-// Validación para registro de usuario (RF-001, HU-001)
+// - Esquema de registro
 export const registerUserSchema = z.object({
   email: z
     .string()
@@ -47,7 +47,7 @@ export const registerUserSchema = z.object({
     }, 'Debes ser mayor de 18 años'),
 });
 
-// Validación para login (RF-002)
+// - Esquema del login
 export const loginSchema = z.object({
   email: z
     .string()
@@ -59,7 +59,7 @@ export const loginSchema = z.object({
     .min(1, 'Contraseña es requerida'),
 });
 
-// Validación para solicitud de albergue (HU-002)
+// - Esquema de solicitud de albergue
 export const shelterApplicationSchema = z.object({
   // Datos del usuario
   email: z.string().email('Email inválido'),
@@ -104,7 +104,31 @@ export const shelterApplicationSchema = z.object({
     .optional(),
 });
 
-// Tipo TypeScript inferido del schema
+//  Tipo TypeScript inferido del schema
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
+
+/**
+ * 📚 NOTAS:
+ * 
+ * 1. ¿QUÉ ES ZOD?
+ *    - Librería de validación TypeScript-first
+ *    - Valida datos en runtime (cliente y servidor)
+ *    - Genera tipos TypeScript automáticamente
+ * 
+ * 2. LOGINSCHEMA:
+ *    - Solo valida email y password
+ *    - Validación mínima (campo requerido + formato email)
+ *    - La validación real (credenciales correctas) ocurre en el backend
+ * 
+ * 3. USO EN LOGIN-FORM:
+ *    - loginSchema.parse(formData) valida antes de enviar
+ *    - Si falla: lanza ZodError con mensajes específicos
+ *    - Si pasa: datos seguros para enviar a NextAuth
+ * 
+ * 4. TIPO LOGININPUT:
+ *    - Generado automáticamente por Zod
+ *    - Define la estructura: { email: string, password: string }
+ *    - Usado en el estado del LoginForm
+ */
