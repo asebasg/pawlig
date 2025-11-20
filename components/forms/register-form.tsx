@@ -5,14 +5,25 @@ import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { registerUserSchema, RegisterUserInput } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
+import Link from 'next/link';
 
 /**
  * Componente de formulario de registro para nuevos adoptantes
- * Implementa HU-001 con validación en cliente y manejo de errores
+ * Implementa HU-001 con validación en cliente y manejo de errores mejorado
  */
+
+//  Interfaz para respuestas de error estructuradas
+interface ApiErrorResponse {
+  error: string;
+  code?: string;
+  suggestion?: string;
+  recoveryUrl?: string;
+  details?: Array<{ field: string; message: string }>;
+}
+
 export default function RegisterForm() {
   const router = useRouter();
-  
+
   // Estados del formulario
   const [formData, setFormData] = useState<RegisterUserInput>({
     email: '',
@@ -29,6 +40,10 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState('');
 
+  //  Estado para manejar sugerencia de recuperación
+  const [showRecoverySuggestion, setShowRecoverySuggestion] = useState(false);
+  const [recoveryUrl, setRecoveryUrl] = useState<string>('');
+
   /**
    * Maneja cambios en los inputs del formulario
    */
@@ -37,7 +52,7 @@ export default function RegisterForm() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     // Limpiar error del campo al editar
     if (errors[name]) {
       setErrors((prev) => {
@@ -45,6 +60,12 @@ export default function RegisterForm() {
         delete newErrors[name];
         return newErrors;
       });
+    }
+
+    //  Limpiar sugerencia de recuperación al editar email
+    if (name === 'email' && showRecoverySuggestion) {
+      setShowRecoverySuggestion(false);
+      setServerError('');
     }
   };
 
@@ -56,6 +77,7 @@ export default function RegisterForm() {
     setIsLoading(true);
     setServerError('');
     setErrors({});
+    setShowRecoverySuggestion(false); // Reset sugerencia
 
     try {
       // 1. Validar datos en el cliente con Zod
@@ -68,14 +90,22 @@ export default function RegisterForm() {
         body: JSON.stringify(validatedData),
       });
 
-      const data = await response.json();
+      //  Parsear respuesta como ApiErrorResponse
+      const data: ApiErrorResponse = await response.json();
 
       if (!response.ok) {
-        // Manejar errores del servidor
+        //  Manejo específico de email duplicado
+        if (data.code === 'EMAIL_ALREADY_EXISTS') {
+          setServerError(data.error);
+          setShowRecoverySuggestion(true);
+          setRecoveryUrl(data.recoveryUrl || '/forgot-password');
+          return;
+        }
+
+        // Manejar errores de validación campo por campo
         if (data.details) {
-          // Errores de validación campo por campo
           const fieldErrors: Record<string, string> = {};
-          data.details.forEach((detail: { field: string; message: string }) => {
+          data.details.forEach((detail) => {
             fieldErrors[detail.field] = detail.message;
           });
           setErrors(fieldErrors);
@@ -98,7 +128,7 @@ export default function RegisterForm() {
         return;
       }
 
-      // 4. Redirigir a la galería de adopciones
+      // 4. Redirigir al dashboard del usuario
       router.push('/adopciones');
       router.refresh();
     } catch (error) {
@@ -128,10 +158,49 @@ export default function RegisterForm() {
         <p className="text-gray-600 mt-2">Regístrate para adoptar una mascota</p>
       </div>
 
-      {/* Error general del servidor */}
+      {/*  Error con sugerencia de recuperación */}
       {serverError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-          {serverError}
+        <div
+          className={`px-4 py-3 rounded-lg ${showRecoverySuggestion
+            ? 'bg-yellow-50 border border-yellow-200'
+            : 'bg-red-50 border border-red-200'
+            }`}
+          role="alert"
+          aria-live="polite"
+        >
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              {showRecoverySuggestion ? (
+                // Icono de advertencia (amarillo)
+                <svg className="h-5 w-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                // Icono de error (rojo)
+                <svg className="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              )}
+            </div>
+            <div className="ml-3 flex-1">
+              <p className={`text-sm font-medium ${showRecoverySuggestion ? 'text-yellow-800' : 'text-red-700'
+                }`}>
+                {serverError}
+              </p>
+              {/*  Sugerencia con enlace a recuperación */}
+              {showRecoverySuggestion && (
+                <p className="mt-2 text-sm text-yellow-700">
+                  ¿Olvidaste tu contraseña?{' '}
+                  <Link
+                    href={recoveryUrl}
+                    className="font-semibold underline hover:text-yellow-900"
+                  >
+                    Recupérala aquí
+                  </Link>
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -147,12 +216,18 @@ export default function RegisterForm() {
           value={formData.email}
           onChange={handleChange}
           required
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-            errors.email ? 'border-red-500' : 'border-gray-300'
-          }`}
+          aria-required="true"
+          aria-invalid={errors.email ? 'true' : 'false'}
+          aria-describedby={errors.email ? 'email-error' : undefined}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.email ? 'border-red-500' : 'border-gray-300'
+            }`}
           placeholder="tu@email.com"
         />
-        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        {errors.email && (
+          <p className="text-red-500 text-sm mt-1" id="email-error" role="alert">
+            {errors.email}
+          </p>
+        )}
       </div>
 
       {/* Contraseña */}
@@ -168,12 +243,22 @@ export default function RegisterForm() {
           onChange={handleChange}
           required
           minLength={8}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-            errors.password ? 'border-red-500' : 'border-gray-300'
-          }`}
+          aria-required="true"
+          aria-invalid={errors.password ? 'true' : 'false'}
+          aria-describedby={errors.password ? 'password-error' : 'password-hint'}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.password ? 'border-red-500' : 'border-gray-300'
+            }`}
           placeholder="Mínimo 8 caracteres"
         />
-        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+        {errors.password ? (
+          <p className="text-red-500 text-sm mt-1" id="password-error" role="alert">
+            {errors.password}
+          </p>
+        ) : (
+          <p className="text-gray-500 text-sm mt-1" id="password-hint">
+            Mínimo 8 caracteres
+          </p>
+        )}
       </div>
 
       {/* Nombre completo */}
@@ -188,12 +273,17 @@ export default function RegisterForm() {
           value={formData.name}
           onChange={handleChange}
           required
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-            errors.name ? 'border-red-500' : 'border-gray-300'
-          }`}
+          aria-required="true"
+          aria-invalid={errors.name ? 'true' : 'false'}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.name ? 'border-red-500' : 'border-gray-300'
+            }`}
           placeholder="Juan Pérez"
         />
-        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+        {errors.name && (
+          <p className="text-red-500 text-sm mt-1" role="alert">
+            {errors.name}
+          </p>
+        )}
       </div>
 
       {/* Teléfono */}
@@ -208,12 +298,16 @@ export default function RegisterForm() {
           value={formData.phone}
           onChange={handleChange}
           required
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-            errors.phone ? 'border-red-500' : 'border-gray-300'
-          }`}
+          aria-required="true"
+          className={` text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.phone ? 'border-red-500' : 'border-gray-300'
+            }`}
           placeholder="3001234567"
         />
-        {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+        {errors.phone && (
+          <p className="text-red-500 text-sm mt-1" role="alert">
+            {errors.phone}
+          </p>
+        )}
       </div>
 
       {/* Municipio */}
@@ -227,7 +321,8 @@ export default function RegisterForm() {
           value={formData.municipality}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          aria-required="true"
+          className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
         >
           <option value={Municipality.MEDELLIN}>Medellín</option>
           <option value={Municipality.BELLO}>Bello</option>
@@ -254,12 +349,16 @@ export default function RegisterForm() {
           value={formData.address}
           onChange={handleChange}
           required
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-            errors.address ? 'border-red-500' : 'border-gray-300'
-          }`}
+          aria-required="true"
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.address ? 'border-red-500' : 'border-gray-300'
+            }`}
           placeholder="Calle 123 #45-67"
         />
-        {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+        {errors.address && (
+          <p className="text-red-500 text-sm mt-1" role="alert">
+            {errors.address}
+          </p>
+        )}
       </div>
 
       {/* Número de identificación */}
@@ -274,12 +373,16 @@ export default function RegisterForm() {
           value={formData.idNumber}
           onChange={handleChange}
           required
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-            errors.idNumber ? 'border-red-500' : 'border-gray-300'
-          }`}
+          aria-required="true"
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.idNumber ? 'border-red-500' : 'border-gray-300'
+            }`}
           placeholder="1234567890"
         />
-        {errors.idNumber && <p className="text-red-500 text-sm mt-1">{errors.idNumber}</p>}
+        {errors.idNumber && (
+          <p className="text-red-500 text-sm mt-1" role="alert">
+            {errors.idNumber}
+          </p>
+        )}
       </div>
 
       {/* Fecha de nacimiento */}
@@ -294,14 +397,18 @@ export default function RegisterForm() {
           value={formData.birthDate}
           onChange={handleChange}
           required
+          aria-required="true"
           max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
             .toISOString()
             .split('T')[0]}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-            errors.birthDate ? 'border-red-500' : 'border-gray-300'
-          }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.birthDate ? 'border-red-500' : 'border-gray-300'
+            }`}
         />
-        {errors.birthDate && <p className="text-red-500 text-sm mt-1">{errors.birthDate}</p>}
+        {errors.birthDate && (
+          <p className="text-red-500 text-sm mt-1" role="alert">
+            {errors.birthDate}
+          </p>
+        )}
         <p className="text-sm text-gray-500 mt-1">Debes ser mayor de 18 años</p>
       </div>
 
@@ -317,10 +424,40 @@ export default function RegisterForm() {
       {/* Link a login */}
       <p className="text-center text-sm text-gray-600">
         ¿Ya tienes cuenta?{' '}
-        <a href="/login" className="text-purple-600 hover:text-purple-700 font-semibold">
+        <Link
+          href="/login"
+          className="text-purple-600 hover:text-purple-700 font-semibold hover:underline"
+        >
           Inicia sesión
-        </a>
+        </Link>
       </p>
     </form>
   );
 }
+
+/**
+ * 📚 NOTAS DE IMPLEMENTACIÓN:
+ * 
+ * 1. MEJORAS DE UX:
+ *    - Alert diferenciado por color (rojo = error, amarillo = advertencia)
+ *    - Enlace directo a recuperación de contraseña
+ *    - Limpieza automática de sugerencia al editar email
+ * 
+ * 2. ACCESIBILIDAD:
+ *    - role="alert" en mensajes de error
+ *    - aria-live="polite" en alerta principal
+ *    - aria-invalid en campos con error
+ *    - aria-describedby vincula errores con inputs
+ * 
+ * 3. ESTADOS MANEJADOS:
+ *    - showRecoverySuggestion: Controla visibilidad de sugerencia
+ *    - recoveryUrl: URL dinámica desde el backend
+ *    - serverError: Mensaje principal de error
+ * 
+ * 4. FLUJO DE EMAIL DUPLICADO:
+ *    1. Usuario ingresa email existente
+ *    2. Backend responde con code: 'EMAIL_ALREADY_EXISTS'
+ *    3. Frontend detecta el código
+ *    4. Muestra alerta amarilla con enlace de recuperación
+ *    5. Usuario puede hacer clic directamente o editar el email
+ */
