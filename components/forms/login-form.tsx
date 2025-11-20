@@ -66,7 +66,7 @@ export default function LoginForm() {
             //  1. Validar datos en el cliente de Zod
             const validatedData = loginSchema.parse(formData);
 
-            //  2. Intentar autenticacion con NextAuth
+            //  2. Intentar autenticación con NextAuth
             const result = await signIn('credentials', {
                 email: validatedData.email,
                 password: validatedData.password,
@@ -162,7 +162,7 @@ export default function LoginForm() {
                     aria-required="true"
                     aria-invalid={errors.email ? 'true' : 'false'}
                     aria-describedby={errors.email ? 'email-error' : undefined}
-                    className={`w-full px-4 py-2 border rounded-lg focus: ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.email ? 'border-red-500' : 'border-gray-300'
+                    className={`text-black w-full px-4 py-2 border rounded-lg focus: ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.email ? 'border-red-500' : 'border-gray-300'
                         }`}
                     placeholder="tu@email.com"
                 />
@@ -175,16 +175,10 @@ export default function LoginForm() {
 
             {/* Campo: Contraseña */}
             <div>
-                <div className="flex justify-between items-center mb-2">
+                <div className="block justify-between items-center mb-2">
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                         Contraseña
                     </label>
-                    <Link
-                        href="/forgot-password"
-                        className="text-sm text-purple-600 hover:text-purple-700 font-medium"
-                    >
-                        ¿Olvidaste tu contraseña?
-                    </Link>
                     <input
                         type="password"
                         id="password"
@@ -196,10 +190,16 @@ export default function LoginForm() {
                         aria-required="true"
                         aria-invalid={errors.password ? 'true' : 'false'}
                         aria-describedby={errors.password ? 'password-error' : undefined}
-                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.password ? 'border-red-500' : 'border-gray-300'
+                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.password ? 'border-red-500' : 'border-gray-300'
                             }`}
                         placeholder="Tu contraseña"
                     />
+                    <Link
+                        href="/forgot-password"
+                        className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                    >
+                        ¿Olvidaste tu contraseña?
+                    </Link>
                     {errors.password && (
                         <p className="text-red-500 text-sm mt-1" id="password-error" role="alert">
                             {errors.password}
@@ -211,7 +211,7 @@ export default function LoginForm() {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="w-full bg-purple-600 text-white py-3 mt-3 mb-5 rounded-lg font-semibold hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     {isLoading ? (
                         <span className="flex items-center justify-center">

@@ -33,7 +33,7 @@ export default function LoginPage() {
                         PawLig
                     </h1>
                 </Link>
-                <p className='mt-2 text-sm text-gray-600'>
+                <p className='mt-2 mb-2 text-sm text-gray-600'>
                     Promoviendo la adopción responsable
                 </p>
             </div>
