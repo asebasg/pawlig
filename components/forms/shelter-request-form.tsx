@@ -105,7 +105,7 @@ export function ShelterRequestForm() {
             id="name"
             name="name"
             required
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
               fieldErrors.name ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Juan Pérez García"
@@ -123,7 +123,7 @@ export function ShelterRequestForm() {
               id="idNumber"
               name="idNumber"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.idNumber ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="1234567890"
@@ -140,7 +140,7 @@ export function ShelterRequestForm() {
               id="birthDate"
               name="birthDate"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -175,7 +175,7 @@ export function ShelterRequestForm() {
               id="phone"
               name="phone"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="+573001234567"
@@ -193,7 +193,7 @@ export function ShelterRequestForm() {
               id="municipality"
               name="municipality"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.municipality ? 'border-red-500' : 'border-gray-300'
               }`}
             >
@@ -216,7 +216,7 @@ export function ShelterRequestForm() {
               id="address"
               name="address"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.address ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Calle 10 #20-30 Apto 405"
@@ -235,7 +235,7 @@ export function ShelterRequestForm() {
               id="password"
               name="password"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.password ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="••••••••"
@@ -260,7 +260,7 @@ export function ShelterRequestForm() {
             id="shelterName"
             name="shelterName"
             required
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
               fieldErrors.shelterName ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Albergue de Mascotas Valle del Aburrá"
@@ -277,7 +277,7 @@ export function ShelterRequestForm() {
               id="shelterMunicipality"
               name="shelterMunicipality"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.shelterMunicipality ? 'border-red-500' : 'border-gray-300'
               }`}
             >
@@ -302,7 +302,7 @@ export function ShelterRequestForm() {
               id="shelterAddress"
               name="shelterAddress"
               required
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.shelterAddress ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Calle Principal #100"
@@ -319,7 +319,7 @@ export function ShelterRequestForm() {
             id="shelterDescription"
             name="shelterDescription"
             rows={4}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
               fieldErrors.shelterDescription ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Cuéntanos sobre tu albergue, su misión y los tipos de animales que rescatan..."
@@ -338,7 +338,7 @@ export function ShelterRequestForm() {
               type="tel"
               id="contactWhatsApp"
               name="contactWhatsApp"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.contactWhatsApp ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="+573001234567"
@@ -356,7 +356,7 @@ export function ShelterRequestForm() {
               type="text"
               id="contactInstagram"
               name="contactInstagram"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                 fieldErrors.contactInstagram ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="@mi_albergue"
