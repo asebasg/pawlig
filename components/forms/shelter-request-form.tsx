@@ -87,13 +87,24 @@ export function ShelterRequestForm() {
 
   if (success) {
     return (
-      <div className="w-full max-w-2xl mx-auto p-6 bg-green-50 border border-green-200 rounded-lg">
-        <h3 className="text-lg font-semibold text-green-800 mb-2">¡Solicitud enviada exitosamente!</h3>
-        <p className="text-green-700">
-          Tu solicitud ha sido recibida. Un administrador la revisará y te notificará en breve sobre el estado de tu aprobación.
-          Te recomendamos estar atento a tu correo electrónico.
-        </p>
+      <div className="block">
+        <div className="w-full max-w-2xl mx-auto p-6 bg-green-50 border border-green-200 rounded-lg">
+          <h3 className="text-lg font-semibold text-green-800 mb-2">¡Solicitud enviada exitosamente!</h3>
+          <p className="text-green-700">
+            Tu solicitud ha sido recibida. Un administrador la revisará y te notificará en breve sobre el estado de tu aprobación.
+            Te recomendamos estar atento a tu correo electrónico.
+          </p>
+        </div>
+        <div className="mt-4 flex justify-center">
+          <Link
+            href="/"
+            className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-800 transition"
+          >
+            Ir al inicio
+          </Link>
+        </div>
       </div>
+
     );
   }
 
