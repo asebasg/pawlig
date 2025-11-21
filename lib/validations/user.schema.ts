@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Municipality } from '@prisma/client'
 
-// - Esquema de registro
+//  ========== ESQUEMA DE REGISTRO (ADOPTANTE) ==========
 export const registerUserSchema = z.object({
   email: z
     .string()
@@ -105,7 +105,7 @@ export const shelterApplicationSchema = z.object({
       return age >= 18;
     }, 'El representante debe ser mayor de 18 años'),
 
-    //  ===== DATOS DEL ALBERGUE =====
+  //  ===== DATOS DEL ALBERGUE =====
   shelterName: z
     .string()
     .min(3, 'Nombre del albergue requerido')
