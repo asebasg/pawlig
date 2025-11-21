@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import { Municipality } from '@prisma/client'
 
-// Usar el enum de Prisma en tiempo de ejecución
-const MunicipalityEnum = $Enums.Municipality;
-
-//  ========== ESQUEMA DE REGISTRO (USUARIO / ADOPTANTE) ==========
+// - Esquema de registro
 export const registerUserSchema = z.object({
   email: z
     .string()
