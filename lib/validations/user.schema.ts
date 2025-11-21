@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { $Enums } from '@prisma/client'
+import { Municipality } from '@prisma/client'
 
 // Usar el enum de Prisma en tiempo de ejecución
 const MunicipalityEnum = $Enums.Municipality;
 
-// Validación para registro de usuario (RF-001, HU-001)
+//  ========== ESQUEMA DE REGISTRO (USUARIO / ADOPTANTE) ==========
 export const registerUserSchema = z.object({
   email: z
     .string()
@@ -26,7 +26,7 @@ export const registerUserSchema = z.object({
     .min(7, 'Teléfono inválido')
     .max(15, 'Teléfono inválido'),
 
-  municipality: z.nativeEnum(MunicipalityEnum, {
+  municipality: z.nativeEnum(Municipality, {
     message: 'Municipio inválido'
   }),
 
@@ -50,7 +50,7 @@ export const registerUserSchema = z.object({
     }, 'Debes ser mayor de 18 años'),
 });
 
-// Validación para login (RF-002)
+//  ========== ESQUEMA DE LOGIN ==========
 export const loginSchema = z.object({
   email: z
     .string()
@@ -62,36 +62,43 @@ export const loginSchema = z.object({
     .min(1, 'Contraseña es requerida'),
 });
 
-// Validación para solicitud de albergue (HU-002)
+//  ========== ESQUEMA DE SOLICITUD DE ALBERGUE ==========
 export const shelterApplicationSchema = z.object({
-  // Datos del usuario
+  // ===== DATOS DEL USUARIO REPRESENTANTE =====
   email: z
     .string()
     .email('Email inválido')
     .min(1, 'Email es requerido'),
+
   password: z
     .string()
-    .min(8, 'La contraseña debe tener mínimo 8 caracteres')
+    .min(8, 'La contraseña debe tener mínimo 8 caracteres') // RN-001
     .max(100, 'La contraseña es muy larga'),
+
   name: z
     .string()
-    .min(2, 'Nombre debe tener al menos 2 caracteres')
+    .min(2, 'Nombre completo del representante requerido')
     .max(100, 'Nombre muy largo'),
+
   phone: z
     .string()
     .min(7, 'Teléfono inválido')
     .max(15, 'Teléfono inválido'),
-  municipality: z.nativeEnum(MunicipalityEnum, {
-    message: 'Municipio inválido'
+
+  municipality: z.nativeEnum(Municipality, {
+    message: 'Municipio de residencia del representante inválido'
   }),
+
   address: z
     .string()
-    .min(5, 'Dirección debe tener al menos 5 caracteres')
+    .min(5, 'Dirección personal del representante requerida')
     .max(200, 'Dirección muy larga'),
+
   idNumber: z
     .string()
-    .min(5, 'Número de identificación inválido')
+    .min(5, 'Número de identificación del representante requerido')
     .max(20, 'Número de identificación inválido'),
+
   birthDate: z
     .string()
     .refine((date) => {
@@ -99,21 +106,28 @@ export const shelterApplicationSchema = z.object({
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
       return age >= 18;
-    }, 'Debes ser mayor de 18 años'),
+    }, 'El representante debe ser mayor de 18 años'),
 
-  // Datos del albergue
+    //  ===== DATOS DEL ALBERGUE =====
   shelterName: z
     .string()
     .min(3, 'Nombre del albergue requerido')
     .max(100, 'Nombre muy largo'),
 
-  shelterMunicipality: z.nativeEnum(MunicipalityEnum, {
-    message: 'Municipio del albergue es requerido'
+  shelterNit: z
+    .string()
+    .min(5, 'NIT del albergue requerido')
+    .max(20, 'NIT inválido')
+    .regex(/^[0-9-]+$/, 'El NIT debe contener solo números y guiones')
+    .optional(),
+
+  shelterMunicipality: z.nativeEnum(Municipality, {
+    message: 'Municipio donde opera el albergue es requerido'
   }),
 
   shelterAddress: z
     .string()
-    .min(5, 'Dirección del albergue requerida')
+    .min(5, 'Dirección física del albergue requerida')
     .max(200, 'Dirección muy larga'),
 
   shelterDescription: z
@@ -124,16 +138,80 @@ export const shelterApplicationSchema = z.object({
 
   contactWhatsApp: z
     .string()
-    .regex(/^\+?[0-9]{10,15}$/, 'Número de WhatsApp inválido')
+    .regex(/^\+?[0-9]{10,15}$/, 'Número de WhatsApp inválido (debe incluir código de país)')
     .optional(),
 
   contactInstagram: z
     .string()
     .regex(/^@?[a-zA-Z0-9._]{1,30}$/, 'Usuario de Instagram inválido')
     .optional(),
-});
+})
+  // Validación personalizada: Al menos un método de contacto requerido (RN-013)
+  .refine(
+    (data) => data.contactWhatsApp || data.contactInstagram,
+    {
+      message: 'Debes proporcionar al menos un método de contacto (WhatsApp o Instagram)',
+      path: ['contactWhatsApp'], // Muestra error en el campo WhatsApp
+    }
+  );
 
-// Tipo TypeScript inferido del schema
+//  ========== TIPOS TYPESCRIPT INFERIDOS ==========
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
+
+/**
+ * 📚 NOTAS DE IMPLEMENTACIÓN:
+ * 
+ * 1. ESQUEMA DE SOLICITUD DE ALBERGUE (shelterApplicationSchema):
+ *    - NUEVO: Agregado para HU-002 (Solicitud y aprobación de cuenta)
+ *    - Combina datos del usuario representante + datos del albergue
+ *    - Validaciones estrictas para garantizar integridad de datos
+ * 
+ * 2. VALIDACIÓN DE NIT:
+ *    - Formato: Solo números y guiones (ej. "123456789-0")
+ *    - Opcional: Algunos albergues pequeños pueden no tener NIT formal
+ *    - Si se proporciona, debe ser único (validado en el backend)
+ * 
+ * 3. VALIDACIÓN DE CONTACTOS (RN-013):
+ *    - Al menos UN método de contacto obligatorio (WhatsApp o Instagram)
+ *    - WhatsApp: Formato internacional +57300... (10-15 dígitos)
+ *    - Instagram: Usuario válido (@username o username, máx 30 chars)
+ *    - Validación con .refine() después del schema principal
+ * 
+ * 4. DIFERENCIAS CON REGISTRO DE ADOPTANTE:
+ *    Adoptante:
+ *      - Datos personales únicamente
+ *      - Rol asignado automáticamente: ADOPTER
+ *    
+ *    Albergue:
+ *      - Datos personales del representante
+ *      - Datos del albergue (nombre, NIT, dirección, contactos)
+ *      - Rol asignado: SHELTER
+ *      - Estado inicial: verified = false (requiere aprobación)
+ * 
+ * 5. MENSAJES DE ERROR:
+ *    - Claros y específicos para cada campo
+ *    - Ayudan al usuario a corregir datos sin frustración
+ *    - Ejemplo: "Número de WhatsApp inválido (debe incluir código de país)"
+ * 
+ * 6. TRAZABILIDAD:
+ *    - HU-002: Solicitud y aprobación de cuenta de albergue ✅
+ *    - RF-007: Administración de albergues ✅
+ *    - RN-001: Contraseña mínima 8 caracteres ✅
+ *    - RN-013: Al menos un contacto válido requerido ✅
+ * 
+ * 7. USO EN EL CÓDIGO:
+ *    - Frontend: components/forms/shelter-request-form.tsx
+ *      → shelterApplicationSchema.parse(formData)
+ *    
+ *    - Backend: app/api/auth/request-shelter-account/route.ts
+ *      → shelterApplicationSchema.parse(body)
+ *    
+ *    - Tipado: ShelterApplicationInput para type-safety en TypeScript
+ * 
+ * 8. CONSISTENCIA:
+ *    - Usa los mismos municipios del enum Municipality (Prisma)
+ *    - Validaciones de edad y teléfono reutilizadas del registerUserSchema
+ *    - Formato de contraseña idéntico (RN-001)
+ */
