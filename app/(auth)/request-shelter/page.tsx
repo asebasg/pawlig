@@ -1,62 +1,143 @@
+import { Metadata } from 'next';
+import { requireAdopter } from '@/lib/auth/require-role';
 import { ShelterRequestForm } from '@/components/forms/shelter-request-form';
+import Link from 'next/link';
 
-export default function RequestShelterPage() {
+/**
+ * Metadata para SEO y redes sociales
+ */
+export const metadata: Metadata = {
+  title: 'Solicitar Cuenta de Albergue',
+  description: 'Solicita una cuenta especializada para gestionar tu albergue en el Valle de Aburrá',
+};
+
+export default async function RequestShelterPage() {
+  // 🔒 PROTECCIÓN: Solo usuarios con rol ADOPTER pueden acceder
+  // Si no está autenticado → redirect a /login (manejado por middleware)
+  // Si tiene otro rol → redirect a su dashboard correspondiente
+  await requireAdopter();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Solicitud de Cuenta para Albergue
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Completa este formulario para solicitar tu cuenta especializada como representante de un albergue o entidad de rescate en el Valle de Aburrá
-          </p>
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 text-left max-w-2xl mx-auto rounded">
-            <p className="text-blue-900">
-              <strong>Importante:</strong> Todos los campos marcados con <span className="text-red-600">*</span> son obligatorios. Tu solicitud será revisada por el administrador del sistema y recibirás una notificación sobre su estado.
-            </p>
-          </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-2xl">
+        {/* Header con logo y navegación */}
+        <div className="mb-8 text-center">
+          <Link href="/" className="inline-block mb-4">
+            <h1 className="text-4xl font-bold text-purple-600">PawLig</h1>
+          </Link>
+          <p className="text-sm text-gray-600">Promoviendo la adopción responsable</p>
         </div>
 
-        {/* Form */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        {/* Card contenedor del formulario */}
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          {/* Información introductoria */}
+          <div className="mb-6 pb-6 border-b border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Solicitar Cuenta de Albergue
+            </h2>
+            <p className="text-gray-600">
+              Completa el siguiente formulario para solicitar una cuenta especializada
+              de albergue. Un administrador revisará tu solicitud en un plazo de 2-3 días laborables.
+            </p>
+          </div>
+
+          {/* Formulario de solicitud */}
           <ShelterRequestForm />
         </div>
 
-        {/* Footer Info */}
-        <div className="mt-12 max-w-2xl mx-auto">
-          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">¿Qué ocurre después?</h2>
-            <ul className="space-y-3 text-gray-700">
-              <li className="flex items-start">
-                <span className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-600 text-white text-sm font-semibold mr-3 flex-shrink-0">
-                  1
-                </span>
-                <span>Tu solicitud quedará en estado "Pendiente de aprobación"</span>
-              </li>
-              <li className="flex items-start">
-                <span className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-600 text-white text-sm font-semibold mr-3 flex-shrink-0">
-                  2
-                </span>
-                <span>El administrador del sistema revisará tu solicitud</span>
-              </li>
-              <li className="flex items-start">
-                <span className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-600 text-white text-sm font-semibold mr-3 flex-shrink-0">
-                  3
-                </span>
-                <span>Recibirás una notificación vía email sobre el resultado</span>
-              </li>
-              <li className="flex items-start">
-                <span className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-600 text-white text-sm font-semibold mr-3 flex-shrink-0">
-                  4
-                </span>
-                <span>Una vez aprobada, podrás publicar mascotas y gestionar solicitudes de adopción</span>
-              </li>
-            </ul>
+        {/* Información adicional */}
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-blue-800">
+                Requisitos para albergues
+              </h3>
+              <div className="mt-2 text-sm text-blue-700">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Ser una entidad legalmente constituida en el Valle de Aburrá</li>
+                  <li>Contar con al menos un método de contacto (WhatsApp o Instagram)</li>
+                  <li>Proporcionar información veraz y completa</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Disclaimer legal */}
+        <p className="text-center text-xs text-gray-500 mt-6">
+          Al enviar esta solicitud, confirmas que la información proporcionada es veraz y
+          aceptas los{' '}
+          <Link href="/terminos" className="text-purple-600 hover:underline">
+            Términos de Servicio
+          </Link>{' '}
+          de PawLig.
+        </p>
       </div>
     </div>
   );
 }
+
+/**
+ * 📚 NOTAS TÉCNICAS:
+ * 
+ * 1. SEGURIDAD EN CAPAS:
+ *    - Capa 1 (Middleware): Bloquea usuarios anónimos antes de renderizar
+ *    - Capa 2 (requireAdopter): Valida rol ADOPTER en el servidor
+ *    - Capa 3 (API Route): Validará nuevamente al procesar el formulario
+ * 
+ * 2. ¿POR QUÉ SOLO ADOPTER?
+ *    - SHELTER ya tiene cuenta de albergue (no puede solicitar otra)
+ *    - VENDOR es proveedor de productos (contexto diferente)
+ *    - ADMIN no necesita solicitar (tiene todos los permisos)
+ *    - ADOPTER es el único que tiene sentido para "convertirse en albergue"
+ * 
+ * 3. FLUJO DE USUARIO:
+ *    Usuario anónimo en /adopciones → Ve enlace "¿Tienes un albergue?"
+ *      ↓
+ *    Clic en enlace → Intenta acceder /request-shelter
+ *      ↓
+ *    Middleware detecta: sin sesión
+ *      ↓
+ *    Redirige a: /login?callbackUrl=/request-shelter
+ *      ↓
+ *    Usuario se registra/inicia sesión como ADOPTER
+ *      ↓
+ *    Redirige de vuelta a: /request-shelter
+ *      ↓
+ *    requireAdopter() valida: role === 'ADOPTER' ✅
+ *      ↓
+ *    Renderiza formulario de solicitud
+ * 
+ * 4. CASO DE USO INVÁLIDO:
+ *    Usuario SHELTER intenta acceder directamente a /request-shelter
+ *      ↓
+ *    Middleware permite pasar (tiene sesión válida)
+ *      ↓
+ *    requireAdopter() detecta: role === 'SHELTER' ❌
+ *      ↓
+ *    Redirige a: /shelter (su dashboard)
+ * 
+ * 5. ACCESIBILIDAD:
+ *    - Formulario con labels correctos
+ *    - Información clara de requisitos
+ *    - Disclaimer visible de términos
+ *    - Navegación coherente con breadcrumbs implícitos
+ * 
+ * 6. UX MEJORADA:
+ *    - Card bien definida con sombra
+ *    - Información introductoria antes del formulario
+ *    - Requisitos visibles para evitar rechazos
+ *    - Link de regreso al inicio
+ * 
+ * 7. TRAZABILIDAD COMPLETA:
+ *    - HU-002: "Solicitud y aprobación de cuenta de albergue" ✅
+ *    - RF-007: "Administración de albergues" ✅
+ *    - CU-002: "Solicitar cuenta de albergue" ✅
+ *    - Manual Usuario 5.1: "Requisitos previos" ✅
+ *    - RNF-002: "Seguridad (protección de rutas)" ✅
+ */
