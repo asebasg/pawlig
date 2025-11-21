@@ -61,7 +61,7 @@ export const loginSchema = z.object({
 
 //  ========== ESQUEMA DE SOLICITUD DE ALBERGUE ==========
 export const shelterApplicationSchema = z.object({
-  // ===== DATOS DEL USUARIO REPRESENTANTE =====
+  //  ===== DATOS DEL USUARIO REPRESENTANTE =====
   email: z
     .string()
     .email('Email inválido')
@@ -113,10 +113,12 @@ export const shelterApplicationSchema = z.object({
 
   shelterNit: z
     .string()
-    .min(5, 'NIT del albergue requerido')
-    .max(20, 'NIT inválido')
-    .regex(/^[0-9-]+$/, 'El NIT debe contener solo números y guiones')
-    .optional(),
+    .regex(
+      /^[0-9]{9}-[0-9]$/,
+      'NIT inválido. Formato esperado: 900123456-7 (9 dígitos + guion + dígito de verificación)'
+    )
+    .min(11, 'NIT debe tener 11 caracteres (ejemplo: 900123456-7)')
+    .max(11, 'NIT debe tener 11 caracteres (ejemplo: 900123456-7)'),
 
   shelterMunicipality: z.nativeEnum(Municipality, {
     message: 'Municipio donde opera el albergue es requerido'

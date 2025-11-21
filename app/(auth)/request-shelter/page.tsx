@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RequestShelterPage() {
-  // 🔒 PROTECCIÓN: Solo usuarios con rol ADOPTER pueden acceder
+  //  PROTECCIÓN: Solo usuarios con rol ADOPTER pueden acceder
   // Si no está autenticado → redirect a /login (manejado por middleware)
   // Si tiene otro rol → redirect a su dashboard correspondiente
   await requireAdopter();
@@ -39,33 +39,34 @@ export default async function RequestShelterPage() {
               Completa el siguiente formulario para solicitar una cuenta especializada
               de albergue. Un administrador revisará tu solicitud en un plazo de 2-3 días laborables.
             </p>
+            <p className="text-gray-600 mt-2.5">Los campos con <span className='text-red-500 font-bold'>*</span> son <span className='font-bold'>campos obligatorios</span>.</p>
+
+            {/* Información adicional */}
+            <div className="mt-6 bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-purple-800">
+                    Requisitos para albergues
+                  </h3>
+                  <div className="mt-2 text-sm text-purple-700">
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>Ser una entidad legalmente constituida en el Valle de Aburrá</li>
+                      <li>Contar con al menos un método de contacto (WhatsApp o Instagram)</li>
+                      <li>Proporcionar información veraz y completa</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Formulario de solicitud */}
           <ShelterRequestForm />
-        </div>
-
-        {/* Información adicional */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
-                Requisitos para albergues
-              </h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Ser una entidad legalmente constituida en el Valle de Aburrá</li>
-                  <li>Contar con al menos un método de contacto (WhatsApp o Instagram)</li>
-                  <li>Proporcionar información veraz y completa</li>
-                </ul>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Disclaimer legal */}

@@ -41,22 +41,8 @@ export async function POST(request: Request) {
         //  2. Validar datos con Zod
         const validatedData = shelterApplicationSchema.parse(body);
 
-        //  3. Verificar si el email ya existe
-        const existingUser = await prisma.user.findUnique({
-            where: { email: validatedData.email },
-        });
-
-        if (existingUser) {
-            return NextResponse.json(
-                {
-                    error: 'El correo ya está registrado',
-                    code: 'EMAIL_ALREADY_EXISTS',
-                    suggestion: '¿Olvidaste tu contraseña? Puedes recuperarla aquí.',
-                    recoveryUrl: '/forgot-password',
-                },
-                { status: 409 }
-            );
-        }
+        //  3. Usar el email de la sesión actual (usuario ya autenticado)
+        const userEmail = session.user.email;
 
         //  4. Verificar si el usuario actual ya tiene una solicitud de albergue pendiente
         const existingShelterRequest = await prisma.shelter.findFirst({
@@ -85,9 +71,10 @@ export async function POST(request: Request) {
         //  6. Crear usuario + albergue en una transacción
         const newShelterAccount = await prisma.$transaction(async (tx) => {
             // Crear usuario con rol SHELTER (pero sin verificar)
-            const user = await tx.user.create({
+            // Actualizar usuario existente con nuevos datos y cambiar rol a SHELTER
+            const user = await tx.user.update({
+                where: { id: session.user.id },
                 data: {
-                    email: validatedData.email,
                     password: hashedPassword,
                     name: validatedData.name,
                     phone: validatedData.phone,
@@ -95,7 +82,7 @@ export async function POST(request: Request) {
                     address: validatedData.address,
                     idNumber: validatedData.idNumber,
                     birthDate: new Date(validatedData.birthDate),
-                    role: 'SHELTER', // Se asigna rol SHELTER (pero cuenta no verificada)
+                    role: 'SHELTER', // Cambiar rol de ADOPTER a SHELTER
                 },
             });
 
@@ -103,6 +90,7 @@ export async function POST(request: Request) {
             const shelter = await tx.shelter.create({
                 data: {
                     name: validatedData.shelterName,
+                    nit: validatedData.shelterNit,
                     municipality: validatedData.shelterMunicipality,
                     address: validatedData.shelterAddress,
                     description: validatedData.shelterDescription,

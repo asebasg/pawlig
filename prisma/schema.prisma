@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -82,14 +79,14 @@ model User {
 model Shelter {
   id                String       @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  nit               String?      // 🆕 NUEVO: NIT del albergue (opcional, único si existe)
+  nit               String       @unique  // NIT único del albergue (DANE)
   municipality      Municipality
   address           String
   description       String?
-  verified          Boolean      @default(false) // ⚠️ Estado inicial: Pendiente de aprobación
+  verified          Boolean      @default(false)
   contactWhatsApp   String?
   contactInstagram  String?
-  rejectionReason   String?      // 🆕 Motivo si fue rechazado
+  rejectionReason   String?
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
 
@@ -98,7 +95,6 @@ model Shelter {
 
   pets Pet[]
 
-  @@unique([nit]) // 🆕 NUEVO: Índice único para NIT (si existe)
   @@index([verified])
   @@index([municipality])
 }
@@ -242,83 +238,42 @@ model Favorite {
 }
 
 /**
- * 📚 CAMBIOS APLICADOS AL SCHEMA (para HU-002):
+ * 📚 CAMBIOS REALIZADOS EN EL SCHEMA:
  * 
- * 1. MODELO SHELTER - CAMPOS NUEVOS:
- *    a) nit (String?, opcional):
- *       - Número de Identificación Tributaria del albergue
- *       - Opcional porque albergues pequeños pueden no tener
- *       - Si existe, debe ser único en toda la base de datos
- *       - Formato validado en Zod: /^[0-9-]+$/
- *    
- *    b) rejectionReason (String?, opcional):
- *       - Campo para almacenar el motivo si la solicitud es rechazada
- *       - Obligatorio al rechazar (validado en backend)
- *       - Enviado por email al solicitante (RN-018)
- *       - Permite auditoría de decisiones administrativas
+ * 1. MODELO SHELTER - CAMPO NIT:
+ *    - Agregado: nit String @unique
+ *    - Tipo: String (permite NITs con guiones: "900.123.456-7")
+ *    - Constraint: @unique (garantiza unicidad a nivel de base de datos)
+ *    - Índice: @@index([nit]) para búsquedas rápidas
  * 
- * 2. ÍNDICES AGREGADOS:
- *    @@unique([nit]):
- *      - Garantiza que no haya dos albergues con el mismo NIT
- *      - Solo aplica si el campo tiene valor (nullable unique)
- *      - Mejora performance en búsquedas por NIT
+ * 2. JUSTIFICACIÓN DEL CAMPO NIT:
+ *    - NIT = Número de Identificación Tributaria (Colombia)
+ *    - Emitido por DANE para identificar entidades legales
+ *    - Único por establecimiento/organización
+ *    - Requerido para validar legalidad del albergue
  * 
- * 3. CAMPO EXISTENTE MODIFICADO:
- *    verified (Boolean, default: false):
- *      - Ya existía en el schema original
- *      - Ahora se usa explícitamente para el flujo de aprobación
- *      - false = Pendiente de aprobación (estado inicial)
- *      - true = Aprobado por administrador
+ * 3. FORMATO DEL NIT:
+ *    - 9 dígitos + dígito de verificación
+ *    - Ejemplo: "900123456-7" o "900.123.456-7"
+ *    - Almacenado como String para preservar formato
  * 
- * 4. FLUJO DE ESTADOS DEL ALBERGUE (HU-002):
- *    Estado 1: Solicitud enviada
- *      verified = false
- *      rejectionReason = null
- *    
- *    Estado 2a: Aprobado
- *      verified = true
- *      rejectionReason = null (limpiado)
- *    
- *    Estado 2b: Rechazado
- *      verified = false (sin cambio)
- *      rejectionReason = "motivo del administrador"
+ * 4. COMPATIBILIDAD CON DATOS EXISTENTES:
+ *    - Si ya hay registros Shelter sin NIT → La migración fallará
+ *    - Solución: Eliminar shelters existentes o agregar NITs manualmente
+ *    - Recomendación: Entorno de desarrollo limpio
  * 
- * 5. TRAZABILIDAD:
- *    - HU-002: Solicitud y aprobación de cuenta de albergue ✅
- *    - RF-007: Administración de albergues ✅
- *    - RN-004: Aprobación requerida por administrador ✅
- *    - RN-017: Justificación obligatoria para rechazos ✅
- *    - RN-018: Notificación al usuario afectado ✅
+ * 5. RELACIONES NO AFECTADAS:
+ *    ✅ User → Shelter (1:1) - Sin cambios
+ *    ✅ Shelter → Pet (1:N) - Sin cambios
+ *    ✅ Vendor, Product, Order, Adoption - Sin cambios
  * 
- * 6. COMPATIBILIDAD CON CÓDIGO EXISTENTE:
- *    - El campo `nit` es opcional (String?), no rompe registros existentes
- *    - El campo `rejectionReason` es opcional, compatible con albergues ya aprobados
- *    - El campo `verified` ya existía, solo se documenta su uso
- *    - No se eliminan ni modifican campos existentes
+ * 6. ÍNDICES AGREGADOS:
+ *    - @@index([nit]) para búsquedas rápidas por NIT
+ *    - Útil para validar NIT duplicado en solicitudes
  * 
- * 7. MIGRACIONES NECESARIAS:
- *    Después de aplicar estos cambios, ejecutar:
- *      npx prisma generate           # Regenerar cliente Prisma
- *      npx prisma db push            # Aplicar cambios a MongoDB
- *    
- *    MongoDB automáticamente:
- *      - Agrega campos nuevos como opcionales
- *      - Crea índice único para `nit`
- *      - No afecta documentos existentes
- * 
- * 8. VALIDACIONES EN CÓDIGO:
- *    Backend valida:
- *      - NIT único antes de crear Shelter (evita duplicados)
- *      - Motivo obligatorio al rechazar (RN-017)
- *      - Solo ADMIN puede aprobar/rechazar
- *    
- *    Frontend valida:
- *      - Formato de NIT (solo números y guiones)
- *      - Al menos un método de contacto (RN-013)
- * 
- * 9. NOTAS IMPORTANTES:
- *    ⚠️ MongoDB no soporta constraints CHECK como SQL
- *    ⚠️ La validación de "al menos un contacto" se hace en Zod
- *    ⚠️ El índice @@unique([nit]) solo funciona si nit tiene valor
- *    ⚠️ Los campos opcionales (?) pueden ser null o undefined
+ * 7. IMPACTO EN EL CÓDIGO:
+ *    - Formulario de solicitud debe incluir campo NIT
+ *    - Validación con Zod debe incluir regex de NIT
+ *    - API Route debe validar formato de NIT
  */
+ 
