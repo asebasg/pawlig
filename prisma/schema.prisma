@@ -43,6 +43,12 @@ enum AdoptionStatus {
   REJECTED
 }
 
+enum PetSize {
+  PEQUEÑO
+  MEDIANO
+  GRANDE
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -128,6 +134,7 @@ model Pet {
   breed        String?
   age          Int?
   sex          String?
+  size         PetSize?
   status       PetStatus @default(AVAILABLE)
   description  String
   requirements String?
@@ -143,6 +150,7 @@ model Pet {
 
   @@index([status])
   @@index([species])
+  @@index([size])
   @@index([shelterId])
   @@index([createdAt])
 }

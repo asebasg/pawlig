@@ -1,225 +1,286 @@
-import { Metadata } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth/auth-options";
-// import { redirect } from "next/navigation";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { PetFilter, FilterState } from "@/components/forms/pet-filter";
+import axios from "axios";
+import { Pet } from "@prisma/client";
 
 /**
- * Metadata para el SEO
- */
-
-export const metadata: Metadata = {
-    title: 'Galería de adopciones',
-    description: 'Encuentra tu compañero perfecto'
-}
-
-/**
- * Página de Galería de Adopciones (PLACEHOLDER)
+ * Página de Galería de Adopciones con Filtros
  * 
- * NOTA: Esta es una versión temporal para completar HU-001
- * La galería completa con mascotas se desarrollará en Sprint 2
+ * Permite a usuarios (anónimos o autenticados) buscar mascotas
+ * con filtros por especie, tamaño y municipio
  * 
  * Ruta: /adopciones
  */
 
-export default async function AdopcionesPage() {
-    // Obtener sesión del usuario (opcional, puede ser anónimo)
-    const session = await getServerSession(authOptions);
-
-    return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <header className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-2xl font-bold text-purple-600">PawLig</h1>
-                        <div className="flex items-center gap-4">
-                            {session?.user ? (
-                                <>
-                                    <span className="text-sm text-gray-600">
-                                        Hola, <span className="font-semibold">{session.user.name}</span>
-                                    </span>
-                                    <a
-                                        href="/api/auth/signout"
-                                        className="text-sm text-gray-600 hover:text-gray-900"
-                                    >
-                                        Cerrar sesión
-                                    </a>
-                                </>
-                            ) : (
-                                <>
-                                    <a
-                                        href="/login"
-                                        className="text-sm text-gray-600 hover:text-gray-900"
-                                    >
-                                        Iniciar sesión
-                                    </a>
-                                    <a
-                                        href="/register"
-                                        className="text-sm bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-                                    >
-                                        Registrarse
-                                    </a>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            {/* Main content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Success message (solo si viene del registro) */}
-                {session?.user && (
-                    <div className="mb-8 bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div className="flex items-start">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                            <div className="ml-3">
-                                <h3 className="text-sm font-medium text-green-800">
-                                    ¡Registro exitoso!
-                                </h3>
-                                <p className="mt-1 text-sm text-green-700">
-                                    Bienvenido/a a PawLig, {session.user.name}. Tu cuenta ha sido creada correctamente.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Hero section */}
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                        Encuentra tu compañero perfecto
-                    </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Miles de mascotas en el Valle de Aburrá esperan por un hogar lleno de amor
-                    </p>
-                </div>
-
-                {/* Placeholder content */}
-                <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                    <div className="mb-8">
-                        <div className="inline-flex items-center justify-center w-24 h-24 bg-purple-100 rounded-full mb-4">
-                            <svg className="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                            Galería en Construcción
-                        </h2>
-                        <p className="text-gray-600 max-w-md mx-auto mb-6">
-                            Estamos trabajando para traerte la mejor experiencia de adopción.
-                            La galería de mascotas estará disponible muy pronto.
-                        </p>
-
-                        {/* Sprint Info */}
-                        <div className="inline-block bg-purple-50 border border-purple-200 rounded-lg px-6 py-3 text-sm">
-                            <p className="text-purple-800">
-                                <span className="font-semibold">🚀 Próximamente:</span> Sprint 2 - Gestión de Mascotas <br />
-                                ¡No te lo pierdas!
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Feature cards */}
-                    <div className="grid md:grid-cols-3 gap-6 mt-12 text-left">
-                        <div className="border border-gray-200 rounded-lg p-6">
-                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
-                            <h3 className="font-semibold text-gray-900 mb-2">Búsqueda Avanzada</h3>
-                            <p className="text-sm text-gray-600">
-                                Filtra por especie, tamaño, edad y ubicación en el Valle de Aburrá
-                            </p>
-                        </div>
-
-                        <div className="border border-gray-200 rounded-lg p-6">
-                            <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
-                                <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                </svg>
-                            </div>
-                            <h3 className="font-semibold text-gray-900 mb-2">Favoritos</h3>
-                            <p className="text-sm text-gray-600">
-                                Guarda tus mascotas favoritas para revisarlas más tarde
-                            </p>
-                        </div>
-
-                        <div className="border border-gray-200 rounded-lg p-6">
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                </svg>
-                            </div>
-                            <h3 className="font-semibold text-gray-900 mb-2">Contacto Directo</h3>
-                            <p className="text-sm text-gray-600">
-                                Comunícate con los albergues vía WhatsApp o Instagram
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* CTA */}
-                    <div className="mt-12 pt-8 border-t border-gray-200">
-                        <p className="text-gray-600 mb-4">
-                            Mientras tanto, puedes explorar otras secciones:
-                        </p>
-                        <div className="flex justify-center gap-4">
-                            <a
-                                href="/albergues"
-                                className="inline-block bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                            >
-                                Ver Albergues
-                            </a>
-                            <a
-                                href="/productos"
-                                className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-                            >
-                                Ver Productos
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-            {/* Footer */}
-            <footer className="bg-white border-t border-gray-200 mt-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <p className="text-center text-gray-500 text-sm">
-                        &copy; 2025 - PawLig <br />
-                        Todos los derechos reservados
-                    </p>
-                </div>
-            </footer>
-        </div>
-    )
+interface PetWithShelter extends Pet {
+  size?: string;
+  shelter: {
+    id: string;
+    name: string;
+    municipality: string;
+    contactWhatsApp?: string;
+    contactInstagram?: string;
+  };
 }
 
-/**
- * 📚 NOTAS:
- * 
- * 1. PROPÓSITO:
- *    - Página temporal para completar el flujo de HU-001
- *    - Evita error 404 después del registro
- *    - Muestra mensaje de éxito al usuario registrado
- * 
- * 2. CARACTERÍSTICAS:
- *    - Detecta si el usuario viene de registrarse
- *    - Muestra header con sesión/logout
- *    - Explica que la galería está en desarrollo
- *    - Links a otras secciones (placeholder también)
- * 
- * 3. DESARROLLO FUTURO:
- *    - Sprint 2: Reemplazar con galería real de mascotas
- *    - Agregar búsqueda y filtros funcionales
- *    - Integrar con API de mascotas
- * 
- * 4. SPRINT 1 COMPLETADO:
- *    - Con esta página, HU-001 queda 100% funcional
- *    - Usuario puede registrarse → ver confirmación
- *    - No hay errores 404 en el flujo
- */
+interface SearchResult {
+  count: number;
+  pets: PetWithShelter[];
+  hasMore: boolean;
+}
+
+export default function AdopcionesPage() {
+  const { data: session } = useSession();
+  const [pets, setPets] = useState<PetWithShelter[]>([]);
+  const [species, setSpecies] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<FilterState>({});
+
+  // Fetch all species on mount
+  useEffect(() => {
+    const fetchSpecies = async () => {
+      try {
+        const response = await axios.get<SearchResult>("/api/pets/search");
+        // Extract unique species from initial results
+        const uniqueSpecies = Array.from(
+          new Set(response.data.pets.map((pet) => pet.species))
+        );
+        setSpecies(uniqueSpecies);
+      } catch (err) {
+        console.error("Error fetching species:", err);
+      }
+    };
+
+    fetchSpecies();
+  }, []);
+
+  // Fetch pets when filters change
+  useEffect(() => {
+    const fetchPets = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const queryParams = new URLSearchParams();
+        if (filters.species) queryParams.append("species", filters.species);
+        if (filters.size) queryParams.append("size", filters.size);
+        if (filters.municipality) queryParams.append("municipality", filters.municipality);
+
+        const response = await axios.get<SearchResult>(
+          `/api/pets/search?${queryParams.toString()}`
+        );
+        setPets(response.data.pets);
+      } catch (err) {
+        console.error("Error fetching pets:", err);
+        setError("Error al cargar las mascotas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPets();
+  }, [filters]);
+
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-purple-600">PawLig</h1>
+            <div className="flex items-center gap-4">
+              {session?.user ? (
+                <>
+                  <span className="text-sm text-gray-600">
+                    Hola, <span className="font-semibold">{session.user.name}</span>
+                  </span>
+                  <a
+                    href="/api/auth/signout"
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    Cerrar sesión
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a
+                    href="/login"
+                    className="text-sm text-gray-600 hover:text-gray-900"
+                  >
+                    Iniciar sesión
+                  </a>
+                  <a
+                    href="/register"
+                    className="text-sm text-white bg-purple-600 px-4 py-2 rounded-md hover:bg-purple-700"
+                  >
+                    Registrarse
+                  </a>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Page Title */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Encuentra tu Compañero Perfecto</h2>
+          <p className="text-gray-600 mt-2">
+            Explora nuestras mascotas disponibles para adopción
+          </p>
+        </div>
+
+        {/* Filter Component */}
+        <PetFilter onFilterChange={handleFilterChange} species={species} />
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          </div>
+        )}
+
+        {/* Results */}
+        {!loading && (
+          <>
+            {pets.length === 0 ? (
+              <div className="bg-white rounded-lg shadow-md p-8 text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  No se encontraron resultados
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Intenta ampliar tus criterios de búsqueda seleccionando menos filtros.
+                </p>
+                <button
+                  onClick={() => setFilters({})}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+                >
+                  Ver todas las mascotas
+                </button>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-600 mb-6">
+                  Se encontraron <span className="font-semibold">{pets.length}</span> mascota(s)
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {pets.map((pet) => (
+                    <div
+                      key={pet.id}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    >
+                      {/* Pet Image */}
+                      {pet.images && pet.images.length > 0 ? (
+                        <img
+                          src={pet.images[0]}
+                          alt={pet.name}
+                          className="w-full h-48 object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-400">Sin imagen</span>
+                        </div>
+                      )}
+
+                      {/* Pet Info */}
+                      <div className="p-4">
+                        <h3 className="text-lg font-bold text-gray-900">{pet.name}</h3>
+                        
+                        <div className="mt-2 space-y-1 text-sm text-gray-600">
+                          <p>
+                            <span className="font-semibold">Especie:</span> {pet.species}
+                          </p>
+                          {pet.breed && (
+                            <p>
+                              <span className="font-semibold">Raza:</span> {pet.breed}
+                            </p>
+                          )}
+                          {pet.age && (
+                            <p>
+                              <span className="font-semibold">Edad:</span> {pet.age} años
+                            </p>
+                          )}
+                          {pet.sex && (
+                            <p>
+                              <span className="font-semibold">Sexo:</span> {pet.sex}
+                            </p>
+                          )}
+                          {pet.size && (
+                            <p>
+                              <span className="font-semibold">Tamaño:</span> {pet.size}
+                            </p>
+                          )}
+                        </div>
+
+                        {pet.description && (
+                          <p className="mt-3 text-sm text-gray-700 line-clamp-2">
+                            {pet.description}
+                          </p>
+                        )}
+
+                        {/* Shelter Info */}
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {pet.shelter.name}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            📍 {pet.shelter.municipality?.replace(/_/g, " ")}
+                          </p>
+                          {(pet.shelter.contactWhatsApp || pet.shelter.contactInstagram) && (
+                            <div className="mt-2 flex gap-2">
+                              {pet.shelter.contactWhatsApp && (
+                                <a
+                                  href={`https://wa.me/${pet.shelter.contactWhatsApp.replace(/\D/g, "")}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-green-600 hover:text-green-700 font-semibold"
+                                >
+                                  WhatsApp
+                                </a>
+                              )}
+                              {pet.shelter.contactInstagram && (
+                                <a
+                                  href={`https://instagram.com/${pet.shelter.contactInstagram}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-pink-600 hover:text-pink-700 font-semibold"
+                                >
+                                  Instagram
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Button */}
+                        <button className="w-full mt-4 bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                          Ver detalles
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </main>
+    </div>
+  );
+}
