@@ -79,7 +79,6 @@ model User {
 model Shelter {
   id                String       @id @default(auto()) @map("_id") @db.ObjectId
   name              String
-  nit               String       @unique  // NIT único del albergue (DANE)
   municipality      Municipality
   address           String
   description       String?

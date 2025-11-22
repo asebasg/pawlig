@@ -111,15 +111,6 @@ export const shelterApplicationSchema = z.object({
     .min(3, 'Nombre del albergue requerido')
     .max(100, 'Nombre muy largo'),
 
-  shelterNit: z
-    .string()
-    .regex(
-      /^[0-9]{9}-[0-9]$/,
-      'NIT inválido. Formato esperado: 900123456-7 (9 dígitos + guion + dígito de verificación)'
-    )
-    .min(11, 'NIT debe tener 11 caracteres (ejemplo: 900123456-7)')
-    .max(11, 'NIT debe tener 11 caracteres (ejemplo: 900123456-7)'),
-
   shelterMunicipality: z.nativeEnum(Municipality, {
     message: 'Municipio donde opera el albergue es requerido'
   }),

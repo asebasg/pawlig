@@ -90,7 +90,6 @@ export async function POST(request: Request) {
             const shelter = await tx.shelter.create({
                 data: {
                     name: validatedData.shelterName,
-                    nit: validatedData.shelterNit,
                     municipality: validatedData.shelterMunicipality,
                     address: validatedData.shelterAddress,
                     description: validatedData.shelterDescription,

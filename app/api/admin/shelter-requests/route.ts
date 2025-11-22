@@ -69,7 +69,6 @@ export async function GET() {
             // Datos del albergue
             shelter: {
                 name: shelter.name,
-                nit: shelter.nit,
                 municipality: shelter.municipality,
                 address: shelter.address,
                 description: shelter.description || 'Sin descripción',
