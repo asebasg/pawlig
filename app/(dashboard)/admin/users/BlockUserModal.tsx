@@ -8,7 +8,7 @@ interface BlockUserModalProps {
         id: string;
         name: string;
         email: string;
-        isActive: string;
+        isActive: boolean;
     };
     onClose: () => void;
     onSuccess: () => void;
@@ -89,7 +89,7 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Motivo {user.isActive ? "del bloqueo" : "del desbloqueo"} *
+                            Motivo {user.isActive ? "del bloqueo" : "del desbloqueo"} <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <textarea
                             value={reason}

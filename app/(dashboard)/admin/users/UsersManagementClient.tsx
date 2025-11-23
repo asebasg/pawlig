@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { UserRole, Municipality } from "@prisma/client";
-import { Search, UserX, UserCheck, Loader2 } from "lucide-react";
+import { Search, UserX, UserCheck, Loader2, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert } from "lucide-react";
 import BlockUserModal from "./BlockUserModal"
 
 interface User {
@@ -188,7 +188,7 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                 placeholder="Nombre o email..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="text-black w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             />
                         </div>
                     </div>
@@ -198,17 +198,20 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Rol
                         </label>
-                        <select
-                            value={roleFilter}
-                            onChange={(e) => setRoleFilter(e.target.value as UserRole | "ALL")}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        >
-                            <option value="ALL">Todos</option>
-                            <option value="ADOPTER">Adoptantes</option>
-                            <option value="SHELTER">Albergues</option>
-                            <option value="VENDOR">Vendedores</option>
-                            <option value="ADMIN">Administradores</option>
-                        </select>
+                        <div className="relative">
+                            <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <select
+                                value={roleFilter}
+                                onChange={(e) => setRoleFilter(e.target.value as UserRole | "ALL")}
+                                className="text-black w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            >
+                                <option value="ALL">Todos</option>
+                                <option value="ADOPTER">Adoptantes</option>
+                                <option value="SHELTER">Albergues</option>
+                                <option value="VENDOR">Vendedores</option>
+                                <option value="ADMIN">Administradores</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -217,8 +220,8 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                     <button
                         onClick={() => setStatusFilter("ALL")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${statusFilter === "ALL"
-                                ? "bg-purple-600 text-white"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            ? "bg-purple-600 text-white"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                     >
                         Todos ({totalCount})
@@ -226,8 +229,8 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                     <button
                         onClick={() => setStatusFilter("ACTIVE")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${statusFilter === "ACTIVE"
-                                ? "bg-green-600 text-white"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            ? "bg-green-600 text-white"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                     >
                         Activos
@@ -235,8 +238,8 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                     <button
                         onClick={() => setStatusFilter("BLOCKED")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${statusFilter === "BLOCKED"
-                                ? "bg-red-600 text-white"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            ? "bg-red-600 text-white"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                     >
                         Bloqueados
@@ -265,22 +268,40 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                 <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Usuario
+                                            <div className="flex items-center gap-1">
+                                                <User className="w-4 h-4 text-gray-500" />
+                                                Usuario
+                                            </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Rol
+                                            <div className="flex items-center gap-1">
+                                                <Shield className="w-4 h-4 text-gray-500" />
+                                                Rol
+                                            </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Estado
+                                            <div className="flex items-center gap-1">
+                                                <MessageCircleQuestion className="w-4 h-4 text-gray-500" />
+                                                Estado
+                                            </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actividad
+                                            <div className="flex items-center gap-1">
+                                                <Activity className="w-4 h-4 text-gray-500" />
+                                                Actividad
+                                            </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Registro
+                                            <div className="flex items-center gap-1">
+                                                <Scroll className="w-4 h-4 text-gray-500" />
+                                                Registro
+                                            </div>
                                         </th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Acciones
+                                            <div className="flex items-center gap-1">
+                                                <ShieldAlert className="w-4 h-4 text-gray-500" />
+                                                Acciones
+                                            </div>
                                         </th>
                                     </tr>
                                 </thead>
@@ -316,15 +337,15 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {user.shelter && (
-                                                    <div>🐾 {user.shelter._count.pets} mascotas</div>
+                                                    <div>🐾 {user.shelter._count?.pets || 0} mascotas</div>
                                                 )}
                                                 {user.vendor && (
-                                                    <div>📦 {user.vendor._count.products} productos</div>
+                                                    <div>📦 {user.vendor._count?.products || 0} productos</div>
                                                 )}
                                                 {user.role === "ADOPTER" && (
                                                     <div>
-                                                        <div>❤️ {user._count.favorites} favoritos</div>
-                                                        <div>📋 {user._count.adoptions} postulaciones</div>
+                                                        <div>❤️ {user._count?.favorites || 0} favoritos</div>
+                                                        <div>📋 {user._count?.adoptions || 0} postulaciones</div>
                                                     </div>
                                                 )}
                                             </td>
@@ -336,8 +357,8 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                     <button
                                                         onClick={() => handleBlockClick(user)}
                                                         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition ${user.isActive
-                                                                ? "text-red-600 hover:bg-red-50"
-                                                                : "text-green-600 hover:bg-green-50"
+                                                            ? "text-red-600 hover:bg-red-50"
+                                                            : "text-green-600 hover:bg-green-50"
                                                             }`}
                                                     >
                                                         {user.isActive ? (
