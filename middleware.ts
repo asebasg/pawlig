@@ -1,124 +1,76 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-//  Rutas públicas (accesibles sin autenticación)
-const publicRoutes = [
-  '/',
-  '/login',
-  '/register',
-  '/adopciones',
-  '/productos',
-  '/albergues',
-  '/terminos',
-  '/privacidad',
-];
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const path = req.nextUrl.pathname;
 
-//  Prefijos de rutas que SIEMPRE requieren autenticación
-// (La validación de rol específico se hace con requireRole() en cada página)
-const protectedPrefixes = [
-  '/admin',
-  '/shelter',
-  '/vendor',
-  '/user',
-  '/request-shelter',
-];
-
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Permitir acceso a rutas de API de NextAuth
-  if (pathname.startsWith('/api/auth')) {
-    return NextResponse.next();
-  }
-
-  // Permitir acceso a archivos estáticos
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/images') ||
-    pathname.startsWith('/icons') ||
-    pathname === '/favicon.ico'
-  ) {
-    return NextResponse.next();
-  }
-
-  // Verificar si la ruta es pública
-  const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname.startsWith(route));
-
-  if (isPublicRoute) {
-    return NextResponse.next();
-  }
-
-  // Verificar si la ruta requiere autenticación
-  const isProtectedRoute = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
-
-  if (isProtectedRoute) {
-    // Obtener token de sesión
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    // Si no hay token → usuario anónimo → bloquear
-    if (!token) {
-      const url = new URL('/login', request.url);
-      url.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(url);
+    //  Protección de ruta /request-shelter
+    // Solo usuarios con rol ADOPTER pueden solicitar ser albergue
+    if (path === "/request-shelter") {
+      if (!token || token.role !== "ADOPTER") {
+        return NextResponse.redirect(
+          new URL("/unauthorized?reason=adopters_only", req.url)
+        );
+      }
     }
 
-    // Hay token → usuario autenticado → permitir pasar
-    // La validación de rol específico se hará en la página con requireRole()
-  }
+    //  Protección de rutas administrativas
+    // Solo usuarios con rol ADMIN pueden acceder a /admin/*
+    if (path.startsWith("/admin")) {
+      if (!token || token.role !== "ADMIN") {
+        return NextResponse.redirect(
+          new URL("/unauthorized?reason=admin_only", req.url)
+        );
+      }
+    }
 
-  return NextResponse.next();
-}
+    //  Protección de rutas de albergues
+    if (path.startsWith("/shelter")) {
+      if (!token || token.role !== "SHELTER") {
+        return NextResponse.redirect(
+          new URL("/unauthorized?reason=shelter_only", req.url)
+        );
+      }
+    }
+
+    //  Protección de rutas de vendedores
+    if (path.startsWith("/vendor")) {
+      if (!token || token.role !== "VENDOR") {
+        return NextResponse.redirect(
+          new URL("/unauthorized?reason=vendor_only", req.url)
+        );
+      }
+    }
+
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
+  }
+);
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\..*|images|icons).*)',
+    "/request-shelter",
+    "/admin/:path*",
+    "/shelter/:path*",
+    "/vendor/:path*",
+    "/user/:path*",
   ],
 };
 
 /**
- * 📚 FLUJO DE SEGURIDAD COMPLETO:
+ *  NOTAS:
  * 
- * EJEMPLO: Usuario anónimo intenta acceder a /request-shelter
+ * 1. Este middleware intercepta las rutas definidas en config.matcher ANTES de que Next.js renderice la página.
  * 
- * 1️⃣ CAPA 1 - MIDDLEWARE (este archivo):
- *    ❌ Sin token → Redirect a /login?callbackUrl=/request-shelter
+ * 2. Para HU-014: Solo usuarios con rol ADMIN pueden acceder a /admin/*
  * 
- * Usuario inicia sesión correctamente
+ * 3. Si la validación falla, redirige a /unauthorized con el motivo.
  * 
- * 2️⃣ CAPA 1 - MIDDLEWARE (este archivo):
- *    ✅ Con token → Permite pasar a la página
- * 
- * 3️⃣ CAPA 2 - REQUIREROLE() en la página:
- *    await requireAdopter();
- *    ❌ Si role !== 'ADOPTER' → Redirect a su dashboard
- *    ✅ Si role === 'ADOPTER' → Renderiza contenido
- * 
- * 4️⃣ CAPA 3 - API ROUTES (cuando el usuario envía el formulario):
- *    const session = await getServerSession(authOptions);
- *    ❌ Sin sesión → 401 Unauthorized
- *    ❌ Role incorrecto → 403 Forbidden
- *    ✅ Todo correcto → Procesa la solicitud
- * 
- * VENTAJAS DE ESTA ARQUITECTURA:
- * ✅ Defense in Depth (3 capas de validación)
- * ✅ Middleware simple y escalable (no crece con muchos ifs)
- * ✅ Cada página controla su autorización específica
- * ✅ API Routes validan independientemente
- * ✅ Si una capa falla, las otras siguen protegiendo
- * 
- * TRAZABILIDAD:
- * - RNF-002: Seguridad (autenticación y autorización) ✅
- * - RF-006: Gestión de roles y permisos ✅
- * - Arquitectura 6.1: Estrategia de autenticación ✅
+ * 4. Esta es la PRIMERA CAPA de seguridad. Las páginas y APIs deben validar nuevamente en el servidor (triple validación).
  */

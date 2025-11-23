@@ -53,27 +53,70 @@ enum OrderStatus {
 
 // ===== MODELS =====
 model User {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  email     String       @unique
-  password  String
-  name      String
-  role      UserRole     @default(ADOPTER)
-  phone     String
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email       String       @unique
+  password    String
+  name        String
+  role        UserRole     @default(ADOPTER)
+  phone       String
   municipality Municipality
-  address   String
-  idNumber  String
-  birthDate DateTime
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  address     String
+  idNumber    String
+  birthDate   DateTime
+  
+  // Bloqueos de usuarios
+  isActive    Boolean      @default(true) // Indica si la cuenta está activa
+  blockedAt   DateTime?    // Fecha de bloqueo
+  blockedBy   String?      @db.ObjectId // ID del admin que bloqueó
+  blockReason String?      // Motivo del bloqueo
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
-  shelter   Shelter?
-  vendor    Vendor?
-  adoptions Adoption[]
-  orders    Order[]
-  favorites Favorite[]
+  // Relaciones existentes
+  shelter     Shelter?
+  vendor      Vendor?
+  adoptions   Adoption[]
+  orders      Order[]
+  favorites   Favorite[]
+  
+  // Auditoría de acciones administrativas
+  adminActions UserAudit[] @relation("AdminActions") // Acciones realizadas por este admin
+  auditRecords UserAudit[] @relation("AffectedUser") // Auditorías donde este usuario fue afectado
 
   @@index([role])
+  @@index([isActive]) // Índice para filtrar usuarios activos/bloqueados
   @@index([municipality])
+}
+
+model UserAudit {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Acción realizada
+  action      String   // "BLOCK", "UNBLOCK", "CHANGE_ROLE", "DELETE"
+  reason      String   // Justificación obligatoria
+  
+  // Datos anteriores y nuevos (para trazabilidad)
+  oldValue    String?  // Valor anterior (ej: "ADOPTER" en cambio de rol)
+  newValue    String?  // Valor nuevo (ej: "VENDOR" en cambio de rol)
+  
+  // Relaciones
+  performedBy User     @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
+  adminId     String   @db.ObjectId
+  
+  affectedUser User    @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @db.ObjectId
+  
+  // Metadata
+  ipAddress   String?  // IP del admin (seguridad adicional)
+  userAgent   String?  // Navegador del admin
+  
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
 }
 
 model Shelter {
