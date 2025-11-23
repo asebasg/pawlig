@@ -95,7 +95,6 @@ model User {
   @@index([role])
   @@index([isActive])
   @@index([municipality])
-  @@index([email])
 }
 
 model UserAudit {
@@ -150,7 +149,6 @@ model Shelter {
   @@index([verified])
   @@index([municipality])
   @@index([name])
-  @@index([nit])
 }
 
 model Vendor {
