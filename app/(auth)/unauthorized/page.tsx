@@ -1,14 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { ShieldAlert, Home, ArrowLeft } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
-interface UnauthorizedPageProps {
-    searchParams: {
-        reason?: string;
-    };
-}
+export default function UnauthorizedPage() {
+    const searchParams = useSearchParams();
+    const reason = searchParams.get('reason') || "unknown";
 
-export default function UnauthorizedPage({ searchParams }: UnauthorizedPageProps) {
-    const reason = searchParams.reason || "unknown";
 
     const messages: Record<string, { title: string; description: string; suggestion: string }> = {
         admin_only: {
@@ -100,7 +99,4 @@ export default function UnauthorizedPage({ searchParams }: UnauthorizedPageProps
     );
 }
 
-export const metadata = {
-    title: "Acceso Denegado - PawLig",
-    description: "No tienes permisos para acceder a este recurso",
-};
+

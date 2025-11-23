@@ -1,21 +1,32 @@
-import { Metadata } from 'next';
-import { requireAdopter } from '@/lib/auth/require-role';
+'use client';
+
 import { ShelterRequestForm } from '@/components/forms/shelter-request-form';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
-/**
- * Metadata para SEO y redes sociales
- */
-export const metadata: Metadata = {
-  title: 'Solicitar Cuenta de Albergue',
-  description: 'Solicita una cuenta especializada para gestionar tu albergue en el Valle de Aburrá',
-};
+export default function RequestShelterPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-export default async function RequestShelterPage() {
-  //  PROTECCIÓN: Solo usuarios con rol ADOPTER pueden acceder
-  // Si no está autenticado → redirect a /login (manejado por middleware)
-  // Si tiene otro rol → redirect a su dashboard correspondiente
-  await requireAdopter();
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session) {
+      router.push('/login?callbackUrl=/request-shelter');
+      return;
+    }
+    
+    if (session.user.role !== 'ADOPTER') {
+      router.push('/dashboard');
+      return;
+    }
+  }, [session, status, router]);
+
+  if (status === 'loading' || !session || session.user.role !== 'ADOPTER') {
+    return <div>Cargando...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
