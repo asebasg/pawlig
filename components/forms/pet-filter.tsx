@@ -1,141 +1,277 @@
-"use client";
+'use client';
 
-import { useState, useCallback, useEffect } from "react";
-import { Municipality } from "@prisma/client";
-
-// Temporary PetSize enum until Prisma regenerates properly
-enum PetSize {
-  PEQUEÑO = "PEQUEÑO",
-  MEDIANO = "MEDIANO",
-  GRANDE = "GRANDE",
-}
+import { useState } from 'react';
+import { Municipality } from '@prisma/client';
+import { petSearchSchema, PetSearchInput } from '@/lib/validations/pet-search.schema';
+import { ZodError } from 'zod';
 
 interface PetFilterProps {
-  onFilterChange: (filters: FilterState) => void;
-  species: string[];
+  onSearch: (filters: PetSearchInput) => void;
+  isLoading?: boolean;
 }
 
-export interface FilterState {
-  species?: string;
-  size?: PetSize;
-  municipality?: Municipality;
-}
+export default function PetFilter({ onSearch, isLoading = false }: PetFilterProps) {
+  // Estados del formulario
+  const [filters, setFilters] = useState<Partial<PetSearchInput>>({
+    species: '',
+    municipality: undefined,
+    sex: undefined,
+    minAge: undefined,
+    maxAge: undefined,
+  });
 
-export function PetFilter({ onFilterChange, species }: PetFilterProps) {
-  const [filters, setFilters] = useState<FilterState>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSpeciesChange = useCallback((value: string) => {
-    const newFilters = { ...filters, species: value || undefined };
-    setFilters(newFilters);
-    onFilterChange(newFilters);
-  }, [filters, onFilterChange]);
+  /**
+   *  Maneja cambios en los inputs
+   */
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
 
-  const handleSizeChange = useCallback((value: string) => {
-    const newFilters = { ...filters, size: value ? (value as PetSize) : undefined };
-    setFilters(newFilters);
-    onFilterChange(newFilters);
-  }, [filters, onFilterChange]);
+    // Conversión de tipos según el campo
+    let parsedValue: any = value;
 
-  const handleMunicipalityChange = useCallback((value: string) => {
-    const newFilters = { ...filters, municipality: value ? (value as Municipality) : undefined };
-    setFilters(newFilters);
-    onFilterChange(newFilters);
-  }, [filters, onFilterChange]);
+    if (name === 'minAge' || name === 'maxAge') {
+      // Convertir a número si es un campo de edad
+      parsedValue = value === '' ? undefined : parseInt(value, 10);
+    } else if (value === '') {
+      // Campos vacíos = undefined
+      parsedValue = undefined;
+    }
 
-  const handleClearFilters = useCallback(() => {
-    setFilters({});
-    onFilterChange({});
-  }, [onFilterChange]);
+    setFilters((prev) => ({ ...prev, [name]: parsedValue }));
 
-  const municipalities = [
-    "MEDELLIN",
-    "BELLO",
-    "ITAGUI",
-    "ENVIGADO",
-    "SABANETA",
-    "LA_ESTRELLA",
-    "CALDAS",
-    "COPACABANA",
-    "GIRARDOTA",
-    "BARBOSA",
-  ] as Municipality[];
+    // Limpiar error del campo al editar
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
 
-  const sizes = ["PEQUEÑO", "MEDIANO", "GRANDE"] as PetSize[];
+  /**
+   * Maneja el envío del formulario
+   * CAPA 1 DE VALIDACIÓN: Valida con Zod antes de enviar
+   */
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
 
-  const hasActiveFilters = Object.values(filters).some((value) => value !== undefined);
+    try {
+      //  VALIDACIÓN CAPA 1: Validar con Zod
+      const validatedData = petSearchSchema.parse({
+        ...filters,
+        // Valores por defecto para campos opcionales
+        page: 1, // Siempre resetear a página 1 en nueva búsqueda
+        limit: 20,
+        status: 'AVAILABLE', // Solo mascotas disponibles
+      });
 
+      //  Validación exitosa: enviar al padre (página)
+      onSearch(validatedData);
+    } catch (error) {
+      // ❌ Error de validación: mostrar errores campo por campo
+      if (error instanceof ZodError) {
+        const fieldErrors: Record<string, string> = {};
+        error.issues.forEach((issue) => {
+          const field = issue.path[0];
+          if (typeof field === 'string') {
+            fieldErrors[field] = issue.message;
+          }
+        });
+        setErrors(fieldErrors);
+      }
+    }
+  };
+
+  /**
+   * Limpia todos los filtros
+   */
+  const handleReset = () => {
+    setFilters({
+      species: '',
+      municipality: undefined,
+      sex: undefined,
+      minAge: undefined,
+      maxAge: undefined,
+    });
+    setErrors({});
+
+    //  Buscar sin filtros (todas las mascotas disponibles)
+    onSearch({
+      page: 1,
+      limit: 20,
+      status: 'AVAILABLE',
+    });
+  };
   return (
-    <div className="w-full bg-white rounded-lg shadow-md p-6 mb-8">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Filtrar Mascotas</h2>
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-2xl shadow-lg">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-gray-900">Filtros de búsqueda</h2>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+        >
+          Limpiar filtros
+        </button>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {/* Species Filter */}
+      {/* Especie */}
+      <div>
+        <label htmlFor="species" className="block text-sm font-medium text-gray-700 mb-2">
+          Especie
+        </label>
+        <input
+          type="text"
+          id="species"
+          name="species"
+          value={filters.species || ''}
+          onChange={handleChange}
+          placeholder="Ej: Perro, Gato"
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
+            errors.species ? 'border-red-500' : 'border-gray-300'
+          }`}
+        />
+        {errors.species && (
+          <p className="text-red-500 text-sm mt-1" role="alert">
+            {errors.species}
+          </p>
+        )}
+      </div>
+
+      {/* Municipio */}
+      <div>
+        <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-2">
+          Municipio
+        </label>
+        <select
+          id="municipality"
+          name="municipality"
+          value={filters.municipality || ''}
+          onChange={handleChange}
+          className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+        >
+          <option value="">Todos los municipios</option>
+          <option value={Municipality.MEDELLIN}>Medellín</option>
+          <option value={Municipality.BELLO}>Bello</option>
+          <option value={Municipality.ITAGUI}>Itagüí</option>
+          <option value={Municipality.ENVIGADO}>Envigado</option>
+          <option value={Municipality.SABANETA}>Sabaneta</option>
+          <option value={Municipality.LA_ESTRELLA}>La Estrella</option>
+          <option value={Municipality.CALDAS}>Caldas</option>
+          <option value={Municipality.COPACABANA}>Copacabana</option>
+          <option value={Municipality.GIRARDOTA}>Girardota</option>
+          <option value={Municipality.BARBOSA}>Barbosa</option>
+        </select>
+      </div>
+
+      {/* Sexo */}
+      <div>
+        <label htmlFor="sex" className="block text-sm font-medium text-gray-700 mb-2">
+          Sexo
+        </label>
+        <select
+          id="sex"
+          name="sex"
+          value={filters.sex || ''}
+          onChange={handleChange}
+          className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+        >
+          <option value="">Todos</option>
+          <option value="Macho">Macho</option>
+          <option value="Hembra">Hembra</option>
+        </select>
+      </div>
+
+      {/* Rango de edad */}
+      <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Especie
+          <label htmlFor="minAge" className="block text-sm font-medium text-gray-700 mb-2">
+            Edad mínima
           </label>
-          <select
-            value={filters.species || ""}
-            onChange={(e) => handleSpeciesChange(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          >
-            <option value="">Todas las especies</option>
-            {species.map((sp) => (
-              <option key={sp} value={sp}>
-                {sp.charAt(0).toUpperCase() + sp.slice(1)}
-              </option>
-            ))}
-          </select>
+          <input
+            type="number"
+            id="minAge"
+            name="minAge"
+            value={filters.minAge ?? ''}
+            onChange={handleChange}
+            min="0"
+            max="30"
+            placeholder="0"
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
+              errors.minAge ? 'border-red-500' : 'border-gray-300'
+            }`}
+          />
+          {errors.minAge && (
+            <p className="text-red-500 text-sm mt-1" role="alert">
+              {errors.minAge}
+            </p>
+          )}
         </div>
 
-        {/* Size Filter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tamaño
+          <label htmlFor="maxAge" className="block text-sm font-medium text-gray-700 mb-2">
+            Edad máxima
           </label>
-          <select
-            value={filters.size || ""}
-            onChange={(e) => handleSizeChange(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          >
-            <option value="">Todos los tamaños</option>
-            {sizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Municipality Filter */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Municipio
-          </label>
-          <select
-            value={filters.municipality || ""}
-            onChange={(e) => handleMunicipalityChange(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          >
-            <option value="">Todos los municipios</option>
-            {municipalities.map((mun) => (
-              <option key={mun} value={mun}>
-                {mun.replace(/_/g, " ")}
-              </option>
-            ))}
-          </select>
+          <input
+            type="number"
+            id="maxAge"
+            name="maxAge"
+            value={filters.maxAge ?? ''}
+            onChange={handleChange}
+            min="0"
+            max="30"
+            placeholder="30"
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
+              errors.maxAge ? 'border-red-500' : 'border-gray-300'
+            }`}
+          />
+          {errors.maxAge && (
+            <p className="text-red-500 text-sm mt-1" role="alert">
+              {errors.maxAge}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Clear Filters Button */}
-      {hasActiveFilters && (
-        <button
-          onClick={handleClearFilters}
-          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg font-semibold hover:bg-gray-400 transition-colors"
-        >
-          Limpiar Filtros
-        </button>
-      )}
-    </div>
+      {/* Botón de búsqueda */}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {isLoading ? (
+          <span className="flex items-center justify-center">
+            <svg
+              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            Buscando...
+          </span>
+        ) : (
+          'Buscar mascotas'
+        )}
+      </button>
+    </form>
   );
 }
