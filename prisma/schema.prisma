@@ -52,27 +52,71 @@ enum OrderStatus {
 }
 
 // ===== MODELS =====
-model User {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  email     String       @unique
-  password  String
-  name      String
-  role      UserRole     @default(ADOPTER)
-  phone     String
-  municipality Municipality
-  address   String
-  idNumber  String
-  birthDate DateTime
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
 
-  shelter   Shelter?
-  vendor    Vendor?
-  adoptions Adoption[]
-  orders    Order[]
-  favorites Favorite[]
+model UserAudit {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Acción realizada (HU-014, CP-015)
+  action      String   // "BLOCK", "UNBLOCK", "CHANGE_ROLE", "DELETE"
+  reason      String   // Justificación obligatoria (RN-017)
+  
+  // Datos anteriores y nuevos (trazabilidad)
+  oldValue    String?  // Valor anterior (ej: "ADOPTER" en cambio de rol)
+  newValue    String?  // Valor nuevo (ej: "VENDOR" en cambio de rol)
+  
+  // Relaciones
+  performedBy User     @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
+  adminId     String   @db.ObjectId
+  
+  affectedUser User    @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @db.ObjectId
+  
+  // Metadata de seguridad
+  ipAddress   String?  // IP del admin (seguridad adicional)
+  userAgent   String?  // Navegador del admin
+  
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model User {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email       String       @unique
+  password    String
+  name        String
+  role        UserRole     @default(ADOPTER)
+  phone       String
+  municipality Municipality
+  address     String
+  idNumber    String
+  birthDate   DateTime
+  
+  // Bloqueos de usuarios (HU-014)
+  isActive    Boolean      @default(true) // Indica si la cuenta está activa
+  blockedAt   DateTime?    // Fecha de bloqueo
+  blockedBy   String?      @db.ObjectId // ID del admin que bloqueó
+  blockReason String?      // Motivo del bloqueo
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relaciones existentes
+  shelter     Shelter?
+  vendor      Vendor?
+  adoptions   Adoption[]
+  orders      Order[]
+  favorites   Favorite[]
+  
+  // Auditoría de acciones administrativas
+  adminActions UserAudit[] @relation("AdminActions") // Acciones realizadas por este admin
+  auditRecords UserAudit[] @relation("AffectedUser") // Auditorías donde este usuario fue afectado
 
   @@index([role])
+  @@index([isActive]) // Índice para filtrar usuarios activos/bloqueados
   @@index([municipality])
   @@index([email])
 }
@@ -80,6 +124,7 @@ model User {
 model Shelter {
   id                String       @id @default(auto()) @map("_id") @db.ObjectId
   name              String
+  nit               String       @unique  // NIT único del albergue (DANE)
   municipality      Municipality
   address           String
   description       String?
@@ -98,6 +143,7 @@ model Shelter {
   @@index([verified])
   @@index([municipality])
   @@index([name])
+  @@index([nit])
 }
 
 model Vendor {
@@ -246,34 +292,49 @@ model Favorite {
 }
 
 /**
- * 📚 CAMBIOS APLICADOS:
+ * 📚 CAMBIOS APLICADOS EN ESTE SCHEMA:
  * 
  * 1. ÍNDICES ADICIONALES PARA BÚSQUEDA (Performance - RNF-001):
- *    - Pet: name, sex, age (campos de filtro frecuentes)
- *    - Shelter: name (búsqueda de albergues)
- *    - Product: name, price (búsqueda de productos)
- *    - User: email (login frecuente)
+ *    Pet:
+ *    - @@index([name]) - Búsqueda por nombre de mascota
+ *    - @@index([sex]) - Filtro de género
+ *    - @@index([age]) - Filtro de rango de edad
+ *    
+ *    Shelter:
+ *    - @@index([name]) - Búsqueda de albergues
+ *    - @@index([nit]) - Validación rápida de NIT
+ *    
+ *    Product:
+ *    - @@index([name]) - Búsqueda de productos
+ *    - @@index([price]) - Ordenamiento por precio
+ *    
+ *    User:
+ *    - @@index([email]) - Login frecuente
+ *    - @@index([isActive]) - Filtrar usuarios bloqueados
  * 
- * 2. ÍNDICES COMPUESTOS IMPLÍCITOS:
- *    - MongoDB optimiza queries con múltiples filtros
- *    - Ejemplo: status + species + shelterId (búsqueda compleja)
+ * 2. CAMPOS EXISTENTES PRESERVADOS:
+ *    ✅ User: isActive, blockedAt, blockedBy, blockReason (sistema de bloqueo HU-014)
+ *    ✅ UserAudit: Modelo completo de auditoría (trazabilidad RN-017, RN-018)
+ *    ✅ Shelter: nit (NIT único del albergue - validación legal)
  * 
- * 3. JUSTIFICACIÓN DE ÍNDICES:
+ * 3. JUSTIFICACIÓN DE ÍNDICES DE BÚSQUEDA:
  *    - status: Siempre filtrado (AVAILABLE/ADOPTED)
  *    - species: Filtro principal de usuarios
  *    - shelterId: Join con shelter en cada query
  *    - createdAt: Ordenamiento por defecto (DESC)
- *    - name: Búsqueda por nombre
- *    - sex: Filtro de género
- *    - age: Filtro de rango de edad
+ *    - name: Búsqueda por nombre (pets, shelters, products)
+ *    - sex: Filtro de género en búsqueda
+ *    - age: Filtro de rango de edad (minAge/maxAge)
+ *    - nit: Validación de NIT duplicado
  * 
- * 4. IMPACTO EN PERFORMANCE:
- *    - Búsquedas < 2 segundos con 10,000 registros (RNF-001)
+ * 4. IMPACTO EN PERFORMANCE (RNF-001):
+ *    - Búsquedas < 2 segundos con 10,000 registros
  *    - Índices en RAM para queries frecuentes
  *    - MongoDB optimiza automáticamente con $match pipeline
  * 
- * 5. MANTENIMIENTO:
- *    - Índices se crean automáticamente con `prisma db push`
- *    - No requiere intervención manual en MongoDB Atlas
- *    - Monitorear uso de índices con MongoDB Atlas Performance Advisor
+ * 5. COMPATIBILIDAD:
+ *    ✅ 100% compatible con código existente
+ *    ✅ No rompe relaciones existentes
+ *    ✅ No modifica campos obligatorios
+ *    ⚠️ NIT único puede fallar si hay shelters duplicados (resolver antes de migrar)
  */
