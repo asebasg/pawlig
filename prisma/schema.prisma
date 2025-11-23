@@ -31,6 +31,13 @@ enum UserRole {
   ADOPTER
 }
 
+enum AuditAction {
+  BLOCK
+  UNBLOCK
+  CHANGE_ROLE
+  DELETE
+}
+
 enum PetStatus {
   AVAILABLE
   IN_PROCESS
@@ -93,7 +100,7 @@ model UserAudit {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   
   // Acción realizada
-  action      String   // "BLOCK", "UNBLOCK", "CHANGE_ROLE", "DELETE"
+  action      AuditAction   // "BLOCK", "UNBLOCK", "CHANGE_ROLE", "DELETE"
   reason      String   // Justificación obligatoria
   
   // Datos anteriores y nuevos (para trazabilidad)
