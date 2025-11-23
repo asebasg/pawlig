@@ -31,6 +31,13 @@ enum UserRole {
   ADOPTER
 }
 
+enum AuditAction {
+  BLOCK
+  UNBLOCK
+  CHANGE_ROLE
+  DELETE
+}
+
 enum PetStatus {
   AVAILABLE
   IN_PROCESS
@@ -95,7 +102,7 @@ model User {
   idNumber    String
   birthDate   DateTime
   
-  // Bloqueos de usuarios (HU-014)
+  // Bloqueos de usuarios
   isActive    Boolean      @default(true) // Indica si la cuenta está activa
   blockedAt   DateTime?    // Fecha de bloqueo
   blockedBy   String?      @db.ObjectId // ID del admin que bloqueó
@@ -119,6 +126,36 @@ model User {
   @@index([isActive]) // Índice para filtrar usuarios activos/bloqueados
   @@index([municipality])
   @@index([email])
+}
+
+model UserAudit {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Acción realizada
+  action      AuditAction   // "BLOCK", "UNBLOCK", "CHANGE_ROLE", "DELETE"
+  reason      String   // Justificación obligatoria
+  
+  // Datos anteriores y nuevos (para trazabilidad)
+  oldValue    String?  // Valor anterior (ej: "ADOPTER" en cambio de rol)
+  newValue    String?  // Valor nuevo (ej: "VENDOR" en cambio de rol)
+  
+  // Relaciones
+  performedBy User     @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
+  adminId     String   @db.ObjectId
+  
+  affectedUser User    @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @db.ObjectId
+  
+  // Metadata
+  ipAddress   String?  // IP del admin (seguridad adicional)
+  userAgent   String?  // Navegador del admin
+  
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
 }
 
 model Shelter {
