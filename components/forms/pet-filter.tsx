@@ -275,3 +275,32 @@ export default function PetFilter({ onSearch, isLoading = false }: PetFilterProp
     </form>
   );
 }
+
+/**
+ * 📚 NOTAS TÉCNICAS:
+ * 
+ * 1. VALIDACIÓN CAPA 1 (Cliente):
+ *    - Valida con Zod antes de enviar al API (línea 76)
+ *    - Muestra errores campo por campo inmediatamente
+ *    - Previene requests inválidos al servidor
+ * 
+ * 2. CONVERSIÓN DE TIPOS:
+ *    - Edad: string → number (línea 47)
+ *    - Campos vacíos: string → undefined (línea 50)
+ *    - Municipio/Sexo: enum válido o undefined
+ * 
+ * 3. UX MEJORADA:
+ *    - Botón "Limpiar filtros" visible siempre
+ *    - Feedback visual de loading
+ *    - Errores desaparecen al editar el campo
+ * 
+ * 4. ACCESIBILIDAD:
+ *    - role="alert" en mensajes de error
+ *    - Labels asociados con inputs (htmlFor/id)
+ *    - Disabled state en loading
+ * 
+ * 5. INTEGRACIÓN CON PÁGINA:
+ *    - onSearch callback recibe filtros validados
+ *    - isLoading prop para sincronizar estado
+ *    - Resetear a página 1 en nueva búsqueda
+ */
