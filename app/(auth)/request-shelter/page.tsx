@@ -12,20 +12,33 @@ export default function RequestShelterPage() {
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     if (!session) {
       router.push('/login?callbackUrl=/request-shelter');
       return;
     }
-    
-    if (session.user.role !== 'ADOPTER') {
-      router.push('/dashboard');
+
+    //  Solo ADOPTER y VENDOR pueden acceder
+    const allowedRoles = ['ADOPTER', 'VENDOR'];
+    if (!allowedRoles.includes(session.user.role)) {
+      router.push('/unauthorized?reason=adopters_vendors_only');
       return;
     }
   }, [session, status, router]);
 
-  if (status === 'loading' || !session || session.user.role !== 'ADOPTER') {
+  //  Validación de rol en loading
+  if (status === 'loading') {
     return <div>Cargando...</div>;
+  }
+
+  if (!session) {
+    return <div>Redirigiendo...</div>;
+  }
+
+  //  Validación de rol antes de renderizar
+  const allowedRoles = ['ADOPTER', 'VENDOR'];
+  if (!allowedRoles.includes(session.user.role)) {
+    return <div>Redirigiendo...</div>;
   }
 
   return (
@@ -95,61 +108,29 @@ export default function RequestShelterPage() {
 }
 
 /**
- * 📚 NOTAS TÉCNICAS:
+ * 📚 CAMBIOS IMPLEMENTADOS:
  * 
- * 1. SEGURIDAD EN CAPAS:
- *    - Capa 1 (Middleware): Bloquea usuarios anónimos antes de renderizar
- *    - Capa 2 (requireAdopter): Valida rol ADOPTER en el servidor
- *    - Capa 3 (API Route): Validará nuevamente al procesar el formulario
+ * 1. Solo ADOPTER y VENDOR pueden acceder
+ *    - Validación: allowedRoles = ['ADOPTER', 'VENDOR']
+ *    - SHELTER rechazado: Ya es albergue
+ *    - ADMIN rechazado: No necesita ser albergue
  * 
- * 2. ¿POR QUÉ SOLO ADOPTER?
- *    - SHELTER ya tiene cuenta de albergue (no puede solicitar otra)
- *    - VENDOR es proveedor de productos (contexto diferente)
- *    - ADMIN no necesita solicitar (tiene todos los permisos)
- *    - ADOPTER es el único que tiene sentido para "convertirse en albergue"
+ * 2. Redirección específica:
+ *    - /unauthorized?reason=adopters_vendors_only
+ *    - Mensaje personalizado en página de error
  * 
- * 3. FLUJO DE USUARIO:
- *    Usuario anónimo en /adopciones → Ve enlace "¿Tienes un albergue?"
- *      ↓
- *    Clic en enlace → Intenta acceder /request-shelter
- *      ↓
- *    Middleware detecta: sin sesión
- *      ↓
- *    Redirige a: /login?callbackUrl=/request-shelter
- *      ↓
- *    Usuario se registra/inicia sesión como ADOPTER
- *      ↓
- *    Redirige de vuelta a: /request-shelter
- *      ↓
- *    requireAdopter() valida: role === 'ADOPTER' ✅
- *      ↓
- *    Renderiza formulario de solicitud
+ * 3. Triple validación:
+ *    - useEffect: Validación en cliente
+ *    - Loading state: Validación antes de renderizar
+ *    - API: Validación final en servidor
  * 
- * 4. CASO DE USO INVÁLIDO:
- *    Usuario SHELTER intenta acceder directamente a /request-shelter
- *      ↓
- *    Middleware permite pasar (tiene sesión válida)
- *      ↓
- *    requireAdopter() detecta: role === 'SHELTER' ❌
- *      ↓
- *    Redirige a: /shelter (su dashboard)
+ * 4. Estados de loading:
+ *    - status === 'loading': "Cargando..."
+ *    - !session: "Redirigiendo..."
+ *    - Rol inválido: "Redirigiendo..."
  * 
- * 5. ACCESIBILIDAD:
- *    - Formulario con labels correctos
- *    - Información clara de requisitos
- *    - Disclaimer visible de términos
- *    - Navegación coherente con breadcrumbs implícitos
- * 
- * 6. UX MEJORADA:
- *    - Card bien definida con sombra
- *    - Información introductoria antes del formulario
- *    - Requisitos visibles para evitar rechazos
- *    - Link de regreso al inicio
- * 
- * 7. TRAZABILIDAD COMPLETA:
- *    - HU-002: "Solicitud y aprobación de cuenta de albergue" ✅
- *    - RF-007: "Administración de albergues" ✅
- *    - CU-002: "Solicitar cuenta de albergue" ✅
- *    - Manual Usuario 5.1: "Requisitos previos" ✅
- *    - RNF-002: "Seguridad (protección de rutas)" ✅
+ * 5. Trazabilidad:
+ *    - Solo ADOPTER y VENDOR ✅
+ *    - HU-002: Solicitud de cuenta ✅
+ *    - RNF-002: Seguridad (autorización) ✅
  */

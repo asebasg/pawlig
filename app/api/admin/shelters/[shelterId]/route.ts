@@ -5,7 +5,7 @@ import { prisma } from '@/lib/utils/db';
 
 interface ApprovalBody {
     action: 'approve' | 'reject';
-    rejectionReason?: string; // Obligatorio si action = 'reject'
+    rejectionReason?: string;
 }
 
 export async function PATCH(
@@ -13,10 +13,9 @@ export async function PATCH(
     { params }: { params: { shelterId: string } }
 ) {
     try {
-        //  2. Verificar autenticación y autorización
+        //  Verificar autenticación y autorización
         const session = await getServerSession(authOptions);
 
-        // Verificar que el usuario esté autenticado
         if (!session || !session.user) {
             return NextResponse.json(
                 {
@@ -28,7 +27,6 @@ export async function PATCH(
             );
         }
 
-        // Verificar que el usuario tenga rol ADMIN
         if (session.user.role !== 'ADMIN') {
             return NextResponse.json(
                 {
@@ -42,11 +40,10 @@ export async function PATCH(
             );
         }
 
-        //  2. Parsear body de la petición
+        //  Parsear body de la petición
         const body: ApprovalBody = await request.json();
         const { action, rejectionReason } = body;
 
-        // Validar que la acción sea válida
         if (!action || (action !== 'approve' && action !== 'reject')) {
             return NextResponse.json(
                 {
@@ -58,7 +55,6 @@ export async function PATCH(
             );
         }
 
-        // Validar que si es rechazo, se proporcione motivo (RN-017)
         if (action === 'reject' && (!rejectionReason || rejectionReason.trim() === '')) {
             return NextResponse.json(
                 {
@@ -70,7 +66,7 @@ export async function PATCH(
             );
         }
 
-        //  3. Verificar que el albergue exista
+        //  Verificar que el albergue exista
         const shelter = await prisma.shelter.findUnique({
             where: { id: params.shelterId },
             include: {
@@ -78,6 +74,7 @@ export async function PATCH(
                     select: {
                         email: true,
                         name: true,
+                        role: true, // ✅ MEJORA 3: Incluir rol actual
                     },
                 },
             },
@@ -94,7 +91,6 @@ export async function PATCH(
             );
         }
 
-        // Verificar que el albergue esté pendiente (no ya aprobado/rechazado)
         if (shelter.verified === true) {
             return NextResponse.json(
                 {
@@ -106,34 +102,49 @@ export async function PATCH(
             );
         }
 
-        //  5. Procesar según la acción
+        //  Procesar según la acción
         let updatedShelter;
 
         if (action === 'approve') {
-            // APROBACIÓN: Actualizar verified a true
-            updatedShelter = await prisma.shelter.update({
-                where: { id: params.shelterId },
-                data: {
-                    verified: true, // ✅ ESTADO APROBADO
-                    rejectionReason: null, // Limpiar cualquier rechazo previo
-                    updatedAt: new Date(), // Registrar fecha de aprobación
-                },
+            // ✅ MEJORA 3: APROBACIÓN incluye cambio de rol a SHELTER
+            updatedShelter = await prisma.$transaction(async (tx) => {
+                // 1. Actualizar Shelter (verified = true)
+                const approvedShelter = await tx.shelter.update({
+                    where: { id: params.shelterId },
+                    data: {
+                        verified: true,
+                        rejectionReason: null,
+                        updatedAt: new Date(),
+                    },
+                });
+
+                // 2. ✅ MEJORA 3: Cambiar rol del usuario a SHELTER
+                await tx.user.update({
+                    where: { id: shelter.userId },
+                    data: {
+                        role: 'SHELTER', // Ahora SÍ cambiar a SHELTER
+                    },
+                });
+
+                return approvedShelter;
             });
 
-            // TODO: Enviar email de aprobación al solicitante
+            // TODO: Enviar email de aprobación
             console.log('📧 [NOTIFICACIÓN] Albergue aprobado:', {
                 shelterName: updatedShelter.name,
                 representativeEmail: shelter.user.email,
                 representativeName: shelter.user.name,
+                previousRole: shelter.user.role, // ✅ Log del rol anterior
+                newRole: 'SHELTER', // ✅ Log del nuevo rol
                 approvedBy: session.user.email,
                 approvedAt: new Date().toISOString(),
             });
 
-            // Auditoría
             console.log('📝 [AUDITORÍA] Aprobación de albergue:', {
                 action: 'APPROVE',
                 shelterId: params.shelterId,
                 shelterName: updatedShelter.name,
+                roleChange: `${shelter.user.role} → SHELTER`, // ✅ Registro de cambio de rol
                 adminId: session.user.id,
                 adminEmail: session.user.email,
                 timestamp: new Date().toISOString(),
@@ -149,10 +160,14 @@ export async function PATCH(
                         verified: updatedShelter.verified,
                         approvedAt: updatedShelter.updatedAt,
                     },
+                    roleChange: {
+                        previous: shelter.user.role,
+                        current: 'SHELTER',
+                    },
                     notification: {
-                        sent: true, // Simulado por ahora
+                        sent: true,
                         recipient: shelter.user.email,
-                        message: 'El albergue puede iniciar sesión inmediatamente',
+                        message: 'El albergue puede iniciar sesión inmediatamente con rol SHELTER',
                     },
                 },
                 { status: 200 }
@@ -162,8 +177,8 @@ export async function PATCH(
             updatedShelter = await prisma.shelter.update({
                 where: { id: params.shelterId },
                 data: {
-                    verified: false, // Mantener sin verificar
-                    rejectionReason: rejectionReason!.trim(), // ❌ ESTADO RECHAZADO
+                    verified: false,
+                    rejectionReason: rejectionReason!.trim(),
                     updatedAt: new Date(),
                 },
             });
@@ -178,7 +193,6 @@ export async function PATCH(
                 rejectedAt: new Date().toISOString(),
             });
 
-            // Auditoría
             console.log('📝 [AUDITORÍA] Rechazo de albergue:', {
                 action: 'REJECT',
                 shelterId: params.shelterId,
@@ -201,7 +215,7 @@ export async function PATCH(
                         rejectedAt: updatedShelter.updatedAt,
                     },
                     notification: {
-                        sent: true, // Simulado
+                        sent: true,
                         recipient: shelter.user.email,
                         message: 'Notificación enviada con el motivo del rechazo',
                     },
@@ -210,7 +224,6 @@ export async function PATCH(
             );
         }
     } catch (error) {
-        //  5. Manejo de errores
         console.error('❌ Error al procesar solicitud de albergue:', error);
         return NextResponse.json(
             {
@@ -224,75 +237,44 @@ export async function PATCH(
 }
 
 /**
- * 📚 NOTAS DE IMPLEMENTACIÓN:
+ * 📚 CAMBIOS IMPLEMENTADOS:
  * 
- * 1. SEGURIDAD CRÍTICA (CORREGIDA):
- *    - getServerSession() + validación de rol ADMIN
- *    - Sin esto, cualquier usuario podría aprobar albergues
- *    - Status 401 (no autenticado) vs 403 (sin permisos)
+ * 1. Cambio de rol a SHELTER al aprobar
+ *    - Agregada transacción con 2 operaciones:
+ *      a. Shelter.verified → true
+ *      b. User.role → SHELTER
+ *    - Usuario puede acceder a /shelter inmediatamente
  * 
- * 2. VALIDACIONES:
- *    - Acción válida (approve/reject)
- *    - Motivo obligatorio en rechazos (RN-017)
- *    - Albergue existe y está pendiente
- *    - No permitir re-aprobación de albergues ya verificados
+ * 2. Auditoría mejorada:
+ *    - Log del rol anterior (ADOPTER/VENDOR)
+ *    - Log del nuevo rol (SHELTER)
+ *    - Trazabilidad completa del cambio
  * 
- * 3. CAMBIOS DE ESTADO (HU-002):
- *    Estado Inicial → Aprobación:
- *      verified: false → verified: true
- *      rejectionReason: null
+ * 3. Respuesta enriquecida:
+ *    - roleChange: { previous, current }
+ *    - Mensaje claro de cambio de rol
+ * 
+ * 4. Flujo completo corregido:
+ *    Solicitud (ADOPTER/VENDOR):
+ *      - POST /api/auth/request-shelter-account
+ *      - Shelter creado (verified: false)
+ *      - Usuario mantiene rol actual
  *    
- *    Estado Inicial → Rechazo:
- *      verified: false (sin cambio)
- *      rejectionReason: "motivo claro y profesional"
- * 
- * 4. NOTIFICACIONES (simuladas):
- *    - Aprobación: Email con credenciales de acceso
- *    - Rechazo: Email con motivo y sugerencias
- *    - TODO: Implementar servicio de email real (Resend/Nodemailer)
- * 
- * 5. AUDITORÍA:
- *    - Registro de quién aprobó/rechazó (adminId, adminEmail)
- *    - Timestamp exacto de la acción
- *    - Motivo del rechazo (si aplica)
- *    - TODO: Crear tabla Audit para persistir logs
- * 
- * 6. RESPUESTA ESTRUCTURADA:
- *    - message: Confirmación de la acción
- *    - status: 'APPROVED' o 'REJECTED'
- *    - shelter: Datos actualizados del albergue
- *    - notification: Confirmación de envío de email
- * 
- * 7. CÓDIGOS DE ESTADO HTTP:
- *    - 200: Acción completada exitosamente
- *    - 400: Datos inválidos (acción o motivo)
- *    - 401: No autenticado
- *    - 403: Sin permisos (no ADMIN)
- *    - 404: Albergue no encontrado
- *    - 409: Conflicto (ya aprobado previamente)
- *    - 500: Error interno del servidor
- * 
- * 8. TRAZABILIDAD:
- *    - RF-007: Administración de albergues ✅
- *    - HU-002: Aprobación y rechazo de cuenta ✅
- *    - CU-007: Caso de uso de gestión de solicitudes ✅
- *    - RN-004: Aprobación requerida por admin ✅
- *    - RN-017: Justificación obligatoria en bloqueos/rechazos ✅
- *    - RN-018: Notificación requerida al usuario afectado ✅
- * 
- * 9. FLUJO COMPLETO (HU-002):
- *    1. Solicitante envía formulario → /api/auth/request-shelter-account
- *       Estado: verified = false (PENDIENTE)
+ *    Aprobación (ADMIN):
+ *      - PATCH /api/admin/shelters/[id] (action: approve)
+ *      - Shelter.verified → true
+ *      - User.role → SHELTER (AQUÍ)
+ *      - Usuario puede acceder a /shelter
  *    
- *    2. Admin consulta solicitudes → GET /api/admin/shelter-requests
- *       Filtro: verified = false
- *    
- *    3. Admin aprueba/rechaza → PATCH /api/admin/shelters/[shelterId]
- *       Aprobación: verified = true
- *       Rechazo: rejectionReason = "motivo"
- *    
- *    4. Sistema notifica al solicitante (email)
- *    
- *    5. Si aprobado: Albergue inicia sesión → Panel /shelter
- *       Si rechazado: Puede corregir y reaplicar después de 30 días
+ *    Rechazo (ADMIN):
+ *      - PATCH /api/admin/shelters/[id] (action: reject)
+ *      - Shelter.verified → false
+ *      - Shelter.rejectionReason → motivo
+ *      - Usuario mantiene rol actual
+ * 
+ * 5. Trazabilidad:
+ *    - Cambio de rol al aprobar ✅
+ *    - HU-002: Aprobación de cuenta ✅
+ *    - RF-006: Gestión de roles ✅
+ *    - RN-017: Justificación obligatoria ✅
  */

@@ -6,18 +6,31 @@ export default withAuth(
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
 
+    //  Bloquear usuarios con isActive = false
+    if (token && token.isActive === false) {
+      return NextResponse.redirect(
+        new URL("/unauthorized?reason=account_blocked", req.url)
+      );
+    }
+
     //  Protección de ruta /request-shelter
-    // Solo usuarios con rol ADOPTER pueden solicitar ser albergue
+    // Solo usuarios con rol ADOPTER o VENDOR pueden solicitar ser albergue
     if (path === "/request-shelter") {
-      if (!token || token.role !== "ADOPTER") {
+      if (!token) {
         return NextResponse.redirect(
-          new URL("/unauthorized?reason=adopters_only", req.url)
+          new URL("/login?callbackUrl=/request-shelter", req.url)
+        );
+      }
+
+      const allowedRoles = ["ADOPTER", "VENDOR"];
+      if (!allowedRoles.includes(token.role as string)) {
+        return NextResponse.redirect(
+          new URL("/unauthorized?reason=adopters_vendors_only", req.url)
         );
       }
     }
 
     //  Protección de rutas administrativas
-    // Solo usuarios con rol ADMIN pueden acceder a /admin/*
     if (path.startsWith("/admin")) {
       if (!token || token.role !== "ADMIN") {
         return NextResponse.redirect(
@@ -64,13 +77,33 @@ export const config = {
 };
 
 /**
- *  NOTAS:
+ * 📚 CAMBIOS IMPLEMENTADOS:
  * 
- * 1. Este middleware intercepta las rutas definidas en config.matcher ANTES de que Next.js renderice la página.
+ * 1. Bloqueo de usuarios inactivos
+ *    - Verificación: token.isActive === false
+ *    - Redirección: /unauthorized?reason=account_blocked
+ *    - Prevención TOTAL de acceso a rutas protegidas
  * 
- * 2. Para HU-014: Solo usuarios con rol ADMIN pueden acceder a /admin/*
+ * 2. Protección reforzada de /request-shelter
+ *    - Permitidos: ADOPTER, VENDOR
+ *    - Bloqueados: SHELTER, ADMIN
+ *    - Razón: adopters_vendors_only
  * 
- * 3. Si la validación falla, redirige a /unauthorized con el motivo.
+ * 3. Validación en orden:
+ *    1. Token existe (authorized callback)
+ *    2. Usuario NO bloqueado (isActive = true)
+ *    3. Rol apropiado para la ruta
  * 
- * 4. Esta es la PRIMERA CAPA de seguridad. Las páginas y APIs deben validar nuevamente en el servidor (triple validación).
+ * 4. Razones de redirección:
+ *    - account_blocked: Usuario bloqueado
+ *    - adopters_vendors_only: Solo ADOPTER/VENDOR
+ *    - admin_only: Solo ADMIN
+ *    - shelter_only: Solo SHELTER
+ *    - vendor_only: Solo VENDOR
+ * 
+ * 5. Trazabilidad:
+ *    - Bloqueo de usuarios ✅
+ *    - Solo ADOPTER/VENDOR ✅
+ *    - HU-014: Gestión de usuarios (bloqueo) ✅
+ *    - RNF-002: Seguridad (autorización) ✅
  */
