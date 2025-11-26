@@ -8,28 +8,38 @@ export default function UnauthorizedPage() {
     const searchParams = useSearchParams();
     const reason = searchParams.get('reason') || "unknown";
 
-
     const messages: Record<string, { title: string; description: string; suggestion: string }> = {
+        // Mensaje para usuarios bloqueados
+        account_blocked: {
+            title: "Cuenta bloqueada",
+            description: "Tu cuenta ha sido bloqueada por un administrador. No puedes acceder a la plataforma en este momento.",
+            suggestion: "Revisa tu correo electrónico para más detalles sobre el motivo del bloqueo. Si crees que es un error, contacta con soporte."
+        },
+        // Mensaje para solicitud de albergue
+        adopters_vendors_only: {
+            title: "Acceso solo para adoptantes y vendedores",
+            description: "Solo usuarios con rol de adoptante o vendedor pueden solicitar cuentas de albergue.",
+            suggestion: "Si ya eres albergue o administrador, no necesitas solicitar una cuenta nueva. Si eres adoptante o vendedor, asegúrate de haber iniciado sesión."
+        },
+        // Mensaje para pagina de administradores
         admin_only: {
             title: "Acceso solo para administradores",
             description: "Esta sección está restringida exclusivamente para administradores del sistema.",
             suggestion: "Si crees que deberías tener acceso, contacta con el equipo de administración."
         },
+        // Mensaje para pagina de albergues
         shelter_only: {
             title: "Acceso solo para albergues",
             description: "Esta sección está restringida para albergues verificados.",
             suggestion: "Si representas un albergue, puedes solicitar una cuenta desde tu perfil de usuario."
         },
+        // Mensaje para pagina de vendedores
         vendor_only: {
             title: "Acceso solo para vendedores",
             description: "Esta sección está restringida para vendedores verificados.",
             suggestion: "Si eres un proveedor de productos, puedes solicitar una cuenta de vendedor."
         },
-        adopters_only: {
-            title: "Acceso solo para adoptantes",
-            description: "Esta acción está disponible únicamente para usuarios con rol de adoptante.",
-            suggestion: "Si ya eres albergue o vendedor, no puedes solicitar un cambio de rol."
-        },
+        // Acceso general denegado
         unknown: {
             title: "Acceso denegado",
             description: "No tienes los permisos necesarios para acceder a este recurso.",
@@ -99,4 +109,35 @@ export default function UnauthorizedPage() {
     );
 }
 
-
+/**
+ * 📚 CAMBIOS IMPLEMENTADOS:
+ * 
+ * 1. Mensaje para cuenta bloqueada
+ *    - Razón: account_blocked
+ *    - Descripción clara del bloqueo
+ *    - Sugerencia de revisar email y contactar soporte
+ * 
+ * 2. Mensaje para solicitud de albergue
+ *    - Razón: adopters_vendors_only
+ *    - Explicación de quién puede solicitar
+ *    - Sugerencia de verificar sesión
+ * 
+ * 3. Mensajes por razón:
+ *    - account_blocked: Usuario bloqueado
+ *    - adopters_vendors_only: Solo ADOPTER/VENDOR
+ *    - admin_only: Solo ADMIN
+ *    - shelter_only: Solo SHELTER
+ *    - vendor_only: Solo VENDOR
+ *    - unknown: Error genérico
+ * 
+ * 4. UX mejorada:
+ *    - Iconos descriptivos (ShieldAlert)
+ *    - Colores apropiados (rojo = error, amarillo = sugerencia)
+ *    - Acciones claras (volver al inicio, volver atrás)
+ *    - Enlace a soporte visible
+ * 
+ * 5. Trazabilidad:
+ *    - Mensaje de bloqueo ✅
+ *    - Mensaje de restricción ✅
+ *    - RNF-003: Usabilidad (mensajes claros) ✅
+ */

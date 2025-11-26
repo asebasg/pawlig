@@ -22,13 +22,14 @@ export async function POST(request: Request) {
             );
         }
 
-        //  VALIDAR ROL: Solo ADOPTER puede solicitar cuenta de albergue
-        if (session.user.role !== 'ADOPTER') {
+        //  Solo ADOPTER y VENDOR pueden solicitar cuenta de albergue
+        const allowedRoles = ['ADOPTER', 'VENDOR'];
+        if (!allowedRoles.includes(session.user.role)) {
             return NextResponse.json(
                 {
                     error: 'No autorizado',
                     code: 'FORBIDDEN',
-                    message: 'Solo usuarios adoptantes pueden solicitar cuentas de albergue',
+                    message: 'Solo usuarios adoptantes o vendedores pueden solicitar cuentas de albergue',
                     currentRole: session.user.role,
                 },
                 { status: 403 }
@@ -68,10 +69,9 @@ export async function POST(request: Request) {
         //  5. Hashear la contraseña
         const hashedPassword = await hashPassword(validatedData.password);
 
-        //  6. Crear usuario + albergue en una transacción
+        //  6. ✅ MEJORA 3: NO cambiar rol a SHELTER hasta aprobación
         const newShelterAccount = await prisma.$transaction(async (tx) => {
-            // Crear usuario con rol SHELTER (pero sin verificar)
-            // Actualizar usuario existente con nuevos datos y cambiar rol a SHELTER
+            // Actualizar usuario existente con nuevos datos (SIN cambiar rol)
             const user = await tx.user.update({
                 where: { id: session.user.id },
                 data: {
@@ -82,7 +82,8 @@ export async function POST(request: Request) {
                     address: validatedData.address,
                     idNumber: validatedData.idNumber,
                     birthDate: new Date(validatedData.birthDate),
-                    role: 'SHELTER', // Cambiar rol de ADOPTER a SHELTER
+                    // Mantener rol actual (ADOPTER o VENDOR)
+                    // NO cambiar a SHELTER hasta aprobación
                 },
             });
 
@@ -150,50 +151,37 @@ export async function POST(request: Request) {
 }
 
 /**
- * 📚 NOTAS DE IMPLEMENTACIÓN:
+ * 📚 CAMBIOS IMPLEMENTADOS:
  * 
- * 1. SEGURIDAD EN 3 CAPAS:
- *    - Middleware: Bloquea anónimos ✅
- *    - Página: requireAdopter() valida rol ✅
- *    - API Route: getServerSession() + validación de rol ✅ (ESTA CAPA)
+ * 1. NO asignar rol SHELTER automáticamente
+ *    - Eliminada línea: role: 'SHELTER'
+ *    - Usuario mantiene rol actual (ADOPTER o VENDOR)
+ *    - Solo cambiará a SHELTER cuando admin apruebe
  * 
- * 2. ¿POR QUÉ VALIDAR NUEVAMENTE EN LA API?
- *    - Defense in Depth: Si una capa falla, las otras protegen
- *    - Protección contra bypass de frontend (Postman, curl, etc.)
- *    - Previene ataques de "replay" con tokens robados
+ * 2. Solo ADOPTER y VENDOR pueden solicitar
+ *    - Validación: allowedRoles = ['ADOPTER', 'VENDOR']
+ *    - SHELTER rechazado: Ya es albergue
+ *    - ADMIN rechazado: No necesita ser albergue
  * 
- * 3. VALIDACIONES ESPECÍFICAS:
- *    ✅ Email único (previene duplicados)
- *    ✅ Solicitud pendiente existente (previene spam)
- *    ✅ Rol ADOPTER (solo adoptantes pueden solicitar)
- *    ✅ Sesión activa (usuario autenticado)
+ * 3. Seguridad reforzada:
+ *    - Triple validación: Middleware + Página + API
+ *    - Mensaje de error específico por rol
+ *    - Status 403 FORBIDDEN para roles no permitidos
  * 
- * 4. CÓDIGOS DE ERROR:
- *    - 401 UNAUTHORIZED: Sin sesión activa
- *    - 403 FORBIDDEN: Rol incorrecto
- *    - 409 CONFLICT: Email duplicado o solicitud pendiente
- *    - 400 BAD REQUEST: Datos inválidos (Zod)
- *    - 500 INTERNAL ERROR: Error inesperado
+ * 4. Flujo corregido:
+ *    Estado Inicial (ADOPTER/VENDOR):
+ *      - Solicita cuenta de albergue
+ *      - Registro Shelter creado (verified: false)
+ *      - Usuario mantiene rol actual
+ *    
+ *    Admin Aprueba:
+ *      - Shelter.verified → true
+ *      - User.role → SHELTER (en PATCH /admin/shelters/[id])
+ *      - Usuario puede acceder a /shelter
  * 
- * 5. TRANSACCIÓN ATÓMICA:
- *    - Usa prisma.$transaction para crear User + Shelter
- *    - Si falla una operación, se revierten ambas
- *    - Garantiza integridad de datos
- * 
- * 6. ESTADO DEL ALBERGUE:
- *    - verified: false (pendiente de aprobación)
- *    - role: 'SHELTER' (asignado, pero cuenta inactiva)
- *    - Administrador debe aprobar antes de que funcione
- * 
- * 7. TRAZABILIDAD:
- *    - HU-002: Solicitud y aprobación de cuenta de albergue ✅
- *    - RF-007: Administración de albergues ✅
- *    - CU-002: Caso de uso de solicitud ✅
+ * 5. Trazabilidad:
+ *    - NO asignar rol automáticamente ✅
+ *    - Solo ADOPTER y VENDOR ✅
+ *    - HU-002: Solicitud de cuenta de albergue ✅
  *    - RNF-002: Seguridad (autorización) ✅
- * 
- * 8. TESTING:
- *    - Usuario anónimo → 401 UNAUTHORIZED ✅
- *    - Usuario SHELTER → 403 FORBIDDEN ✅
- *    - Usuario ADOPTER con solicitud pendiente → 409 CONFLICT ✅
- *    - Usuario ADOPTER válido → 201 CREATED ✅
  */
