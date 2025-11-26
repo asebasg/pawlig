@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
         //  Verificar si el usuario está bloqueado (HU-014)
         if (!user.isActive) {
           throw new Error(
-            `Cuenta bloqueada. Motivo: ${user.blockReason || 'Contacta con soporte para más información'}`
+            `Cuenta bloqueada. Contacta con soporte para más información`
           );
         }
 

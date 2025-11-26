@@ -134,16 +134,18 @@ export default function LoginForm() {
                                     ? 'Email o contraseña incorrectos'
                                     : loginError}
                             </p>
-                            {/* Sugerencia de recuperación de contraseña */}
-                            <p className="mt-2 text-sm text-red-700">
-                                ¿Olvidaste tu contraseña?{' '}
-                                <Link
-                                    href="/forgot-password"
-                                    className="font-semibold underline hover:text-red-900"
-                                >
-                                    Recupérala aquí
-                                </Link>
-                            </p>
+                            {/* Sugerencia de recuperación de contraseña - Solo si NO es cuenta bloqueada */}
+                            {!loginError.includes('Cuenta bloqueada') && (
+                                <p className="mt-2 text-sm text-red-700">
+                                    ¿Olvidaste tu contraseña?{' '}
+                                    <Link
+                                        href="/forgot-password"
+                                        className="font-semibold underline hover:text-red-900"
+                                    >
+                                        Recupérala aquí
+                                    </Link>
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -194,12 +196,14 @@ export default function LoginForm() {
                             }`}
                         placeholder="Tu contraseña"
                     />
-                    <Link
-                        href="/forgot-password"
-                        className="text-sm text-purple-600 hover:text-purple-700 font-medium"
-                    >
-                        ¿Olvidaste tu contraseña?
-                    </Link>
+                    {!loginError?.includes('Cuenta bloqueada') && (
+                        <Link
+                            href="/forgot-password"
+                            className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                        >
+                            ¿Olvidaste tu contraseña?
+                        </Link>
+                    )}
                     {errors.password && (
                         <p className="text-red-500 text-sm mt-1" id="password-error" role="alert">
                             {errors.password}

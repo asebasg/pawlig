@@ -29,7 +29,19 @@ export async function POST(request: Request) {
         });
 
         if (existingUser) {
-            // Respuesta estructurada con codigo de error especifico
+            // Si la cuenta está bloqueada, mostrar mensaje de bloqueo
+            if (!existingUser.isActive) {
+                return NextResponse.json(
+                    {
+                        error: `Cuenta bloqueada. Contacta con soporte para más información`,
+                        code: 'ACCOUNT_BLOCKED',
+                        suggestion: 'Contacta con soporte para resolver el bloqueo de tu cuenta.',
+                    },
+                    { status: 403 } // 403 = forbidden
+                );
+            }
+
+            // Si la cuenta está activa, mostrar mensaje de correo en uso
             return NextResponse.json(
                 {
                     error: 'El correo ya está registrado',
@@ -106,7 +118,7 @@ export async function POST(request: Request) {
         if (error instanceof Error && error.message.includes('Unique constraint')) {
             return NextResponse.json(
                 {
-                    error: 'El correo o número de identificación ya estan registrados',
+                    error: 'El correo o número de identificación ya están registrados',
                     code: 'DUPLICATE_DATA',
                     suggestion: 'Verifica tus datos o intenta recuperar tu contraseña',
                     recoveryUrl: '/forgot-password',
