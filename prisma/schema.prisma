@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -34,6 +31,13 @@ enum UserRole {
   ADOPTER
 }
 
+enum AuditAction {
+  BLOCK
+  UNBLOCK
+  CHANGE_ROLE
+  DELETE
+}
+
 enum PetStatus {
   AVAILABLE
   IN_PROCESS
@@ -55,33 +59,78 @@ enum OrderStatus {
 }
 
 // ===== MODELS =====
-model User {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  email     String       @unique
-  password  String
-  name      String
-  role      UserRole     @default(ADOPTER)
-  phone     String
-  municipality Municipality
-  address   String
-  idNumber  String
-  birthDate DateTime
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
 
-  shelter   Shelter?
-  vendor    Vendor?
-  adoptions Adoption[]
-  orders    Order[]
-  favorites Favorite[]
+model User {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email       String       @unique
+  password    String
+  name        String
+  role        UserRole     @default(ADOPTER)
+  phone       String
+  municipality Municipality
+  address     String
+  idNumber    String
+  birthDate   DateTime
+  
+  // Bloqueos de usuarios (HU-014)
+  isActive    Boolean      @default(true)
+  blockedAt   DateTime?
+  blockedBy   String?      @db.ObjectId
+  blockReason String?
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relaciones
+  shelter     Shelter?
+  vendor      Vendor?
+  adoptions   Adoption[]
+  orders      Order[]
+  favorites   Favorite[]
+  
+  // Auditoría (HU-014)
+  adminActions UserAudit[] @relation("AdminActions")
+  auditRecords UserAudit[] @relation("AffectedUser")
 
   @@index([role])
+  @@index([isActive])
   @@index([municipality])
+}
+
+model UserAudit {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  
+  // Acción realizada (HU-014)
+  action      AuditAction // Enum tipado (no String)
+  reason      String      // Justificación obligatoria (RN-017)
+  
+  // Trazabilidad
+  oldValue    String?
+  newValue    String?
+  
+  // Relaciones
+  performedBy User     @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
+  adminId     String   @db.ObjectId
+  
+  affectedUser User    @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @db.ObjectId
+  
+  // Metadata de seguridad (RNF-002)
+  ipAddress   String?
+  userAgent   String?
+  
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
 }
 
 model Shelter {
   id                String       @id @default(auto()) @map("_id") @db.ObjectId
   name              String
+  nit               String       @unique
   municipality      Municipality
   address           String
   description       String?
@@ -99,6 +148,7 @@ model Shelter {
 
   @@index([verified])
   @@index([municipality])
+  @@index([name])
 }
 
 model Vendor {
@@ -121,6 +171,7 @@ model Vendor {
 
   @@index([verified])
   @@index([municipality])
+  @@index([businessName])
 }
 
 model Pet {
@@ -147,6 +198,9 @@ model Pet {
   @@index([species])
   @@index([shelterId])
   @@index([createdAt])
+  @@index([name])
+  @@index([sex])
+  @@index([age])
 }
 
 model Product {
@@ -168,6 +222,8 @@ model Product {
   @@index([category])
   @@index([vendorId])
   @@index([stock])
+  @@index([name])
+  @@index([price])
 }
 
 model Adoption {
@@ -187,6 +243,7 @@ model Adoption {
   @@index([status])
   @@index([adopterId])
   @@index([petId])
+  @@index([createdAt])
 }
 
 model Order {

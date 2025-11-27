@@ -1,30 +1,38 @@
 import { Metadata } from 'next';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth/auth-options';
+import { redirect } from 'next/navigation';
 import LoginForm from '@/components/forms/login-form';
 import Link from 'next/link';
 
 /**
  * Metadata para SEO y redes sociales
- * aparece en el <head> de la pagina
  */
-
 export const metadata: Metadata = {
-    title: 'Iniciar Sesión - PawLig',
+    title: 'Iniciar Sesión',
     description: 'Accede a tu cuenta de PawLig para adoptar mascotas o gestionar tu albergue',
 };
 
 /**
- * Página de login
- * 
- * Layout:
- * - Fondo gris claro (bg-gray-50)
- * - Fondo gris claro (bg-gray-50)
- * - Contenedor centrado vertical y horizontalmente
- * - Card blanca con sombra que contiene el formulario
- * - Logo/título en la parte superior
- * - Footer con enlaces legales
+ *  Página de login
+ * Usuarios autenticados son redirigidos automáticamente
  */
+export default async function LoginPage() {
+    //  Verificar si ya hay sesión activa
+    const session = await getServerSession(authOptions);
 
-export default function LoginPage() {
+    if (session && session.user) {
+        //  Usuario ya autenticado → redirigir según rol
+        const roleRedirects: Record<string, string> = {
+            ADMIN: '/admin',
+            SHELTER: '/shelter',
+            VENDOR: '/vendor',
+            ADOPTER: '/adopciones',
+        };
+
+        redirect(roleRedirects[session.user.role] || '/adopciones');
+    }
+
     return (
         <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8'>
             <div className='sm:mx-auto sm:w-full sm:max-w-md'>
@@ -62,30 +70,25 @@ export default function LoginPage() {
 }
 
 /**
- * 📚 NOTAS TÉCNICAS:
+ * 📚 CAMBIOS IMPLEMENTADOS:
  * 
- * 1. ESTRUCTURA DE CARPETAS:
- *    - (auth) es un grupo de rutas (route group) en Next.js
- *    - No afecta la URL, solo organiza archivos
- *    - /login/page.tsx se accede como /login
+ * 1. Redirección automática de usuarios autenticados
+ *    - getServerSession() verifica sesión activa
+ *    - Si existe sesión → redirect según rol
+ *    - Si no existe sesión → muestra formulario de login
  * 
- * 2. METADATA:
- *    - Generada en el servidor (SEO-friendly)
- *    - Aparece en <title> y meta tags
- *    - Mejora la indexación en buscadores
+ * 2. Redirecciones por rol:
+ *    - ADMIN → /admin
+ *    - SHELTER → /shelter
+ *    - VENDOR → /vendor
+ *    - ADOPTER → /adopciones
  * 
- * 3. RESPONSIVE DESIGN:
- *    - sm:mx-auto: Centrado horizontal en pantallas pequeñas+
- *    - sm:w-full sm:max-w-md: Ancho limitado en desktop
- *    - px-4 sm:px-6 lg:px-8: Padding adaptativo
+ * 3. Seguridad:
+ *    - Server Component (validación en servidor)
+ *    - Sin renderizado innecesario si ya autenticado
+ *    - Previene doble login accidental
  * 
- * 4. ACCESIBILIDAD:
- *    - min-h-screen: Altura mínima completa de viewport
- *    - flex flex-col justify-center: Centrado vertical
- *    - text-center para alineación visual
- * 
- * 5. INTEGRACIÓN:
- *    - LoginForm es un Client Component ('use client')
- *    - Esta página es Server Component (por defecto)
- *    - La página es estática, el form es interactivo
+ * 4. Trazabilidad:
+ *    - Usuarios autenticados NO pueden acceder a /login ✅
+ *    - RNF-002: Seguridad (gestión de sesiones) ✅
  */
