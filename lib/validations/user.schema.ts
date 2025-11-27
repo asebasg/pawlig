@@ -159,6 +159,42 @@ export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
 
+//  ========== ESQUEMA DE ACTUALIZACIÓN DE PERFIL DE VENDEDOR ==========
+export const vendorProfileUpdateSchema = z.object({
+  businessName: z
+    .string()
+    .min(3, 'Nombre del negocio debe tener al menos 3 caracteres')
+    .max(100, 'Nombre del negocio muy largo'),
+
+  businessPhone: z
+    .string()
+    .min(7, 'Teléfono del negocio inválido')
+    .max(15, 'Teléfono del negocio inválido')
+    .optional(),
+
+  description: z
+    .string()
+    .min(20, 'Descripción debe tener al menos 20 caracteres')
+    .max(1000, 'Descripción muy larga')
+    .optional(),
+
+  logo: z
+    .string()
+    .url('Logo debe ser una URL válida')
+    .optional(),
+
+  municipality: z.nativeEnum(Municipality, {
+    message: 'Municipio inválido'
+  }),
+
+  address: z
+    .string()
+    .min(5, 'Dirección debe tener al menos 5 caracteres')
+    .max(200, 'Dirección muy larga'),
+});
+
+export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>;
+
 /**
  * 📚 NOTAS DE IMPLEMENTACIÓN:
  * 
