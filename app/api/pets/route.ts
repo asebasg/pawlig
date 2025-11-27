@@ -22,6 +22,8 @@ import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
 import { UserRole, PetStatus } from "@prisma/client";
 import { createPetSchema, shelterPetsFilterSchema } from "@/lib/validations/pet.schema";
+import { ZodError } from "zod";
+import { Prisma } from "@prisma/client";
 
 /**
  *  POST /api/pets
@@ -141,6 +143,39 @@ export async function POST(request: NextRequest) {
         );
     } catch (error) {
         console.error("[POST /api/pets] - Se ha detectado un error: ", error);
+        
+        // Manejo específico de errores Zod
+        if (error instanceof ZodError) {
+            const fieldErrors: Record<string, string> = {};
+            error.issues.forEach((issue) => {
+                const field = issue.path[0];
+                if (typeof field === 'string') {
+                    fieldErrors[field] = issue.message;
+                }
+            });
+            return NextResponse.json({
+                error: 'Errores de validación',
+                details: fieldErrors,
+            }, { status: 400 });
+        }
+
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+                return NextResponse.json(
+                    { error: "Ya existe una mascota con estos datos" },
+                    { status: 409 }
+                );
+            }
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Albergue no encontrado" },
+                    { status: 404 }
+                );
+            }
+        }
+
+        // Error genérico
         return NextResponse.json(
             { error: "Se ha producido un error al crear la mascota" },
             { status: 500 }
@@ -248,7 +283,34 @@ export async function GET(request: NextRequest) {
             },
         });
     } catch (error) {
-        console.error("[POST /api/pets] - Se ha detectado un error: ", error)
+        console.error("[GET /api/pets] - Se ha detectado un error: ", error);
+        
+        // Manejo específico de errores Zod
+        if (error instanceof ZodError) {
+            const fieldErrors: Record<string, string> = {};
+            error.issues.forEach((issue) => {
+                const field = issue.path[0];
+                if (typeof field === 'string') {
+                    fieldErrors[field] = issue.message;
+                }
+            });
+            return NextResponse.json({
+                error: 'Parámetros de consulta inválidos',
+                details: fieldErrors,
+            }, { status: 400 });
+        }
+
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Albergue no encontrado" },
+                    { status: 404 }
+                );
+            }
+        }
+
+        // Error genérico
         return NextResponse.json(
             { error: "Error al obtener mascotas" },
             { status: 500 }

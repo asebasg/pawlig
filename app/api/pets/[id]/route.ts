@@ -23,6 +23,8 @@ import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
 import { UserRole } from "@prisma/client";
 import { updatePetSchema, updatePetStatusSchema } from "@/lib/validations/pet.schema";
+import { ZodError } from "zod";
+import { Prisma } from "@prisma/client";
 
 /**
  *  GET /api/pets/[id]
@@ -74,6 +76,18 @@ export async function GET(
         return NextResponse.json({ pet });
     } catch (error) {
         console.error("[GET /api/pets/[id]] Error:", error);
+        
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Mascota no encontrada" },
+                    { status: 404 }
+                );
+            }
+        }
+
+        // Error genérico
         return NextResponse.json(
             { error: "Error al obtener mascota" },
             { status: 500 }
@@ -180,6 +194,39 @@ export async function PUT(
         });
     } catch (error) {
         console.error("[PUT /api/pets/[id]] Error:", error);
+        
+        // Manejo específico de errores Zod
+        if (error instanceof ZodError) {
+            const fieldErrors: Record<string, string> = {};
+            error.issues.forEach((issue) => {
+                const field = issue.path[0];
+                if (typeof field === 'string') {
+                    fieldErrors[field] = issue.message;
+                }
+            });
+            return NextResponse.json({
+                error: 'Errores de validación',
+                details: fieldErrors,
+            }, { status: 400 });
+        }
+
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Mascota no encontrada" },
+                    { status: 404 }
+                );
+            }
+            if (error.code === 'P2002') {
+                return NextResponse.json(
+                    { error: "Conflicto al actualizar mascota" },
+                    { status: 409 }
+                );
+            }
+        }
+
+        // Error genérico
         return NextResponse.json(
             { error: "Error al actualizar mascota" },
             { status: 500 }
@@ -283,6 +330,33 @@ export async function PATCH(
         });
     } catch (error) {
         console.error("[PATCH /api/pets/[id]] - Se ha detectado un error:", error);
+        
+        // Manejo específico de errores Zod
+        if (error instanceof ZodError) {
+            const fieldErrors: Record<string, string> = {};
+            error.issues.forEach((issue) => {
+                const field = issue.path[0];
+                if (typeof field === 'string') {
+                    fieldErrors[field] = issue.message;
+                }
+            });
+            return NextResponse.json({
+                error: 'Estado inválido',
+                details: fieldErrors,
+            }, { status: 400 });
+        }
+
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Mascota no encontrada" },
+                    { status: 404 }
+                );
+            }
+        }
+
+        // Error genérico
         return NextResponse.json(
             { error: "Error al actualizar estado de mascota" },
             { status: 500 }
@@ -356,6 +430,24 @@ export async function DELETE(
         });
     } catch (error) {
         console.error("[DELETE /api/pets/[id]] - Se ha detectado un error:", error);
+        
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Mascota no encontrada" },
+                    { status: 404 }
+                );
+            }
+            if (error.code === 'P2003') {
+                return NextResponse.json(
+                    { error: "No se puede eliminar: la mascota tiene adopciones pendientes" },
+                    { status: 409 }
+                );
+            }
+        }
+
+        // Error genérico
         return NextResponse.json(
             { error: "Error al eliminar mascota" },
             { status: 500 }
