@@ -27,16 +27,16 @@ Esta tarea implementa la galería pública de mascotas para la plataforma Pawlig
 
 ### ✨ Nuevos Archivos
 
-| Archivo | Tipo | Líneas | Descripción |
-|---------|------|--------|-------------|
-| `components/PetCard.tsx` | Componente | 200+ | Tarjeta reutilizable de mascota con badge de estado, favoritos y enlace a detalle |
-| `components/PetDetailClient.tsx` | Componente | 500+ | Página cliente para detalle de mascota con galería expandida e información completa |
-| `app/adopciones/[id]/page.tsx` | Página | 200+ | Página servidor de detalle con data fetching, SEO metadata y validación |
+| Archivo                          | Tipo       | Líneas | Descripción                                                                         |
+| -------------------------------- | ---------- | ------ | ----------------------------------------------------------------------------------- |
+| `components/PetCard.tsx`         | Componente | 200+   | Tarjeta reutilizable de mascota con badge de estado, favoritos y enlace a detalle   |
+| `components/PetDetailClient.tsx` | Componente | 500+   | Página cliente para detalle de mascota con galería expandida e información completa |
+| `app/adopciones/[id]/page.tsx`   | Página     | 200+   | Página servidor de detalle con data fetching, SEO metadata y validación             |
 
 ### 🔄 Archivos Modificados
 
-| Archivo | Cambios | Descripción |
-|---------|---------|-------------|
+| Archivo                             | Cambios         | Descripción                                                                                            |
+| ----------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------ |
 | `components/pet-gallery-client.tsx` | -101 líneas, +0 | Refactorización: eliminado componente `PetCard` inline, ahora importa el nuevo componente reutilizable |
 
 ### 📊 Resumen de Cambios
@@ -67,9 +67,9 @@ interface PetCardProps {
     species: string;
     breed: string;
     age: number;
-    sex: 'M' | 'F';
+    sex: "M" | "F";
     image: string;
-    status: 'AVAILABLE' | 'IN_PROCESS' | 'ADOPTED';
+    status: "AVAILABLE" | "IN_PROCESS" | "ADOPTED";
     shelter: {
       name: string;
       municipality: string;
@@ -83,6 +83,7 @@ interface PetCardProps {
 **Funcionalidades:**
 
 - 🏷️ **Badge de Estado:** Indicador visual con colores
+
   - Verde: `AVAILABLE` (Disponible)
   - Amarillo: `IN_PROCESS` (En Proceso)
   - Gris: `ADOPTED` (Adoptada)
@@ -90,12 +91,14 @@ interface PetCardProps {
 - 🖼️ **Imagen:** Con zoom en hover y fallback para imágenes faltantes
 
 - ❤️ **Sistema de Favoritos:**
+
   - Botón con ícono de corazón
   - Requiere autenticación (redirect a login si no autorizado)
   - Integración con endpoint `/api/pets/[id]/favorite`
   - Estados: vacío/lleno con animación
 
 - ℹ️ **Información de Mascota:**
+
   - Especie y raza
   - Edad (en años/meses)
   - Sexo (M/H)
@@ -106,6 +109,7 @@ interface PetCardProps {
 - 📱 **Diseño Responsive:** Adaptable a cualquier resolución
 
 **Ubicación en Galería:**
+
 ```
 ├── desktop: 3 columnas (12 mascotas por pantalla)
 ├── tablet: 2 columnas (8 mascotas por pantalla)
@@ -135,6 +139,7 @@ interface PetCardProps {
 ```
 
 **Estructura:**
+
 ```
 ┌─────────────────────────────────┐
 │  [←] [Imagen Grande] [→]       │
@@ -244,8 +249,8 @@ db.pet.findUnique({
   where: { _id: id },
   include: {
     shelter: true,
-    adoptions: { 
-      where: { status: 'APPROVED' } 
+    adoptions: {
+      where: { status: 'APPROVED' }
     }
   }
 })
@@ -283,6 +288,7 @@ db.pet.findUnique({
 ### Endpoints Utilizados
 
 #### 1. **GET /api/pets/search**
+
 ```
 Propósito: Búsqueda y filtrado de mascotas
 Query Parameters:
@@ -301,6 +307,7 @@ Response:
 ```
 
 #### 2. **GET /api/pets/[id]**
+
 ```
 Propósito: Obtener detalle de una mascota
 Parámetros: id (ObjectId)
@@ -308,12 +315,13 @@ Response: Pet (con relaciones: shelter, adoptions)
 ```
 
 #### 3. **POST /api/pets/[id]/favorite**
+
 ```
 Propósito: Toggle de mascota favorita
 Requerimientos:
   - Autenticación: JWT (NextAuth)
   - Método: POST
-  
+
 Body: { isFavorited: boolean }
 
 Response: { success: boolean, message: string }
@@ -325,6 +333,7 @@ Códigos de error:
 ```
 
 #### 4. **POST /api/adopter/adoptions**
+
 ```
 Propósito: Crear solicitud de adopción
 Requerimientos:
@@ -515,17 +524,19 @@ xl: 1280px - Desktop grande (3-4 columnas)
 ### Layouts Adaptables
 
 **Galería:**
+
 ```
 Mobile (1 col):     Tablet (2 cols):    Desktop (3 cols):
 ┌──────────┐        ┌─────┐ ┌─────┐   ┌────┐ ┌────┐ ┌────┐
 │ PetCard  │        │ PC  │ │ PC  │   │ PC │ │ PC │ │ PC │
 └──────────┘        │     │ │     │   │    │ │    │ │    │
 ┌──────────┐        └─────┘ └─────┘   └────┘ └────┘ └────┘
-│ PetCard  │        
-└──────────┘        
+│ PetCard  │
+└──────────┘
 ```
 
 **Detalle:**
+
 ```
 Mobile:              Tablet/Desktop:
 ┌─────────────┐      ┌──────────────┬──────────┐
@@ -566,14 +577,14 @@ text-gray-400 → Corazón vacío
 
 ```typescript
 import {
-  Heart,              // Favoritos
-  ChevronLeft,        // Galería anterior
-  ChevronRight,       // Galería siguiente
-  MapPin,             // Ubicación
-  MessageCircle,      // Contacto
-  Instagram,          // Red social
-  Phone               // Teléfono
-} from 'lucide-react'
+  Heart, // Favoritos
+  ChevronLeft, // Galería anterior
+  ChevronRight, // Galería siguiente
+  MapPin, // Ubicación
+  MessageCircle, // Contacto
+  Instagram, // Red social
+  Phone, // Teléfono
+} from "lucide-react";
 ```
 
 ### Estados de Carga
@@ -602,11 +613,11 @@ model Pet {
   description      String?
   image            String    // URL a Cloudinary
   status           String    // ENUM: "AVAILABLE", "IN_PROCESS", "ADOPTED"
-  
+
   // Relaciones
   shelterID        String    @db.ObjectId
   shelter          Shelter   @relation(fields: [shelterID], references: [_id])
-  
+
   adoptions        Adoption[]
   favorites        Favorite[]
 }
@@ -711,26 +722,31 @@ La aplicación estará disponible en `http://localhost:3000`
 ### 4. Acceder a Funcionalidades
 
 #### Galería Pública
+
 ```
 http://localhost:3000/adopciones
 ```
 
 Pruebas:
+
 - Ver galería de mascotas
 - Usar filtros
 - Hacer scroll para cargar más
 
 #### Detalle de Mascota
+
 ```
 http://localhost:3000/adopciones/[ID-MASCOTA]
 ```
 
 Ejemplo (reemplazar con ID real):
+
 ```
 http://localhost:3000/adopciones/507f1f77bcf86cd799439011
 ```
 
 Pruebas:
+
 - Navegar galería de imágenes
 - Ver información completa
 - Agregar a favoritos (si autenticado)
@@ -844,17 +860,20 @@ if (!ObjectId.isValid(id)) {
 ### ⚠️ Consideraciones Importantes
 
 1. **Base de datos debe tener índices:**
+
    ```javascript
-   db.pets.createIndex({ "shelter._id": 1 })
-   db.pets.createIndex({ "name": "text" })
+   db.pets.createIndex({ "shelter._id": 1 });
+   db.pets.createIndex({ name: "text" });
    ```
 
 2. **Imágenes deben estar en Cloudinary:**
+
    - URLs públicas accesibles
    - Formato soportado: JPG, PNG, WebP
    - Responsivas con transformaciones
 
 3. **NextAuth debe estar configurado:**
+
    - Providers (Google, GitHub, etc.)
    - Sesión activa para favoritos/adopciones
    - Roles definidos en token JWT
@@ -893,6 +912,7 @@ if (!ObjectId.isValid(id)) {
 **Última actualización:** Noviembre 2025
 
 Para revisar este PR, verifique:
+
 1. ✅ Todos los archivos creados sin conflictos
 2. ✅ Componentes renderean correctamente
 3. ✅ Filtros funcionan con búsqueda

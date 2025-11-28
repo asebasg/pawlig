@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Search, Loader2 } from 'lucide-react';
-import PetCard from './PetCard';
+import PetCard from './cards/pet-card';
+import PetFilters from './filters/pet-filters';
 
 interface Pet {
   id: string;
@@ -32,18 +33,7 @@ interface PetGalleryClientProps {
   userSession: UserSession | null;
 }
 
-const MUNICIPALITIES = [
-  { value: 'MEDELLIN', label: 'Medellín' },
-  { value: 'BELLO', label: 'Bello' },
-  { value: 'ITAGUI', label: 'Itagüí' },
-  { value: 'ENVIGADO', label: 'Envigado' },
-  { value: 'SABANETA', label: 'Sabaneta' },
-  { value: 'LA_ESTRELLA', label: 'La Estrella' },
-  { value: 'CALDAS', label: 'Caldas' },
-  { value: 'COPACABANA', label: 'Copacabana' },
-  { value: 'GIRARDOTA', label: 'Girardota' },
-  { value: 'BARBOSA', label: 'Barbosa' }
-];
+
 
 export default function PetGalleryClient({ userSession }: PetGalleryClientProps) {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -51,14 +41,29 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
   const [error, setError] = useState<string | null>(null);
 
   // Filtros
-  const [speciesFilter, setSpeciesFilter] = useState('');
-  const [municipalityFilter, setMunicipalityFilter] = useState('');
+  const [filters, setFilters] = useState({
+    species: '',
+    municipality: '',
+    age: '',
+    sex: '',
+  });
   const [searchQuery, setSearchQuery] = useState('');
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ species: '', municipality: '', age: '', sex: '' });
+    setSearchQuery('');
+    setCurrentPage(1);
+  };
 
   // Cargar mascotas desde API
   const fetchPets = async () => {
@@ -69,12 +74,14 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
       const params = new URLSearchParams();
       
       // Solo agregar filtros si tienen valor
-      if (speciesFilter) params.append('species', speciesFilter);
-      if (municipalityFilter) params.append('municipality', municipalityFilter);
+      if (filters.species) params.append('species', filters.species);
+      if (filters.municipality) params.append('municipality', filters.municipality);
+      if (filters.age) params.append('age', filters.age);
+      if (filters.sex) params.append('sex', filters.sex);
       if (searchQuery.trim()) params.append('search', searchQuery.trim());
-      params.append('status', 'AVAILABLE'); // Solo mascotas disponibles
+      params.append('status', 'AVAILABLE');
       params.append('page', currentPage.toString());
-      params.append('limit', '12');
+      params.append('limit', '20');
 
       const response = await fetch(`/api/pets?${params.toString()}`);
       
@@ -83,8 +90,31 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
       }
 
       const data = await response.json();
+      const petsData = data.data || [];
       
-      setPets(data.data || []);
+      // Si hay usuario autenticado, verificar favoritos
+      if (userSession?.id && petsData.length > 0) {
+        const petIds = petsData.map((p: Pet) => p.id);
+        try {
+          const favResponse = await fetch('/api/user/favorites/check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ petIds }),
+          });
+          
+          if (favResponse.ok) {
+            const favData = await favResponse.json();
+            // Agregar info de favoritos a cada mascota
+            petsData.forEach((pet: any) => {
+              pet.isFavorited = favData.favorites?.includes(pet.id) || false;
+            });
+          }
+        } catch (e) {
+          console.error('Error checking favorites:', e);
+        }
+      }
+      
+      setPets(petsData);
       setTotalPages(data.pagination?.totalPages || 1);
       setTotalCount(data.pagination?.totalCount || 0);
     } catch (err) {
@@ -97,7 +127,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
   // Efecto para cargar mascotas al cambiar filtros o página
   useEffect(() => {
     fetchPets();
-  }, [speciesFilter, municipalityFilter, currentPage]);
+  }, [filters, currentPage]);
 
   // Búsqueda con debounce
   useEffect(() => {
@@ -112,17 +142,11 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  // Limpiar filtros
-  const handleClearFilters = () => {
-    setSpeciesFilter('');
-    setMunicipalityFilter('');
-    setSearchQuery('');
-    setCurrentPage(1);
-  };
+
 
   return (
     <div className="space-y-8">
-      {/* Filtros */}
+      {/* Búsqueda y Filtros */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Filtrar mascotas
@@ -143,10 +167,10 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
         </div>
 
         {/* Filtros desplegables */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <select 
-            value={speciesFilter}
-            onChange={(e) => setSpeciesFilter(e.target.value)}
+            value={filters.species}
+            onChange={(e) => handleFilterChange('species', e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Todas las especies</option>
@@ -156,25 +180,44 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
           </select>
 
           <select 
-            value={municipalityFilter}
-            onChange={(e) => setMunicipalityFilter(e.target.value)}
+            value={filters.municipality}
+            onChange={(e) => handleFilterChange('municipality', e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Todos los municipios</option>
-            {MUNICIPALITIES.map((mun) => (
-              <option key={mun.value} value={mun.value}>
-                {mun.label}
-              </option>
-            ))}
+            <option value="MEDELLIN">Medellín</option>
+            <option value="BELLO">Bello</option>
+            <option value="ITAGUI">Itagüí</option>
+            <option value="ENVIGADO">Envigado</option>
+            <option value="SABANETA">Sabaneta</option>
+            <option value="LA_ESTRELLA">La Estrella</option>
+            <option value="CALDAS">Caldas</option>
+            <option value="COPACABANA">Copacabana</option>
+            <option value="GIRARDOTA">Girardota</option>
+            <option value="BARBOSA">Barbosa</option>
           </select>
 
-          <button 
-            onClick={fetchPets}
-            disabled={loading}
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          <select 
+            value={filters.age}
+            onChange={(e) => handleFilterChange('age', e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
-            {loading ? 'Buscando...' : 'Buscar'}
-          </button>
+            <option value="">Cualquier edad</option>
+            <option value="1">Hasta 1 año</option>
+            <option value="3">Hasta 3 años</option>
+            <option value="5">Hasta 5 años</option>
+            <option value="10">Hasta 10 años</option>
+          </select>
+
+          <select 
+            value={filters.sex}
+            onChange={(e) => handleFilterChange('sex', e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          >
+            <option value="">Cualquier sexo</option>
+            <option value="M">Macho</option>
+            <option value="F">Hembra</option>
+          </select>
 
           <button 
             onClick={handleClearFilters}
@@ -223,11 +266,12 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
             </p>
           </div>
         ) : (
-          pets.map((pet) => (
+          pets.map((pet: any) => (
             <PetCard 
               key={pet.id} 
               pet={pet} 
               userSession={userSession}
+              isFavorited={pet.isFavorited || false}
             />
           ))
         )}

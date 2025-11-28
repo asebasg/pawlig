@@ -201,17 +201,44 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
     try {
-        //  1. Verificar autenticación y rol SHELTER
+        const { searchParams } = new URL(request.url);
         const session = await getServerSession(authOptions);
 
-        if (!session?.user || session.user.role !== UserRole.SHELTER) {
+        // Detectar si es búsqueda pública
+        const isPublicSearch = searchParams.has('species') || 
+                              searchParams.has('municipality') || 
+                              searchParams.has('search') ||
+                              searchParams.has('age') ||
+                              searchParams.has('sex') ||
+                              searchParams.has('status');
+
+        // Si es búsqueda pública O usuario no es SHELTER, usar servicio público
+        if (isPublicSearch || !session?.user || session.user.role !== UserRole.SHELTER) {
+            const { getPetsWithFilters } = await import('@/lib/services/pet.service');
+            
+            const filters = {
+                species: searchParams.get('species') || undefined,
+                municipality: searchParams.get('municipality') as any,
+                status: (searchParams.get('status') as any) || 'AVAILABLE',
+                age: searchParams.get('age') ? parseInt(searchParams.get('age')!) : undefined,
+                sex: searchParams.get('sex') || undefined,
+                search: searchParams.get('search') || undefined,
+                page: parseInt(searchParams.get('page') || '1'),
+                limit: parseInt(searchParams.get('limit') || '20'),
+            };
+
+            const result = await getPetsWithFilters(filters);
+            return NextResponse.json(result);
+        }
+
+        // Si no es búsqueda pública, verificar que sea SHELTER
+        if (session.user.role !== UserRole.SHELTER) {
             return NextResponse.json(
                 { error: "No autorizado" },
                 { status: 403 }
             );
         }
 
-        //  2. Obtener la ID del albergue
         const shelter = await prisma.shelter.findUnique({
             where: { userId: session.user.id },
             select: { id: true }
@@ -223,10 +250,6 @@ export async function GET(request: NextRequest) {
                 { status: 404 }
             );
         }
-
-        //  3. Parsear query params y aplicar filtros
-
-        const { searchParams } = new URL(request.url);
 
         const filters = shelterPetsFilterSchema.safeParse({
             status: searchParams.get("status") || undefined,
@@ -243,16 +266,13 @@ export async function GET(request: NextRequest) {
 
         const { status, page, limit } = filters.data;
 
-        //  4. Construir query
         const where = {
             shelterId: shelter.id,
-            ...(status && { status }), // Filtro opcional por estado
+            ...(status && { status }),
         };
 
-        //  5. Contar total para paginación
         const total = await prisma.pet.count({ where });
 
-        //  6. Obtener mascotas
         const pets = await prisma.pet.findMany({
             where,
             select: {
@@ -272,7 +292,6 @@ export async function GET(request: NextRequest) {
             take: limit,
         });
 
-        //  7. Retornar paginado
         return NextResponse.json({
             pets,
             pagination: {

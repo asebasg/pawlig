@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
-import { prisma } from '@/lib/utils/db';
 import { notFound } from 'next/navigation';
 import PetDetailClient from '@/components/PetDetailClient';
+import { getPetById, getSimilarPets, checkIsFavorited } from '@/lib/services/pet.service';
 
 /**
  * Página de Detalle de Mascota
@@ -37,17 +37,7 @@ export async function generateMetadata(
   { params }: PetDetailPageProps
 ): Promise<Metadata> {
   try {
-    const pet = await prisma.pet.findUnique({
-      where: { id: params.id },
-      select: {
-        id: true,
-        name: true,
-        species: true,
-        breed: true,
-        description: true,
-        images: true,
-      },
-    });
+    const pet = await getPetById(params.id);
 
     if (!pet) {
       return {
@@ -71,86 +61,23 @@ export async function generateMetadata(
   }
 }
 
-export default async function PetDetailPage({ params }: PetDetailPageProps) {
-  // Validar formato de ID
-  if (!/^[0-9a-fA-F]{24}$/.test(params.id)) {
-    notFound();
-  }
+export const revalidate = 60;
 
-  // Obtener datos de la mascota
-  const pet = await prisma.pet.findUnique({
-    where: { id: params.id },
-    include: {
-      shelter: {
-        select: {
-          id: true,
-          name: true,
-          municipality: true,
-          address: true,
-          description: true,
-          contactWhatsApp: true,
-          contactInstagram: true,
-        },
-      },
-      adoptions: {
-        select: {
-          id: true,
-          status: true,
-        },
-      },
-    },
-  });
+export default async function PetDetailPage({ params }: PetDetailPageProps) {
+  const pet = await getPetById(params.id);
 
   if (!pet) {
     notFound();
   }
 
-  // Obtener sesión del usuario
   const session = await getServerSession(authOptions);
 
-  // Verificar si es favorito del usuario
   let isFavorited = false;
   if (session?.user?.id) {
-    const favorite = await prisma.favorite.findUnique({
-      where: {
-        userId_petId: {
-          userId: session.user.id,
-          petId: params.id,
-        },
-      },
-    });
-    isFavorited = !!favorite;
+    isFavorited = await checkIsFavorited(session.user.id, params.id);
   }
 
-  // Obtener mascotas similares (mismo albergue o especie)
-  const similarPets = await prisma.pet.findMany({
-    where: {
-      id: { not: params.id },
-      status: 'AVAILABLE',
-      OR: [
-        { shelterId: pet.shelterId },
-        { species: pet.species },
-      ],
-    },
-    select: {
-      id: true,
-      name: true,
-      species: true,
-      breed: true,
-      age: true,
-      sex: true,
-      status: true,
-      images: true,
-      shelter: {
-        select: {
-          id: true,
-          name: true,
-          municipality: true,
-        },
-      },
-    },
-    take: 6,
-  });
+  const similarPets = await getSimilarPets(params.id, pet.shelterId, pet.species);
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -5,7 +5,7 @@ import {
   Heart,
   MapPin,
   Calendar,
-  Dna2,
+  Info,
   MessageSquare,
   Instagram,
   Loader2,
@@ -13,7 +13,9 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import Link from 'next/link';
-import PetCard from './PetCard';
+import Image from 'next/image';
+import PetCard from './cards/pet-card';
+import Badge from './ui/badge';
 
 interface Pet {
   id: string;
@@ -173,26 +175,7 @@ export default function PetDetailClient({
     }
   };
 
-  // Badge de estado
-  const statusConfig = {
-    AVAILABLE: {
-      label: 'Disponible para Adoptar',
-      color: 'bg-green-100 text-green-800',
-      icon: '✓',
-    },
-    IN_PROCESS: {
-      label: 'En Proceso de Adopción',
-      color: 'bg-yellow-100 text-yellow-800',
-      icon: '⏳',
-    },
-    ADOPTED: {
-      label: 'Adoptada',
-      color: 'bg-gray-100 text-gray-800',
-      icon: '✓',
-    },
-  };
 
-  const statusInfo = statusConfig[pet.status];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -202,10 +185,13 @@ export default function PetDetailClient({
           {/* Imagen Principal */}
           <div className="relative h-96 bg-gray-200">
             {images.length > 0 ? (
-              <img
+              <Image
                 src={images[currentImageIndex]}
                 alt={pet.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                priority
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -250,11 +236,15 @@ export default function PetDetailClient({
                     idx === currentImageIndex ? 'border-purple-600' : 'border-gray-200'
                   }`}
                 >
-                  <img
-                    src={img}
-                    alt={`Miniatura ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={img}
+                      alt={`Miniatura ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
                 </button>
               ))}
             </div>
@@ -266,9 +256,7 @@ export default function PetDetailClient({
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{pet.name}</h1>
-              <div className={`inline-block px-4 py-1 rounded-full text-sm font-semibold ${statusInfo.color}`}>
-                {statusInfo.icon} {statusInfo.label}
-              </div>
+              <Badge status={pet.status} />
             </div>
             <button
               onClick={handleFavoriteClick}
@@ -287,14 +275,14 @@ export default function PetDetailClient({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-6 border-y border-gray-200">
             {/* Especie */}
             <div className="text-center">
-              <Dna2 className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+              <Info className="w-5 h-5 text-purple-600 mx-auto mb-2" />
               <p className="text-sm text-gray-600">Especie</p>
               <p className="font-semibold text-gray-900">{pet.species}</p>
             </div>
 
             {/* Raza */}
             <div className="text-center">
-              <Dna2 className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+              <Info className="w-5 h-5 text-purple-600 mx-auto mb-2" />
               <p className="text-sm text-gray-600">Raza</p>
               <p className="font-semibold text-gray-900">{pet.breed || 'No especificada'}</p>
             </div>
@@ -313,7 +301,7 @@ export default function PetDetailClient({
             {/* Sexo */}
             {pet.sex && (
               <div className="text-center">
-                <Dna2 className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+                <Info className="w-5 h-5 text-purple-600 mx-auto mb-2" />
                 <p className="text-sm text-gray-600">Sexo</p>
                 <p className="font-semibold text-gray-900">{pet.sex}</p>
               </div>
