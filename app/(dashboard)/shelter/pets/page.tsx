@@ -21,7 +21,7 @@ import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
 import { UserRole, PetStatus } from "@prisma/client";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, SquareChartGantt, ListCheck, ClipboardClock, CircleCheck } from "lucide-react";
 import PetCard from "@/components/cards/shelter-pet-card";
 
 interface PageProps {
@@ -136,27 +136,34 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
                         active={!statusFilter}
                         label="Todas"
                         count={counts.all}
+                        icon={<SquareChartGantt className="w-4 h-4" />}
                     />
+
                     <FilterButton
                         href="/shelter/pets?status=AVAILABLE"
                         active={statusFilter === PetStatus.AVAILABLE}
                         label="Disponibles"
                         count={counts.available}
                         color="green"
+                        icon={<ListCheck className="w-4 h-4" />}
                     />
+
                     <FilterButton
                         href="/shelter/pets?status=IN_PROCESS"
                         active={statusFilter === PetStatus.IN_PROCESS}
                         label="En Proceso"
                         count={counts.inProcess}
                         color="yellow"
+                        icon={<ClipboardClock className="w-4 h-4" />}
                     />
+
                     <FilterButton
                         href="/shelter/pets?status=ADOPTED"
                         active={statusFilter === PetStatus.ADOPTED}
                         label="Adoptadas"
                         count={counts.adopted}
                         color="gray"
+                        icon={<CircleCheck className="w-4 h-4" />}
                     />
                 </div>
             </div>
@@ -194,8 +201,8 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
                                         key={p}
                                         href={`/shelter/pets?${statusFilter ? `status=${statusFilter}&` : ""}page=${p}`}
                                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${p === page
-                                                ? "bg-purple-600 text-white"
-                                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                            ? "bg-purple-600 text-white"
+                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                             }`}
                                     >
                                         {p}
@@ -220,12 +227,14 @@ function FilterButton(
         label,
         count,
         color = "purple",
+        icon,
     }: {
         href: string;
         active: boolean;
         label: string;
         count: number;
         color?: "purple" | "green" | "yellow" | "gray";
+        icon?: React.ReactNode;
     }
 ) {
     const colors = {
@@ -238,8 +247,9 @@ function FilterButton(
     return (
         <Link
             href={href}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${colors[color]}`}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${colors[color]}`}
         >
+            {icon}
             {label} ({count})
         </Link>
     );

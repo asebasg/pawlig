@@ -16,7 +16,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PetStatus } from "@prisma/client";
-import { Edit, Trash2, Eye, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Edit, Trash2, Eye, Clock, CheckCircle, XCircle, BookOpenCheck } from "lucide-react";
 import Link from "next/link";
 
 interface Pet {
@@ -164,7 +164,7 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                     {/* Contador de postulaciones */}
                     {pet._count.adoptions > 0 && (
                         <div className="flex items-center gap-1 text-sm text-purple-600 mb-3">
-                            <AlertCircle className="w-4 h-4" />
+                            <BookOpenCheck className="w-4 h-4" />
                             <span>{pet._count.adoptions} {pet._count.adoptions === 1 ? "postulación" : "postulaciones"}</span>
                         </div>
                     )}
