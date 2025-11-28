@@ -1,6 +1,7 @@
 # TAREA-017: Actualización de Perfiles - Guía Rápida
 
 ## 🎯 Objetivo
+
 Implementar funcionalidad de actualización de perfiles para usuarios adoptantes y vendedores según HU-003.
 
 ---
@@ -8,12 +9,14 @@ Implementar funcionalidad de actualización de perfiles para usuarios adoptantes
 ## 📍 Endpoints Implementados
 
 ### 1. Perfil de Usuario (ADOPTER)
+
 ```
 GET  /api/users/profile    - Obtener datos actuales
 PUT  /api/users/profile    - Actualizar perfil
 ```
 
 **Campos actualizables:**
+
 - name (obligatorio)
 - phone (obligatorio)
 - municipality (obligatorio)
@@ -22,17 +25,20 @@ PUT  /api/users/profile    - Actualizar perfil
 - birthDate (obligatorio, >= 18 años)
 
 **Campos protegidos:**
+
 - email, password, role, isActive
 
 ---
 
 ### 2. Perfil de Vendedor (VENDOR)
+
 ```
 GET  /api/vendors/profile   - Obtener datos actuales
 PUT  /api/vendors/profile   - Actualizar perfil
 ```
 
 **Campos actualizables:**
+
 - businessName (obligatorio)
 - businessPhone (opcional)
 - description (opcional, 20-1000 chars)
@@ -41,6 +47,7 @@ PUT  /api/vendors/profile   - Actualizar perfil
 - address (obligatorio)
 
 **Campos protegidos:**
+
 - verified, rejectionReason, userId
 
 ---
@@ -48,12 +55,16 @@ PUT  /api/vendors/profile   - Actualizar perfil
 ## 🖥️ Interfaces de Usuario
 
 ### Usuario Adoptante
+
 **Ruta:** `/dashboard/profile`
+
 - Accesible para cualquier usuario autenticado
 - Formulario: `components/forms/user-profile-form.tsx`
 
 ### Vendedor
+
 **Ruta:** `/dashboard/vendor/profile`
+
 - Solo accesible para usuarios con rol VENDOR
 - Formulario: `components/forms/vendor-profile-form.tsx`
 
@@ -62,6 +73,7 @@ PUT  /api/vendors/profile   - Actualizar perfil
 ## 🔒 Seguridad
 
 ### Validaciones Implementadas:
+
 - ✅ Autenticación requerida (NextAuth)
 - ✅ Verificación de rol (VENDOR para vendedores)
 - ✅ Validación de cuenta activa (isActive)
@@ -69,6 +81,7 @@ PUT  /api/vendors/profile   - Actualizar perfil
 - ✅ Campos protegidos no actualizables
 
 ### Códigos de Error:
+
 - `401` - No autenticado
 - `403` - Rol incorrecto o cuenta bloqueada
 - `400` - Errores de validación
@@ -80,6 +93,7 @@ PUT  /api/vendors/profile   - Actualizar perfil
 ## 🧪 Testing Manual
 
 ### Escenario 1: Actualización exitosa (Usuario)
+
 1. Login como ADOPTER
 2. Ir a `/dashboard/profile`
 3. Modificar campos (ej: nombre, teléfono)
@@ -87,6 +101,7 @@ PUT  /api/vendors/profile   - Actualizar perfil
 5. **Esperado:** Mensaje verde "Perfil actualizado exitosamente"
 
 ### Escenario 2: Validación de campos obligatorios
+
 1. Login como usuario
 2. Ir a `/dashboard/profile`
 3. Borrar campo obligatorio (ej: nombre)
@@ -94,11 +109,13 @@ PUT  /api/vendors/profile   - Actualizar perfil
 5. **Esperado:** Error rojo "Nombre debe tener al menos 2 caracteres"
 
 ### Escenario 3: Cuenta bloqueada
+
 1. Admin bloquea cuenta de usuario
 2. Usuario intenta actualizar perfil
 3. **Esperado:** Error "Cuenta bloqueada. No puedes actualizar tu perfil."
 
 ### Escenario 4: Actualización exitosa (Vendedor)
+
 1. Login como VENDOR
 2. Ir a `/dashboard/vendor/profile`
 3. Modificar campos (ej: businessName, description)
@@ -106,6 +123,7 @@ PUT  /api/vendors/profile   - Actualizar perfil
 5. **Esperado:** Mensaje verde "Perfil actualizado exitosamente"
 
 ### Escenario 5: Validación de edad
+
 1. Login como usuario
 2. Ir a `/dashboard/profile`
 3. Cambiar birthDate a menos de 18 años
@@ -117,6 +135,7 @@ PUT  /api/vendors/profile   - Actualizar perfil
 ## 📦 Archivos Principales
 
 ### Backend (API Routes):
+
 ```
 app/api/users/profile/route.ts      - Endpoint de usuarios
 app/api/vendors/profile/route.ts    - Endpoint de vendedores (NUEVO)
@@ -124,18 +143,21 @@ app/api/providers/profile/route.ts  - Legacy (deprecado)
 ```
 
 ### Frontend (Páginas):
+
 ```
 app/(dashboard)/profile/page.tsx           - Página de perfil usuario
 app/(dashboard)/vendor/profile/page.tsx    - Página de perfil vendedor
 ```
 
 ### Componentes:
+
 ```
 components/forms/user-profile-form.tsx     - Formulario usuario
 components/forms/vendor-profile-form.tsx   - Formulario vendedor
 ```
 
 ### Validaciones:
+
 ```
 lib/validations/user.schema.ts             - Schemas Zod
 ```
@@ -171,14 +193,17 @@ lib/validations/user.schema.ts             - Schemas Zod
 ## 🐛 Problemas Conocidos y Soluciones
 
 ### ❌ Error: "Method Not Allowed (405)"
+
 **Causa:** Formulario enviando método incorrecto
 **Solución:** ✅ Corregido - Ambos usan PUT
 
 ### ❌ Error: "Perfil de vendedor no encontrado"
+
 **Causa:** Usuario no tiene registro en tabla Vendor
 **Solución:** Verificar que el usuario tenga rol VENDOR y registro en Vendor
 
 ### ❌ Error: "Cuenta bloqueada"
+
 **Causa:** isActive = false
 **Solución:** Contactar administrador para desbloqueo
 
