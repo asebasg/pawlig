@@ -127,15 +127,15 @@ export default async function ShelterAdoptionsPage() {
             <p className="text-sm font-medium text-gray-600 mb-1">Total de Postulaciones</p>
             <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-yellow-200 p-4 bg-yellow-50">
+          <div className="rounded-lg shadow-sm border border-yellow-200 p-4 bg-yellow-50">
             <p className="text-sm font-medium text-yellow-700 mb-1">Pendientes</p>
             <p className="text-3xl font-bold text-yellow-900">{stats.pending}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-green-200 p-4 bg-green-50">
+          <div className="rounded-lg shadow-sm border border-green-200 p-4 bg-green-50">
             <p className="text-sm font-medium text-green-700 mb-1">Aprobadas</p>
             <p className="text-3xl font-bold text-green-900">{stats.approved}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border border-red-200 p-4 bg-red-50">
+          <div className="rounded-lg shadow-sm border border-red-200 p-4 bg-red-50">
             <p className="text-sm font-medium text-red-700 mb-1">Rechazadas</p>
             <p className="text-3xl font-bold text-red-900">{stats.rejected}</p>
           </div>
