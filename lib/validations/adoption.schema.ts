@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { AdoptionStatus } from '@prisma/client';
 
 /**
- * Schema de validación para gestión de postulaciones (TAREA-024)
+ * Schema de validación para gestión de postulaciones
  * 
  * VALIDACIÓN DE 3 CAPAS:
  * 1. Cliente (formulario): Validación inmediata
@@ -17,6 +17,7 @@ import { AdoptionStatus } from '@prisma/client';
  * - Requerido: status
  * - Opcional: rejectionReason (requerido si status es REJECTED)
  */
+
 export const adoptionStatusChangeSchema = z.object({
   status: z
     .nativeEnum(AdoptionStatus, {
@@ -48,7 +49,7 @@ export type AdoptionStatusChangeInput = z.infer<typeof adoptionStatusChangeSchem
 
 // ========== ESQUEMA DE CONSULTA DE POSTULACIONES ==========
 /**
- * RFC-002: Obtener postulaciones del albergue
+ *  Obtener postulaciones del albergue
  * - Filtros opcionales: status, petId, pagination
  */
 export const adoptionQuerySchema = z.object({
