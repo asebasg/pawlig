@@ -4,27 +4,21 @@ import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
 
 export async function POST(
-  request: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user) {
+    if (!session || !session.user) {
       return NextResponse.json(
-        { error: 'No autenticado' },
+        { error: 'Debes iniciar sesión para agregar favoritos' },
         { status: 401 }
       );
     }
 
+    const userId = session.user.id;
     const petId = params.id;
-
-    if (!/^[0-9a-fA-F]{24}$/.test(petId)) {
-      return NextResponse.json(
-        { error: 'ID de mascota inválido' },
-        { status: 400 }
-      );
-    }
 
     const pet = await prisma.pet.findUnique({
       where: { id: petId },
@@ -41,38 +35,46 @@ export async function POST(
     const existingFavorite = await prisma.favorite.findUnique({
       where: {
         userId_petId: {
-          userId: session.user.id,
+          userId,
           petId,
         },
       },
     });
 
-    if (existingFavorite) {
-      await prisma.favorite.delete({
-        where: { id: existingFavorite.id },
-      });
+    let result;
+    let message: string;
 
-      return NextResponse.json({
-        success: true,
-        message: 'Mascota removida de favoritos',
-        isFavorited: false,
+    if (existingFavorite) {
+      result = await prisma.favorite.delete({
+        where: {
+          userId_petId: {
+            userId,
+            petId,
+          },
+        },
       });
+      message = 'Mascota removida de favoritos';
     } else {
-      await prisma.favorite.create({
+      result = await prisma.favorite.create({
         data: {
-          userId: session.user.id,
+          userId,
           petId,
         },
       });
-
-      return NextResponse.json({
-        success: true,
-        message: 'Mascota agregada a favoritos',
-        isFavorited: true,
-      });
+      message = 'Mascota agregada a favoritos';
     }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message,
+        isFavorite: !existingFavorite,
+        favorite: result,
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('[POST /api/pets/[id]/favorite] Error:', error);
+    console.error('Error en toggle de favorito:', error);
     return NextResponse.json(
       { error: 'Error al actualizar favorito' },
       { status: 500 }

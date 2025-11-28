@@ -142,7 +142,7 @@ export default function PetDetailClient({
     try {
       setIsLoadingAdoption(true);
 
-      const response = await fetch('/api/adopter/adoptions', {
+      const response = await fetch('/api/user/adoptions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export default function PetDetailClient({
 
       setAdoptionSuccess(true);
       setTimeout(() => {
-        window.location.href = '/adopter/profile';
+        window.location.href = '/user';
       }, 2000);
     } catch (error) {
       console.error('Error:', error);
