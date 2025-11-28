@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { notFound } from 'next/navigation';
 import PetDetailClient from '@/components/PetDetailClient';
-import { ToastProvider } from '@/components/ui/toast';
 import { getPetById, getSimilarPets, checkIsFavorited } from '@/lib/services/pet.service';
 
 export async function generateMetadata(
@@ -27,7 +26,7 @@ export async function generateMetadata(
         images: pet.images && pet.images.length > 0 ? [pet.images[0]] : [],
       },
     };
-  } catch (error) {
+  } catch {
     return {
       title: 'Detalle de mascota - PawLig',
     };
@@ -53,8 +52,7 @@ export default async function PetDetailPage({ params }: { params: { id: string }
   const similarPets = await getSimilarPets(params.id, pet.shelterId, pet.species);
 
   return (
-    <ToastProvider>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <header className="bg-white shadow-sm sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-between items-center">
@@ -153,6 +151,5 @@ export default async function PetDetailPage({ params }: { params: { id: string }
           </div>
         </footer>
       </div>
-    </ToastProvider>
   );
 }

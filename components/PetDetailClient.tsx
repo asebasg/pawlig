@@ -16,7 +16,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import PetCard from './cards/pet-card';
 import Badge from './ui/badge';
-import { useToast } from '@/components/ui/toast';
 
 interface Pet {
   id: string;
@@ -83,7 +82,6 @@ export default function PetDetailClient({
   const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
   const [isLoadingAdoption, setIsLoadingAdoption] = useState(false);
   const [adoptionSuccess, setAdoptionSuccess] = useState(false);
-  const { showToast } = useToast();
 
   const images = pet.images || [];
   const hasMultipleImages = images.length > 1;
@@ -113,12 +111,7 @@ export default function PetDetailClient({
         throw new Error('Error al actualizar favorito');
       }
 
-      const newStatus = !isFavorited;
-      setIsFavorited(newStatus);
-      showToast(
-        newStatus ? 'Agregado a favoritos' : 'Eliminado de favoritos',
-        'success'
-      );
+      setIsFavorited(!isFavorited);
     } catch (error) {
       console.error('Error:', error);
     } finally {
