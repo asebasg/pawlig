@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import { petCreateSchema } from '@/lib/validations/pet.schema';
+import { createPetSchema } from '@/lib/validations/pet.schema';
 import { ZodError } from 'zod';
 
 /**
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     // 4. Parsear y validar datos
     const body = await request.json();
-    const validatedData = petCreateSchema.parse(body);
+    const validatedData = createPetSchema.parse(body);
 
     // 5. Crear mascota
     const newPet = await prisma.pet.create({

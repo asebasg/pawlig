@@ -17,7 +17,7 @@ import { PetStatus, Municipality } from '@prisma/client';
  * - Opcional: breed, age, sex, requirements
  * - Solo SHELTER puede crear
  */
-export const petCreateSchema = z.object({
+export const createPetSchema = z.object({
   name: z
     .string()
     .min(2, 'Nombre debe tener al menos 2 caracteres')
@@ -75,7 +75,8 @@ export const petCreateSchema = z.object({
     .default([]),
 });
 
-export type PetCreateInput = z.infer<typeof petCreateSchema>;
+export type PetCreateInput = z.infer<typeof createPetSchema>;
+export type CreatePetInput = PetCreateInput; // Alias para compatibilidad
 
 // ========== ESQUEMA DE ACTUALIZACIÓN DE MASCOTA ==========
 /**
@@ -83,7 +84,7 @@ export type PetCreateInput = z.infer<typeof petCreateSchema>;
  * - Todos los campos son opcionales (PATCH)
  * - Solo propietario del albergue puede editar
  */
-export const petUpdateSchema = z.object({
+export const updatePetSchema = z.object({
   name: z
     .string()
     .min(2, 'Nombre debe tener al menos 2 caracteres')
@@ -143,7 +144,8 @@ export const petUpdateSchema = z.object({
     .optional(),
 });
 
-export type PetUpdateInput = z.infer<typeof petUpdateSchema>;
+export type PetUpdateInput = z.infer<typeof updatePetSchema>;
+export type UpdatePetInput = PetUpdateInput; // Alias para compatibilidad
 
 // ========== ESQUEMA DE CAMBIO DE ESTADO ==========
 /**
@@ -151,7 +153,7 @@ export type PetUpdateInput = z.infer<typeof petUpdateSchema>;
  * - Estados permitidos: AVAILABLE, IN_PROCESS, ADOPTED
  * - Solo propietario del albergue puede cambiar
  */
-export const petStatusChangeSchema = z.object({
+export const updatePetStatusSchema = z.object({
   status: z
     .nativeEnum(PetStatus, {
       message: 'Estado inválido. Debe ser AVAILABLE, IN_PROCESS o ADOPTED',
@@ -166,7 +168,8 @@ export const petStatusChangeSchema = z.object({
     .nullable(),
 });
 
-export type PetStatusChangeInput = z.infer<typeof petStatusChangeSchema>;
+export type PetStatusChangeInput = z.infer<typeof updatePetStatusSchema>;
+export type UpdatePetStatusInput = PetStatusChangeInput; // Alias para compatibilidad
 
 /**
  * 📚 NOTAS:

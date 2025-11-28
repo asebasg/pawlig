@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import { petStatusChangeSchema } from '@/lib/validations/pet.schema';
+import { updatePetStatusSchema } from '@/lib/validations/pet.schema';
 import { ZodError } from 'zod';
 
 /**
@@ -99,7 +99,7 @@ export async function PUT(
 
     // 7. Parsear y validar datos
     const body = await request.json();
-    const validatedData = petStatusChangeSchema.parse(body);
+    const validatedData = updatePetStatusSchema.parse(body);
 
     // 8. Validación: No permitir cambios inválidos de estado
     const allowedTransitions: Record<string, string[]> = {

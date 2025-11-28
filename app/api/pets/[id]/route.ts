@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import { petUpdateSchema } from '@/lib/validations/pet.schema';
+import { updatePetSchema, updatePetStatusSchema } from '@/lib/validations/pet.schema';
 import { ZodError } from 'zod';
 
 /**
@@ -190,7 +190,7 @@ export async function PUT(
 
     // 7. Parsear y validar datos
     const body = await request.json();
-    const validatedData = petUpdateSchema.parse(body);
+    const validatedData = updatePetSchema.parse(body);
 
     // 8. Actualizar mascota
     const updatedPet = await prisma.pet.update({
@@ -268,6 +268,189 @@ export async function PUT(
 }
 
 /**
+ * PATCH /api/pets/[id]
+ * Actualizar solo el estado de la mascota
+ * 
+ * CRITERIO DE ACEPTACIÓN:
+ * "Cuando cambio estado de 'Disponible' a 'Adoptado',
+ *  entonces se retira de resultados de búsqueda activos"
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // 1. Validar ID
+    if (!params.id) {
+      return NextResponse.json(
+        { error: 'ID de mascota requerido', code: 'INVALID_ID' },
+        { status: 400 }
+      );
+    }
+
+    // 2. Verificar autenticación
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: 'No autenticado', code: 'UNAUTHORIZED' },
+        { status: 401 }
+      );
+    }
+
+    // 3. Verificar rol (solo SHELTER)
+    if (session.user.role !== 'SHELTER') {
+      return NextResponse.json(
+        { error: 'Acceso denegado', code: 'FORBIDDEN' },
+        { status: 403 }
+      );
+    }
+
+    // 4. Buscar mascota y verificar propiedad
+    const pet = await prisma.pet.findUnique({
+      where: { id: params.id },
+      select: { id: true, shelterId: true, name: true, status: true },
+    });
+
+    if (!pet) {
+      return NextResponse.json(
+        { error: 'Mascota no encontrada', code: 'PET_NOT_FOUND' },
+        { status: 404 }
+      );
+    }
+
+    // 5. Verificar que el usuario es propietario del albergue
+    const shelter = await prisma.shelter.findFirst({
+      where: { id: pet.shelterId, userId: session.user.id },
+      select: { id: true },
+    });
+
+    if (!shelter) {
+      return NextResponse.json(
+        { error: 'No tienes permiso', code: 'UNAUTHORIZED_EDIT' },
+        { status: 403 }
+      );
+    }
+
+    // 6. Parsear y validar datos
+    const body = await request.json();
+    const validatedData = updatePetStatusSchema.parse(body);
+
+    // 7. Actualizar estado
+    const updatedPet = await prisma.pet.update({
+      where: { id: params.id },
+      data: { status: validatedData.status },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        updatedAt: true,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: `Estado de ${pet.name} actualizado a ${updatedPet.status}`,
+        code: 'STATUS_UPDATED',
+        data: updatedPet,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          error: 'Datos inválidos',
+          code: 'VALIDATION_ERROR',
+          details: error.issues.map((issue) => ({
+            field: issue.path.join('.'),
+            message: issue.message,
+          })),
+        },
+        { status: 400 }
+      );
+    }
+
+    console.error('Error al actualizar estado de mascota:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor', code: 'INTERNAL_ERROR' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * DELETE /api/pets/[id]
+ * Eliminar mascota permanentemente
+ */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    // 1. Validar ID
+    if (!params.id) {
+      return NextResponse.json(
+        { error: 'ID de mascota requerido', code: 'INVALID_ID' },
+        { status: 400 }
+      );
+    }
+
+    // 2. Verificar autenticación
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== 'SHELTER') {
+      return NextResponse.json(
+        { error: 'Acceso denegado', code: 'FORBIDDEN' },
+        { status: 403 }
+      );
+    }
+
+    // 3. Buscar mascota y verificar propiedad
+    const pet = await prisma.pet.findUnique({
+      where: { id: params.id },
+      select: { id: true, shelterId: true, name: true },
+    });
+
+    if (!pet) {
+      return NextResponse.json(
+        { error: 'Mascota no encontrada', code: 'PET_NOT_FOUND' },
+        { status: 404 }
+      );
+    }
+
+    const shelter = await prisma.shelter.findFirst({
+      where: { id: pet.shelterId, userId: session.user.id },
+      select: { id: true },
+    });
+
+    if (!shelter) {
+      return NextResponse.json(
+        { error: 'No tienes permiso', code: 'UNAUTHORIZED_EDIT' },
+        { status: 403 }
+      );
+    }
+
+    // 4. Eliminar mascota
+    await prisma.pet.delete({
+      where: { id: params.id },
+    });
+
+    return NextResponse.json(
+      {
+        message: `Mascota "${pet.name}" eliminada exitosamente`,
+        code: 'PET_DELETED',
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error al eliminar mascota:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor', code: 'INTERNAL_ERROR' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
  * 📚 NOTAS TÉCNICAS:
  * 
  * GET /api/pets/[id]:
@@ -285,9 +468,20 @@ export async function PUT(
  * 5. Solo actualiza campos que vienen en el request
  * 6. Incluye datos del shelter en respuesta
  * 
+ * PATCH /api/pets/[id]:
+ * 1. Solo SHELTER puede cambiar estado
+ * 2. Solo propietario del albergue
+ * 3. Valida con updatePetStatusSchema
+ * 4. Actualiza solo campo status
+ * 
+ * DELETE /api/pets/[id]:
+ * 1. Solo SHELTER puede eliminar
+ * 2. Solo propietario del albergue
+ * 3. Eliminación permanente (considerar soft delete en producción)
+ * 
  * AUTORIZACIÓN:
  * - GET: Público
- * - PUT: Requiere SHELTER + propietario del albergue
+ * - PUT, PATCH, DELETE: Requiere SHELTER + propietario del albergue
  * 
  * IMÁGENES:
  * - URLs de Cloudinary
