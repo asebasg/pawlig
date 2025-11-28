@@ -6,8 +6,8 @@ import { vendorProfileUpdateSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
 
 /**
- * PUT /api/providers/profile
- * Actualizar perfil de proveedor (vendor)
+ * PUT /api/vendors/profile
+ * Actualizar perfil de vendor
  * Requiere: Usuario autenticado con rol VENDOR
  * Implementa: HU-003 (Actualización de perfil)
  */
@@ -15,7 +15,6 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    // Verificar autenticación
     if (!session?.user) {
       return NextResponse.json(
         { error: 'No autenticado' },
@@ -23,21 +22,29 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Verificar rol de proveedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
-        { error: 'Solo proveedores pueden acceder a este recurso' },
+        { error: 'Solo vendors pueden acceder a este recurso' },
         { status: 403 }
       );
     }
 
-    // Parsear datos del request
-    const body = await request.json();
+    // Validar cuenta activa
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { isActive: true },
+    });
 
-    // Validar datos con Zod
+    if (!user?.isActive) {
+      return NextResponse.json(
+        { error: 'Cuenta bloqueada. Contacta al administrador' },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
     const validatedData = vendorProfileUpdateSchema.parse(body);
 
-    // Actualizar perfil del proveedor
     const updatedVendor = await prisma.vendor.update({
       where: { userId: session.user.id },
       data: {
@@ -70,7 +77,6 @@ export async function PUT(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    // Manejo de errores de validación Zod
     if (error instanceof ZodError) {
       const fieldErrors: Record<string, string> = {};
       error.issues.forEach((issue: any) => {
@@ -89,10 +95,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Manejo de error: perfil no encontrado
     if (error instanceof Error && error.message.includes('Record to update not found')) {
       return NextResponse.json(
-        { error: 'Perfil de proveedor no encontrado' },
+        { error: 'Perfil de vendor no encontrado' },
         { status: 404 }
       );
     }
@@ -106,14 +111,13 @@ export async function PUT(request: NextRequest) {
 }
 
 /**
- * GET /api/providers/profile
- * Obtener información del perfil del proveedor autenticado
+ * GET /api/vendors/profile
+ * Obtener información del perfil del vendor autenticado
  */
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    // Verificar autenticación
     if (!session?.user) {
       return NextResponse.json(
         { error: 'No autenticado' },
@@ -121,15 +125,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verificar rol de proveedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
-        { error: 'Solo proveedores pueden acceder a este recurso' },
+        { error: 'Solo vendors pueden acceder a este recurso' },
         { status: 403 }
       );
     }
 
-    // Obtener perfil del proveedor
     const vendor = await prisma.vendor.findUnique({
       where: { userId: session.user.id },
       select: {
@@ -148,7 +150,7 @@ export async function GET(request: NextRequest) {
 
     if (!vendor) {
       return NextResponse.json(
-        { error: 'Perfil de proveedor no encontrado' },
+        { error: 'Perfil de vendor no encontrado' },
         { status: 404 }
       );
     }
