@@ -6,10 +6,14 @@ import { vendorProfileUpdateSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
 
 /**
- * PUT /api/vendors/profile
- * Actualizar perfil de vendedor
+ * @deprecated Esta ruta está deprecada. Usa /api/vendors/profile en su lugar.
+ * PUT /api/providers/profile
+ * Actualizar perfil de proveedor (vendor)
  * Requiere: Usuario autenticado con rol VENDOR
  * Implementa: HU-003 (Actualización de perfil)
+ * 
+ * NOTA: Esta ruta se mantiene por compatibilidad hacia atrás.
+ * Se recomienda migrar a /api/vendors/profile
  */
 export async function PUT(request: NextRequest) {
   try {
@@ -23,7 +27,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Verificar rol de vendedor
+    // Verificar rol de proveedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
         { error: 'Solo vendedores pueden acceder a este recurso' },
@@ -45,7 +49,7 @@ export async function PUT(request: NextRequest) {
     // Validar datos con Zod
     const validatedData = vendorProfileUpdateSchema.parse(body);
 
-    // Actualizar perfil del vendedor
+    // Actualizar perfil del proveedor
     const updatedVendor = await prisma.vendor.update({
       where: { userId: session.user.id },
       data: {
@@ -114,8 +118,9 @@ export async function PUT(request: NextRequest) {
 }
 
 /**
- * GET /api/vendors/profile
- * Obtener información del perfil del vendedor autenticado
+ * @deprecated Esta ruta está deprecada. Usa /api/vendors/profile en su lugar.
+ * GET /api/providers/profile
+ * Obtener información del perfil del proveedor autenticado
  */
 export async function GET(request: NextRequest) {
   try {
@@ -129,7 +134,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verificar rol de vendedor
+    // Verificar rol de proveedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
         { error: 'Solo vendedores pueden acceder a este recurso' },
@@ -137,7 +142,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Obtener perfil del vendedor
+    // Obtener perfil del proveedor
     const vendor = await prisma.vendor.findUnique({
       where: { userId: session.user.id },
       select: {

@@ -1,24 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { vendorProfileUpdateSchema, VendorProfileUpdateInput } from '@/lib/validations/user.schema';
+import { registerUserSchema, RegisterUserInput } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
 import axios from 'axios';
 
 /**
- * Componente de formulario para actualizar perfil de vendedor
- * Implementa HU-003: Actualización del perfil del vendedor
+ * Componente de formulario para actualizar perfil de usuario adoptante
+ * Implementa HU-003: Actualización del perfil del usuario
  */
 
-interface VendorProfile {
+interface UserProfile {
   id: string;
-  businessName: string;
-  businessPhone?: string;
-  description?: string;
-  logo?: string;
+  email: string;
+  name: string;
+  phone: string;
   municipality: Municipality;
   address: string;
-  verified: boolean;
+  idNumber: string;
+  birthDate: string;
+  role: string;
+  createdAt: string;
   updatedAt: string;
 }
 
@@ -27,14 +29,14 @@ interface ApiErrorResponse {
   details?: Record<string, string>;
 }
 
-export default function VendorProfileForm() {
-  const [formData, setFormData] = useState<VendorProfileUpdateInput>({
-    businessName: '',
-    businessPhone: undefined,
-    description: undefined,
-    logo: undefined,
+export default function UserProfileForm() {
+  const [formData, setFormData] = useState<Omit<RegisterUserInput, 'email' | 'password'>>({
+    name: '',
+    phone: '',
     municipality: Municipality.MEDELLIN,
     address: '',
+    idNumber: '',
+    birthDate: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -43,21 +45,21 @@ export default function VendorProfileForm() {
   const [successMessage, setSuccessMessage] = useState('');
   const [serverError, setServerError] = useState('');
 
-  // Cargar datos actuales del vendedor al montar
+  // Cargar datos actuales del usuario al montar
   useEffect(() => {
-    const fetchVendorProfile = async () => {
+    const fetchUserProfile = async () => {
       try {
-        const response = await axios.get<VendorProfile>('/api/vendors/profile');
+        const response = await axios.get<UserProfile>('/api/users/profile');
         setFormData({
-          businessName: response.data.businessName,
-          businessPhone: response.data.businessPhone,
-          description: response.data.description,
-          logo: response.data.logo,
+          name: response.data.name,
+          phone: response.data.phone,
           municipality: response.data.municipality,
           address: response.data.address,
+          idNumber: response.data.idNumber,
+          birthDate: response.data.birthDate.split('T')[0], // Convertir a formato YYYY-MM-DD
         });
       } catch (error) {
-        console.error('Error fetching vendor profile:', error);
+        console.error('Error fetching user profile:', error);
         if (axios.isAxiosError(error) && error.response?.status === 403) {
           setServerError('Tu cuenta está bloqueada. Contacta al administrador.');
         } else {
@@ -68,14 +70,14 @@ export default function VendorProfileForm() {
       }
     };
 
-    fetchVendorProfile();
+    fetchUserProfile();
   }, []);
 
   /**
    * Maneja cambios en los inputs del formulario
    */
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value || undefined }));
@@ -106,17 +108,27 @@ export default function VendorProfileForm() {
     setSuccessMessage('');
 
     try {
-      // 1. Validar datos en el cliente con Zod
-      const validatedData = vendorProfileUpdateSchema.parse(formData);
+      // 1. Crear schema de validación sin email y password
+      const updateSchema = registerUserSchema.pick({
+        name: true,
+        phone: true,
+        municipality: true,
+        address: true,
+        idNumber: true,
+        birthDate: true,
+      });
 
-      // 2. Enviar petición al API
-      const response = await axios.put<{ message: string; vendor: VendorProfile }>(
-        '/api/vendors/profile',
+      // 2. Validar datos en el cliente con Zod
+      const validatedData = updateSchema.parse(formData);
+
+      // 3. Enviar petición al API
+      const response = await axios.put<{ message: string; user: UserProfile }>(
+        '/api/users/profile',
         validatedData
       );
 
-      // 3. Mostrar mensaje de éxito
-      setSuccessMessage('¡Perfil actualizado exitosamente! Los cambios se aplicarán inmediatamente en tu tienda.');
+      // 4. Mostrar mensaje de éxito
+      setSuccessMessage('¡Perfil actualizado exitosamente! Los cambios se aplicarán inmediatamente.');
       setFormData(validatedData);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
@@ -169,9 +181,9 @@ export default function VendorProfileForm() {
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Editar Perfil de Negocio</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Editar Perfil Personal</h2>
         <p className="text-gray-600 mt-2">
-          Actualiza la información de tu negocio. Los cambios se aplicarán inmediatamente.
+          Actualiza tu información personal. Los cambios se aplicarán inmediatamente.
         </p>
       </div>
 
@@ -217,99 +229,86 @@ export default function VendorProfileForm() {
         </div>
       )}
 
-      {/* Nombre del Negocio */}
+      {/* Nombre Completo */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Nombre del Negocio *
+          Nombre Completo *
         </label>
         <input
           type="text"
-          name="businessName"
-          value={formData.businessName}
+          name="name"
+          value={formData.name}
           onChange={handleChange}
           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.businessName ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
           }`}
-          placeholder="Ej: PawShop Premium"
+          placeholder="Ej: Juan Pérez García"
           required
         />
-        {errors.businessName && (
-          <p className="text-red-600 text-sm mt-1">{errors.businessName}</p>
+        {errors.name && (
+          <p className="text-red-600 text-sm mt-1">{errors.name}</p>
         )}
       </div>
 
-      {/* Teléfono del Negocio */}
+      {/* Teléfono */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Teléfono del Negocio
+          Teléfono *
         </label>
         <input
           type="tel"
-          name="businessPhone"
-          value={formData.businessPhone || ''}
+          name="phone"
+          value={formData.phone}
           onChange={handleChange}
           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.businessPhone ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300'
           }`}
           placeholder="Ej: 3001234567"
+          required
         />
-        {errors.businessPhone && (
-          <p className="text-red-600 text-sm mt-1">{errors.businessPhone}</p>
+        {errors.phone && (
+          <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
         )}
       </div>
 
-      {/* Descripción */}
+      {/* Número de Identificación */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Descripción del Negocio
-        </label>
-        <textarea
-          name="description"
-          value={formData.description || ''}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition h-32 resize-none ${
-            errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-          placeholder="Describe tu negocio, productos especiales, misión, etc. (mínimo 20 caracteres)"
-        />
-        {errors.description && (
-          <p className="text-red-600 text-sm mt-1">{errors.description}</p>
-        )}
-        <p className="text-gray-500 text-xs mt-1">
-          {formData.description ? formData.description.length : 0}/1000 caracteres
-        </p>
-      </div>
-
-      {/* Logo URL */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          URL del Logo
+          Número de Identificación *
         </label>
         <input
-          type="url"
-          name="logo"
-          value={formData.logo || ''}
+          type="text"
+          name="idNumber"
+          value={formData.idNumber}
           onChange={handleChange}
           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.logo ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            errors.idNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
           }`}
-          placeholder="https://ejemplo.com/logo.png"
+          placeholder="Ej: 1234567890"
+          required
         />
-        {errors.logo && (
-          <p className="text-red-600 text-sm mt-1">{errors.logo}</p>
+        {errors.idNumber && (
+          <p className="text-red-600 text-sm mt-1">{errors.idNumber}</p>
         )}
-        {formData.logo && (
-          <div className="mt-3">
-            <p className="text-sm text-gray-600 mb-2">Vista previa del logo:</p>
-            <img
-              src={formData.logo}
-              alt="Logo preview"
-              className="h-16 w-16 object-cover rounded"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </div>
+      </div>
+
+      {/* Fecha de Nacimiento */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Fecha de Nacimiento *
+        </label>
+        <input
+          type="date"
+          name="birthDate"
+          value={formData.birthDate}
+          onChange={handleChange}
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.birthDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          }`}
+          required
+        />
+        {errors.birthDate && (
+          <p className="text-red-600 text-sm mt-1">{errors.birthDate}</p>
         )}
       </div>
 
@@ -342,7 +341,7 @@ export default function VendorProfileForm() {
       {/* Dirección */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Dirección Física *
+          Dirección *
         </label>
         <input
           type="text"
@@ -352,7 +351,7 @@ export default function VendorProfileForm() {
           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
             errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
           }`}
-          placeholder="Ej: Carrera 50 #10-20, Centro"
+          placeholder="Ej: Carrera 50 #10-20, Apartamento 5"
           required
         />
         {errors.address && (

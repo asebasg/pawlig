@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import { vendorProfileUpdateSchema } from '@/lib/validations/user.schema';
+import { registerUserSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
 
 /**
- * PUT /api/vendors/profile
- * Actualizar perfil de vendedor
- * Requiere: Usuario autenticado con rol VENDOR
+ * PUT /api/users/profile
+ * Actualizar perfil de usuario adoptante
+ * Requiere: Usuario autenticado
  * Implementa: HU-003 (Actualización de perfil)
  */
 export async function PUT(request: NextRequest) {
@@ -23,14 +23,6 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Verificar rol de vendedor
-    if (session.user.role !== 'VENDOR') {
-      return NextResponse.json(
-        { error: 'Solo vendedores pueden acceder a este recurso' },
-        { status: 403 }
-      );
-    }
-
     // Verificar que la cuenta esté activa (seguridad adicional)
     if (session.user.isActive === false) {
       return NextResponse.json(
@@ -42,29 +34,40 @@ export async function PUT(request: NextRequest) {
     // Parsear datos del request
     const body = await request.json();
 
-    // Validar datos con Zod
-    const validatedData = vendorProfileUpdateSchema.parse(body);
+    // Crear schema de validación para actualización (sin password ni email)
+    const updateUserSchema = registerUserSchema.pick({
+      name: true,
+      phone: true,
+      municipality: true,
+      address: true,
+      idNumber: true,
+      birthDate: true,
+    });
 
-    // Actualizar perfil del vendedor
-    const updatedVendor = await prisma.vendor.update({
-      where: { userId: session.user.id },
+    // Validar datos con Zod (incluye validación de edad 18+)
+    const validatedData = updateUserSchema.parse(body);
+
+    // Actualizar usuario en MongoDB
+    const updatedUser = await prisma.user.update({
+      where: { id: session.user.id },
       data: {
-        businessName: validatedData.businessName,
-        businessPhone: validatedData.businessPhone,
-        description: validatedData.description,
-        logo: validatedData.logo,
+        name: validatedData.name,
+        phone: validatedData.phone,
         municipality: validatedData.municipality,
         address: validatedData.address,
+        idNumber: validatedData.idNumber,
+        birthDate: new Date(validatedData.birthDate),
       },
       select: {
         id: true,
-        businessName: true,
-        businessPhone: true,
-        description: true,
-        logo: true,
+        email: true,
+        name: true,
+        phone: true,
         municipality: true,
         address: true,
-        verified: true,
+        idNumber: true,
+        birthDate: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -73,7 +76,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(
       {
         message: 'Perfil actualizado exitosamente',
-        vendor: updatedVendor,
+        user: updatedUser,
       },
       { status: 200 }
     );
@@ -97,15 +100,15 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Manejo de error: perfil no encontrado
+    // Manejo de error: usuario no encontrado
     if (error instanceof Error && error.message.includes('Record to update not found')) {
       return NextResponse.json(
-        { error: 'Perfil de vendedor no encontrado' },
+        { error: 'Usuario no encontrado' },
         { status: 404 }
       );
     }
 
-    console.error('Error updating vendor profile:', error);
+    console.error('Error updating user profile:', error);
     return NextResponse.json(
       { error: 'Error al actualizar el perfil' },
       { status: 500 }
@@ -114,8 +117,8 @@ export async function PUT(request: NextRequest) {
 }
 
 /**
- * GET /api/vendors/profile
- * Obtener información del perfil del vendedor autenticado
+ * GET /api/users/profile
+ * Obtener información del perfil del usuario autenticado
  */
 export async function GET(request: NextRequest) {
   try {
@@ -129,41 +132,34 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verificar rol de vendedor
-    if (session.user.role !== 'VENDOR') {
-      return NextResponse.json(
-        { error: 'Solo vendedores pueden acceder a este recurso' },
-        { status: 403 }
-      );
-    }
-
-    // Obtener perfil del vendedor
-    const vendor = await prisma.vendor.findUnique({
-      where: { userId: session.user.id },
+    // Obtener perfil del usuario
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
       select: {
         id: true,
-        businessName: true,
-        businessPhone: true,
-        description: true,
-        logo: true,
+        email: true,
+        name: true,
+        phone: true,
         municipality: true,
         address: true,
-        verified: true,
+        idNumber: true,
+        birthDate: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
       },
     });
 
-    if (!vendor) {
+    if (!user) {
       return NextResponse.json(
-        { error: 'Perfil de vendedor no encontrado' },
+        { error: 'Usuario no encontrado' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(vendor);
+    return NextResponse.json(user);
   } catch (error) {
-    console.error('Error fetching vendor profile:', error);
+    console.error('Error fetching user profile:', error);
     return NextResponse.json(
       { error: 'Error al obtener el perfil' },
       { status: 500 }
