@@ -15,9 +15,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (session.user.role !== UserRole.ADOPTER) {
+    if (session.user.role === UserRole.SHELTER) {
       return NextResponse.json(
-        { error: 'Solo los adoptantes pueden solicitar adopciones' },
+        { error: 'Los albergues no pueden solicitar adopciones' },
         { status: 403 }
       );
     }

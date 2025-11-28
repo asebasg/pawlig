@@ -77,8 +77,7 @@ export default function PetCard({
   };
 
   return (
-    <Link href={`/adopciones/${pet.id}`}>
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col">
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
         <div className="relative h-56 bg-gray-200 overflow-hidden group">
           {pet.images && pet.images.length > 0 ? (
             <Image
@@ -146,14 +145,14 @@ export default function PetCard({
             <span className="line-clamp-1">{pet.shelter.name}</span>
           </div>
 
-          <button
-            onClick={(e) => e.preventDefault()}
-            className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition text-sm"
-          >
-            Ver Detalles
-          </button>
+          <Link href={`/adopciones/${pet.id}`}>
+            <button
+              className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition text-sm"
+            >
+              Ver Detalles
+            </button>
+          </Link>
         </div>
       </div>
-    </Link>
   );
 }
