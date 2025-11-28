@@ -121,7 +121,7 @@ export default async function VendorProfilePage() {
  *    2. Página carga con datos actuales del perfil (GET /api/vendors/profile)
  *    3. Usuario edita campos y hace clic en "Guardar Cambios"
  *    4. Formulario valida datos localmente con Zod
- *    5. Si validación OK → envía PATCH /api/vendors/profile
+ *    5. Si validación OK → envía PUT /api/vendors/profile
  *    6. Backend valida nuevamente y actualiza en MongoDB
  *    7. Respuesta con éxito o errores de validación
  *    8. Si éxito → muestra mensaje verde "Perfil actualizado exitosamente"
@@ -129,7 +129,7 @@ export default async function VendorProfilePage() {
  * 
  * 3. CRITERIOS DE ACEPTACIÓN HU-003:
  *    ✓ Criterio 1: "Cuando edito y guardo → sistema guarda y aplica inmediatamente"
- *      - Implementado: PATCH endpoint actualiza MongoDB inmediatamente
+ *      - Implementado: PUT endpoint actualiza MongoDB inmediatamente
  *      - Frontend: No necesita reload, datos persisten en formData
  *      - Visible: Mensaje de éxito confirma guardado
  *    

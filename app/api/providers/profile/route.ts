@@ -6,10 +6,14 @@ import { vendorProfileUpdateSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
 
 /**
+ * @deprecated Esta ruta está deprecada. Usa /api/vendors/profile en su lugar.
  * PUT /api/providers/profile
  * Actualizar perfil de proveedor (vendor)
  * Requiere: Usuario autenticado con rol VENDOR
  * Implementa: HU-003 (Actualización de perfil)
+ * 
+ * NOTA: Esta ruta se mantiene por compatibilidad hacia atrás.
+ * Se recomienda migrar a /api/vendors/profile
  */
 export async function PUT(request: NextRequest) {
   try {
@@ -26,7 +30,15 @@ export async function PUT(request: NextRequest) {
     // Verificar rol de proveedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
-        { error: 'Solo proveedores pueden acceder a este recurso' },
+        { error: 'Solo vendedores pueden acceder a este recurso' },
+        { status: 403 }
+      );
+    }
+
+    // Verificar que la cuenta esté activa (seguridad adicional)
+    if (session.user.isActive === false) {
+      return NextResponse.json(
+        { error: 'Cuenta bloqueada. No puedes actualizar tu perfil.' },
         { status: 403 }
       );
     }
@@ -92,7 +104,7 @@ export async function PUT(request: NextRequest) {
     // Manejo de error: perfil no encontrado
     if (error instanceof Error && error.message.includes('Record to update not found')) {
       return NextResponse.json(
-        { error: 'Perfil de proveedor no encontrado' },
+        { error: 'Perfil de vendedor no encontrado' },
         { status: 404 }
       );
     }
@@ -106,6 +118,7 @@ export async function PUT(request: NextRequest) {
 }
 
 /**
+ * @deprecated Esta ruta está deprecada. Usa /api/vendors/profile en su lugar.
  * GET /api/providers/profile
  * Obtener información del perfil del proveedor autenticado
  */
@@ -124,7 +137,7 @@ export async function GET(request: NextRequest) {
     // Verificar rol de proveedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
-        { error: 'Solo proveedores pueden acceder a este recurso' },
+        { error: 'Solo vendedores pueden acceder a este recurso' },
         { status: 403 }
       );
     }
@@ -148,7 +161,7 @@ export async function GET(request: NextRequest) {
 
     if (!vendor) {
       return NextResponse.json(
-        { error: 'Perfil de proveedor no encontrado' },
+        { error: 'Perfil de vendedor no encontrado' },
         { status: 404 }
       );
     }

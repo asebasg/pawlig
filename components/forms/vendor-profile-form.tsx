@@ -47,7 +47,7 @@ export default function VendorProfileForm() {
   useEffect(() => {
     const fetchVendorProfile = async () => {
       try {
-        const response = await axios.get<VendorProfile>('/api/providers/profile');
+        const response = await axios.get<VendorProfile>('/api/vendors/profile');
         setFormData({
           businessName: response.data.businessName,
           businessPhone: response.data.businessPhone,
@@ -58,7 +58,11 @@ export default function VendorProfileForm() {
         });
       } catch (error) {
         console.error('Error fetching vendor profile:', error);
-        setServerError('Error al cargar el perfil. Intenta de nuevo.');
+        if (axios.isAxiosError(error) && error.response?.status === 403) {
+          setServerError('Tu cuenta está bloqueada. Contacta al administrador.');
+        } else {
+          setServerError('Error al cargar el perfil. Intenta de nuevo.');
+        }
       } finally {
         setIsFetching(false);
       }
@@ -106,8 +110,8 @@ export default function VendorProfileForm() {
       const validatedData = vendorProfileUpdateSchema.parse(formData);
 
       // 2. Enviar petición al API
-      const response = await axios.patch<{ message: string; vendor: VendorProfile }>(
-        '/api/providers/profile',
+      const response = await axios.put<{ message: string; vendor: VendorProfile }>(
+        '/api/vendors/profile',
         validatedData
       );
 
@@ -118,7 +122,10 @@ export default function VendorProfileForm() {
       if (axios.isAxiosError(error) && error.response?.data) {
         const apiError = error.response.data as ApiErrorResponse;
         
-        if (apiError.details) {
+        // Cuenta bloqueada
+        if (error.response.status === 403) {
+          setServerError('Tu cuenta está bloqueada. No puedes actualizar tu perfil. Contacta al administrador.');
+        } else if (apiError.details) {
           // Errores de validación del backend
           setErrors(apiError.details);
         } else {
