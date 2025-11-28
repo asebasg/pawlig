@@ -16,143 +16,25 @@ export default async function AdopcionesPage() {
   const session = await getServerSession(authOptions);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <a href="/" className="text-2xl font-bold text-purple-600 hover:text-purple-700">
-              PawLig
-            </a>
-            <nav className="flex items-center gap-4">
-              <a
-                href="/adopciones"
-                className="text-sm text-gray-700 hover:text-purple-600 font-medium"
-              >
-                Adopciones
-              </a>
-              <a
-                href="/productos"
-                className="text-sm text-gray-700 hover:text-purple-600 font-medium"
-              >
-                Productos
-              </a>
-              <a
-                href="/albergues"
-                className="text-sm text-gray-700 hover:text-purple-600 font-medium"
-              >
-                Albergues
-              </a>
-              {session?.user ? (
-                <>
-                  <span className="text-sm text-gray-600">
-                    Hola, <span className="font-semibold">{session.user.name}</span>
-                  </span>
-                  <a
-                    href="/api/auth/signout"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Cerrar sesión
-                  </a>
-                </>
-              ) : (
-                <>
-                  <a
-                    href="/login"
-                    className="text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Iniciar sesión
-                  </a>
-                  <a
-                    href="/register"
-                    className="text-sm bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-                  >
-                    Registrarse
-                  </a>
-                </>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Encuentra tu compañero perfecto
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Miles de mascotas en el Valle de Aburrá esperan por un hogar lleno de amor
+        </p>
+      </div>
 
-      {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Encuentra tu compañero perfecto
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Miles de mascotas en el Valle de Aburrá esperan por un hogar lleno de amor
-          </p>
-        </div>
-
-        {/* Galería con filtros y mascotas */}
-        <PetGalleryClient 
-          userSession={session ? {
-            id: session.user.id,
-            name: session.user.name,
-            email: session.user.email,
-            role: session.user.role,
-          } : null}
-        />
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="font-bold text-gray-900 mb-4">PawLig</h3>
-              <p className="text-sm text-gray-600">
-                Promoviendo la adopción responsable en el Valle de Aburrá
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Enlaces</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="/adopciones" className="text-sm text-gray-600 hover:text-purple-600">
-                    Adopciones
-                  </a>
-                </li>
-                <li>
-                  <a href="/productos" className="text-sm text-gray-600 hover:text-purple-600">
-                    Productos
-                  </a>
-                </li>
-                <li>
-                  <a href="/albergues" className="text-sm text-gray-600 hover:text-purple-600">
-                    Albergues
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="/terminos" className="text-sm text-gray-600 hover:text-purple-600">
-                    Términos de servicio
-                  </a>
-                </li>
-                <li>
-                  <a href="/privacidad" className="text-sm text-gray-600 hover:text-purple-600">
-                    Política de privacidad
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 pt-8">
-            <p className="text-center text-gray-500 text-sm">
-              &copy; 2025 PawLig - Todos los derechos reservados
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <PetGalleryClient 
+        userSession={session ? {
+          id: session.user.id,
+          name: session.user.name,
+          email: session.user.email,
+          role: session.user.role,
+        } : null}
+      />
+    </main>
   );
 }
 
