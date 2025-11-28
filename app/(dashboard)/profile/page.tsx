@@ -20,7 +20,7 @@ export const metadata: Metadata = {
  * 1. Edita información y la guarda → sistema guarda cambios y aplica inmediatamente
  * 2. Campo obligatorio vacío → sistema notifica qué campo debe ser completado
  * 
- * Ruta: /dashboard/profile (para cualquier usuario autenticado)
+ * Ruta: /profile (para cualquier usuario autenticado)
  */
 export default async function UserProfilePage() {
   // Obtener sesión del usuario
@@ -28,7 +28,7 @@ export default async function UserProfilePage() {
 
   // Verificar autenticación
   if (!session?.user) {
-    redirect('/login?callbackUrl=/dashboard/profile');
+    redirect('/login?callbackUrl=/profile');
   }
 
   return (
@@ -57,8 +57,8 @@ export default async function UserProfilePage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumb */}
         <div className="mb-8">
-          <a href="/dashboard" className="text-purple-600 hover:text-purple-700 text-sm font-semibold">
-            ← Volver al Dashboard
+          <a href="/" className="text-purple-600 hover:text-purple-700 text-sm font-semibold">
+            ← Volver al Inicio
           </a>
         </div>
 
@@ -111,7 +111,7 @@ export default async function UserProfilePage() {
  *    - Redirige a login si no está autenticado
  * 
  * 2. FLUJO DE EDICIÓN (HU-003):
- *    1. Usuario accede a /dashboard/profile
+ *    1. Usuario accede a /profile
  *    2. Página carga con datos actuales del usuario (GET /api/users/profile)
  *    3. Usuario edita campos y hace clic en "Guardar Cambios"
  *    4. Formulario valida datos localmente con Zod

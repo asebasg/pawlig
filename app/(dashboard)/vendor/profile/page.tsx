@@ -20,7 +20,7 @@ export const metadata: Metadata = {
  * 1. Edita información y la guarda → sistema guarda cambios y aplica inmediatamente
  * 2. Campo obligatorio vacío → sistema notifica qué campo debe ser completado
  * 
- * Ruta: /dashboard/vendor/profile (solo VENDOR)
+ * Ruta: /vendor/profile (solo VENDOR)
  */
 export default async function VendorProfilePage() {
   // Obtener sesión del usuario
@@ -28,7 +28,7 @@ export default async function VendorProfilePage() {
 
   // Verificar autenticación
   if (!session?.user) {
-    redirect('/login?callbackUrl=/dashboard/vendor/profile');
+    redirect('/login?callbackUrl=/vendor/profile');
   }
 
   // Verificar rol de vendedor
@@ -62,8 +62,8 @@ export default async function VendorProfilePage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumb */}
         <div className="mb-8">
-          <a href="/dashboard" className="text-purple-600 hover:text-purple-700 text-sm font-semibold">
-            ← Volver al Dashboard
+          <a href="/" className="text-purple-600 hover:text-purple-700 text-sm font-semibold">
+            ← Volver al Inicio
           </a>
         </div>
 
@@ -117,7 +117,7 @@ export default async function VendorProfilePage() {
  *    - Redirige a /unauthorized si no tiene rol VENDOR
  * 
  * 2. FLUJO DE EDICIÓN (HU-003):
- *    1. Usuario VENDOR accede a /dashboard/vendor/profile
+ *    1. Usuario VENDOR accede a /vendor/profile
  *    2. Página carga con datos actuales del perfil (GET /api/vendors/profile)
  *    3. Usuario edita campos y hace clic en "Guardar Cambios"
  *    4. Formulario valida datos localmente con Zod

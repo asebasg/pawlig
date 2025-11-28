@@ -31,21 +31,22 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Verificar que la cuenta esté activa (seguridad adicional)
-    if (session.user.isActive === false) {
+    // Validar cuenta activa
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { isActive: true },
+    });
+
+    if (!user?.isActive) {
       return NextResponse.json(
-        { error: 'Cuenta bloqueada. No puedes actualizar tu perfil.' },
+        { error: 'Cuenta bloqueada. Contacta al administrador' },
         { status: 403 }
       );
     }
 
-    // Parsear datos del request
     const body = await request.json();
-
-    // Validar datos con Zod
     const validatedData = vendorProfileUpdateSchema.parse(body);
 
-    // Actualizar perfil del vendedor
     const updatedVendor = await prisma.vendor.update({
       where: { userId: session.user.id },
       data: {
@@ -97,10 +98,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Manejo de error: perfil no encontrado
     if (error instanceof Error && error.message.includes('Record to update not found')) {
       return NextResponse.json(
-        { error: 'Perfil de vendedor no encontrado' },
+        { error: 'Perfil de vendor no encontrado' },
         { status: 404 }
       );
     }
@@ -115,13 +115,12 @@ export async function PUT(request: NextRequest) {
 
 /**
  * GET /api/vendors/profile
- * Obtener información del perfil del vendedor autenticado
+ * Obtener información del perfil del vendor autenticado
  */
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    // Verificar autenticación
     if (!session?.user) {
       return NextResponse.json(
         { error: 'No autenticado' },
@@ -129,15 +128,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Verificar rol de vendedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
-        { error: 'Solo vendedores pueden acceder a este recurso' },
+        { error: 'Solo vendors pueden acceder a este recurso' },
         { status: 403 }
       );
     }
 
-    // Obtener perfil del vendedor
     const vendor = await prisma.vendor.findUnique({
       where: { userId: session.user.id },
       select: {
@@ -156,7 +153,7 @@ export async function GET(request: NextRequest) {
 
     if (!vendor) {
       return NextResponse.json(
-        { error: 'Perfil de vendedor no encontrado' },
+        { error: 'Perfil de vendor no encontrado' },
         { status: 404 }
       );
     }
