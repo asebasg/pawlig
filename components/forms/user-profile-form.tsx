@@ -60,7 +60,11 @@ export default function UserProfileForm() {
         });
       } catch (error) {
         console.error('Error fetching user profile:', error);
-        setServerError('Error al cargar el perfil. Intenta de nuevo.');
+        if (axios.isAxiosError(error) && error.response?.status === 403) {
+          setServerError('Tu cuenta está bloqueada. Contacta al administrador.');
+        } else {
+          setServerError('Error al cargar el perfil. Intenta de nuevo.');
+        }
       } finally {
         setIsFetching(false);
       }
@@ -130,7 +134,10 @@ export default function UserProfileForm() {
       if (axios.isAxiosError(error) && error.response?.data) {
         const apiError = error.response.data as ApiErrorResponse;
         
-        if (apiError.details) {
+        // Cuenta bloqueada
+        if (error.response.status === 403) {
+          setServerError('Tu cuenta está bloqueada. No puedes actualizar tu perfil. Contacta al administrador.');
+        } else if (apiError.details) {
           // Errores de validación del backend
           setErrors(apiError.details);
         } else {

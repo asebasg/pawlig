@@ -1,199 +1,158 @@
+/**
+ *  Esquemas de validación para mascotas
+ * 
+ * PROPÓSITO:
+ * - Validar datos de entrada en cliente y servidor
+ * - Garantizar cumplimiento de RN-007 (mínimo 1 foto)
+ * - Validar campos obligatorios según RF-009
+ * 
+ * TRAZABILIDAD:
+ * - HU-005: Publicación y gestión de mascota
+ * - RF-009: Registro de animales para adopción
+ * - RN-007: Mínimo una foto por mascota
+ */
+
 import { z } from 'zod';
-import { PetStatus, Municipality } from '@prisma/client';
+import { PetStatus } from '@prisma/client';
 
 /**
- * Schema de validación para CRUD de mascotas (TAREA-014)
+ *  Enums de especies permitidas
+ * Extensible para otras en el futuro
+ */
+
+export const PetSpecies = {
+    DOG: "Perro",
+    CAT: "Gato",
+    OTHER: "Otro"
+}
+
+/**
+ *  Enum de sexos permitidos
+ */
+
+export const PetSex = {
+    MALE: "Macho",
+    FEMALE: "Hembra"
+}
+
+/**
+ *  Schema para crear una nueva mascota
  * 
- * VALIDACIÓN DE 3 CAPAS:
- * 1. Cliente (formulario): Validación inmediata
- * 2. API (endpoints): Validación con Zod antes de BD
- * 3. Prisma: Validación de tipos en base de datos
+ * VALIDACIONES:
+ * - Nombre: 2-50 caracteres
+ * - Especie: Valores predefinidos
+ * - Edad: 0-30 años (opcional)
+ * - Descripción: 20-1000 caracteres
+ * - Imágenes: Array no vacío (RN-007)
+ * - shelterId: ObjectId válido (propiedad del albergue)
  */
 
-// ========== ESQUEMA DE CREACIÓN DE MASCOTA ==========
-/**
- * RFC-001: Crear mascota
- * - Requerido: name, species, description
- * - Opcional: breed, age, sex, requirements
- * - Solo SHELTER puede crear
- */
 export const createPetSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Nombre debe tener al menos 2 caracteres')
-    .max(100, 'Nombre no puede exceder 100 caracteres'),
-
-  species: z
-    .string()
-    .min(2, 'Especie debe tener al menos 2 caracteres')
-    .max(50, 'Especie no puede exceder 50 caracteres'),
-
-  breed: z
-    .string()
-    .min(1, 'Raza no puede estar vacía')
-    .max(100, 'Raza no puede exceder 100 caracteres')
-    .optional()
-    .nullable(),
-
-  age: z
-    .number()
-    .int('Edad debe ser un número entero')
-    .min(0, 'Edad no puede ser negativa')
-    .max(50, 'Edad máxima permitida: 50 años')
-    .optional()
-    .nullable(),
-
-  sex: z
-    .enum(['MALE', 'FEMALE', 'UNKNOWN'], {
-      message: 'Sexo debe ser MALE, FEMALE o UNKNOWN',
-    })
-    .optional()
-    .nullable(),
-
-  description: z
-    .string()
-    .min(10, 'Descripción debe tener al menos 10 caracteres')
-    .max(1000, 'Descripción no puede exceder 1000 caracteres'),
-
-  requirements: z
-    .string()
-    .min(5, 'Requisitos debe tener al menos 5 caracteres')
-    .max(500, 'Requisitos no puede exceder 500 caracteres')
-    .optional()
-    .nullable(),
-
-  // Array de URLs de imágenes (Cloudinary)
-  images: z
-    .array(
-      z
+    // Datos básicos obligatorios
+    name: z
         .string()
-        .url('Cada imagen debe ser una URL válida')
-    )
-    .min(1, 'Se requiere al menos una imagen')
-    .max(10, 'Máximo 10 imágenes por mascota')
-    .optional()
-    .default([]),
+        .min(2, "El nombre debe tener al menos 2 caracteres")
+        .max(50, "El nombre no puede exceder los 50 caracteres")
+        .trim(),
+
+    species: z.enum(
+        [PetSpecies.DOG, PetSpecies.CAT, PetSpecies.OTHER],
+        {
+            error: () => ({ message: "Selecciona una especie válida" }),
+        }
+    ),
+
+    breed: z
+        .string()
+        .min(2, "La raza debe tener al menos 2 caracteres")
+        .max(30, "La raza no puede exceder los 30 caracteres.")
+        .optional()
+        .nullable(),
+
+    age: z
+        .number()
+        .int()
+        .min(0, "La edad no puede ser negativa")
+        .max(30, "La edad no puede superar los 30 años")
+        .optional()
+        .nullable(),
+
+    sex: z.enum(
+        [PetSex.MALE, PetSex.FEMALE],
+        {
+            error: () => ({ message: "Selecciona un sexo válido" })
+        }
+    ),
+
+    // Descripción detallada (obligatoria)
+    description: z
+        .string()
+        .min(10, "La descripción no puede tener menos de 10 caracteres")
+        .max(500, "La descripción no puede superar los 500 caracteres")
+        .trim(),
+
+    // Requisitos de adopción
+    requirements: z
+        .string()
+        .min(10, "Los requisitos para adoptar no pueden tener menos de 10 caracteres")
+        .max(500, "Los requisitos para adoptar no pueden superar los 500 caracteres")
+        .trim(),
+
+    // Imágenes (RN-007: Mínimo 1 por mascota)
+    images: z
+        .array(z.string().url("Cada imagen debe ser una URL válida"))
+        .min(1, "Debes subir al menos una foto de la mascota (RN-007)")
+        .max(5, "Máximo 5 fotos permitidas"),
+
+    // Relación con el albergue
+    shelterId: z
+        .string()
+        .regex(/^[0-9a-fA-F]{24}$/, "ID de albergue inválido"),
 });
 
-export type PetCreateInput = z.infer<typeof createPetSchema>;
-export type CreatePetInput = PetCreateInput; // Alias para compatibilidad
-
-// ========== ESQUEMA DE ACTUALIZACIÓN DE MASCOTA ==========
 /**
- * RFC-002: Actualizar mascota
- * - Todos los campos son opcionales (PATCH)
- * - Solo propietario del albergue puede editar
+ *  Schema para actualizar una mascota existente
+ * 
+ * DIFERENCIAS con createPetSchema:
+ * - Todos los campos son opcionales (partial)
+ * - No requiere shelterId (no se puede cambiar)
+ * - Permite validar actualizaciones parciales
  */
-export const updatePetSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Nombre debe tener al menos 2 caracteres')
-    .max(100, 'Nombre no puede exceder 100 caracteres')
-    .optional(),
 
-  species: z
-    .string()
-    .min(2, 'Especie debe tener al menos 2 caracteres')
-    .max(50, 'Especie no puede exceder 50 caracteres')
-    .optional(),
+export const updatePetSchema = createPetSchema
+    .omit({ shelterId: true })
+    .partial();
 
-  breed: z
-    .string()
-    .min(1, 'Raza no puede estar vacía')
-    .max(100, 'Raza no puede exceder 100 caracteres')
-    .optional()
-    .nullable(),
-
-  age: z
-    .number()
-    .int('Edad debe ser un número entero')
-    .min(0, 'Edad no puede ser negativa')
-    .max(50, 'Edad máxima permitida: 50 años')
-    .optional()
-    .nullable(),
-
-  sex: z
-    .enum(['MALE', 'FEMALE', 'UNKNOWN'], {
-      message: 'Sexo debe ser MALE, FEMALE o UNKNOWN',
-    })
-    .optional()
-    .nullable(),
-
-  description: z
-    .string()
-    .min(10, 'Descripción debe tener al menos 10 caracteres')
-    .max(1000, 'Descripción no puede exceder 1000 caracteres')
-    .optional(),
-
-  requirements: z
-    .string()
-    .min(5, 'Requisitos debe tener al menos 5 caracteres')
-    .max(500, 'Requisitos no puede exceder 500 caracteres')
-    .optional()
-    .nullable(),
-
-  // Array de URLs de imágenes (Cloudinary)
-  images: z
-    .array(
-      z
-        .string()
-        .url('Cada imagen debe ser una URL válida')
-    )
-    .min(1, 'Se requiere al menos una imagen')
-    .max(10, 'Máximo 10 imágenes por mascota')
-    .optional(),
-});
-
-export type PetUpdateInput = z.infer<typeof updatePetSchema>;
-export type UpdatePetInput = PetUpdateInput; // Alias para compatibilidad
-
-// ========== ESQUEMA DE CAMBIO DE ESTADO ==========
 /**
- * RFC-003: Cambiar estado de mascota
- * - Estados permitidos: AVAILABLE, IN_PROCESS, ADOPTED
- * - Solo propietario del albergue puede cambiar
- */
+*  Schema para cambiar el estado de una mascota
+* 
+* USO:
+* - Criterio de aceptación: cambio de estado retira de búsqueda
+* - Estados válidos: AVAILABLE, IN_PROCESS, ADOPTED
+*/
+
 export const updatePetStatusSchema = z.object({
-  status: z
-    .nativeEnum(PetStatus, {
-      message: 'Estado inválido. Debe ser AVAILABLE, IN_PROCESS o ADOPTED',
+    status: z.nativeEnum(PetStatus, {
+        error: () => ({
+            message: "Estado inválido. Usa: AVAILABLE, IN_PROCESS o ADOPTED"
+        }),
     }),
-
-  // Opcional: razón del cambio de estado
-  changeReason: z
-    .string()
-    .min(5, 'Razón debe tener al menos 5 caracteres')
-    .max(300, 'Razón no puede exceder 300 caracteres')
-    .optional()
-    .nullable(),
 });
 
-export type PetStatusChangeInput = z.infer<typeof updatePetStatusSchema>;
-export type UpdatePetStatusInput = PetStatusChangeInput; // Alias para compatibilidad
-
 /**
- * 📚 NOTAS:
- * 
- * 1. VALIDACIÓN:
- *    - Zod en cliente y servidor
- *    - Prisma validación de tipos
- * 
- * 2. CAMPOS OPCIONALES:
- *    - breed, age, sex: Información adicional de la mascota
- *    - requirements: Requisitos especiales de adopción
- * 
- * 3. IMÁGENES:
- *    - URLs de Cloudinary
- *    - Mínimo 1, máximo 10
- *    - Validación de URL
- * 
- * 4. ROLES:
- *    - SHELTER: Crear, actualizar, cambiar estado
- *    - ADOPTER: Solo lectura
- *    - ADMIN: Control total
- * 
- * 5. ESTADOS:
- *    - AVAILABLE: Disponible para adopción
- *    - IN_PROCESS: En proceso de adopción
- *    - ADOPTED: Ya adoptada
+ *  Schema para búsqueda de mascotas del albergue
+ * (Reutilizable desde HU-006 con filtro por shelterId)
  */
+
+export const shelterPetsFilterSchema = z.object({
+    status: z.nativeEnum(PetStatus).optional(),
+    page: z.number().int().positive().default(1),
+    limit: z.number().int().min(1).max(50).default(20),
+})
+
+//  ====== TIPOS TYPESCRIPT INFERIDOS ======
+
+export type CreatePetInput = z.infer<typeof createPetSchema>;
+export type UpdatePetInput = z.infer<typeof updatePetSchema>;
+export type UpdatePetStatusInput = z.infer<typeof updatePetStatusSchema>;
+export type ShelterPetsFilter = z.infer<typeof shelterPetsFilterSchema>;

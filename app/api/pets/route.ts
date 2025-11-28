@@ -1,176 +1,319 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/auth-options';
-import { prisma } from '@/lib/utils/db';
-import { createPetSchema } from '@/lib/validations/pet.schema';
-import { ZodError } from 'zod';
+/**
+ *  API Route: /api/pets
+ * 
+ * PROPÓSITO:
+ * - CRUD completo de mascotas
+ * - Solo accesible para albergues verificados
+ * - Validación de propiedad (shelterId)
+ * 
+ * MÉTODOS:
+ * - POST: Crear nueva mascota (HU-005)
+ * - GET: Listar mascotas del albergue autenticado
+ * 
+ * TRAZABILIDAD:
+ * - HU-005: Publicación de mascota
+ * - RF-009: Registro de animales
+ * - CU-004: Publicar mascota en adopción
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth-options";
+import { prisma } from "@/lib/utils/db";
+import { UserRole, PetStatus } from "@prisma/client";
+import { createPetSchema, shelterPetsFilterSchema } from "@/lib/validations/pet.schema";
+import { ZodError } from "zod";
+import { Prisma } from "@prisma/client";
 
 /**
- * Endpoint para crear mascotas
- * Implementa HU-005, TAREA-014
+ *  POST /api/pets
+ *  Crear una nueva mascota
  * 
- * POST /api/pets
- * - Crear mascota (solo SHELTER)
- * - Integracion con Cloudinary para fotos
- * - Validación de datos con Zod
+ * FLUJO:
+ * 1. Verificar autenticación y rol SHELTER
+ * 2. Validar que el albergue esté verificado
+ * 3. Validar datos con Zod schema
+ * 4. Verificar propiedad del shelterId
+ * 5. Crear mascota con estado AVAILABLE
+ * 6. Retornar mascota creada
+ * 
+ * CRITERIO DE ACEPTACIÓN:
+ * "Dado que ingreso todos los datos obligatorios y al menos una foto,
+ *  cuando guardo la publicación, entonces la mascota queda visible 
+ *  inmediatamente con estado 'Disponible'"
  */
 
 export async function POST(request: NextRequest) {
-  try {
-    // 1. Verificar autenticación
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json(
-        {
-          error: 'No autenticado',
-          code: 'UNAUTHORIZED',
-          message: 'Debes iniciar sesión para crear una mascota',
-        },
-        { status: 401 }
-      );
+    try {
+        //  1. Autenticación y autorización
+        // Verifica que el rol sí sea SHELTER
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user) {
+            return NextResponse.json(
+                { error: "No autenticado" },
+                { status: 401 }
+            );
+        }
+
+        //  Solo albergues pueden crear mascotas
+        if (session.user.role !== UserRole.SHELTER) {
+            return NextResponse.json(
+                { error: "Sólo los albergues pueden crear mascotas" },
+                { status: 403 }
+            );
+        }
+
+        //  2. Verificar que el albergue este verificado (HU-002)
+        const shelter = await prisma.shelter.findUnique({
+            where: { userId: session.user.id },
+            select: { id: true, verified: true, name: true, nit: true }
+        });
+
+        if (!shelter) {
+            return NextResponse.json(
+                { error: "No se encontró tu perfil de albergue" },
+                { status: 404 }
+            );
+        }
+
+        if (!shelter.verified) {
+            return NextResponse.json(
+                { error: "Tu albergue debe estar verificado para publicar mascotas" },
+                { status: 403 }
+            );
+        }
+
+        //  3. Validación de datos
+        const body = await request.json();
+
+        const validation = createPetSchema.safeParse(body);
+
+        if (!validation.success) {
+            return NextResponse.json(
+                {
+                    error: "Datos inválidos",
+                    details: validation.error.flatten().fieldErrors,
+                },
+                { status: 400 }
+            );
+        }
+
+        const data = validation.data;
+
+        //  4. Verificar propiedad del albergue
+        if (data.shelterId !== shelter.id) {
+            return NextResponse.json(
+                { error: "No puedes publicar mascotas en nombre de otro albergue" },
+                { status: 403 }
+            );
+        }
+
+        //  5. Crear mascota
+        const pet = await prisma.pet.create({
+            data: {
+                name: data.name,
+                species: data.species,
+                breed: data.breed,
+                age: data.age,
+                sex: data.sex,
+                description: data.description,
+                requirements: data.requirements,
+                images: data.images, // URLs de Cloudinary
+                status: PetStatus.AVAILABLE, // Estado inicial de la mascota
+                shelterId: data.shelterId,
+            },
+            include: {
+                shelter: {
+                    select: {
+                        name: true,
+                        municipality: true,
+                    },
+                },
+            },
+        });
+
+        //  6. Retornar éxito
+        return NextResponse.json(
+            {
+                message: "Mascota publicada exitosamente",
+                pet,
+            },
+            { status: 201 }
+        );
+    } catch (error) {
+        console.error("[POST /api/pets] - Se ha detectado un error: ", error);
+        
+        // Manejo específico de errores Zod
+        if (error instanceof ZodError) {
+            const fieldErrors: Record<string, string> = {};
+            error.issues.forEach((issue) => {
+                const field = issue.path[0];
+                if (typeof field === 'string') {
+                    fieldErrors[field] = issue.message;
+                }
+            });
+            return NextResponse.json({
+                error: 'Errores de validación',
+                details: fieldErrors,
+            }, { status: 400 });
+        }
+
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+                return NextResponse.json(
+                    { error: "Ya existe una mascota con estos datos" },
+                    { status: 409 }
+                );
+            }
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Albergue no encontrado" },
+                    { status: 404 }
+                );
+            }
+        }
+
+        // Error genérico
+        return NextResponse.json(
+            { error: "Se ha producido un error al crear la mascota" },
+            { status: 500 }
+        );
     }
-
-    // 2. Verificar rol (solo SHELTER puede crear mascotas)
-    if (session.user.role !== 'SHELTER') {
-      return NextResponse.json(
-        {
-          error: 'Acceso denegado',
-          code: 'FORBIDDEN',
-          message: 'Solo usuarios con rol SHELTER pueden crear mascotas',
-          userRole: session.user.role,
-        },
-        { status: 403 }
-      );
-    }
-
-    // 3. Verificar que el usuario tiene un albergue
-    const shelter = await prisma.shelter.findFirst({
-      where: { userId: session.user.id },
-      select: { id: true, verified: true },
-    });
-
-    if (!shelter) {
-      return NextResponse.json(
-        {
-          error: 'Sin albergue',
-          code: 'SHELTER_NOT_FOUND',
-          message: 'Debes tener un albergue registrado para crear mascotas',
-        },
-        { status: 404 }
-      );
-    }
-
-    // 4. Parsear y validar datos
-    const body = await request.json();
-    const validatedData = createPetSchema.parse(body);
-
-    // 5. Crear mascota
-    const newPet = await prisma.pet.create({
-      data: {
-        name: validatedData.name,
-        species: validatedData.species,
-        breed: validatedData.breed || null,
-        age: validatedData.age || null,
-        sex: validatedData.sex || null,
-        description: validatedData.description,
-        requirements: validatedData.requirements || null,
-        images: validatedData.images || [],
-        status: 'AVAILABLE', // Estado por defecto
-        shelterId: shelter.id,
-      },
-      include: {
-        shelter: {
-          select: {
-            id: true,
-            name: true,
-            municipality: true,
-            contactWhatsApp: true,
-            contactInstagram: true,
-          },
-        },
-      },
-    });
-
-    // 6. Retornar respuesta exitosa
-    return NextResponse.json(
-      {
-        message: 'Mascota creada exitosamente',
-        code: 'PET_CREATED',
-        data: newPet,
-      },
-      { status: 201 }
-    );
-  } catch (error) {
-    // Manejo de errores de validación Zod
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          error: 'Datos inválidos',
-          code: 'VALIDATION_ERROR',
-          details: error.issues.map((issue) => ({
-            field: issue.path.join('.'),
-            message: issue.message,
-          })),
-        },
-        { status: 400 }
-      );
-    }
-
-    // Error de Prisma
-    if (error instanceof Error && error.message.includes('Prisma')) {
-      console.error('Error de Prisma al crear mascota:', error);
-      return NextResponse.json(
-        {
-          error: 'Error al crear mascota',
-          code: 'DATABASE_ERROR',
-        },
-        { status: 500 }
-      );
-    }
-
-    // Error genérico del servidor
-    console.error('Error al crear mascota:', error);
-    return NextResponse.json(
-      {
-        error: 'Error interno del servidor',
-        code: 'INTERNAL_ERROR',
-      },
-      { status: 500 }
-    );
-  }
 }
 
 /**
- * 📚 NOTAS TÉCNICAS:
+ *  GET /api/pets
+ *  Listar mascotas del albergue autenticado
  * 
- * 1. AUTENTICACIÓN Y AUTORIZACIÓN:
- *    - Solo SHELTER puede crear mascotas
- *    - Usuario debe estar registrado con rol SHELTER
- *    - Se verifica que existe albergue asociado
+ * FLUJO:
+ * 1. Verificar autenticación y rol SHELTER
+ * 2. Obtener shelterId del usuario
+ * 3. Aplicar filtros opcionales (status, paginación)
+ * 4. Retornar lista paginada de mascotas
  * 
- * 2. VALIDACIÓN:
- *    - Zod en cliente y servidor
- *    - Campos requeridos: name, species, description
- *    - Campos opcionales: breed, age, sex, requirements, images
- * 
- * 3. IMÁGENES:
- *    - URLs de Cloudinary (subidas desde frontend)
- *    - Array de strings (URLs completas)
- *    - Mínimo 1, máximo 10 imágenes
- * 
- * 4. ESTADO INICIAL:
- *    - Las mascotas inician en estado AVAILABLE
- *    - Pueden cambiar a IN_PROCESS o ADOPTED luego
- * 
- * 5. RELACIONES:
- *    - Cada mascota pertenece a un shelter
- *    - Se incluyen datos del shelter en la respuesta
- * 
- * 6. RESPUESTA:
- *    - 201 Created: Mascota creada exitosamente
- *    - 400 Bad Request: Datos inválidos (Zod)
- *    - 401 Unauthorized: No autenticado
- *    - 403 Forbidden: No es SHELTER
- *    - 404 Not Found: Sin albergue registrado
- *    - 500 Internal Server Error: Error de BD
+ * QUERY PARAMS:
+ * - status?: AVAILABLE | IN_PROCESS | ADOPTED
+ * - page?: number (default: 1)
+ * - limit?: number (default: 20, max: 50)
  */
+
+export async function GET(request: NextRequest) {
+    try {
+        //  1. Verificar autenticación y rol SHELTER
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user || session.user.role !== UserRole.SHELTER) {
+            return NextResponse.json(
+                { error: "No autorizado" },
+                { status: 403 }
+            );
+        }
+
+        //  2. Obtener la ID del albergue
+        const shelter = await prisma.shelter.findUnique({
+            where: { userId: session.user.id },
+            select: { id: true }
+        });
+
+        if (!shelter) {
+            return NextResponse.json(
+                { error: "No se encontró tu perfil de albergue" },
+                { status: 404 }
+            );
+        }
+
+        //  3. Parsear query params y aplicar filtros
+
+        const { searchParams } = new URL(request.url);
+
+        const filters = shelterPetsFilterSchema.safeParse({
+            status: searchParams.get("status") || undefined,
+            page: parseInt(searchParams.get("page") || "1"),
+            limit: parseInt(searchParams.get("limit") || "20"),
+        });
+
+        if (!filters.success) {
+            return NextResponse.json(
+                { error: "Parámetros inválidos", details: filters.error.flatten() },
+                { status: 400 }
+            );
+        }
+
+        const { status, page, limit } = filters.data;
+
+        //  4. Construir query
+        const where = {
+            shelterId: shelter.id,
+            ...(status && { status }), // Filtro opcional por estado
+        };
+
+        //  5. Contar total para paginación
+        const total = await prisma.pet.count({ where });
+
+        //  6. Obtener mascotas
+        const pets = await prisma.pet.findMany({
+            where,
+            select: {
+                id: true,
+                name: true,
+                species: true,
+                breed: true,
+                age: true,
+                sex: true,
+                status: true,
+                images: true,
+                description: true,
+                createdAt: true,
+            },
+            orderBy: { createdAt: "desc" },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        //  7. Retornar paginado
+        return NextResponse.json({
+            pets,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+            },
+        });
+    } catch (error) {
+        console.error("[GET /api/pets] - Se ha detectado un error: ", error);
+        
+        // Manejo específico de errores Zod
+        if (error instanceof ZodError) {
+            const fieldErrors: Record<string, string> = {};
+            error.issues.forEach((issue) => {
+                const field = issue.path[0];
+                if (typeof field === 'string') {
+                    fieldErrors[field] = issue.message;
+                }
+            });
+            return NextResponse.json({
+                error: 'Parámetros de consulta inválidos',
+                details: fieldErrors,
+            }, { status: 400 });
+        }
+
+        // Manejo específico de errores Prisma
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2025') {
+                return NextResponse.json(
+                    { error: "Albergue no encontrado" },
+                    { status: 404 }
+                );
+            }
+        }
+
+        // Error genérico
+        return NextResponse.json(
+            { error: "Error al obtener mascotas" },
+            { status: 500 }
+        );
+    }
+}

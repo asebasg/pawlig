@@ -23,6 +23,14 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Verificar que la cuenta esté activa (seguridad adicional)
+    if (session.user.isActive === false) {
+      return NextResponse.json(
+        { error: 'Cuenta bloqueada. No puedes actualizar tu perfil.' },
+        { status: 403 }
+      );
+    }
+
     // Parsear datos del request
     const body = await request.json();
 
@@ -36,7 +44,7 @@ export async function PUT(request: NextRequest) {
       birthDate: true,
     });
 
-    // Validar datos con Zod
+    // Validar datos con Zod (incluye validación de edad 18+)
     const validatedData = updateUserSchema.parse(body);
 
     // Actualizar usuario en MongoDB
@@ -89,6 +97,14 @@ export async function PUT(request: NextRequest) {
           details: fieldErrors,
         },
         { status: 400 }
+      );
+    }
+
+    // Manejo de error: usuario no encontrado
+    if (error instanceof Error && error.message.includes('Record to update not found')) {
+      return NextResponse.json(
+        { error: 'Usuario no encontrado' },
+        { status: 404 }
       );
     }
 

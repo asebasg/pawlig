@@ -7,7 +7,7 @@ import { ZodError } from 'zod';
 
 /**
  * PUT /api/vendors/profile
- * Actualizar perfil de vendor
+ * Actualizar perfil de vendedor
  * Requiere: Usuario autenticado con rol VENDOR
  * Implementa: HU-003 (Actualización de perfil)
  */
@@ -15,6 +15,7 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
+    // Verificar autenticación
     if (!session?.user) {
       return NextResponse.json(
         { error: 'No autenticado' },
@@ -22,9 +23,10 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Verificar rol de vendedor
     if (session.user.role !== 'VENDOR') {
       return NextResponse.json(
-        { error: 'Solo vendors pueden acceder a este recurso' },
+        { error: 'Solo vendedores pueden acceder a este recurso' },
         { status: 403 }
       );
     }
@@ -77,6 +79,7 @@ export async function PUT(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    // Manejo de errores de validación Zod
     if (error instanceof ZodError) {
       const fieldErrors: Record<string, string> = {};
       error.issues.forEach((issue: any) => {
