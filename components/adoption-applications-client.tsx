@@ -35,16 +35,16 @@ interface Adoption {
   pet: Pet;
 }
 
-interface AdoptionApplicationsClientProps {}
+interface AdoptionApplicationsClientProps { }
 
-export default function AdoptionApplicationsClient({}: AdoptionApplicationsClientProps) {
+export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClientProps) {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Filtros
   const [statusFilter, setStatusFilter] = useState<string>('');
-  
+
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -205,7 +205,7 @@ export default function AdoptionApplicationsClient({}: AdoptionApplicationsClien
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="text-black px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             <option value="">Todas</option>
             <option value="PENDING">Pendientes</option>
@@ -336,11 +336,10 @@ export default function AdoptionApplicationsClient({}: AdoptionApplicationsClien
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 rounded-lg text-sm ${
-                currentPage === page
+              className={`px-3 py-2 rounded-lg text-sm ${currentPage === page
                   ? 'bg-purple-600 text-white'
                   : 'border border-gray-300 hover:bg-gray-50'
-              }`}
+                }`}
             >
               {page}
             </button>

@@ -10,7 +10,7 @@ import { ChevronLeft } from 'lucide-react';
  * Página del panel de postulaciones para albergues
  * Implementa TAREA-024
  * 
- * Ruta: /dashboard/shelter/adoptions
+ * Ruta: /shelter/adoptions
  * - Solo SHELTER puede acceder
  * - Muestra lista de postulaciones pendientes
  * - Permite aprobar/rechazar
@@ -74,7 +74,7 @@ export default async function ShelterAdoptionsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-4">
             <Link
-              href="/dashboard/shelter"
+              href="/shelter"
               className="p-2 hover:bg-gray-100 rounded-lg transition"
               title="Volver"
             >
@@ -108,9 +108,8 @@ export default async function ShelterAdoptionsPage() {
               <p className="text-sm font-medium text-gray-600">Estado del Albergue</p>
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${
-                    shelter.verified ? 'bg-green-500' : 'bg-yellow-500'
-                  }`}
+                  className={`w-3 h-3 rounded-full ${shelter.verified ? 'bg-green-500' : 'bg-yellow-500'
+                    }`}
                 />
                 <span className="text-sm font-medium text-gray-900">
                   {shelter.verified ? 'Verificado' : 'Pendiente'}
