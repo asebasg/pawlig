@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Heart, MapPin, Calendar, Dna2 } from 'lucide-react';
 import Link from 'next/link';
+import { useToast } from '@/components/ui/toast';
 
 interface Pet {
   id: string;
@@ -58,6 +59,7 @@ export default function PetCard({
 }: PetCardProps) {
   const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
   const [isFav, setIsFav] = useState(isFavorited);
+  const { showToast } = useToast();
 
   // Configuración de badges por estado
   const statusConfig = {
@@ -104,6 +106,10 @@ export default function PetCard({
       const newFavStatus = !isFav;
       setIsFav(newFavStatus);
       onFavoriteChange?.(newFavStatus);
+      showToast(
+        newFavStatus ? 'Agregado a favoritos' : 'Eliminado de favoritos',
+        'success'
+      );
     } catch (error) {
       console.error('Error:', error);
     } finally {

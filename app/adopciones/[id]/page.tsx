@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
 import { notFound } from 'next/navigation';
 import PetDetailClient from '@/components/PetDetailClient';
+import { ToastProvider } from '@/components/ui/toast';
 
 /**
  * Página de Detalle de Mascota
@@ -153,7 +154,8 @@ export default async function PetDetailPage({ params }: PetDetailPageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -255,5 +257,6 @@ export default async function PetDetailPage({ params }: PetDetailPageProps) {
         </div>
       </footer>
     </div>
+    </ToastProvider>
   );
 }

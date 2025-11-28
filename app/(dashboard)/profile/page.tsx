@@ -32,73 +32,40 @@ export default async function UserProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-purple-600">PawLig</h1>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                Hola, <span className="font-semibold">{session.user.name}</span>
-              </span>
-              <a
-                href="/api/auth/signout"
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Cerrar sesión
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Breadcrumb */}
+      <div className="mb-8">
+        <a href="/user" className="text-purple-600 hover:text-purple-700 text-sm font-semibold">
+          ← Volver a Mi Panel
+        </a>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumb */}
-        <div className="mb-8">
-          <a href="/dashboard" className="text-purple-600 hover:text-purple-700 text-sm font-semibold">
-            ← Volver al Dashboard
-          </a>
-        </div>
+      {/* Form Container */}
+      <div className="bg-white rounded-lg shadow-md p-8">
+        <UserProfileForm />
+      </div>
 
-        {/* Form Container */}
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <UserProfileForm />
-        </div>
-
-        {/* Info Section */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-3">
-            📋 Información Importante
-          </h3>
-          <ul className="text-sm text-blue-800 space-y-2">
-            <li>
-              <strong>✓ Cambios inmediatos:</strong> Los cambios se aplicarán inmediatamente en tu cuenta.
-            </li>
-            <li>
-              <strong>✓ Validación:</strong> El sistema valida automáticamente que todos los campos obligatorios estén completos.
-            </li>
-            <li>
-              <strong>✓ Edad mínima:</strong> Debes tener al menos 18 años para usar PawLig.
-            </li>
-            <li>
-              <strong>✓ Información personal:</strong> Tu información se mantiene segura y privada.
-            </li>
-          </ul>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <p className="text-center text-gray-500 text-sm">
-            &copy; 2025 - PawLig <br />
-            Todos los derechos reservados
-          </p>
-        </div>
-      </footer>
-    </div>
+      {/* Info Section */}
+      <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-blue-900 mb-3">
+          📋 Información Importante
+        </h3>
+        <ul className="text-sm text-blue-800 space-y-2">
+          <li>
+            <strong>✓ Cambios inmediatos:</strong> Los cambios se aplicarán inmediatamente en tu cuenta.
+          </li>
+          <li>
+            <strong>✓ Validación:</strong> El sistema valida automáticamente que todos los campos obligatorios estén completos.
+          </li>
+          <li>
+            <strong>✓ Edad mínima:</strong> Debes tener al menos 18 años para usar PawLig.
+          </li>
+          <li>
+            <strong>✓ Información personal:</strong> Tu información se mantiene segura y privada.
+          </li>
+        </ul>
+      </div>
+    </main>
   );
 }
 

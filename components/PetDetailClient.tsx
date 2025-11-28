@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import PetCard from './PetCard';
+import { useToast } from '@/components/ui/toast';
 
 interface Pet {
   id: string;
@@ -91,6 +92,7 @@ export default function PetDetailClient({
   const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
   const [isLoadingAdoption, setIsLoadingAdoption] = useState(false);
   const [adoptionSuccess, setAdoptionSuccess] = useState(false);
+  const { showToast } = useToast();
 
   const images = pet.images || [];
   const hasMultipleImages = images.length > 1;
@@ -122,7 +124,12 @@ export default function PetDetailClient({
         throw new Error('Error al actualizar favorito');
       }
 
-      setIsFavorited(!isFavorited);
+      const newStatus = !isFavorited;
+      setIsFavorited(newStatus);
+      showToast(
+        newStatus ? 'Agregado a favoritos' : 'Eliminado de favoritos',
+        'success'
+      );
     } catch (error) {
       console.error('Error:', error);
     } finally {
