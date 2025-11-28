@@ -96,9 +96,10 @@ export const createPetSchema = z.object({
         .string()
         .min(10, "Los requisitos para adoptar no pueden tener menos de 10 caracteres")
         .max(500, "Los requisitos para adoptar no pueden superar los 500 caracteres")
-        .trim(),
+        .trim()
+        .optional(),
 
-    // Imágenes (RN-007: Mínimo 1 por mascota)
+    // Imágenes (Mínimo 1 por mascota)
     images: z
         .array(z.string().url("Cada imagen debe ser una URL válida"))
         .min(1, "Debes subir al menos una foto de la mascota (RN-007)")

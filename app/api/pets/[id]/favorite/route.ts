@@ -1,15 +1,28 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
+import { NextRequest, NextResponse } from 'next/server';
 
+/**
+ * POST /api/pets/[id]/favorite
+ * Toggle para agregar o remover una mascota de los favoritos del usuario
+ * 
+ * Requerimientos:
+ * - HU-004: Visualización del Panel de Usuario
+ * - RF-005: Sistema de favoritos
+ * 
+ * Casos de uso:
+ * 1. Agregar mascota a favoritos (no existe relación)
+ * 2. Remover mascota de favoritos (existe relación)
+ */
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    // Verificar autenticación
     const session = await getServerSession(authOptions);
-
+    
     if (!session || !session.user) {
       return NextResponse.json(
         { error: 'Debes iniciar sesión para agregar favoritos' },
@@ -20,6 +33,7 @@ export async function POST(
     const userId = session.user.id;
     const petId = params.id;
 
+    // Validar que la mascota existe
     const pet = await prisma.pet.findUnique({
       where: { id: petId },
       select: { id: true },
@@ -32,6 +46,7 @@ export async function POST(
       );
     }
 
+    // Verificar si ya existe el favorito
     const existingFavorite = await prisma.favorite.findUnique({
       where: {
         userId_petId: {
@@ -45,6 +60,7 @@ export async function POST(
     let message: string;
 
     if (existingFavorite) {
+      // Remover de favoritos
       result = await prisma.favorite.delete({
         where: {
           userId_petId: {
@@ -55,6 +71,7 @@ export async function POST(
       });
       message = 'Mascota removida de favoritos';
     } else {
+      // Agregar a favoritos
       result = await prisma.favorite.create({
         data: {
           userId,
@@ -75,6 +92,7 @@ export async function POST(
     );
   } catch (error) {
     console.error('Error en toggle de favorito:', error);
+
     return NextResponse.json(
       { error: 'Error al actualizar favorito' },
       { status: 500 }
