@@ -10,7 +10,7 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=flat-square&logo=mongodb)
 ![NextAuth](https://img.shields.io/badge/NextAuth-4.24-yellow?style=flat-square)
 
-**Proyecto de grado** - SENA Análisis y Desarrollo de Software  
+**Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
 
 </div>
