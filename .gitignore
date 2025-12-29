@@ -39,7 +39,8 @@ next-env.d.ts
 
 /app/generated/prisma
 
-# visual studio
+# editor
 /.vscode/
 /.qodo/
 -p/
+/.agent/
