@@ -5,28 +5,24 @@ export const NAVIGATION_BY_ROLE = {
     { label: "Adopciones", href: "/adopciones" },
     { label: "Productos", href: "/productos" },
     { label: "Albergues", href: "/albergues" },
-    { label: "Mi Panel", href: "/user" }
   ],
   SHELTER: [
     { label: "Inicio", href: "/" },
     { label: "Adopciones", href: "/adopciones" },
-    { label: "Mi Panel", href: "/shelter" },
     { label: "Mis Mascotas", href: "/shelter/pets" },
     { label: "Postulaciones", href: "/shelter/adoptions" }
   ],
   VENDOR: [
     { label: "Inicio", href: "/" },
     { label: "Productos", href: "/productos" },
-    { label: "Mi Panel", href: "/vendor" },
     { label: "Mis Productos", href: "/vendor/products" },
     { label: "Órdenes", href: "/vendor/orders" }
   ],
   ADMIN: [
     { label: "Dashboard", href: "/admin" },
-    { label: "Usuarios", href: "/admin/users" },
-    { label: "Albergues", href: "/admin/shelters" },
-    { label: "Vendedores", href: "/admin/vendors" },
-    { label: "Reportes", href: "/admin/reports" }
+    { label: "Adopciones", href: "/adopciones" },
+    { label: "Productos", href: "/productos" },
+    { label: "Albergues", href: "/albergues" },
   ]
 } as const;
 
@@ -37,33 +33,36 @@ export const PUBLIC_LINKS = [
   { label: "Productos", href: "/productos" },
   { label: "Albergues", href: "/albergues" },
   { label: "Nosotros", href: "/nosotros" },
-  { label: "Ayuda", href: "/help" }
+  { label: "Ayuda", href: "/help" },
+  { label: "Terminos y Condiciones", href: "/terms" },
 ];
 
 // Opciones del menú de usuario por rol
 export const USER_MENU_OPTIONS = {
   ADOPTER: [
-    { label: "Mi Panel", href: "/user", icon: "LayoutDashboard" },
+    { label: "Dashboard", href: "/user", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/user/profile", icon: "User" },
     { label: "Mis Favoritos", href: "/user/favorites", icon: "Heart" },
     { label: "Mis Postulaciones", href: "/user/adoptions", icon: "FileText" }
   ],
   SHELTER: [
-    { label: "Mi Panel", href: "/shelter", icon: "LayoutDashboard" },
+    { label: "Dashboard", href: "/shelter", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/shelter/profile", icon: "User" },
     { label: "Mis Mascotas", href: "/shelter/pets", icon: "PawPrint" },
     { label: "Reportes", href: "/shelter/reports", icon: "BarChart" }
   ],
   VENDOR: [
-    { label: "Mi Panel", href: "/vendor", icon: "LayoutDashboard" },
+    { label: "Dashboard", href: "/vendor", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/vendor/profile", icon: "User" },
     { label: "Mis Productos", href: "/vendor/products", icon: "Package" },
     { label: "Órdenes", href: "/vendor/orders", icon: "ShoppingBag" }
   ],
   ADMIN: [
-    { label: "Panel Admin", href: "/admin", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
-    { label: "Gestionar Usuarios", href: "/admin/users", icon: "Users" },
+    { label: "Usuarios", href: "/admin/users", icon: "Users" },
+    { label: "Albergues", href: "/admin/shelters", icon: "Home" },
+    { label: "Vendedores", href: "/admin/vendors", icon: "ShoppingCart" },
+    { label: "Reportes", href: "/admin/reports", icon: "FileText" },
     { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" }
   ]
 } as const;
@@ -84,6 +83,7 @@ export const FOOTER_LINKS = {
     { label: "Preguntas Frecuentes", href: "/faq" },
     { label: "Términos y Condiciones", href: "/terminos" }
   ],
+  // TODO: Hacer recursos reales y compartilos en archivos de Google Drive (PDF)
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
@@ -94,6 +94,7 @@ export const FOOTER_LINKS = {
   social: [
     { label: "Instagram", href: "https://instagram.com/pawlig", icon: "Instagram" },
     { label: "Facebook", href: "https://facebook.com/pawlig", icon: "Facebook" },
+    { label: "Twitter", href: "https://twitter.com/pawlig", icon: "Twitter" },
     { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" }
   ]
 };
@@ -102,5 +103,5 @@ export const FOOTER_LINKS = {
 export const CONTACT_INFO = {
   email: "soporte@pawlig.com",
   phone: "+57 (4) 123-4567",
-  address: "SENA Medellín"
+  address: "Medellín, Antioquia, Colombia"
 };

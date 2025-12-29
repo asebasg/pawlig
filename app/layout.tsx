@@ -28,10 +28,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <SessionProvider>
+          {/* Navbar */}
           <Navbar />
+          {/* Contenido de las paginas */}
           <main className="flex-1">
             {children}
           </main>
+          {/* Footer */}
           <Footer />
         </SessionProvider>
       </body>

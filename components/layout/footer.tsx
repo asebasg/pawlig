@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Instagram, Facebook, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Facebook, Twitter, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { FOOTER_LINKS, CONTACT_INFO } from "@/lib/constants";
 
@@ -84,6 +84,7 @@ export function Footer() {
                 {FOOTER_LINKS.social.map((social) => {
                   const Icon = social.icon === "Instagram" ? Instagram 
                     : social.icon === "Facebook" ? Facebook 
+                    : social.icon === "Twitter" ? Twitter
                     : MessageCircle;
                   
                   return (

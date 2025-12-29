@@ -1,101 +1,423 @@
 import Image from "next/image";
+import Link from "next/link";
+import { Heart, HouseHeart, Shield, ClipboardCheck, Package, CheckCircle, Search, Flame, PawPrint } from "lucide-react";
+import { prisma } from "@/lib/utils/db";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth-options";
+import PetCard from "@/components/cards/pet-card";
+import { StarButton } from "@/components/ui/star-button";
+import { Metadata } from 'next';
 
-export default function Home() {
+/**
+ * Metadata para SEO
+ */
+export const metadata: Metadata = {
+  title: 'Inicio - PawLig',
+  description: 'Plataforma integral para la adopción y cuidado de mascotas',
+};
+export default async function Home() {
+  // Obtener sesión del usuario
+  const session = await getServerSession(authOptions);
+
+  // Obtener las primeras 3 mascotas disponibles
+  const featuredPets = await prisma.pet.findMany({
+    where: {
+      status: "AVAILABLE",
+    },
+    include: {
+      shelter: {
+        select: {
+          id: true,
+          name: true,
+          municipality: true,
+        },
+      },
+    },
+    take: 3,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  // Si hay usuario autenticado, verificar favoritos
+  let favoritePetIds: string[] = [];
+  if (session?.user?.id && featuredPets.length > 0) {
+    const favorites = await prisma.favorite.findMany({
+      where: {
+        userId: session.user.id,
+        petId: {
+          in: featuredPets.map((p) => p.id),
+        },
+      },
+      select: {
+        petId: true,
+      },
+    });
+    favoritePetIds = favorites.map((f) => f.petId);
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-white">
+      {/* Sección Hero */}
+      <section className="py-12 bg-gradient-to-b from-purple-50 to-white">
+        <div className="max-w-7xl mx-auto px-8 text-center">
+          <h1 className="text-5xl font-bold text-purple-800 mb-8 leading-tight">
+            Aquí, donde tus sueños comienzan y la<br />felicidad de ellos también
+          </h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          {/* Estadísticas */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mb-12">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center shadow-sm">
+                <span className="text-teal-600 text-xl">🐾</span>
+              </div>
+              <div className="text-left">
+                <p className="text-2xl font-bold text-purple-800">+2,500</p>
+                <p className="text-sm text-purple-600 font-medium">Animales rescatados</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center shadow-sm">
+                <span className="text-purple-600 text-xl">🏠</span>
+              </div>
+              <div className="text-left">
+                <p className="text-2xl font-bold text-purple-800">+50</p>
+                <p className="text-sm text-purple-600 font-medium">Albergues aliados</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center shadow-sm">
+                <span className="text-yellow-600 text-xl">✨</span>
+              </div>
+              <div className="text-left">
+                <p className="text-2xl font-bold text-purple-800">100%</p>
+                <p className="text-sm text-purple-600 font-medium">Historias de esperanza</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Botones de Llamada a la Acción */}
+          <div className="flex items-center justify-center gap-4">
+            <Link
+              href="/adopciones"
+              className="bg-purple-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-purple-700 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+            >
+              Buscar un amigo
+            </Link>
+            <Link
+              href="/productos"
+              className="bg-white text-purple-700 border-2 border-purple-200 px-8 py-3 rounded-lg font-bold hover:border-purple-600 hover:text-purple-600 transition-colors"
+            >
+              Ver Productos
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Sección Por Qué Adoptar */}
+      <section className="py-8 bg-white">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-purple-800 mb-4">
+              ¿Por qué adoptar?
+            </h2>
+            <p className="text-purple-600 max-w-2xl mx-auto">
+              Salvar una vida es embellecer otra historia. La adopción es nuestra garantía de un mundo sostenible, consciente y lleno de responsabilidad.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all border border-purple-100">
+              <div className="relative h-56 bg-purple-200">
+                {/* Imágenes de tarjeta */}
+                <Image
+                  src="/images/pet-adopted.png"
+                  alt="Mascota adoptada"
+                  fill
+                  className="object-cover pointer-events-none"
+                />
+              </div>
+              <div className="p-8 text-center relative">
+                <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto absolute -top-7 left-1/2 transform -translate-x-1/2 shadow-md">
+                  <Heart className="w-6 h-6 text-pink-500 fill-pink-500" />
+                </div>
+                <h3 className="text-xl font-bold text-purple-800 mb-3 mt-4">
+                  Compañía para toda la vida
+                </h3>
+                <p className="text-purple-600 text-sm leading-relaxed">
+                  Brinda un compañero y recibe amor incondicional en cada paseo.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all border border-purple-100">
+              <div className="relative h-56 bg-purple-200">
+                {/* Imágenes de tarjeta */}
+                <Image
+                  src="/images/pet-home.png"
+                  alt="Mascota en casa"
+                  fill
+                  className="object-cover pointer-events-none"
+                />
+              </div>
+              <div className="p-8 text-center relative">
+                <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto absolute -top-7 left-1/2 transform -translate-x-1/2 shadow-md">
+                  <HouseHeart className="w-6 h-6 text-purple-500" />
+                </div>
+                <h3 className="text-xl font-bold text-purple-800 mb-3 mt-4">
+                  Dar un nuevo hogar
+                </h3>
+                <p className="text-purple-600 text-sm leading-relaxed">
+                  Llena tu espacio de refugio, tranquilidad y salud con una mascota leal.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all border border-purple-100">
+              <div className="relative h-56 bg-purple-200">
+                {/* Imágenes de tarjeta */}
+                <Image
+                  src="/images/pet-community.png"
+                  alt="Valle de Aburrá"
+                  fill
+                  className="object-cover pointer-events-none"
+                />
+              </div>
+              <div className="p-8 text-center relative">
+                <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto absolute -top-7 left-1/2 transform -translate-x-1/2 shadow-md">
+                  <Flame className="w-6 h-6 text-orange-600 fill-orange-600" />
+                </div>
+                <h3 className="text-xl font-bold text-purple-800 mb-3 mt-4">
+                  Apoyo comunitario
+                </h3>
+                <p className="text-purple-600 text-sm leading-relaxed">
+                  Cada adopción impulsa programas de protección para rescatar a más animales.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección Mascotas Destacadas (DATOS REALES) */}
+      <section className="py-20 bg-purple-50">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl font-bold text-purple-800">
+              Conoce a quienes buscan un hogar
+            </h2>
+            <Link
+              href="/adopciones"
+              className="text-purple-700 hover:text-purple-800 font-semibold flex items-center gap-2 hover:translate-x-1 transition-transform"
+            >
+              Ver todas las mascotas
+              <span>→</span>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {featuredPets.length === 0 ? (
+              <div className="col-span-full bg-white rounded-2xl p-12 text-center shadow-sm">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-purple-400" />
+                </div>
+                <p className="text-purple-500 mb-4 text-lg">
+                  No hay mascotas destacadas en este momento.
+                </p>
+                <Link
+                  href="/adopciones"
+                  className="text-purple-600 hover:text-purple-700 font-semibold underline"
+                >
+                  Explorar todo el catálogo
+                </Link>
+              </div>
+            ) : (
+              featuredPets.map((pet) => (
+                <div key={pet.id} className="h-full">
+                  <PetCard
+                    pet={pet}
+                    userSession={
+                      session?.user
+                        ? {
+                          id: session.user.id,
+                          name: session.user.name || "",
+                          email: session.user.email || "",
+                          role: session.user.role,
+                        }
+                        : null
+                    }
+                    isFavorited={favoritePetIds.includes(pet.id)}
+                  />
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Sección ¿Sabías Que? */}
+      <section className="py-10 bg-gradient-to-b from-purple-50 via-purple-300 to-purple-500 text-white relative overflow-hidden">
+        <section className="py-4 mb-4"> {/* bg-purple-50 */}
+          <div className="max-w-7xl mx-auto px-8">
+            <h2 className="text-4xl font-bold text-center text-purple-800 mb-12">
+              ¿Sabías que...?
+            </h2>
+
+            <div className="relative bg-purple-900 rounded-3xl overflow-hidden p-12 text-white shadow-2xl min-h-[500px] flex items-center">
+              {/* Capa de Imagen de Fondo */}
+              <Image
+                src="/images/medellin-map.png"
+                alt="Valle de Aburrá"
+                fill
+                className="object-cover pointer-events-none"
+              />
+
+              {/* Capa de Superposición Spotlight: Usa una sombra masiva para oscurecer todo AFUERA del círculo */}
+              {/* Movido a la derecha con justify-end y padding */}
+              <div className="absolute inset-0 flex items-center justify-center md:justify-end md:pr-20 pointer-events-none">
+                <div className="w-[450px] h-[450px] rounded-full border-4 border-purple-500 shadow-[0_0_0_9999px_rgba(0,0,0,0.70)] scale-125 md:scale-100" />
+              </div>
+
+              {/* Contenido Flotante - alineado a la izquierda */}
+              <div className="relative z-10 text-left max-w-lg md:pl-10">
+                <p className="text-xl md:text-2xl mb-4 font-medium text-purple-300 uppercase tracking-wide shadow-black drop-shadow-lg">
+                  En el Valle de Aburrá
+                </p>
+                <h3 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight drop-shadow-xl text-white">
+                  +3500 animales
+                </h3>
+                <p className="text-xl md:text-3xl mb-10 text-purple-100 leading-relaxed font-light drop-shadow-lg">
+                  están en situación de abandono.
+                </p>
+                <div className="inline-block bg-purple-600/90 hover:bg-purple-600 transition-colors rounded-full px-8 py-4 shadow-lg shadow-purple-900/50">
+                  <p className="text-xl md:text-2xl font-bold text-white">
+                    ¡Tú puedes hacer la diferencia!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sección Solución PawLig */}
+        <section className="py-6 mb-10">
+          <div className="max-w-7xl mx-auto px-8">
+            <h2 className="text-4xl font-bold text-center text-purple-800 mb-12">
+              Y PawLig es la <span className="text-yellow-400">solución</span> a ello
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl p-8">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                  <Shield className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-purple-800 mb-3 text-center">
+                  ¡Puedes escoger desde aquí a tu<br />peludito favorito!
+                </h3>
+                <p className="text-purple-600 text-sm text-center">
+                  En PawLig, no tienes que esperar: te un<br />
+                  especio real para descubrir cientos de<br />
+                  mascotas en busca de hogar y puedes<br />
+                  enviar tu solicitud de adopción al instante.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-8">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                  <ClipboardCheck className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-purple-800 mb-3 text-center">
+                  Procesos centralizados
+                </h3>
+                <p className="text-purple-600 text-sm text-center">
+                  En PawLig, los procesos de adopción y<br />
+                  la comunicación entre albergues son<br />
+                  eficientes y ágiles, sin trámites largos ni<br />
+                  desgaste emocional.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-8">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                  <Package className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-purple-800 mb-3 text-center">
+                  Productos confiables y<br />segmentados
+                </h3>
+                <p className="text-purple-600 text-sm text-center">
+                  Aquí encontrarás una amplia variedad de<br />
+                  productos para el cuidado de tus mascotas<br />
+                  (alimentos y accesorios de calidad, a precios<br />
+                  accesibles.)
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-8">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                  <CheckCircle className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-purple-800 mb-3 text-center">
+                  Veracidad de perfiles
+                </h3>
+                <p className="text-purple-600 text-sm text-center">
+                  ¿Tienes dudas sobre la autenticidad de un<br />
+                  producto o una mascota? ¡No te preocupes! En<br />
+                  PawLig, los perfiles se encuentran siempre<br />
+                  verificados y verificados antes de ser<br />
+                  publicar cualquier contenido.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sección CTA Emocional */}
+        {/* Background Pattern - Paws */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Scatter Paws */}
+          <PawPrint className="absolute top-3/4 left-10 text-purple-900/25 w-24 h-24 -rotate-45" />
+          <PawPrint className="absolute bottom-10 left-1/4 text-purple-900/25 w-16 h-16 rotate-12" />
+          <PawPrint className="absolute bottom-40 right-10 text-purple-900/25 w-32 h-32 rotate-45" />
+          <PawPrint className="absolute bottom-10 right-1/3 text-purple-900/25 w-20 h-20 -rotate-12" />
+          <PawPrint className="absolute top-2/3 right-20 text-purple-900/25 w-28 h-28 -rotate-12" />
+          <PawPrint className="absolute bottom-1/2 left-20 text-purple-900/25 w-20 h-20 rotate-45" />
+          <PawPrint className="absolute bottom-20 left-[10%] text-purple-900/25 w-12 h-12 -rotate-12" />
+          <PawPrint className="absolute top-[60%] right-[10%] text-purple-900/25 w-14 h-14 rotate-12" />
+        </div>
+
+        <div className="max-w-4xl mx-auto px-8 text-center relative z-10">
+          <h2 className="text-5xl font-bold mb-8">
+            La vida de un animalito<br />está en tus manos
+          </h2>
+
+          <p className="text-xl mb-6">
+            Hay un pequeño compañero esperando por ti, listo para<br />
+            salir de su refugio y llenar tus días de ternura y alegría.
+          </p>
+
+          <p className="text-xl mb-8">
+            Abrirle las puertas de tu hogar no solo transformará su vida,<br />
+            sino también la tuya. Cada adopción es una historia de<br />
+            esperanza y un nuevo comienzo.
+          </p>
+
+          <p className="text-2xl font-bold mb-8">
+            ¡Dale una oportunidad al amor, anímate a adoptar!
+          </p>
+
+          <StarButton
+            href="/register"
+            className="inline-block bg-white text-purple-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-purple-100 transition-colors"
+          >
+            ¡Adopta y transforma la<br />vida de un animalito!
+          </StarButton>
+
+          <p className="mt-6 text-sm">
+            ¿Ya tienes una cuenta? <Link href="/login" className="underline font-semibold">Inicia sesión</Link>
+          </p>
+        </div>
+      </section>
+
     </div>
   );
 }
