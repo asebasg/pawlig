@@ -46,7 +46,7 @@ export async function generateMetadata(
     }
 
     return {
-      title: `${pet.name} - Adopta en PawLig`,
+      title: `Adopta a ${pet.name}`,
       description: `${pet.species}${pet.breed ? ` ${pet.breed}` : ''} en adopción. ${pet.description?.substring(0, 150) || 'Encuentra tu compañero perfecto'}...`,
       openGraph: {
         title: `${pet.name} busca hogar en PawLig`,
