@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
 import RegisterForm from '@/components/forms/register-form';
+import Link from 'next/link';
 
 /**
  * Metadata para SEO y redes sociales
@@ -39,19 +40,18 @@ export default async function RegisterPage() {
         {/* Card contenedor */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <RegisterForm />
-        </div>
+          <p className='text-center text-xs text-gray-500'>
+            Al registrarte en PawLig, aceptas nuestros {' '}
 
-        {/* Disclaimer legal */}
-        <p className="text-center text-xs text-gray-500 mt-6">
-          Al registrarte, aceptas nuestros{' '}
-          <a href="/terminos" className="text-purple-600 hover:underline">
-            Términos de Servicio
-          </a>{' '}
-          y{' '}
-          <a href="/privacidad" className="text-purple-600 hover:underline">
-            Política de Privacidad
-          </a>
-        </p>
+            <Link href='/terminos' className='text-purple-600 hover:underline font-bold'>
+              Términos de Servicio
+            </Link> {' '}
+            y{' '}
+            <Link href='/privacidad' className='text-purple-600 hover:underline font-bold'>
+              Política de Privacidad
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -59,9 +59,9 @@ export const USER_MENU_OPTIONS = {
   ],
   ADMIN: [
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
-    { label: "Usuarios", href: "/admin/users", icon: "Users" },
-    { label: "Albergues", href: "/admin/shelters", icon: "Home" },
-    { label: "Vendedores", href: "/admin/vendors", icon: "ShoppingCart" },
+    { label: "Gestión Usuarios", href: "/admin/users", icon: "Users" },
+    { label: "Gestión Albergues", href: "/admin/shelters", icon: "Home" },
+    { label: "Gestión Vendedores", href: "/admin/vendors", icon: "ShoppingCart" },
     { label: "Reportes", href: "/admin/reports", icon: "FileText" },
     { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" }
   ]
@@ -81,7 +81,8 @@ export const FOOTER_LINKS = {
     { label: "Albergues", href: "/albergues" },
     { label: "Nosotros", href: "/nosotros" },
     { label: "Preguntas Frecuentes", href: "/faq" },
-    { label: "Términos y Condiciones", href: "/terminos" }
+    { label: "Términos y Condiciones", href: "/terminos" },
+    { label: "Política de Privacidad", href: "/privacidad" },
   ],
   // TODO: Hacer recursos reales y compartilos en archivos de Google Drive (PDF)
   resources: [
@@ -92,10 +93,10 @@ export const FOOTER_LINKS = {
     { label: "Política de Privacidad", href: "/privacidad" }
   ],
   social: [
+    { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" },
     { label: "Instagram", href: "https://instagram.com/pawlig", icon: "Instagram" },
     { label: "Facebook", href: "https://facebook.com/pawlig", icon: "Facebook" },
     { label: "Twitter", href: "https://twitter.com/pawlig", icon: "Twitter" },
-    { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" }
   ]
 };
 

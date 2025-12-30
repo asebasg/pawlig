@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from 'next/link';
 import { loginSchema, LoginInput } from "@/lib/validations/user.schema";
+import { PawPrint } from 'lucide-react';
 
 export default function LoginForm() {
     const router = useRouter();
@@ -111,8 +112,11 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
             {/* Header */}
             <div className="text-center mb-8">
+                <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <PawPrint className="w-12 h-12 text-purple-900" />
+                </div>
                 <h1 className="text-3xl font-bold text-gray-900">Iniciar sesión</h1>
-                <p className="text-gray-600 mt-2">Accede a tu cuenta de PawLig</p>
+                <p className="text-gray-600 mt-2">Accede a tu cuenta</p>
             </div>
 
             {/* Error general de login */}
