@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/utils/db';
-import { PetStatus, Municipality } from '@prisma/client';
+import { PetStatus, Municipality, Sex, Prisma } from '@prisma/client';
 
 export interface PetFilters {
   species?: string;
@@ -24,12 +24,12 @@ export async function getPetsWithFilters(filters: PetFilters) {
     limit = 20,
   } = filters;
 
-  const where: any = {
+  const where: Prisma.PetWhereInput = {
     status,
   };
 
   if (species) where.species = species;
-  if (sex) where.sex = sex;
+  if (sex) where.sex = sex as Sex;
   if (age) where.age = { lte: age };
   if (search) {
     where.OR = [
