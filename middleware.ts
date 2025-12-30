@@ -76,34 +76,43 @@ export const config = {
   ],
 };
 
-/**
- * 📚 CAMBIOS IMPLEMENTADOS:
- * 
- * 1. Bloqueo de usuarios inactivos
- *    - Verificación: token.isActive === false
- *    - Redirección: /unauthorized?reason=account_blocked
- *    - Prevención TOTAL de acceso a rutas protegidas
- * 
- * 2. Protección reforzada de /request-shelter
- *    - Permitidos: ADOPTER, VENDOR
- *    - Bloqueados: SHELTER, ADMIN
- *    - Razón: adopters_vendors_only
- * 
- * 3. Validación en orden:
- *    1. Token existe (authorized callback)
- *    2. Usuario NO bloqueado (isActive = true)
- *    3. Rol apropiado para la ruta
- * 
- * 4. Razones de redirección:
- *    - account_blocked: Usuario bloqueado
- *    - adopters_vendors_only: Solo ADOPTER/VENDOR
- *    - admin_only: Solo ADMIN
- *    - shelter_only: Solo SHELTER
- *    - vendor_only: Solo VENDOR
- * 
- * 5. Trazabilidad:
- *    - Bloqueo de usuarios ✅
- *    - Solo ADOPTER/VENDOR ✅
- *    - HU-014: Gestión de usuarios (bloqueo) ✅
- *    - RNF-002: Seguridad (autorización) ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * **Descripción General:**
+ * Este archivo de middleware es un punto central de control de acceso para
+ * las rutas protegidas de la aplicación. Utiliza `next-auth` para interceptar
+ * las solicitudes, verificar la autenticación y la autorización del usuario
+ * antes de permitir el acceso a las páginas solicitadas.
+ *
+ * **Lógica Clave:**
+ * - **Envoltura con `withAuth`**: El middleware se exporta a través de la
+ *   función `withAuth` de `next-auth`, que simplifica la obtención del token
+ *   JWT y la gestión de la autenticación básica.
+ * - **Orden de Verificación**: La lógica de autorización sigue un orden
+ *   estricto para garantizar la seguridad:
+ *   1. **Autenticación**: `withAuth` primero asegura que exista un token válido.
+ *   2. **Estado de Actividad**: La primera verificación explícita es si el
+ *      usuario está activo (`token.isActive`). Si no lo está, se le deniega
+ *      el acceso a CUALQUIER ruta protegida, siendo esta la regla de mayor
+ *      prioridad.
+ *   3. **Autorización por Rol**: Se implementan chequeos específicos para cada
+ *      grupo de rutas (ej: `/admin`, `/shelter`), verificando que el rol
+ *      en el token (`token.role`) coincida con el requerido para esa sección.
+ * - **Redirecciones Claras**: Si una verificación falla, el usuario es
+ *   redirigido a una página de `/unauthorized` con un parámetro de `reason`
+ *   en la URL. Esto permite mostrar mensajes de error específicos al usuario
+ *   final, mejorando la experiencia y la depuración.
+ * - **`config.matcher`**: Este objeto de configuración es crucial para el
+ *   rendimiento, ya que le indica a Next.js que ejecute este middleware
+ *   únicamente para las rutas que coincidan con los patrones definidos,
+ *   evitando la sobrecarga en rutas públicas.
+ *
+ * **Dependencias Externas:**
+ * - `next-auth/middleware`: Proporciona la función `withAuth` que es la base
+ *   de este sistema de protección de rutas. El token JWT decodificado se
+ *   adjunta automáticamente al objeto `req.nextauth`.
+ *
  */

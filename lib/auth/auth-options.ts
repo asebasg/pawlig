@@ -93,20 +93,52 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-/**
- * 📚 CAMBIOS IMPLEMENTADOS:
- * 
- * 1. MEJORA 1: Validación de bloqueo en authorize()
- *    - Verifica user.isActive antes de crear sesión
- *    - Lanza error descriptivo con motivo del bloqueo
- *    - Bloqueo ocurre ANTES de iniciar sesión (prevención total)
- * 
- * 2. Token JWT enriquecido:
- *    - Agregado campo isActive al token
- *    - Disponible en session.user.isActive para validaciones
- * 
- * 3. Trazabilidad:
- *    - HU-014: Gestión de usuarios (bloqueo) ✅
- *    - RN-017: Justificación obligatoria ✅
- *    - RNF-002: Seguridad (prevención de acceso) ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * **Descripción General:**
+ * Este archivo contiene el objeto de configuración `authOptions` para `NextAuth.js`,
+ * que define toda la estrategia de autenticación de la aplicación. Es el
+ * núcleo del sistema de gestión de sesiones y usuarios.
+ *
+ * **Lógica Clave:**
+ * - **Proveedor de Credenciales (`CredentialsProvider`)**:
+ *   - Se utiliza como el único método de autenticación, basado en email y
+ *     contraseña.
+ *   - La función `authorize` es el corazón de la lógica: busca al usuario
+ *     en la base de datos, verifica que no esté bloqueado (`isActive`), y
+ *     luego valida la contraseña usando `verifyPassword`.
+ *   - Si la autenticación es exitosa, devuelve un objeto de usuario que se
+ *     utilizará para crear el token JWT.
+ *   - Lanza errores específicos para cada caso de fallo (usuario no
+ *     encontrado, cuenta bloqueada, contraseña incorrecta), que `NextAuth`
+ *     maneja para redirigir al usuario con un mensaje de error.
+ *
+ * - **Callbacks de JWT y Sesión**:
+ *   - **`jwt` callback**: Este callback se ejecuta al crear o actualizar un
+ *     JSON Web Token. Se utiliza para "enriquecer" el token, añadiéndole
+ *     datos adicionales del usuario como `id`, `role` y `isActive`.
+ *   - **`session` callback**: Se ejecuta cuando se accede a la sesión desde el
+ *     cliente (ej: con `useSession`). Su función es transferir los datos
+ *     enriquecidos desde el token JWT a la sesión del cliente (`session.user`),
+ *     haciendo que `role` y `isActive` estén disponibles en el frontend.
+ *
+ * - **Configuración de Sesión**:
+ *   - `strategy: 'jwt'`: Especifica que la gestión de sesiones se hará a
+ *     través de JWT, lo cual es ideal para arquitecturas sin estado.
+ *   - `maxAge`: Define la duración de la sesión en 24 horas, un requisito
+ *     funcional de seguridad (RNF-002).
+ *
+ * **Dependencias Externas:**
+ * - `next-auth`: La librería principal que gestiona todo el flujo de
+ *   autenticación.
+ * - `next-auth/providers/credentials`: El proveedor específico para la
+ *   autenticación basada en credenciales.
+ * - `@prisma/client`: Utilizado dentro de `authorize` para buscar usuarios
+ *   en la base de datos.
+ * - `bcryptjs` (a través de `verifyPassword`): Usado para comparar de forma
+ *   segura la contraseña proporcionada con el hash almacenado.
+ *
  */
