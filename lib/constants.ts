@@ -113,25 +113,25 @@ export const CONTACT_INFO = {
 export const CRITICAL_ROLE_CHANGES = {
   // Elevación a ADMIN siempre es crítica
   [`${UserRole.ADOPTER}_TO_${UserRole.ADMIN}`]: {
-    message: '¿Estás seguro de promover a este usuario a Administrador?',
+    message: '¿Estás seguro de promover a este Usuario a Administrador?',
     warning: 'Tendrá acceso completo al sistema.',
   },
   [`${UserRole.SHELTER}_TO_${UserRole.ADMIN}`]: {
-    message: '¿Promover este albergue a Administrador?',
+    message: '¿Promover este Albergue a Administrador?',
     warning: 'Perderá sus permisos específicos de albergue.',
   },
   [`${UserRole.VENDOR}_TO_${UserRole.ADMIN}`]: {
-    message: '¿Promover este vendedor a Administrador?',
+    message: '¿Promover este Vendedor a Administrador?',
     warning: 'Perderá sus permisos específicos de vendedor.',
   },
 
   // Degradaciones que pierden permisos importantes
   [`${UserRole.SHELTER}_TO_${UserRole.ADOPTER}`]: {
-    message: '¿Degradar este albergue a Adoptante?',
+    message: '¿Degradar este Albergue a Adoptante?',
     warning: 'Ya no podrá gestionar mascotas ni adopciones.',
   },
   [`${UserRole.VENDOR}_TO_${UserRole.ADOPTER}`]: {
-    message: '¿Degradar este vendedor a Adoptante?',
+    message: '¿Degradar este Vendedor a Adoptante?',
     warning: 'Ya no podrá gestionar productos ni inventario.',
   },
 } as const;

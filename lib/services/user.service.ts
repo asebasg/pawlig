@@ -22,7 +22,7 @@ export const getUserById = unstable_cache(
           birthDate: true,
           isActive: true,
           blockedAt: true,
-          blockedReason: true,
+          blockReason: true,
           createdAt: true,
           updatedAt: true,
           shelter: {

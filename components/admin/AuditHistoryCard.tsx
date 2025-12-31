@@ -2,7 +2,7 @@
 
 import { AuditAction } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, Shield, UserX, CheckCircle, UserPlus, Trash2 } from "lucide-react";
+import { Clock, Shield, UserX, CheckCircle, Trash2 } from "lucide-react";
 
 type AuditRecord = {
   action: AuditAction;
