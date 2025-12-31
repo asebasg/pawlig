@@ -158,7 +158,7 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                     {/* Nombre y especie */}
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">{pet.name}</h3>
                     <p className="text-sm text-gray-600 mb-2">
-                        {pet.species} {pet.breed && `• ${pet.breed}`} {pet.age && `• ${pet.age} años`}
+                        {pet.species && `${pet.species}`} {pet.sex && `• ${pet.sex}`} <br /> {pet.breed && `${pet.breed}`} <br /> {pet.age !== undefined && `${pet.age} ${pet.age === 1 ? "año" : "años"}`}
                     </p>
 
                     {/* Contador de postulaciones */}

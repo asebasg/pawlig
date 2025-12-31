@@ -6,6 +6,7 @@ import { signIn } from 'next-auth/react';
 import { registerUserSchema, RegisterUserInput } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
 import Link from 'next/link';
+import { PawPrint } from 'lucide-react';
 
 /**
  * Componente de formulario de registro para nuevos adoptantes
@@ -154,8 +155,11 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
       <div className="text-center mb-8">
+        <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+          <PawPrint className="w-12 h-12 text-orange-700" />
+        </div>
         <h1 className="text-3xl font-bold text-gray-900">Crear cuenta</h1>
-        <p className="text-gray-600 mt-2">Regístrate para adoptar una mascota</p>
+        <p className="text-gray-600 mt-2">Regístrate en PawLig</p>
       </div>
 
       {/*  Error con sugerencia de recuperación */}
@@ -422,7 +426,7 @@ export default function RegisterForm() {
       </button>
 
       {/* Link a login */}
-      <p className="text-center text-sm text-gray-600">
+      <p className="pb-4 mb-4 text-center text-sm text-gray-600">
         ¿Ya tienes cuenta?{' '}
         <Link
           href="/login"

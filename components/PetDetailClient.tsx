@@ -331,7 +331,7 @@ export default function PetDetailClient({
         {/* Card de Albergue */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6 sticky top-20">
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Albergue</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2 text-center">Albergue</h3>
             <Link href={`#`} className="text-purple-600 hover:text-purple-700 font-semibold text-lg">
               {pet.shelter.name}
             </Link>

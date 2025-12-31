@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { 
-  ChevronDown, 
+import {
+  ChevronDown,
   LogOut,
   LayoutDashboard,
   User,
@@ -17,7 +17,9 @@ import {
   Users,
   TrendingUp,
   Settings,
-  HelpCircle
+  HelpCircle,
+  Home,
+  ShoppingCart,
 } from "lucide-react";
 import { USER_MENU_OPTIONS, COMMON_MENU_OPTIONS } from "@/lib/constants";
 
@@ -42,7 +44,9 @@ const iconMap = {
   Users,
   TrendingUp,
   Settings,
-  HelpCircle
+  HelpCircle,
+  Home,
+  ShoppingCart
 };
 
 const roleLabels = {

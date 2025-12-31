@@ -72,7 +72,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
       setError(null);
 
       const params = new URLSearchParams();
-      
+
       // Solo agregar filtros si tienen valor
       if (filters.species) params.append('species', filters.species);
       if (filters.municipality) params.append('municipality', filters.municipality);
@@ -84,14 +84,14 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
       params.append('limit', '20');
 
       const response = await fetch(`/api/pets?${params.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error('Error al cargar mascotas');
       }
 
       const data = await response.json();
       const petsData = data.data || [];
-      
+
       // Si hay usuario autenticado, verificar favoritos
       if (userSession?.id && petsData.length > 0) {
         const petIds = petsData.map((p: Pet) => p.id);
@@ -101,7 +101,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ petIds }),
           });
-          
+
           if (favResponse.ok) {
             const favData = await favResponse.json();
             // Agregar info de favoritos a cada mascota
@@ -113,7 +113,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
           console.error('Error checking favorites:', e);
         }
       }
-      
+
       setPets(petsData);
       setTotalPages(data.pagination?.totalPages || 1);
       setTotalCount(data.pagination?.totalCount || 0);
@@ -151,7 +151,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Filtrar mascotas
         </h2>
-        
+
         {/* Búsqueda por texto */}
         <div className="mb-4">
           <div className="relative">
@@ -168,7 +168,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
 
         {/* Filtros desplegables */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <select 
+          <select
             value={filters.species}
             onChange={(e) => handleFilterChange('species', e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -179,7 +179,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
             <option value="Otro">Otros</option>
           </select>
 
-          <select 
+          <select
             value={filters.municipality}
             onChange={(e) => handleFilterChange('municipality', e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -197,7 +197,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
             <option value="BARBOSA">Barbosa</option>
           </select>
 
-          <select 
+          <select
             value={filters.age}
             onChange={(e) => handleFilterChange('age', e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -209,17 +209,17 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
             <option value="10">Hasta 10 años</option>
           </select>
 
-          <select 
+          <select
             value={filters.sex}
             onChange={(e) => handleFilterChange('sex', e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Cualquier sexo</option>
-            <option value="M">Macho</option>
-            <option value="F">Hembra</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
           </select>
 
-          <button 
+          <button
             onClick={handleClearFilters}
             className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
           >
@@ -249,7 +249,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
         ) : error ? (
           <div className="col-span-full text-center py-12">
             <p className="text-red-600 mb-4">{error}</p>
-            <button 
+            <button
               onClick={fetchPets}
               className="text-purple-600 hover:underline"
             >
@@ -267,9 +267,9 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
           </div>
         ) : (
           pets.map((pet: any) => (
-            <PetCard 
-              key={pet.id} 
-              pet={pet} 
+            <PetCard
+              key={pet.id}
+              pet={pet}
               userSession={userSession}
               isFavorited={pet.isFavorited || false}
             />
@@ -287,11 +287,11 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
           >
             Anterior
           </button>
-          
+
           <span className="text-gray-600">
             Página {currentPage} de {totalPages}
           </span>
-          
+
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}

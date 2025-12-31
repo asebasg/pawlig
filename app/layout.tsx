@@ -3,6 +3,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
@@ -28,11 +29,24 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <SessionProvider>
+          {/* Navbar */}
           <Navbar />
+          {/* Contenido de las paginas */}
           <main className="flex-1">
             {children}
           </main>
+          {/* Footer */}
           <Footer />
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            toastOptions={{
+              style: {
+                fontFamily: "var(--font-geist-sans)",
+              },
+            }}
+          />
         </SessionProvider>
       </body>
     </html>

@@ -109,8 +109,8 @@ export default function PetFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Cualquiera</option>
-            <option value="M">Macho</option>
-            <option value="F">Hembra</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
           </select>
         </div>
       </div>

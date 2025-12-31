@@ -34,38 +34,29 @@ export default async function LoginPage() {
     }
 
     return (
-        <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8'>
-            <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-                <Link href='/' className='inline-block'>
-                    <h1 className='text-4xl font-bold text-purple-600'>
-                        PawLig
-                    </h1>
-                </Link>
-                <p className='mt-2 mb-2 text-sm text-gray-600'>
-                    Promoviendo la adopción responsable
-                </p>
-            </div>
+        <div className='min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
+            <div className='w-full max-w-md'>
+                {/* Card contenedor del formulario */}
+                <div className='bg-white rounded-2xl shadow-lg p-8 w-full max-w-md'>
+                    <LoginForm />
+                    <div className='mt-8'>
+                        <p className='text-center text-xs text-gray-500'>
+                            Al iniciar sesión, aceptas nuestros {' '}
 
-            {/* Card contenedor del formulario */}
-            <div className='bg-white rounded-2xl shadow-lg p-8'>
-                <LoginForm />
-            </div>
-
-            {/* Footer */}
-            <div className='mt-8'>
-                <p className='text-center text-xs text-gray-500'>
-                    Al iniciar sesión, aceptas nuestros {' '}
-
-                    <Link href='/terminos' className='text-purple-600 hover:underline'>
-                        Términos de servicio
-                    </Link> {' '}
-                    y{' '}
-                    <Link href='/privacidad' className='text-purple-600 hover:underline'>
-                        Política de Privacidad
-                    </Link>
-                </p>
+                            <Link href='/terminos' className='text-purple-600 hover:underline font-bold'>
+                                Términos de Servicio
+                            </Link> {' '}
+                            y{' '}
+                            <Link href='/privacidad' className='text-purple-600 hover:underline font-bold'>
+                                Política de Privacidad
+                            </Link>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
+
+
     );
 }
 

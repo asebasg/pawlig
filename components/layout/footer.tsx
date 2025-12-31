@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Instagram, Facebook, MessageCircle, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Facebook, Twitter, MessageCircle, Mail, Phone, MapPin, Link2, Album, FileUser } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { FOOTER_LINKS, CONTACT_INFO } from "@/lib/constants";
 
@@ -22,7 +22,10 @@ export function Footer() {
 
           {/* Column 2: Quick Links */}
           <div>
-            <h3 className="font-bold text-white text-lg mb-4">Enlaces Rápidos</h3>
+            <div className="flex items-start gap-2">
+              <Link2 size={24} className="mt-0.5 flex-shrink-0"/>
+              <h3 className="font-bold text-white text-lg mb-4">Enlaces Rápidos</h3>
+            </div>
             <ul className="space-y-2">
               {FOOTER_LINKS.quickLinks.map((link) => (
                 <li key={link.href}>
@@ -39,7 +42,10 @@ export function Footer() {
 
           {/* Column 3: Resources */}
           <div>
-            <h3 className="font-bold text-white text-lg mb-4">Recursos</h3>
+            <div className="flex items-start gap-2">
+              <Album size={24} className="mt-0.5 flex-shrink-0"/>
+              <h3 className="font-bold text-white text-lg mb-4">Recursos</h3>
+            </div>
             <ul className="space-y-2">
               {FOOTER_LINKS.resources.map((link) => (
                 <li key={link.href}>
@@ -56,7 +62,10 @@ export function Footer() {
 
           {/* Column 4: Contact */}
           <div>
-            <h3 className="font-bold text-white text-lg mb-4">Contacto</h3>
+            <div className="flex items-start gap-2">
+              <FileUser size={24} className="mt-0.5 flex-shrink-0"/>
+              <h3 className="font-bold text-white text-lg mb-4">Contacto</h3>
+            </div>
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <Mail size={18} className="mt-0.5 flex-shrink-0" />
@@ -79,11 +88,12 @@ export function Footer() {
 
             {/* Social Media */}
             <div className="mt-4">
-              <p className="text-sm font-semibold text-white mb-2">Síguenos</p>
+              <p className="text-sm font-semibold text-white mb-2">Síguenos en nuestras redes</p>
               <div className="flex gap-3">
                 {FOOTER_LINKS.social.map((social) => {
                   const Icon = social.icon === "Instagram" ? Instagram 
                     : social.icon === "Facebook" ? Facebook 
+                    : social.icon === "Twitter" ? Twitter
                     : MessageCircle;
                   
                   return (
@@ -108,21 +118,8 @@ export function Footer() {
       {/* Footer Bottom */}
       <div className="bg-gray-900 border-t border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-400">
-            <p>© {currentYear} PawLig - SENA. Todos los derechos reservados.</p>
-            <div className="flex gap-4">
-              <Link href="/privacidad" className="hover:text-white transition-colors">
-                Privacidad
-              </Link>
-              <span>|</span>
-              <Link href="/terminos" className="hover:text-white transition-colors">
-                Términos
-              </Link>
-              <span>|</span>
-              <Link href="/cookies" className="hover:text-white transition-colors">
-                Cookies
-              </Link>
-            </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-gray-300/50">
+            <p>© {currentYear} PawLig. Todos los derechos reservados.</p>
           </div>
         </div>
       </div>

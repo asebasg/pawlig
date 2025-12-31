@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { UserRole, Municipality } from "@prisma/client";
-import { Search, UserX, UserCheck, Loader2, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert } from "lucide-react";
+import { Search, UserX, UserCheck, Loader2, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
 import BlockUserModal from "./BlockUserModal"
 
 interface User {
@@ -44,6 +45,7 @@ interface UsersManagementClientProps {
 }
 
 export default function UsersManagementClient({ adminUser }: UsersManagementClientProps) {
+    const router = useRouter();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -297,8 +299,8 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                 Registro
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
+                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <ShieldAlert className="w-4 h-4 text-gray-500" />
                                                 Acciones
                                             </div>
@@ -352,28 +354,32 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {formatDate(user.createdAt)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                {user.role !== "ADMIN" && (
+                                            <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
-                                                        onClick={() => handleBlockClick(user)}
-                                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition ${user.isActive
-                                                            ? "text-red-600 hover:bg-red-50"
-                                                            : "text-green-600 hover:bg-green-50"
-                                                            }`}
+                                                        onClick={() => router.push(`/admin/users/${user.id}/view`)}
+                                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition text-purple-600 hover:bg-purple-50"
+                                                        aria-label={`Ver detalles de ${user.name}`}
                                                     >
-                                                        {user.isActive ? (
-                                                            <>
-                                                                <UserX className="w-4 h-4" />
-                                                                Bloquear
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <UserCheck className="w-4 h-4" />
-                                                                Desbloquear
-                                                            </>
-                                                        )}
+                                                        <Eye className="w-4 h-4" />
+                                                        Ver más
                                                     </button>
-                                                )}
+                                                    {user.role !== "ADMIN" && (
+                                                        <button
+                                                            onClick={() => handleBlockClick(user)}
+                                                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition ${user.isActive
+                                                                ? "text-red-600 hover:bg-red-50"
+                                                                : "text-green-600 hover:bg-green-50"
+                                                                }`}
+                                                        >
+                                                            {user.isActive ? (
+                                                                <UserX className="w-4 h-4" />
+                                                            ) : (
+                                                                <UserCheck className="w-4 h-4" />
+                                                            )}
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

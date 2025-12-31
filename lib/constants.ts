@@ -1,3 +1,5 @@
+import { UserRole } from "@prisma/client";
+
 // Rutas de navegación por rol
 export const NAVIGATION_BY_ROLE = {
   ADOPTER: [
@@ -5,28 +7,24 @@ export const NAVIGATION_BY_ROLE = {
     { label: "Adopciones", href: "/adopciones" },
     { label: "Productos", href: "/productos" },
     { label: "Albergues", href: "/albergues" },
-    { label: "Mi Panel", href: "/user" }
   ],
   SHELTER: [
     { label: "Inicio", href: "/" },
     { label: "Adopciones", href: "/adopciones" },
-    { label: "Mi Panel", href: "/shelter" },
     { label: "Mis Mascotas", href: "/shelter/pets" },
     { label: "Postulaciones", href: "/shelter/adoptions" }
   ],
   VENDOR: [
     { label: "Inicio", href: "/" },
     { label: "Productos", href: "/productos" },
-    { label: "Mi Panel", href: "/vendor" },
     { label: "Mis Productos", href: "/vendor/products" },
     { label: "Órdenes", href: "/vendor/orders" }
   ],
   ADMIN: [
     { label: "Dashboard", href: "/admin" },
-    { label: "Usuarios", href: "/admin/users" },
-    { label: "Albergues", href: "/admin/shelters" },
-    { label: "Vendedores", href: "/admin/vendors" },
-    { label: "Reportes", href: "/admin/reports" }
+    { label: "Adopciones", href: "/adopciones" },
+    { label: "Productos", href: "/productos" },
+    { label: "Albergues", href: "/albergues" },
   ]
 } as const;
 
@@ -37,33 +35,36 @@ export const PUBLIC_LINKS = [
   { label: "Productos", href: "/productos" },
   { label: "Albergues", href: "/albergues" },
   { label: "Nosotros", href: "/nosotros" },
-  { label: "Ayuda", href: "/help" }
+  { label: "Ayuda", href: "/help" },
+  { label: "Terminos y Condiciones", href: "/terms" },
 ];
 
 // Opciones del menú de usuario por rol
 export const USER_MENU_OPTIONS = {
   ADOPTER: [
-    { label: "Mi Panel", href: "/user", icon: "LayoutDashboard" },
+    { label: "Dashboard", href: "/user", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/user/profile", icon: "User" },
     { label: "Mis Favoritos", href: "/user/favorites", icon: "Heart" },
     { label: "Mis Postulaciones", href: "/user/adoptions", icon: "FileText" }
   ],
   SHELTER: [
-    { label: "Mi Panel", href: "/shelter", icon: "LayoutDashboard" },
+    { label: "Dashboard", href: "/shelter", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/shelter/profile", icon: "User" },
     { label: "Mis Mascotas", href: "/shelter/pets", icon: "PawPrint" },
     { label: "Reportes", href: "/shelter/reports", icon: "BarChart" }
   ],
   VENDOR: [
-    { label: "Mi Panel", href: "/vendor", icon: "LayoutDashboard" },
+    { label: "Dashboard", href: "/vendor", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/vendor/profile", icon: "User" },
     { label: "Mis Productos", href: "/vendor/products", icon: "Package" },
     { label: "Órdenes", href: "/vendor/orders", icon: "ShoppingBag" }
   ],
   ADMIN: [
-    { label: "Panel Admin", href: "/admin", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
-    { label: "Gestionar Usuarios", href: "/admin/users", icon: "Users" },
+    { label: "Gestión Usuarios", href: "/admin/users", icon: "Users" },
+    { label: "Gestión Albergues", href: "/admin/shelters", icon: "Home" },
+    { label: "Gestión Vendedores", href: "/admin/vendors", icon: "ShoppingCart" },
+    { label: "Reportes", href: "/admin/reports", icon: "FileText" },
     { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" }
   ]
 } as const;
@@ -82,8 +83,10 @@ export const FOOTER_LINKS = {
     { label: "Albergues", href: "/albergues" },
     { label: "Nosotros", href: "/nosotros" },
     { label: "Preguntas Frecuentes", href: "/faq" },
-    { label: "Términos y Condiciones", href: "/terminos" }
+    { label: "Términos y Condiciones", href: "/terminos" },
+    { label: "Política de Privacidad", href: "/privacidad" },
   ],
+  // TODO: Hacer recursos reales y compartilos en archivos de Google Drive (PDF)
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
@@ -92,9 +95,10 @@ export const FOOTER_LINKS = {
     { label: "Política de Privacidad", href: "/privacidad" }
   ],
   social: [
+    { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" },
     { label: "Instagram", href: "https://instagram.com/pawlig", icon: "Instagram" },
     { label: "Facebook", href: "https://facebook.com/pawlig", icon: "Facebook" },
-    { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" }
+    { label: "Twitter", href: "https://twitter.com/pawlig", icon: "Twitter" },
   ]
 };
 
@@ -102,5 +106,41 @@ export const FOOTER_LINKS = {
 export const CONTACT_INFO = {
   email: "soporte@pawlig.com",
   phone: "+57 (4) 123-4567",
-  address: "SENA Medellín"
+  address: "Medellín, Antioquia, Colombia"
 };
+
+// Definición de cambios de rol considerados críticos
+export const CRITICAL_ROLE_CHANGES = {
+  // Elevación a ADMIN siempre es crítica
+  [`${UserRole.ADOPTER}_TO_${UserRole.ADMIN}`]: {
+    message: '¿Estás seguro de promover a este Usuario a Administrador?',
+    warning: 'Tendrá acceso completo al sistema.',
+  },
+  [`${UserRole.SHELTER}_TO_${UserRole.ADMIN}`]: {
+    message: '¿Promover este Albergue a Administrador?',
+    warning: 'Perderá sus permisos específicos de albergue.',
+  },
+  [`${UserRole.VENDOR}_TO_${UserRole.ADMIN}`]: {
+    message: '¿Promover este Vendedor a Administrador?',
+    warning: 'Perderá sus permisos específicos de vendedor.',
+  },
+
+  // Degradaciones que pierden permisos importantes
+  [`${UserRole.SHELTER}_TO_${UserRole.ADOPTER}`]: {
+    message: '¿Degradar este Albergue a Adoptante?',
+    warning: 'Ya no podrá gestionar mascotas ni adopciones.',
+  },
+  [`${UserRole.VENDOR}_TO_${UserRole.ADOPTER}`]: {
+    message: '¿Degradar este Vendedor a Adoptante?',
+    warning: 'Ya no podrá gestionar productos ni inventario.',
+  },
+} as const;
+
+// Función para verificar si un cambio de rol es crítico
+export function isCriticalRoleChange(
+  currentRole: UserRole,
+  newRole: UserRole
+): boolean {
+  const key = `${currentRole}_TO_${newRole}` as keyof typeof CRITICAL_ROLE_CHANGES;
+  return key in CRITICAL_ROLE_CHANGES;
+}
