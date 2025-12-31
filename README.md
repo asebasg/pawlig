@@ -4,14 +4,16 @@
 
 **Una plataforma moderna para conectar mascotas con hogares responsables**
 
-![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=flat-square&logo=next.js)
+![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=flat-square&logo=mongodb)
-![NextAuth](https://img.shields.io/badge/NextAuth-4.24-yellow?style=flat-square)
+![NextAuth](https://img.shields.io/badge/NextAuth-4.24.7-yellow?style=flat-square)
 
 **Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
+<br>
+*Última actualización: 31-12-2025*
 
 </div>
 
@@ -82,16 +84,16 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 ## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
-- **Next.js 14.2**: Framework React con SSR.
+- **Next.js 14.2.33**: Framework React con SSR.
 - **React 18**: Librería para UI.
 - **TypeScript 5.0**: Tipado estático.
 - **Tailwind CSS 3.4**: Framework de estilos.
-- **React Hook Form 7.66**: Gestión de formularios.
+- **React Hook Form 7.66.1**: Gestión de formularios.
 
 ### Backend & Autenticación
-- **NextAuth.js 4.24**: Autenticación y sesiones.
+- **NextAuth.js 4.24.7**: Autenticación y sesiones.
 - **Prisma 6.19**: ORM para base de datos.
-- **Zod 4.1**: Validación de esquemas.
+- **Zod 4.1.12**: Validación de esquemas.
 
 ### Base de Datos & Almacenamiento
 - **MongoDB Atlas**: Base de datos NoSQL.
@@ -181,6 +183,7 @@ El `schema.prisma` define las siguientes entidades principales:
 - `npm run dev`: Inicia el servidor de desarrollo.
 - `npm run build`: Compila la aplicación para producción.
 - `npm run start`: Inicia el servidor de producción.
+- `npm run test`: Ejecuta las pruebas unitarias con Vitest.
 - `npx prisma generate`: Genera el cliente de Prisma.
 - `npx prisma db push`: Sincroniza el esquema con la base de datos.
 - `npx prisma studio`: Abre la interfaz visual de la base de datos.
