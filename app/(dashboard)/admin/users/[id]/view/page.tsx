@@ -1,28 +1,29 @@
 import { notFound } from "next/navigation";
 import { getUserById } from "@/lib/services/user.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User as PrismaUser, AuditAction, UserRole, Municipality } from "@prisma/client";
+import { User as PrismaUser, AuditAction } from "@prisma/client";
 import { AuditHistoryCard } from "@/components/admin/AuditHistoryCard";
 import UserViewClient from "@/components/admin/UserViewClient";
-import { User, Mail, Phone, MapPin, Calendar, CheckCircle, XCircle } from "lucide-react";
+import Link from "next/link";
+import { User, Mail, Phone, MapPin, Calendar, CheckCircle, XCircle, ArrowLeft, CalendarCheck2 } from "lucide-react";
 
 type UserWithAudit = PrismaUser & {
   auditRecords: ({
-      performedBy: {
-          name: string;
-          email: string;
-      };
+    performedBy: {
+      name: string;
+      email: string;
+    };
   } & {
-      id: string;
-      action: AuditAction;
-      reason: string;
-      oldValue: string | null;
-      newValue: string | null;
-      adminId: string;
-      userId: string;
-      ipAddress: string | null;
-      userAgent: string | null;
-      createdAt: Date;
+    id: string;
+    action: AuditAction;
+    reason: string;
+    oldValue: string | null;
+    newValue: string | null;
+    adminId: string;
+    userId: string;
+    ipAddress: string | null;
+    userAgent: string | null;
+    createdAt: Date;
   })[];
 };
 
@@ -45,6 +46,13 @@ export default async function UserViewPage({ params }: { params: { id: string } 
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <Link
+        href="/admin/users"
+        className="inline-flex items-center gap-2 py-4 mb-2 rounded-lg text-black hover:text-gray-700 transition-colors"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        Regresar al Panel de Gestión
+      </Link>
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
         <p className="text-gray-600">{user.email}</p>
@@ -66,12 +74,13 @@ export default async function UserViewPage({ params }: { params: { id: string } 
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <InfoItem icon={Mail} label="Email" value={user.email} />
               <InfoItem icon={Phone} label="Teléfono" value={user.phone} />
-              <InfoItem icon={MapPin} label="Municipio" value={user.municipality} />
+              <InfoItem icon={MapPin} label="Municipio" value={`${user.municipality}, ANTIOQUIA`} />
               <InfoItem icon={Calendar} label="Fecha de Nacimiento" value={formatDate(user.birthDate)} />
+              <InfoItem icon={CalendarCheck2} label="Fecha de Registro" value={formatDate(user.createdAt)} />
               <div className="sm:col-span-2">
                 <InfoItem icon={user.isActive ? CheckCircle : XCircle} label="Estado"
-                          value={user.isActive ? "Activo" : `Bloqueado desde ${formatDate(user.blockedAt)}`}
-                          valueColor={user.isActive ? "text-green-600" : "text-red-600"} />
+                  value={user.isActive ? "Activo" : `Bloqueado desde ${formatDate(user.blockedAt)}`}
+                  valueColor={user.isActive ? "text-green-600" : "text-red-600"} />
                 {!user.isActive && user.blockReason && <p className="text-xs text-gray-500 mt-1 ml-6">Razón: {user.blockReason}</p>}
               </div>
             </CardContent>
@@ -83,7 +92,7 @@ export default async function UserViewPage({ params }: { params: { id: string } 
 
         {/* Columna Derecha: Auditoría */}
         <div className="lg:col-span-1">
-          <AuditHistoryCard auditRecords={user.auditRecords.map(r => ({...r, createdAt: new Date(r.createdAt)}))} />
+          <AuditHistoryCard auditRecords={user.auditRecords.map(r => ({ ...r, createdAt: new Date(r.createdAt) }))} />
         </div>
 
       </div>
@@ -93,19 +102,19 @@ export default async function UserViewPage({ params }: { params: { id: string } 
 
 // Componente de ayuda para mostrar items de información
 function InfoItem({ icon: Icon, label, value, valueColor = "text-gray-800" }: { icon: React.ElementType, label: string, value: string, valueColor?: string }) {
-    return (
-        <div>
-            <div className="flex items-center gap-2 text-gray-500">
-                <Icon className="w-4 h-4" />
-                <span className="font-semibold">{label}:</span>
-            </div>
-            <p className={`ml-6 ${valueColor}`}>{value}</p>
-        </div>
-    );
+  return (
+    <div>
+      <div className="flex items-center gap-2 text-gray-500">
+        <Icon className="w-4 h-4" />
+        <span className="font-semibold">{label}:</span>
+      </div>
+      <p className={`ml-6 ${valueColor}`}>{value}</p>
+    </div>
+  );
 }
 
 export const metadata = {
-  title: "Detalle de Usuario",
+  title: `Detalles del Usuario`,
 };
 
 /*
