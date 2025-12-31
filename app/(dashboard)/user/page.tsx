@@ -27,7 +27,12 @@ export default async function UserDashboardPage() {
         <p className="text-lg text-gray-600">Gestiona tus mascotas favoritas y realiza seguimiento a tus solicitudes de adopción</p>
       </div>
 
-      <AdopterDashboardClient userSession={session.user} />
+      <AdopterDashboardClient userSession={{
+        id: session.user.id || '',
+        name: session.user.name || '',
+        email: session.user.email || '',
+        role: session.user.role || UserRole.ADOPTER,
+      }} />
     </main>
   );
 }

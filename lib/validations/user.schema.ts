@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Municipality } from '@prisma/client'
+import { Municipality, UserRole } from '@prisma/client'
 
 //  ========== ESQUEMA DE REGISTRO (ADOPTANTE) ==========
 export const registerUserSchema = z.object({
@@ -194,6 +194,16 @@ export const vendorProfileUpdateSchema = z.object({
 });
 
 export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>;
+
+//  ========== ESQUEMA DE ACTUALIZACIÓN DE ROL (ADMIN) ==========
+export const roleUpdateSchema = z.object({
+  newRole: z.nativeEnum(UserRole, {
+    message: "Rol inválido",
+  }),
+  reason: z.string().min(10, "La razón debe tener al menos 10 caracteres."),
+});
+
+export type RoleUpdateInput = z.infer<typeof roleUpdateSchema>;
 
 /**
  * 📚 NOTAS DE IMPLEMENTACIÓN:

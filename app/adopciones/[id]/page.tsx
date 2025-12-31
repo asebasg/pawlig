@@ -80,12 +80,19 @@ export default async function PetDetailPage({ params }: PetDetailPageProps) {
 
   const similarPets = await getSimilarPets(params.id, pet.shelterId, pet.species);
 
+  const userSession = session?.user ? {
+    id: session.user.id || '',
+    name: session.user.name || '',
+    email: session.user.email || '',
+    role: session.user.role || '',
+  } : null;
+
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <PetDetailClient
         pet={pet}
         isFavorited={isFavorited}
-        userSession={session?.user || null}
+        userSession={userSession}
         similarPets={similarPets}
       />
     </main>
