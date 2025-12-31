@@ -13,13 +13,14 @@
 **Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-*Última actualización: 31-12-2025*
+_Última actualización: 31-12-2025_
 
 </div>
 
 ---
 
 ## 📋 Tabla de Contenidos
+
 1. [Descripción General](#-descripción-general)
 2. [Características Principales](#-características-principales)
 3. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
@@ -46,6 +47,7 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 ## ✨ Características Principales
 
 ### 🔐 Autenticación y Seguridad
+
 - **Sistema multi-rol** con 4 tipos de usuarios: Admin, Albergue, Proveedor, Adoptante.
 - **Autenticación JWT** stateless mediante NextAuth.js.
 - **Contraseñas encriptadas** con bcryptjs.
@@ -53,29 +55,35 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 - **Middleware de protección** de rutas por rol.
 
 ### 🐕 Módulo de Adopciones
+
 - **Publicación de mascotas** por albergues con múltiples imágenes.
 - **Búsqueda avanzada** con filtros por especie, raza, edad, etc.
 - **Sistema de favoritos** y postulaciones de adopción.
 - **Gestión de estado** de adopción (Pendiente, Aprobada, Rechazada).
 
 ### 🛍️ Tienda Virtual (E-commerce)
+
 - **Catálogo de productos** y gestión de inventario.
 - **Sistema de órdenes** con múltiples estados.
 - **Carrito de compras** persistente.
 
 ### 👥 Paneles de Control Personalizados
+
 - **Dashboards** para Admin, Albergue, Proveedor y Adoptante, cada uno con funcionalidades específicas a su rol.
 
 ### 📊 Auditoría y Moderación
+
 - **Historial de acciones** administrativas.
 - **Verificación de albergues** y proveedores.
 - **Registro de IP y User-Agent** para seguridad.
 
 ### 📱 Diseño Responsivo
+
 - **Mobile-first** y adaptable a todos los dispositivos.
 - **Componentes accesibles** con Tailwind CSS.
 
 ### 🌐 Integraciones
+
 - **WhatsApp e Instagram** para contacto.
 - **Cloudinary** para almacenamiento de imágenes.
 
@@ -84,6 +92,7 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 ## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
+
 - **Next.js 14.2.33**: Framework React con SSR.
 - **React 18**: Librería para UI.
 - **TypeScript 5.0**: Tipado estático.
@@ -91,11 +100,13 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 - **React Hook Form 7.66.1**: Gestión de formularios.
 
 ### Backend & Autenticación
+
 - **NextAuth.js 4.24.7**: Autenticación y sesiones.
 - **Prisma 6.19**: ORM para base de datos.
 - **Zod 4.1.12**: Validación de esquemas.
 
 ### Base de Datos & Almacenamiento
+
 - **MongoDB Atlas**: Base de datos NoSQL.
 - **Cloudinary**: Almacenamiento de imágenes.
 
@@ -104,6 +115,7 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 ## 📦 Instalación y Configuración
 
 ### Prerrequisitos
+
 - Node.js 18.17+
 - npm 9+ o yarn 1.22+
 - Git
@@ -111,22 +123,27 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 - Cuenta en Cloudinary
 
 ### Pasos
+
 1. **Clonar el Repositorio:**
+
    ```bash
    git clone https://github.com/asebasg/pawlig.git
    cd pawlig
    ```
 
 2. **Instalar Dependencias:**
+
    ```bash
    npm install
    ```
 
 3. **Configurar Variables de Entorno:**
+
    - Copia `.env.local.example` a `.env.local`.
    - Rellena las variables con tus credenciales de MongoDB, NextAuth y Cloudinary.
 
 4. **Inicializar Base de Datos:**
+
    ```bash
    npx prisma generate
    npx prisma db push
@@ -141,6 +158,7 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 ---
 
 ## 🗂️ Estructura del Proyecto
+
 ```
 pawlig/
 ├── app/             # Rutas, páginas y layouts (App Router)
@@ -166,6 +184,7 @@ pawlig/
 ## 🗄️ Modelo de Datos
 
 El `schema.prisma` define las siguientes entidades principales:
+
 - `User`
 - `Shelter`
 - `Pet`
@@ -231,6 +250,7 @@ Este proyecto es para fines académicos como parte del programa de Análisis y D
 ## 📞 Soporte y Contacto
 
 **Equipo de Desarrollo:**
+
 - **Andrés Sebastián Ospina Guzmán:** asebasg07@gmail.com
 - **Mateo Úsuga Vasco:** mateo.usuga.v21@gmail.com
 - **Santiago Lezcano Escobar:** santiag1725g@gmail.com
