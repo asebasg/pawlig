@@ -6,6 +6,71 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 
 ---
 
+## 31-12-2025 - Gestión de Usuarios y Visualización Detallada (Admin)
+
+**Commits:** `0e3b7e3`, `78409cf`, `bba8cb4`  
+**Tipo:** Feature (Admin)  
+**Scope:** admin, users
+
+### Descripción
+
+Implementación integral de la gestión de usuarios para administradores. Se añade una vista detallada del usuario, historial de auditoría de cambios y la capacidad de modificar roles de usuario de forma segura con validaciones.
+
+### Archivos Modificados
+
+- **`app/(dashboard)/admin/users/[id]/view/page.tsx`** (A)
+  - Nueva página de vista detallada de usuario
+- **`components/admin/UserViewClient.tsx`** (A)
+  - Cliente para la visualización y gestión de la vista de usuario
+- **`components/admin/RoleChangeModal.tsx`** (A)
+  - Modal para cambio de roles con confirmación
+- **`components/admin/AuditHistoryCard.tsx`** (A)
+  - Componente para visualizar el historial de cambios (auditoría)
+- **`lib/services/user.service.ts`** (M)
+  - Nuevos métodos para obtener usuario por ID y actualizar roles
+- **`lib/validations/user.schema.ts`** (M)
+  - Esquemas de validación actualizados
+
+---
+
+## 31-12-2025 - Mejoras en Componentes de Mascotas
+
+**Commit:** `fd9d17a`  
+**Tipo:** Feature  
+**Scope:** mascotas, ui
+
+### Descripción
+
+Refactorización del componente cliente de detalles de mascota y actualizaciones en las tarjetas de presentación para albergues.
+
+### Archivos Modificados
+
+- **`components/PetDetailClient.tsx`** (M)
+  - Optimizaciones en la visualización de detalles
+- **`components/cards/shelter-pet-card.tsx`** (M)
+  - Ajustes de UI en la tarjeta de mascota
+
+---
+
+## 31-12-2025 - Actualización de Documentación del Proyecto
+
+**Commits:** `91656f8`, `0f13c4e`, `34f458a`  
+**Tipo:** Documentation  
+**Scope:** docs
+
+### Descripción
+
+Creación inicial del archivo `CHANGES.md` para seguimiento de cambios y actualizaciones de formato y contenido en el `README.md`.
+
+### Archivos Modificados
+
+- **`CHANGES.md`** (A)
+  - Creación del archivo de registro de cambios
+- **`README.md`** (M)
+  - Mejoras de formato, corrección de instrucciones y actualización de metadatos
+
+---
+
 ## 31-12-2025 - Actualización de Assets: Imagen del Mapa de Medellín
 
 **Commit:** `33c4a6d6f2dd5916631c8ab3f09e0764838cc271`  
