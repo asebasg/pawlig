@@ -27,11 +27,11 @@ export default async function AdopcionesPage() {
       </div>
 
       <PetGalleryClient 
-        userSession={session ? {
-          id: session.user.id,
-          name: session.user.name,
-          email: session.user.email,
-          role: session.user.role,
+        userSession={session?.user ? {
+          id: session.user.id || '',
+          name: session.user.name || '',
+          email: session.user.email || '',
+          role: session.user.role || '',
         } : null}
       />
     </main>

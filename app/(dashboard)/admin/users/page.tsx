@@ -13,9 +13,15 @@ export default async function AdminUsersPage() {
     }
 
     // Solo ADMIN puede acceder
-    if (session.user.role !== UserRole.ADMIN) {
+    if (session.user.role !== UserRole.ADMIN || !session.user.id || !session.user.name || !session.user.email) {
         redirect('/unauthorized?reason=admin_only')
     }
+
+    const adminUser = {
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
@@ -28,7 +34,7 @@ export default async function AdminUsersPage() {
                 </p>
             </div>
 
-            <UsersManagementClient adminUser={session.user} />
+            <UsersManagementClient adminUser={adminUser} />
         </div>
     );
 }

@@ -1,3 +1,5 @@
+import { UserRole } from "@prisma/client";
+
 // Rutas de navegación por rol
 export const NAVIGATION_BY_ROLE = {
   ADOPTER: [
@@ -106,3 +108,39 @@ export const CONTACT_INFO = {
   phone: "+57 (4) 123-4567",
   address: "Medellín, Antioquia, Colombia"
 };
+
+// Definición de cambios de rol considerados críticos
+export const CRITICAL_ROLE_CHANGES = {
+  // Elevación a ADMIN siempre es crítica
+  [`${UserRole.ADOPTER}_TO_${UserRole.ADMIN}`]: {
+    message: '¿Estás seguro de promover a este usuario a Administrador?',
+    warning: 'Tendrá acceso completo al sistema.',
+  },
+  [`${UserRole.SHELTER}_TO_${UserRole.ADMIN}`]: {
+    message: '¿Promover este albergue a Administrador?',
+    warning: 'Perderá sus permisos específicos de albergue.',
+  },
+  [`${UserRole.VENDOR}_TO_${UserRole.ADMIN}`]: {
+    message: '¿Promover este vendedor a Administrador?',
+    warning: 'Perderá sus permisos específicos de vendedor.',
+  },
+
+  // Degradaciones que pierden permisos importantes
+  [`${UserRole.SHELTER}_TO_${UserRole.ADOPTER}`]: {
+    message: '¿Degradar este albergue a Adoptante?',
+    warning: 'Ya no podrá gestionar mascotas ni adopciones.',
+  },
+  [`${UserRole.VENDOR}_TO_${UserRole.ADOPTER}`]: {
+    message: '¿Degradar este vendedor a Adoptante?',
+    warning: 'Ya no podrá gestionar productos ni inventario.',
+  },
+} as const;
+
+// Función para verificar si un cambio de rol es crítico
+export function isCriticalRoleChange(
+  currentRole: UserRole,
+  newRole: UserRole
+): boolean {
+  const key = `${currentRole}_TO_${newRole}` as keyof typeof CRITICAL_ROLE_CHANGES;
+  return key in CRITICAL_ROLE_CHANGES;
+}
