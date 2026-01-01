@@ -15,7 +15,6 @@
  * - RF-009: Registro de animales
  * - CU-004: Publicar mascota en adopción
  */
-
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
@@ -25,6 +24,12 @@ import { createPetSchema, shelterPetsFilterSchema } from "@/lib/validations/pet.
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 
+/**
+ * POST/GET /api/pets
+ * Descripción: Crea una nueva mascota en la base de datos y obtiene el listado de mascotas.
+ * Requiere: Autenticación como SHELTER verificado para POST.
+ * Implementa: HU-005 (Publicación de mascota).
+ */
 /**
  *  POST /api/pets
  *  Crear una nueva mascota
@@ -189,18 +194,18 @@ export async function POST(request: NextRequest) {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este archivo define la ruta API /api/pets, que gestiona las operaciones
+ * Este archivo define la ruta API '/api/pets', que gestiona las operaciones
  * principales para las mascotas, incluyendo su creación y la obtención de
  * listados. Es un punto central que conecta el frontend con la lógica de
  * negocio y la base de datos.
  *
  * Lógica Clave:
- * - POST /api/pets:
+ * - POST '/api/pets':
  *   - Autorización Robusta: Antes de procesar, verifica que el usuario
- *     esté autenticado, tenga el rol SHELTER y que el albergue asociado
+ *     esté autenticado, tenga el rol 'SHELTER' y que el albergue asociado
  *     esté verificado. Esto asegura que solo entidades autorizadas puedan
  *     crear mascotas.
- *   - Validación con Zod: Utiliza createPetSchema para validar los
+ *   - Validación con Zod: Utiliza 'createPetSchema' para validar los
  *     datos de entrada. Esto garantiza la integridad de los datos antes de
  *     llegar a la base de datos y proporciona mensajes de error claros.
  *   - Manejo de Errores: Implementa un manejo de errores detallado que
@@ -208,23 +213,23 @@ export async function POST(request: NextRequest) {
  *     datos (Prisma), y errores genéricos, devolviendo códigos de estado
  *     HTTP apropiados.
  *
- * - GET /api/pets:
+ * - GET '/api/pets':
  *   - Ruta Bifurcada: La lógica de esta función se divide en dos caminos.
  *     Si detecta parámetros de búsqueda pública (como especie, municipio,
- *     etc.), delega la tarea al servicio getPetsWithFilters para devolver
+ *     etc.), delega la tarea al servicio 'getPetsWithFilters' para devolver
  *     un listado público.
  *   - Acceso Privado: Si no es una búsqueda pública, la ruta asume que
  *     un albergue está solicitando su propio listado de mascotas. En este
- *     caso, aplica la autorización de SHELTER y filtra las mascotas por
- *     el shelterId del usuario autenticado.
+ *     caso, aplica la autorización de 'SHELTER' y filtra las mascotas por
+ *     el 'shelterId' del usuario autenticado.
  *
  * Dependencias Externas:
- * - next-auth: Se utiliza para obtener la sesión del usuario (getServerSession)
+ * - 'next-auth': Se utiliza para obtener la sesión del usuario ('getServerSession')
  *   y proteger los endpoints, asegurando que las operaciones críticas solo
  *   sean realizadas por usuarios autenticados y con los roles correctos.
- * - zod: Es fundamental para la validación de los datos de entrada en POST
- *   y de los parámetros de consulta en GET, previniendo datos malformados.
- * - @prisma/client: El cliente de Prisma se usa para todas las interacciones
+ * - 'zod': Es fundamental para la validación de los datos de entrada en 'POST'
+ *   y de los parámetros de consulta en 'GET', previniendo datos malformados.
+ * - '@prisma/client': El cliente de Prisma se usa para todas las interacciones
  *   directas con la base de datos, como crear una nueva mascota o buscar
  *   un albergue.
  *

@@ -19,7 +19,6 @@
  * 4. Submit → API /api/pets
  * 5. Redirección a listado de mascotas
  */
-
 "use client";
 
 import { useState } from "react";
@@ -30,6 +29,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createPetSchema, PetSpecies, PetSex, type CreatePetInput } from "@/lib/validations/pet.schema";
 import { Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 
+/**
+ * Componente: PetForm
+ * Descripción: Formulario para crear y editar mascotas.
+ * Requiere: -
+ * Implementa: HU-005 (Publicación y gestión de mascota).
+ */
 interface PetFormProps {
     mode?: "create" | "edit";
     initialData?: Partial<CreatePetInput> & { id?: string };
@@ -466,47 +471,47 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * PetForm es un componente de cliente ("use client") diseñado para la
+ * PetForm es un componente de cliente ('use client') diseñado para la
  * creación y edición de perfiles de mascotas. Es un formulario complejo que
  * integra validación, subida de archivos y comunicación con la API,
  * proporcionando una experiencia de usuario interactiva y robusta.
  *
  * Lógica Clave:
  * - Manejo de Estado del Formulario:
- *   - Se utiliza react-hook-form para gestionar el estado de los campos del
+ *   - Se utiliza 'react-hook-form' para gestionar el estado de los campos del
  *     formulario, incluyendo sus valores, errores y estado de envío.
- *   - La integración con zodResolver permite una validación de datos en
- *     tiempo real basada en el esquema createPetSchema, mejorando la UX al
+ *   - La integración con 'zodResolver' permite una validación de datos en
+ *     tiempo real basada en el esquema 'createPetSchema', mejorando la UX al
  *     proporcionar feedback inmediato.
  *
  * - Subida de Imágenes a Cloudinary:
- *   - La función handleImageUpload es asíncrona y maneja la subida de
- *     imágenes a un endpoint propio (/api/upload), que a su vez se
+ *   - La función 'handleImageUpload' es asíncrona y maneja la subida de
+ *     imágenes a un endpoint propio ('/api/upload'), que a su vez se
  *     comunica con Cloudinary.
  *   - Realiza validaciones en el cliente (tamaño, tipo de archivo, cantidad)
  *     para evitar cargas innecesarias y mejorar el rendimiento.
- *   - El estado uploadingImages se utiliza para deshabilitar el botón de
+ *   - El estado 'uploadingImages' se utiliza para deshabilitar el botón de
  *     envío y mostrar un indicador de carga, previniendo envíos incompletos.
  *
  * - Manejo de Estado Local:
- *   - useState se usa para gestionar el estado que no pertenece a react-hook-form,
- *     como el array de URLs de imágenes (images), los estados de carga
- *     (uploadingImages), y los mensajes de error/éxito del envío (submitError,
- *     submitSuccess).
+ *   - 'useState' se usa para gestionar el estado que no pertenece a 'react-hook-form',
+ *     como el array de URLs de imágenes ('images'), los estados de carga
+ *     ('uploadingImages'), y los mensajes de error/éxito del envío ('submitError',
+ *     'submitSuccess').
  *
  * - Modo Dinámico (Crear/Editar):
- *   - El componente acepta una prop mode que puede ser "create" o "edit".
+ *   - El componente acepta una prop 'mode' que puede ser 'create' o 'edit'.
  *   - Esta prop determina la URL del endpoint y el método HTTP a utilizar
- *     (POST para crear, PUT para editar), haciendo el formulario reutilizable.
- *   - initialData se utiliza para pre-llenar el formulario en modo de edición.
+ *     ('POST' para crear, 'PUT' para editar), haciendo el formulario reutilizable.
+ *   - 'initialData' se utiliza para pre-llenar el formulario en modo de edición.
  *
  * Dependencias Externas:
- * - next-auth/react: El hook useSession se usa para obtener datos del
+ * - 'next-auth/react': El hook 'useSession' se usa para obtener datos del
  *   usuario autenticado, aunque en este componente su uso es principalmente
  *   para futuras ampliaciones o verificaciones.
- * - react-hook-form y @hookform/resolvers/zod: Son cruciales para la
+ * - 'react-hook-form' y '@hookform/resolvers/zod': Son cruciales para la
  *   gestión del formulario y la validación basada en esquemas de Zod.
- * - lucide-react: Proporciona los íconos utilizados en la interfaz para
+ * - 'lucide-react': Proporciona los íconos utilizados en la interfaz para
  *   mejorar la claridad visual.
  *
  */

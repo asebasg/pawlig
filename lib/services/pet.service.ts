@@ -1,6 +1,12 @@
 import { prisma } from '@/lib/utils/db';
 import { PetStatus, Municipality, Sex, Prisma } from '@prisma/client';
 
+/**
+ * Servicio: Pet Service
+ * Descripción: Provee funciones para interactuar con la base de datos en relación a las mascotas.
+ * Requiere: -
+ * Implementa: Lógica de obtención de datos para listado, detalle y recomendaciones de mascotas.
+ */
 export interface PetFilters {
   species?: string;
   municipality?: Municipality;
@@ -170,26 +176,26 @@ export async function checkIsFavorited(userId: string, petId: string) {
  * filtros, paginación y obtener datos específicos de las mascotas.
  *
  * Lógica Clave:
- * - getPetsWithFilters: Es la función más compleja. Construye una consulta
+ * - 'getPetsWithFilters': Es la función más compleja. Construye una consulta
  *   dinámica a la base de datos basada en múltiples filtros opcionales como
- *   especie, municipio, edad, etc. Utiliza Promise.all para ejecutar
+ *   especie, municipio, edad, etc. Utiliza 'Promise.all' para ejecutar
  *   la consulta de datos y el conteo total en paralelo, optimizando el
  *   rendimiento. Devuelve un objeto con los datos y la información de
  *   paginación.
- * - getPetById: Obtiene una mascota por su ID. Incluye una validación
+ * - 'getPetById': Obtiene una mascota por su ID. Incluye una validación
  *   rápida del formato del ID para evitar consultas innecesarias a la base
  *   de datos. Realiza un join con el albergue y las adopciones para
  *   proveer información contextual completa.
- * - getSimilarPets: Busca mascotas similares basándose en el albergue o
+ * - 'getSimilarPets': Busca mascotas similares basándose en el albergue o
  *   la especie, excluyendo la mascota actual. Esta función es clave para
  *   las recomendaciones en la página de detalles de una mascota.
- * - checkIsFavorited: Proporciona una comprobación de estado simple y
+ * - 'checkIsFavorited': Proporciona una comprobación de estado simple y
  *   eficiente para saber si un usuario ha marcado una mascota como favorita,
- *   usando el índice único userId_petId.
+ *   usando el índice único 'userId_petId'.
  *
  * Dependencias Externas:
- * - @prisma/client: El cliente de Prisma se utiliza como ORM para todas
+ * - '@prisma/client': El cliente de Prisma se utiliza como ORM para todas
  *   las interacciones con la base de datos. Las consultas están fuertemente
- *   tipadas gracias a los modelos definidos en schema.prisma.
+ *   tipadas gracias a los modelos definidos en 'schema.prisma'.
  *
  */
