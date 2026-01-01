@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth/auth-options';
+import { prisma } from '@/lib/utils/db';
+import { adoptionStatusChangeSchema } from '@/lib/validations/adoption.schema';
+import { ZodError } from 'zod';
 
 /**
  * PATCH /api/adoptions/{id}
@@ -7,10 +11,6 @@ import { getServerSession } from 'next-auth';
  * Requiere: Autenticación como SHELTER y ser propietario de la mascota.
  * Implementa: TAREA-024 (Cambio de estado de postulación).
  */
-import { authOptions } from '@/lib/auth/auth-options';
-import { prisma } from '@/lib/utils/db';
-import { adoptionStatusChangeSchema } from '@/lib/validations/adoption.schema';
-import { ZodError } from 'zod';
 
 /**
  * Endpoint para cambiar estado de postulación
@@ -271,35 +271,35 @@ export async function PATCH(
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * **Descripción General:**
+ * Descripción General:
  * Este endpoint maneja la lógica para que un albergue apruebe o rechace
  * una postulación de adopción. Es una operación crítica que no solo
  * actualiza el estado de la postulación, sino que también orquesta el
  * cambio de estado de la mascota asociada.
  *
- * **Lógica Clave:**
- * - **Autorización Múltiple:** Antes de cualquier operación, se realizan
+ * Lógica Clave:
+ * - Autorización Múltiple: Antes de cualquier operación, se realizan
  *   múltiples verificaciones de seguridad: que el usuario esté autenticado,
- *   que su rol sea SHELTER, y que el albergue sea el propietario de la
+ *   que su rol sea 'SHELTER', y que el albergue sea el propietario de la
  *   mascota implicada en la postulación.
- * - **Transacción Atómica:** La lógica principal está envuelta en una
- *   transacción de Prisma (`$transaction`). Esto es fundamental para
+ * - Transacción Atómica: La lógica principal está envuelta en una
+ *   transacción de Prisma ('$transaction'). Esto es fundamental para
  *   garantizar la consistencia de los datos, ya que la actualización de
  *   la postulación y la de la mascota deben ocurrir juntas (o ninguna de
  *   las dos).
- * - **Orquestación de Estados:** El estado de la mascota se actualiza
+ * - Orquestación de Estados: El estado de la mascota se actualiza
  *   automáticamente en función del nuevo estado de la postulación.
  *   - Si una postulación es 'APPROVED', la mascota pasa a 'ADOPTED'.
  *   - Si es 'REJECTED', se verifica si existen otras postulaciones
  *     aprobadas. Si no hay ninguna, la mascota vuelve a 'AVAILABLE'.
  *   Esto previene que una mascota quede en un estado inconsistente.
  *
- * **Dependencias Externas:**
- * - `next-auth`: Se usa para la autenticación y obtención de la sesión
+ * Dependencias Externas:
+ * - 'next-auth': Se usa para la autenticación y obtención de la sesión
  *   del usuario para las validaciones de rol y propiedad.
- * - `zod`: Valida que el cuerpo de la solicitud contenga un estado
+ * - 'zod': Valida que el cuerpo de la solicitud contenga un estado
  *   válido y una razón de rechazo si es necesaria.
- * - `@prisma/client`: Utilizado para todas las operaciones de base de
+ * - '@prisma/client': Utilizado para todas las operaciones de base de
  *   datos, incluyendo la transacción que asegura la atomicidad.
  *
  */
