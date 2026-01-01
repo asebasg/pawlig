@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, AlertTriangle, Loader2 } from "lucide-react";
+import { X, AlertTriangle } from "lucide-react";
+import Loader from '@/components/ui/loader';
 
 interface BlockUserModalProps {
     user: {
@@ -144,7 +145,7 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
                         >
                             {loading ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <Loader />
                                     Procesando...
                                 </>
                             ) : (

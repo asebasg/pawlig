@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { RoleChangeModal } from "./RoleChangeModal";
-import { Shield, Save, Loader2 } from "lucide-react";
+import { Shield, Save } from "lucide-react";
+import Loader from '@/components/ui/loader';
 
 type UserData = {
   id: string;
@@ -147,7 +148,7 @@ export default function UserViewClient({ user }: UserViewClientProps) {
             <div className="flex justify-end">
               <Button type="submit" disabled={!isDirty || isLoading}>
                 {isLoading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader />
                 ) : (
                   <Save className="mr-2 h-4 w-4" />
                 )}
