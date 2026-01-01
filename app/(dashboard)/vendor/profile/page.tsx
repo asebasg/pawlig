@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
 import VendorProfileForm from '@/components/forms/vendor-profile-form';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 /**
  * Metadata para SEO
@@ -38,33 +40,16 @@ export default async function VendorProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-purple-600">PawLig</h1>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                Hola, <span className="font-semibold">{session.user.name}</span>
-              </span>
-              <a
-                href="/api/auth/signout"
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Cerrar sesión
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumb */}
         <div className="mb-8">
-          <a href="/" className="text-purple-600 hover:text-purple-700 text-sm font-semibold">
-            ← Volver al Inicio
-          </a>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Volver al Inicio
+          </Link>
         </div>
 
         {/* Form Container */}
@@ -93,16 +78,6 @@ export default async function VendorProfilePage() {
           </ul>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <p className="text-center text-gray-500 text-sm">
-            &copy; 2025 - PawLig <br />
-            Todos los derechos reservados
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ChevronDown,
   LogOut,
@@ -20,6 +21,7 @@ import {
   HelpCircle,
   Home,
   ShoppingCart,
+  Plus,
 } from "lucide-react";
 import { USER_MENU_OPTIONS, COMMON_MENU_OPTIONS } from "@/lib/constants";
 
@@ -46,7 +48,8 @@ const iconMap = {
   Settings,
   HelpCircle,
   Home,
-  ShoppingCart
+  ShoppingCart,
+  Plus,
 };
 
 const roleLabels = {
@@ -84,9 +87,15 @@ export function UserMenu({ user }: UserMenuProps) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+        <div className="relative w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
           {user.image ? (
-            <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
+            <Image
+              src={user.image}
+              alt={user.name || ""}
+              fill
+              className="object-cover"
+              sizes="40px"
+            />
           ) : (
             <User size={20} className="text-purple-600" />
           )}
@@ -102,9 +111,15 @@ export function UserMenu({ user }: UserMenuProps) {
           {/* User Info */}
           <div className="px-4 py-3 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+              <div className="relative w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
                 {user.image ? (
-                  <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
+                  <Image
+                    src={user.image}
+                    alt={user.name || ""}
+                    fill
+                    className="object-cover"
+                    sizes="48px"
+                  />
                 ) : (
                   <User size={24} className="text-purple-600" />
                 )}

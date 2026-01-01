@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import AdoptionApplicationsClient from '@/components/adoption-applications-client';
+import AdoptionApplicationsClient from '@/components/AdoptionApplicationsClient';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
