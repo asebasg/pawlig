@@ -1,12 +1,5 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-
-/**
- * PUT /api/admin/users/{id}/role
- * Descripción: Actualiza el rol de un usuario.
- * Requiere: Autenticación como ADMIN.
- * Implementa: HU-014 (Gestión de usuarios).
- */
 import { authOptions } from "@/lib/auth/auth-options";
 import { roleUpdateSchema } from "@/lib/validations/user.schema";
 import { updateUserRole } from "@/lib/services/user.service";
@@ -123,48 +116,5 @@ export async function PUT(
  * - `@/lib/validations/user.schema`: Para el schema de Zod.
  * - `@/lib/services/user.service`: Para la lógica de negocio.
  * - `@/lib/utils/logger`: Para el logging estructurado.
- *
- */
-
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * Este archivo define la API Route para manejar la actualización del rol de
- * un usuario. Es un endpoint protegido que solo los administradores pueden
- * utilizar. Sigue un flujo estricto de validaciones para garantizar la
- * seguridad y la integridad de los datos.
- *
- * Lógica Clave:
- * - 'Flujo de Validación Estricto':
- *   1. 'Autenticación y Autorización': Primero, se verifica si hay una
- *      sesión activa y si el usuario tiene el rol de 'ADMIN'. Esta es la
- *      primera barrera de seguridad.
- *   2. 'Validación de Entrada (Zod)': El cuerpo de la solicitud ('body')
- *      se valida contra el 'roleUpdateSchema'. Esto asegura que los datos
- *      recibidos (nuevo rol y razón) tengan el formato y tipo correctos
- *      antes de procesarlos.
- *   3. 'Lógica de Negocio (Servicio)': La lógica principal (verificar
- *      reglas de negocio, actualizar la DB, registrar auditoría) se delega
- *      al servicio 'updateUserRole'. Esto mantiene el controlador (la API
- *      route) limpio y centrado en la gestión de la solicitud/respuesta.
- * - 'Registro de Auditoría y Errores':
- *   - Se utiliza el 'logger.audit' para registrar explícitamente el evento
- *     de cambio de rol con todos los metadatos relevantes.
- *   - En caso de error, se utiliza 'logger.error' para capturar los
- *     detalles completos del fallo, lo cual es vital para la depuración.
- * - 'Manejo de Errores Específicos': El bloque 'catch' está diseñado para
- *   devolver mensajes de error claros al cliente cuando la lógica de
- *   negocio falla (ej: "Cannot change your own role"), en lugar de un
- *   genérico "Internal Server Error".
- *
- * Dependencias Externas:
- * - 'next/server': Para 'NextResponse'.
- * - 'next-auth': Para 'getServerSession' y la gestión de sesiones.
- * - '@/lib/validations/user.schema': Para el schema de Zod.
- * - '@/lib/services/user.service': Para la lógica de negocio.
- * - '@/lib/utils/logger': Para el logging estructurado.
  *
  */

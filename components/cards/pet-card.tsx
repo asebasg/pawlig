@@ -1,5 +1,11 @@
 'use client';
 
+/**
+ * Componente: Pet Card
+ * Descripción: Muestra una tarjeta de vista previa para una mascota.
+ * Requiere: -
+ * Implementa: Lógica para marcar/desmarcar como favorito.
+ */
 import { useState } from 'react';
 import { Heart, MapPin, Calendar, Info } from 'lucide-react';
 import Link from 'next/link';
@@ -155,3 +161,48 @@ export default function PetCard({
     </Link>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es una 'client component' que renderiza una tarjeta de
+ * vista previa para una mascota. Es un componente fundamental en los
+ * listados de mascotas y está diseñado para ser visualmente atractivo y
+ * funcional, incluyendo una acción para marcar como favorito.
+ *
+ * Lógica Clave:
+ * - 'Gestión del Estado de Favorito':
+ *   - El componente maneja un estado local ('isFav') para el corazón de
+ *     favorito, lo que permite una respuesta visual inmediata al clic del
+ *     usuario.
+ *   - La función 'handleFavoriteClick' es asíncrona y se comunica con el
+ *     endpoint de la API ('/api/pets/{pet.id}/favorite') para persistir
+ *     el cambio en la base de datos.
+ *   - 'Manejo de Sesión': Si un usuario no autenticado intenta marcar
+ *     una mascota como favorita, es redirigido a la página de login con
+ *     un 'callbackUrl' para que pueda volver a la página actual después
+ *     de iniciar sesión.
+ * - 'Optimización de Imágenes con next/image':
+ *   - Se utiliza el componente 'Image' de Next.js para optimizar la carga
+ *     de la imagen de la mascota. El atributo 'fill' y 'sizes' asegura que
+ *     la imagen sea responsiva y se cargue en el tamaño más adecuado para
+ *     el viewport del usuario.
+ * - 'Componente Reutilizable':
+ *   - Acepta la prop 'isFavorited' para inicializar el estado del corazón,
+ *     lo que permite que el estado inicial se pase desde un componente
+ *     padre que ya ha consultado los favoritos del usuario.
+ *   - El callback 'onFavoriteChange' permite notificar al componente padre
+ *     cuando el estado de favorito cambia, facilitando la sincronización
+ *     del estado a nivel superior si es necesario.
+ *
+ * Dependencias Externas:
+ * - 'lucide-react': Para los íconos utilizados en la tarjeta.
+ * - 'next/link' y 'next/image': Para la navegación optimizada y la
+ *   carga de imágenes.
+ * - '@prisma/client' (indirectamente a través del tipo 'PetStatus'): Para
+ *   el tipado del estado de la mascota.
+ *
+ */

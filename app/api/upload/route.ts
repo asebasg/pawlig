@@ -22,16 +22,10 @@
  *   CLOUDINARY_API_KEY
  *   CLOUDINARY_API_SECRET
  */
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
-
-/**
- * POST /api/upload
- * Descripción: Sube una imagen a Cloudinary.
- * Requiere: Usuario autenticado.
- * Implementa: Lógica de subida de imágenes.
- */
 import { v2 as cloudinary } from "cloudinary";
 
 // Configurar Cloudinary
@@ -195,45 +189,3 @@ export async function DELETE(request: NextRequest) {
         );
     }
 }
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * Este endpoint maneja la subida directa de imágenes a Cloudinary desde el
- * cliente. A diferencia del endpoint de firma ('/api/cloudinary/sign'), esta
- * ruta procesa la imagen directamente en el servidor, lo que simplifica el
- * flujo para casos de uso controlados, aunque puede consumir más recursos
- * del servidor.
- *
- * Lógica Clave:
- * - 'Autenticación Obligatoria': El endpoint está protegido y solo permite
- *   subidas de usuarios autenticados, previniendo el abuso del servicio.
- * - 'Configuración de Cloudinary': La configuración del SDK de Cloudinary
- *   se realiza al inicio del archivo, utilizando variables de entorno. Se
- *   incluye una verificación para asegurar que estas variables estén
- *   presentes antes de intentar una subida.
- * - 'Validación de Payload': Se realizan múltiples validaciones en el
- *   backend para asegurar que la imagen recibida (en formato base64) sea
- *   válida:
- *   - Verifica que el string 'image' exista y no esté vacío.
- *   - Confirma que el string base64 comience con 'data:image/'.
- *   - Extrae y valida el tipo MIME ('image/jpeg' o 'image/png').
- * - 'Transformaciones en la Subida': Al subir la imagen a Cloudinary,
- *   se aplican transformaciones automáticas para optimizarla:
- *   - 'width' y 'height': Limitan las dimensiones máximas de la imagen.
- *   - 'quality': Ajusta la compresión para un buen balance calidad/peso.
- *   - 'fetch_format': Permite a Cloudinary servir formatos modernos
- *     como WebP a los navegadores que lo soporten.
- * - 'Manejo del Endpoint DELETE': Se incluye una función 'DELETE' para
- *   permitir la eliminación de imágenes de Cloudinary usando su 'publicId'.
- *   Esto es útil para la gestión de archivos (ej: cuando un usuario elimina
- *   una foto de perfil).
- *
- * Dependencias Externas:
- * - 'next-auth': Para la autenticación y protección del endpoint.
- * - 'cloudinary': El SDK oficial de Cloudinary para Node.js, utilizado
- *   para interactuar con la API de Cloudinary.
- *
- */

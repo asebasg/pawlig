@@ -1,12 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/db';
-
-/**
- * POST /api/auth/register
- * Descripción: Registra un nuevo usuario en la base de datos.
- * Requiere: -
- * Implementa: HU-001 (Registro de usuario).
- */
 import { hashPassword } from '@/lib/auth/password';
 import { registerUserSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
@@ -175,47 +168,4 @@ export async function POST(request: Request) {
  *    - Password hasheado con bcrypt (12 salt rounds)
  *    - Solo se retornan campos seguros (sin password)
  *    - Detalles de error solo visibles en desarrollo
- */
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * Este endpoint es responsable del registro de nuevos usuarios en la
- * plataforma. Está diseñado para ser el punto de entrada principal para
- * los adoptantes y maneja la validación de datos, la verificación de
- * duplicados y el almacenamiento seguro de la información del usuario.
- *
- * Lógica Clave:
- * - 'Validación con Zod': Antes de procesar cualquier dato, el cuerpo de
- *   la solicitud se valida contra 'registerUserSchema'. Esto asegura que
- *   todos los campos requeridos estén presentes y tengan el formato
- *   correcto, devolviendo errores detallados si la validación falla.
- * - 'Verificación de Email Duplicado': Se realiza una consulta a la base
- *   de datos para verificar si el email proporcionado ya existe. Si es así,
- *   se devuelve una respuesta de error '409 Conflict' con un código
- *   específico ('EMAIL_ALREADY_EXISTS'), permitiendo al frontend
- *   mostrar un mensaje claro y una sugerencia de recuperación de contraseña.
- * - 'Hashing de Contraseña': La contraseña del usuario nunca se almacena
- *   en texto plano. Se utiliza la función 'hashPassword' (que a su vez
- *   usa 'bcrypt') para generar un hash seguro de la contraseña antes de
- *   guardarla en la base de datos.
- * - 'Asignación de Rol por Defecto': Todos los usuarios registrados a
- *   través de este endpoint reciben automáticamente el rol de 'ADOPTER'.
- *   Esto simplifica el flujo de registro y asegura que los nuevos
- *   usuarios tengan los permisos básicos para buscar mascotas.
- * - 'Manejo de Errores Detallado': El bloque 'catch' está diseñado para
- *   manejar diferentes tipos de errores (errores de Zod, errores de Prisma,
- *   y errores genéricos) y devolver respuestas JSON estructuradas y
- *   apropiadas para cada caso.
- *
- * Dependencias Externas:
- * - 'zod': Para la validación de esquemas y la garantía de la integridad
- *   de los datos de entrada.
- * - '@prisma/client': Para la interacción con la base de datos, incluyendo
- *   la creación del nuevo registro de usuario.
- * - 'bcrypt' (indirectamente a través de 'lib/auth/password'): Para el
- *   hashing seguro de las contraseñas de los usuarios.
- *
  */

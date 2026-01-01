@@ -6,10 +6,13 @@ import { adoptionStatusChangeSchema } from '@/lib/validations/adoption.schema';
 import { ZodError } from 'zod';
 
 /**
- * PATCH /api/adoptions/{id}
- * Descripción: Actualiza el estado de una postulación de adopción (Aprobada/Rechazada).
- * Requiere: Autenticación como SHELTER y ser propietario de la mascota.
- * Implementa: TAREA-024 (Cambio de estado de postulación).
+ * Endpoint para cambiar estado de postulación
+ * Implementa TAREA-024
+ *
+ * PATCH /api/adoptions/[id]
+ * - Aprobar o rechazar postulación
+ * - Actualizar estado de mascota automáticamente
+ * - Solo SHELTER propietario del albergue
  */
 
 export async function PATCH(
@@ -256,40 +259,39 @@ export async function PATCH(
   }
 }
 
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
+/**
+ * 📚 NOTAS TÉCNICAS:
  *
- * Descripción General:
- * Este endpoint maneja la lógica para que un albergue apruebe o rechace
- * una postulación de adopción. Es una operación crítica que no solo
- * actualiza el estado de la postulación, sino que también orquesta el
- * cambio de estado de la mascota asociada.
+ * 1. AUTENTICACIÓN Y AUTORIZACIÓN:
+ *    - Solo SHELTER puede cambiar estados
+ *    - Solo propietario del albergue de la mascota
  *
- * Lógica Clave:
- * - Autorización Múltiple: Antes de cualquier operación, se realizan
- *   múltiples verificaciones de seguridad: que el usuario esté autenticado,
- *   que su rol sea 'SHELTER', y que el albergue sea el propietario de la
- *   mascota implicada en la postulación.
- * - Transacción Atómica: La lógica principal está envuelta en una
- *   transacción de Prisma ('$transaction'). Esto es fundamental para
- *   garantizar la consistencia de los datos, ya que la actualización de
- *   la postulación y la de la mascota deben ocurrir juntas (o ninguna de
- *   las dos).
- * - Orquestación de Estados: El estado de la mascota se actualiza
- *   automáticamente en función del nuevo estado de la postulación.
- *   - Si una postulación es 'APPROVED', la mascota pasa a 'ADOPTED'.
- *   - Si es 'REJECTED', se verifica si existen otras postulaciones
- *     aprobadas. Si no hay ninguna, la mascota vuelve a 'AVAILABLE'.
- *   Esto previene que una mascota quede en un estado inconsistente.
+ * 2. ACTUALIZACIÓN AUTOMÁTICA DE ESTADO DE MASCOTA:
+ *    - APPROVED: Pet cambia a IN_PROCESS → ADOPTED (automático)
+ *    - REJECTED: Pet vuelve a AVAILABLE (si no hay otras APPROVED)
+ *    - Usa transacción para asegurar consistencia
  *
- * Dependencias Externas:
- * - 'next-auth': Se usa para la autenticación y obtención de la sesión
- *   del usuario para las validaciones de rol y propiedad.
- * - 'zod': Valida que el cuerpo de la solicitud contenga un estado
- *   válido y una razón de rechazo si es necesaria.
- * - '@prisma/client': Utilizado para todas las operaciones de base de
- *   datos, incluyendo la transacción que asegura la atomicidad.
+ * 3. LÓGICA DE CAMBIO DE ESTADO:
+ *    - PENDING → APPROVED: Pet IN_PROCESS → ADOPTED
+ *    - PENDING → REJECTED: Pet AVAILABLE (si es necesario)
+ *    - Solo una adopción APPROVED por mascota
+ *    - Si se aprueba: automáticamente ADOPTED
  *
+ * 4. VALIDACIÓN:
+ *    - Razón del rechazo obligatoria si status es REJECTED
+ *    - Postulación debe existir
+ *    - Mascota debe pertenecer al albergue
+ *
+ * 5. TRANSACCIÓN:
+ *    - Garantiza que adoption y pet se actualizan juntos
+ *    - Evita inconsistencias (ej: adoption APPROVED pero pet AVAILABLE)
+ *    - Rollback automático si hay error
+ *
+ * 6. RESPUESTA:
+ *    - 200 OK: Estado actualizado
+ *    - 400 Bad Request: Datos inválidos
+ *    - 401 Unauthorized: No autenticado
+ *    - 403 Forbidden: No es SHELTER o no es propietario
+ *    - 404 Not Found: Postulación o albergue no existe
+ *    - 500 Internal Server Error: Error de BD
  */

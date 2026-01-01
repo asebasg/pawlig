@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+
+/**
+ * GET /api/shelters/adoptions
+ * Descripción: Obtiene las postulaciones de adopción para el albergue autenticado.
+ * Requiere: Autenticación como SHELTER.
+ * Implementa: TAREA-024 (Gestión de postulaciones).
+ */
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
 import { adoptionQueryStringSchema } from '@/lib/validations/adoption.schema';
@@ -231,4 +238,43 @@ export async function GET(request: NextRequest) {
  *    - pagination: Metadatos de navegación
  *    - filters: Filtros aplicados (útil para frontend)
  *    - success: Flag de éxito
+ */
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este endpoint permite a un albergue autenticado ('SHELTER') obtener una
+ * lista paginada y filtrada de las postulaciones de adopción que ha
+ * recibido para sus mascotas. Es una herramienta fundamental para que los
+ * albergues gestionen el proceso de adopción.
+ *
+ * Lógica Clave:
+ * - 'Autorización de Albergue': El acceso está estrictamente limitado a
+ *   usuarios con el rol 'SHELTER'. Se verifica que el usuario autenticado
+ *   tenga un albergue asociado en la base de datos.
+ * - 'Validación de Parámetros de Consulta': Los parámetros de la URL
+ *   ('status', 'petId', 'page', 'limit') se validan usando el esquema
+ *   'adoptionQueryStringSchema' de Zod. Esto asegura que los filtros y la
+ *   paginación sean válidos antes de construir la consulta.
+ * - 'Consulta Segura y Eficiente':
+ *   - La consulta principal se filtra automáticamente por el 'shelterId'
+ *     del usuario autenticado, garantizando que un albergue solo pueda ver
+ *     sus propias postulaciones.
+ *   - Se utiliza 'Promise.all' para ejecutar la consulta de datos y la de
+ *     conteo total en paralelo, mejorando el rendimiento.
+ * - 'Inclusión de Datos Relacionados': La consulta incluye datos del
+ *   'adopter' y de la 'pet' asociados a cada postulación. Se utiliza 'select'
+ *   para devolver solo los campos necesarios y evitar exponer datos
+ *   sensibles (como la contraseña del adoptante).
+ *
+ * Dependencias Externas:
+ * - 'next-auth': Para la autenticación y la obtención de la sesión del
+ *   usuario para verificar el rol y el ID del albergue.
+ * - 'zod': Para validar y parsear los parámetros de consulta de la URL.
+ * - '@prisma/client': Para interactuar con la base de datos y realizar la
+ *   consulta de las postulaciones.
+ *
  */

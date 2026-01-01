@@ -1,5 +1,11 @@
 'use client';
 
+/**
+ * Componente: Formulario de Login
+ * Descripción: Proporciona la interfaz y la lógica para que los usuarios inicien sesión.
+ * Requiere: -
+ * Implementa: Interacción con NextAuth para la autenticación de credenciales.
+ */
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -258,33 +264,44 @@ export default function LoginForm() {
     )
 };
 
-/**
- * 📚 NOTAS TÉCNICAS:
- * 
- * 1. INTEGRACIÓN CON NEXTAUTH:
- *    - signIn('credentials') llama al CredentialsProvider configurado
- *    - NextAuth valida contra lib/auth/auth-options.ts
- *    - Si válido: Crea sesión JWT automáticamente
- *    - Si inválido: Retorna error en result.error
- * 
- * 2. MANEJO DE REDIRECCIONES:
- *    - callbackUrl: URL donde el usuario quería ir originalmente
- *    - Si no hay callbackUrl: redirige a /adopciones por defecto
- *    - router.refresh(): Actualiza la sesión en componentes de servidor
- * 
- * 3. ERRORES COMUNES DE NEXTAUTH:
- *    - 'CredentialsSignin': Credenciales incorrectas (genérico)
- *    - 'Usuario no encontrado': Email no existe
- *    - 'Contraseña incorrecta': Password inválido
- *    - Todos se muestran como "Email o contraseña incorrectos" (seguridad)
- * 
- * 4. SEGURIDAD:
- *    - No revelar si el email existe o no (previene enumeración)
- *    - autoComplete habilitado para gestores de contraseñas
- *    - Enlace visible a recuperación de contraseña
- * 
- * 5. ACCESIBILIDAD:
- *    - aria-required, aria-invalid, aria-describedby
- *    - role="alert" en mensajes de error
- *    - Estados de loading con spinner visible
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es un formulario de cliente ('use client') que maneja el
+ * proceso de inicio de sesión. Integra la validación de datos del lado del
+ * cliente con Zod y se comunica con NextAuth.js para realizar la
+ * autenticación de credenciales.
+ *
+ * Lógica Clave:
+ * - 'Validación con Zod en el Cliente': Antes de intentar el inicio de
+ *   sesión, los datos del formulario se validan contra el 'loginSchema'.
+ *   Esto proporciona una retroalimentación rápida al usuario sobre errores
+ *   de formato (ej: email inválido) sin necesidad de una solicitud al
+ *   servidor.
+ * - 'Integración con NextAuth.js': La función 'signIn' de 'next-auth/react'
+ *   se utiliza para iniciar el flujo de autenticación.
+ *   - 'redirect: false': Esta opción es crucial. Evita que NextAuth
+ *     redirija automáticamente, permitiendo al componente manejar el
+ *     resultado de la autenticación (éxito o error) en el cliente.
+ * - 'Manejo de Errores':
+ *   - Los errores de validación de Zod se capturan y se muestran junto a
+ *     los campos correspondientes.
+ *   - Los errores de autenticación devueltos por NextAuth (ej:
+ *     'CredentialsSignin') se capturan en 'result.error' y se muestran
+ *     en un mensaje de error general. Por seguridad, los mensajes
+ *     específicos como "Usuario no encontrado" se mapean a un error
+ *     genérico de "Email o contraseña incorrectos".
+ * - 'Manejo de Redirección (callbackUrl)': El componente utiliza el hook
+ *   'useSearchParams' para leer el 'callbackUrl' de la URL. Esto permite
+ *   redirigir al usuario a la página que intentaba visitar antes de ser
+ *   enviado al login, mejorando la experiencia de usuario.
+ *
+ * Dependencias Externas:
+ * - 'next-auth/react': Principalmente la función 'signIn'.
+ * - 'next/navigation': Para 'useRouter' y 'useSearchParams'.
+ * - 'zod': Para la validación del esquema de login.
+ *
  */

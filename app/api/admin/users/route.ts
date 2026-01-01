@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-
-/**
- * GET /api/admin/users
- * Descripción: Obtiene una lista paginada de usuarios con filtros.
- * Requiere: Autenticación como ADMIN.
- * Implementa: HU-014 (Gestión de usuarios).
- */
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
 import { UserRole } from '@prisma/client';
@@ -150,44 +143,3 @@ export async function GET(request: NextRequest) {
         );
     }
 }
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * Este endpoint proporciona una funcionalidad robusta para que los
- * administradores obtengan una lista paginada y filtrada de todos los
- * usuarios del sistema. Es una herramienta clave para la gestión y
- * monitorización de usuarios.
- *
- * Lógica Clave:
- * - 'Autorización de Administrador': El acceso a esta ruta está
- *   estrictamente limitado a los usuarios con el rol de 'ADMIN'. Cualquier
- *   otro rol recibirá un error '403 Forbidden'.
- * - 'Construcción Dinámica de Filtros': La cláusula 'where' de Prisma
- *   se construye dinámicamente basándose en los parámetros de consulta
- *   ('query params') proporcionados en la URL. Esto permite filtrar
- *   usuarios por rol, estado de actividad ('isActive'), municipio y un
- *   término de búsqueda general (nombre o email).
- * - 'Consulta Optimizada con Paginación':
- *   - Se utiliza 'Promise.all' para ejecutar dos consultas en paralelo:
- *     una para obtener los datos de los usuarios ('findMany') y otra para
- *     obtener el conteo total de registros que coinciden con los filtros
- *     ('count'). Esto es más eficiente que realizar las consultas
- *     secuencialmente.
- *   - Se implementa la paginación utilizando los parámetros 'skip' y 'take'
- *     de Prisma, asegurando que solo se devuelva un subconjunto de datos
- *     en cada solicitud.
- * - 'Selección de Datos Relevantes': La consulta 'select' está diseñada
- *   para devolver solo la información necesaria para la vista de
- *   administración, incluyendo datos de relaciones como '_count' (para
- *   mostrar la actividad del usuario) y detalles del 'shelter' o 'vendor'
- *   asociado.
- *
- * Dependencias Externas:
- * - 'next-auth': Para la autenticación y la verificación del rol 'ADMIN'.
- * - '@prisma/client': Para la construcción de consultas complejas a la
- *   base de datos, incluyendo filtros dinámicos y paginación.
- *
- */
