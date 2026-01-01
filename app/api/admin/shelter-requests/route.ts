@@ -1,5 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+
+/**
+ * GET /api/admin/shelter-requests
+ * Descripción: Obtiene una lista de solicitudes de albergues pendientes de aprobación.
+ * Requiere: Autenticación como ADMIN.
+ * Implementa: HU-002 (Aprobación de cuenta de albergue).
+ */
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
 
@@ -164,4 +171,45 @@ export async function GET() {
  *    - Filtros adicionales (por municipio, fecha)
  *    - Ordenamiento configurable
  *    - Búsqueda por nombre o NIT
+ */
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este endpoint es una herramienta exclusiva para administradores, diseñada
+ * para obtener una lista de todas las solicitudes de cuenta de albergue
+ * que están pendientes de revisión. Proporciona una vista consolidada y
+ * formateada de los datos necesarios para tomar una decisión de aprobación
+ * o rechazo.
+ *
+ * Lógica Clave:
+ * - 'Autorización Estricta': El acceso está rigurosamente controlado. Se
+ *   verifica primero la autenticación del usuario y luego se asegura que
+ *   el rol del usuario sea 'ADMIN'. Esto previene que datos sensibles de
+ *   las solicitudes sean expuestos a usuarios no autorizados.
+ * - 'Filtrado de Solicitudes Pendientes': La consulta a la base de datos
+ *   utiliza una cláusula 'where' para filtrar específicamente los registros
+ *   de albergues que tienen 'verified: false' y 'rejectionReason: null'.
+ *   Esto asegura que solo se devuelvan las solicitudes nuevas o pendientes,
+ *   excluyendo las ya aprobadas o rechazadas.
+ * - 'Inclusión de Datos del Representante': Se utiliza 'include' en la
+ *   consulta de Prisma para hacer un 'join' con la tabla de usuarios y
+ *   obtener los datos del representante legal del albergue. Se usa 'select'
+ *   dentro del 'include' para evitar exponer la contraseña u otros datos
+ *   sensibles del usuario.
+ * - 'Transformación y Enriquecimiento de Datos': Los datos crudos de la
+ *   base de datos se mapean y transforman en una estructura más amigable
+ *   para el frontend. Se añade información calculada como 'daysWaiting',
+ *   que ayuda a los administradores a priorizar las solicitudes más
+ *   antiguas.
+ *
+ * Dependencias Externas:
+ * - 'next-auth': Para la autenticación y la validación del rol de
+ *   administrador.
+ * - '@prisma/client': Para realizar la consulta a la base de datos y
+ *   obtener las solicitudes pendientes con los datos de usuario relacionados.
+ *
  */

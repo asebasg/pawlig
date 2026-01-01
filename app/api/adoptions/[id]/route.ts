@@ -12,16 +12,6 @@ import { ZodError } from 'zod';
  * Implementa: TAREA-024 (Cambio de estado de postulación).
  */
 
-/**
- * Endpoint para cambiar estado de postulación
- * Implementa TAREA-024
- * 
- * PATCH /api/adoptions/[id]
- * - Aprobar o rechazar postulación
- * - Actualizar estado de mascota automáticamente
- * - Solo SHELTER propietario del albergue
- */
-
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }

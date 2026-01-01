@@ -16,10 +16,16 @@
  * - HU-005: Edición y archivo de mascotas
  * - Criterio: "Cuando cambio estado, se retira de búsqueda"
  */
-
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
+
+/**
+ * GET, PUT, PATCH, DELETE /api/pets/{id}
+ * Descripción: Gestiona las operaciones CRUD para una mascota específica.
+ * Requiere: Autenticación como SHELTER para operaciones de escritura (PUT, PATCH, DELETE).
+ * Implementa: HU-005 (Edición y archivo de mascotas).
+ */
 import { prisma } from "@/lib/utils/db";
 import { UserRole } from "@prisma/client";
 import { updatePetSchema, updatePetStatusSchema } from "@/lib/validations/pet.schema";
@@ -454,3 +460,46 @@ export async function DELETE(
         );
     }
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo define la ruta API para gestionar una mascota específica
+ * a través de su ID. Centraliza todas las operaciones de lectura,
+ * actualización y eliminación para un único registro de mascota.
+ *
+ * Lógica Clave:
+ * - 'GET': Es un endpoint público que permite a cualquier usuario obtener
+ *   los detalles de una mascota. Incluye información relevante del albergue
+ *   para facilitar el contacto. Realiza una validación del formato del ID
+ *   para evitar consultas inválidas a la base de datos.
+ * - 'PUT': Maneja la actualización completa de los datos de una mascota.
+ *   Está protegido y requiere que el usuario sea un 'SHELTER' y el
+ *   propietario de la mascota. Utiliza 'updatePetSchema' de Zod para
+ *   validar todos los campos del formulario de edición.
+ * - 'PATCH': Es un endpoint especializado para actualizar únicamente el
+ *   estado de una mascota (ej: de 'AVAILABLE' a 'ADOPTED'). Al igual que
+ *   'PUT', está protegido y verifica la propiedad. Usa un esquema de Zod
+ *   más simple ('updatePetStatusSchema') para validar solo el campo 'status'.
+ * - 'DELETE': Gestiona la eliminación de una mascota. También protegido
+ *   y con verificación de propiedad. Actualmente realiza una eliminación
+ *   permanente ('hard delete'), pero se podría adaptar fácilmente a un
+ *   'soft delete' cambiando el 'status' a 'ARCHIVED'.
+ * - 'Verificación de Propiedad': Las operaciones de escritura ('PUT',
+ *   'PATCH', 'DELETE') implementan una lógica de seguridad crucial:
+ *   verifican que el 'shelterId' de la mascota coincida con el ID del
+ *   albergue del usuario autenticado. Esto previene que un albergue
+ *   modifique las mascotas de otro.
+ *
+ * Dependencias Externas:
+ * - 'next-auth': Para proteger los endpoints de escritura y verificar el
+ *   rol y la identidad del usuario.
+ * - 'zod': Para la validación de los datos de entrada en los métodos 'PUT'
+ *   y 'PATCH', asegurando la integridad de los datos.
+ * - '@prisma/client': Para todas las interacciones con la base de datos
+ *   (búsqueda, actualización, eliminación).
+ *
+ */

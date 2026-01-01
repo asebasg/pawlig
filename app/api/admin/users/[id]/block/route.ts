@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
+/**
+ * PUT /api/admin/users/{id}/block
+ * Descripción: Bloquea o desbloquea una cuenta de usuario.
+ * Requiere: Autenticación como ADMIN.
+ * Implementa: HU-014 (Gestión de usuarios).
+ */
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
 import { UserRole } from "@prisma/client";
@@ -173,3 +180,41 @@ export async function PUT(
         );
     }
 }
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este endpoint es una herramienta de moderación para administradores que
+ * permite bloquear o desbloquear la cuenta de un usuario. Es una operación
+ * sensible que actualiza el estado del usuario y registra la acción en la
+ * tabla de auditoría.
+ *
+ * Lógica Clave:
+ * - 'Autorización de Administrador': Se verifica rigurosamente que el
+ *   solicitante sea un administrador ('ADMIN'). Además, se implementan
+ *   salvaguardas críticas para prevenir que un administrador se bloquee a
+ *   sí mismo o bloquee a otro administrador.
+ * - 'Validación de Entrada con Zod': El cuerpo de la solicitud se valida
+ *   con 'BlockUserSchema' para asegurar que la acción sea 'BLOCK' o 'UNBLOCK'
+ *   y que se proporcione una razón ('reason') con la longitud adecuada.
+ * - 'Transacción Atómica': La operación de actualización del usuario y la
+ *   creación del registro de auditoría se envuelven en una transacción de
+ *   Prisma ('$transaction'). Esto garantiza la atomicidad: o ambas
+ *   operaciones se completan con éxito, o ninguna lo hace. Esto es
+ *   fundamental para mantener la integridad de los datos y un registro de
+ *   auditoría fiable.
+ * - 'Registro de Auditoría Detallado': Se captura información contextual
+ *   importante como la dirección IP y el 'User-Agent' del administrador
+ *   que realiza la acción. Estos datos se almacenan en el registro de
+ *   auditoría para una trazabilidad completa.
+ *
+ * Dependencias Externas:
+ * - 'next-auth': Para la autenticación y la validación del rol de 'ADMIN'.
+ * - 'zod': Para una validación estricta y segura del cuerpo de la
+ *   solicitud.
+ * - '@prisma/client': Para interactuar con la base de datos, especialmente
+ *   para ejecutar la transacción de bloqueo/desbloqueo.
+ *
+ */

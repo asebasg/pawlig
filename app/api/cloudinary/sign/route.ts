@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
+/**
+ * POST /api/cloudinary/sign
+ * Descripción: Genera una firma segura para subir archivos a Cloudinary.
+ * Requiere: Usuario autenticado.
+ * Implementa: Lógica de autorización basada en roles para la subida de archivos.
+ */
 import { authOptions } from "@/lib/auth/auth-options";
 import { generateUploadSignature } from "@/lib/cloudinary";
 import { uploadIntentSchema } from "@/lib/validations/cloudinary.schema";
@@ -102,3 +109,42 @@ export async function POST(req: Request) {
         );
     }
 }
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este endpoint es un componente de seguridad crítico que centraliza la
+ * generación de firmas para la subida de archivos a Cloudinary. En lugar
+ * de exponer claves de API en el cliente, el frontend solicita una firma
+ * a esta ruta, que valida la autenticación y autorización del usuario
+ * antes de devolver una firma de un solo uso.
+ *
+ * Lógica Clave:
+ * - 'Autenticación y Estado de Cuenta': Primero, se verifica que el
+ *   usuario tenga una sesión activa y que su cuenta no esté bloqueada
+ *   ('isActive' es true). Esta es la primera barrera de seguridad.
+ * - 'Validación de Intención con Zod': Se valida el cuerpo de la solicitud
+ *   para asegurar que el cliente especifique una carpeta de destino válida
+ *   ('folder'). Esto previene intentos de subida a directorios no esperados.
+ * - 'Matriz de Permisos (RBAC)': Se utiliza un objeto 'rolePermissions'
+ *   para definir explícitamente qué roles de usuario pueden subir archivos
+ *   a qué carpetas. Por ejemplo, un 'ADOPTER' solo puede subir a la carpeta
+ *   'avatars', mientras que un 'SHELTER' puede subir a 'pets' y 'avatars'.
+ *   Esta es la principal capa de autorización.
+ * - 'Generación de Firma Segura': La función 'generateUploadSignature'
+ *   (abstraída en 'lib/cloudinary') utiliza el SDK de Cloudinary en el
+ *   backend para crear una firma digital usando la API Secret. La firma
+ *   incluye la carpeta de destino y un timestamp, lo que la hace segura y
+ *   de corta duración.
+ *
+ * Dependencias Externas:
+ * - 'next-auth': Para obtener la sesión del servidor y verificar la
+ *   autenticación y el rol del usuario.
+ * - 'zod': Para validar y asegurar la integridad del payload de la
+ *   solicitud.
+ * - 'cloudinary' (indirectamente a través de 'lib/cloudinary'): El SDK
+ *   de Cloudinary se utiliza en el backend para la generación de la firma.
+ *
+ */

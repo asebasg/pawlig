@@ -30,23 +30,6 @@ import { Prisma } from "@prisma/client";
  * Requiere: Autenticación como SHELTER verificado para POST.
  * Implementa: HU-005 (Publicación de mascota).
  */
-/**
- *  POST /api/pets
- *  Crear una nueva mascota
- * 
- * FLUJO:
- * 1. Verificar autenticación y rol SHELTER
- * 2. Validar que el albergue esté verificado
- * 3. Validar datos con Zod schema
- * 4. Verificar propiedad del shelterId
- * 5. Crear mascota con estado AVAILABLE
- * 6. Retornar mascota creada
- * 
- * CRITERIO DE ACEPTACIÓN:
- * "Dado que ingreso todos los datos obligatorios y al menos una foto,
- *  cuando guardo la publicación, entonces la mascota queda visible 
- *  inmediatamente con estado 'Disponible'"
- */
 
 export async function POST(request: NextRequest) {
     try {
