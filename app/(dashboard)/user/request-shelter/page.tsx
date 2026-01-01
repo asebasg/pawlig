@@ -1,63 +1,51 @@
-'use client';
-
+import { Metadata } from 'next';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/lib/auth/auth-options';
 import { ShelterRequestForm } from '@/components/forms/shelter-request-form';
 import Link from 'next/link';
-import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 /**
- * GET /request-shelter
- * Descripción: Página para solicitar una cuenta de albergue.
- * Requiere: Usuario autenticado con rol 'ADOPTER' o 'VENDOR'.
- * Implementa: HU-003 (Solicitud de Albergue)
+ * PAGE /user/request-shelter
+ * Descripción: Página de solicitud de registro como albergue. Protegida para usuarios autenticados con rol 'ADOPTER'.
+ * Requiere: Usuario autenticado, Rol ADOPTER
+ * Implementa: Solicitud de Registro de Albergue
  */
-export default function RequestShelterPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (status === 'loading') return;
+export const metadata: Metadata = {
+  title: "Solicitar Cuenta de Albergue",
+  description: "Formulario para solicitar el registro de una cuenta de albergue en PawLig.",
+};
 
-    if (!session) {
-      router.push('/login?callbackUrl=/request-shelter');
-      return;
-    }
+export default async function RequestShelterPage() {
+  const session = await getServerSession(authOptions);
 
-    //  Solo ADOPTER y VENDOR pueden acceder
-    const allowedRoles = ['ADOPTER', 'VENDOR'];
-    if (!allowedRoles.includes(session.user.role)) {
-      router.push('/unauthorized?reason=adopters_vendors_only');
-      return;
-    }
-  }, [session, status, router]);
-
-  //  Validación de rol en loading
-  if (status === 'loading') {
-    return <div>Cargando...</div>;
+  //  1. Validar sesión
+  if (!session?.user) {
+    redirect('/login?callbackUrl=/user/request-shelter');
   }
 
-  if (!session) {
-    return <div>Redirigiendo...</div>;
-  }
-
-  //  Validación de rol antes de renderizar
-  const allowedRoles = ['ADOPTER', 'VENDOR'];
+  //  2. Validar roles permitidos
+  // Solo los usuarios 'ADOPTER' pueden solicitar ser albergues.
+  // Los albergues y admins no necesitan acceder aquí.
+  const allowedRoles = ['ADOPTER'];
   if (!allowedRoles.includes(session.user.role)) {
-    return <div>Redirigiendo...</div>;
+    // Redirigir a página de no autorizado o al dashboard
+    // Usamos query param para mostrar un mensaje específico si existe la página de error
+    redirect('/unauthorized?reason=role_not_allowed');
   }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-2xl">
-        {/* Header con logo y navegación */}
-        <div className="mb-8 text-center">
-          <Link href="/" className="inline-block mb-4">
-            <h1 className="text-4xl font-bold text-purple-600">PawLig</h1>
-          </Link>
-          <p className="text-sm text-gray-600">Promoviendo la adopción responsable</p>
-        </div>
-
+        <Link
+          href="/user"
+          className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver a Mi Panel
+        </Link>
         {/* Card contenedor del formulario */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
           {/* Información introductoria */}
@@ -80,7 +68,7 @@ export default function RequestShelterPage() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-purple-800">
+                  <h3 className="text-sm font-bold text-purple-800">
                     Requisitos para albergues
                   </h3>
                   <div className="mt-2 text-sm text-purple-700">
@@ -97,17 +85,17 @@ export default function RequestShelterPage() {
 
           {/* Formulario de solicitud */}
           <ShelterRequestForm />
-        </div>
 
-        {/* Disclaimer legal */}
-        <p className="text-center text-xs text-gray-500 mt-6">
-          Al enviar esta solicitud, confirmas que la información proporcionada es veraz y
-          aceptas los{' '}
-          <Link href="/terminos" className="text-purple-600 hover:underline">
-            Términos de Servicio
-          </Link>{' '}
-          de PawLig.
-        </p>
+          {/* Disclaimer legal */}
+          <p className="text-center text-xs text-gray-500 mt-6">
+            Al enviar esta solicitud, confirmas que la información proporcionada es veraz y
+            aceptas los{' '}
+            <Link href="/terminos" className="text-purple-600 hover:underline font-bold">
+              Términos de Servicio
+            </Link>{' '}
+            de PawLig.
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -119,21 +107,22 @@ export default function RequestShelterPage() {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Página protegida que permite a usuarios con rol 'ADOPTER' o 'VENDOR' solicitar
- * la verificación como albergue. Incluye validaciones de seguridad tanto en el
- * cliente como en el servidor.
+ * Esta página actúa como un contenedor seguro para el formulario de solicitud
+ * de albergue. Su responsabilidad principal es garantizar que solo los usuarios
+ * con rol 'ADOPTER' puedan acceder al formulario.
  *
  * Lógica Clave:
- * - Protección de Ruta: Implementa una triple verificación de seguridad:
- *   1. useEffect: Redirige si no hay sesión o el rol no es válido.
- *   2. Renderizado Condicional: No muestra contenido hasta validar la sesión.
- *   3. Validación de Roles: Restringe el acceso explícitamente a roles
- *      autorizados, redirigiendo intentos no válidos a la página de
- *      acceso no autorizado con un motivo específico.
+ * - Server-Side Rendering (SSR): Se utiliza getServerSession para validar
+ *   la autenticación antes de servir cualquier contenido HTML.
+ * - Control de Acceso Basado en Roles (RBAC): Se verifica explícitamente
+ *   que el rol del usuario sea 'ADOPTER'.
+ * - Redirección Automática: 
+ *   - Si no hay sesión -> redirige a /login.
+ *   - Si el rol no es válido -> redirige a /unauthorized.
  *
  * Dependencias Externas:
- * - next-auth/react: Hooks useSession para la gestión del estado de autenticación
- *   en el cliente.
- * - ShelterRequestForm: Componente que encapsula la lógica del formulario.
+ * - NextAuth: Utilizado para verificar la sesión del usuario del lado del servidor.
+ * - Next.js Navigation: Utilizado para manejar las redirecciones (redirect).
+ * - ShelterRequestForm: Componente interno que renderiza el formulario de solicitud.
  *
  */

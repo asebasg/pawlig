@@ -2,9 +2,9 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import AdoptionApplicationsClient from '@/components/adoption-applications-client';
+import AdoptionApplicationsClient from '@/components/AdoptionApplicationsClient';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 /**
  * Página del panel de postulaciones para albergues
@@ -78,7 +78,7 @@ export default async function ShelterAdoptionsPage() {
               className="p-2 hover:bg-gray-100 rounded-lg transition"
               title="Volver"
             >
-              <ChevronLeft size={20} className="text-gray-600" />
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Postulaciones de Adopción</h1>

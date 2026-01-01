@@ -45,7 +45,8 @@ export const USER_MENU_OPTIONS = {
     { label: "Dashboard", href: "/user", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/user/profile", icon: "User" },
     { label: "Mis Favoritos", href: "/user/favorites", icon: "Heart" },
-    { label: "Mis Postulaciones", href: "/user/adoptions", icon: "FileText" }
+    { label: "Mis Postulaciones", href: "/user/adoptions", icon: "FileText" },
+    { label: "Solicitar Albergue", href: "/user/request-shelter", icon: "Plus" }
   ],
   SHELTER: [
     { label: "Dashboard", href: "/shelter", icon: "LayoutDashboard" },

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/utils/db';
+import Image from 'next/image';
 import { Clock, CheckCircle, XCircle, MessageCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -85,7 +86,7 @@ export default async function AdoptionsPage() {
               <div className="flex gap-4">
                 <div className="w-20 h-20 flex-shrink-0">
                   {adoption.pet?.images?.[0] ? (
-                    <img
+                    <Image
                       src={adoption.pet.images[0]}
                       alt={adoption.pet.name}
                       className="w-full h-full rounded-lg object-cover"

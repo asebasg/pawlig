@@ -94,7 +94,7 @@ export default async function EditPetPage({ params }: PageProps) {
                         href="/shelter/pets"
                         className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                     >
-                        <ArrowLeft className="w-4 h-4" />
+                        <ArrowLeft className="w-5 h-5" />
                         Volver a Mis Mascotas
                     </Link>
                 </div>
@@ -110,7 +110,7 @@ export default async function EditPetPage({ params }: PageProps) {
                         href="/shelter/pets"
                         className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
                     >
-                        <ArrowLeft className="w-4 h-4" />
+                        <ArrowLeft className="w-5 h-5" />
                         Volver a Mis Mascotas
                     </Link>
                     <div className="text-center">
