@@ -77,7 +77,8 @@ export default function PetCard({
   };
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+    <Link href={`/adopciones/${pet.id}`} className="block h-full">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
         <div className="relative h-56 bg-gray-200 overflow-hidden group">
           {pet.images && pet.images.length > 0 ? (
             <Image
@@ -102,6 +103,7 @@ export default function PetCard({
             disabled={isLoadingFavorite}
             className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition disabled:opacity-50 z-10"
             title={isFav ? 'Remover de favoritos' : 'Agregar a favoritos'}
+            type="button"
           >
             <Heart
               className={`w-5 h-5 transition-colors ${
@@ -145,14 +147,11 @@ export default function PetCard({
             <span className="line-clamp-1">{pet.shelter.name}</span>
           </div>
 
-          <Link href={`/adopciones/${pet.id}`}>
-            <button
-              className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition text-sm"
-            >
-              Ver Detalles
-            </button>
-          </Link>
+          <div className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition text-sm text-center">
+            Ver Detalles
+          </div>
         </div>
       </div>
+    </Link>
   );
 }
