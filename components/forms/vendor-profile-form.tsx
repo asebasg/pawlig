@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { vendorProfileUpdateSchema, VendorProfileUpdateInput } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
 import axios from 'axios';
+import Image from 'next/image';
 
 /**
  * Componente de formulario para actualizar perfil de vendedor
@@ -301,7 +302,7 @@ export default function VendorProfileForm() {
         {formData.logo && (
           <div className="mt-3">
             <p className="text-sm text-gray-600 mb-2">Vista previa del logo:</p>
-            <img
+            <Image
               src={formData.logo}
               alt="Logo preview"
               className="h-16 w-16 object-cover rounded"

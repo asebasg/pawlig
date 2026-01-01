@@ -27,7 +27,9 @@ import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createPetSchema, PetSpecies, PetSex, type CreatePetInput } from "@/lib/validations/pet.schema";
-import { Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Upload, X, AlertCircle, CheckCircle } from "lucide-react";
+import Loader from '@/components/ui/loader';
+import Image from 'next/image';
 
 /**
  * Componente: PetForm
@@ -380,7 +382,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         {images.map((url, index) => (
                             <div key={index} className="relative group">
-                                <img
+                                <Image
                                     src={url}
                                     alt={`Foto ${index + 1}`}
                                     className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
@@ -407,7 +409,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         >
                             {uploadingImages ? (
                                 <>
-                                    <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+                                    <Loader />
                                     <span className="text-sm font-medium text-purple-600">Subiendo fotos...</span>
                                 </>
                             ) : (
@@ -453,7 +455,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 >
                     {isSubmitting ? (
                         <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <Loader />
                             <span>{mode === "create" ? "Publicando..." : "Guardando..."}</span>
                         </>
                     ) : (

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import {
-  Loader2,
   CheckCircle,
   XCircle,
   Clock,
@@ -11,6 +10,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import NotificationBanner from './NotificationBanner';
+import Loader from '@/components/ui/loader';
+import Image from 'next/image';
 
 interface Adoption {
   id: string;
@@ -174,11 +175,10 @@ export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
             <button
               key={filter.value}
               onClick={() => setSelectedStatus(filter.value)}
-              className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
-                selectedStatus === filter.value
+              className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${selectedStatus === filter.value
                   ? 'bg-purple-600 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
+                }`}
             >
               {filter.label}
               {filter.value === 'ALL'
@@ -196,7 +196,7 @@ export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
       {/* Estados */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="w-12 h-12 animate-spin text-purple-600 mb-4" />
+          <Loader />
           <p className="text-gray-500">Cargando solicitudes...</p>
         </div>
       ) : error ? (
@@ -315,16 +315,15 @@ function AdoptionCard({ adoption, isRecent }: AdoptionCardProps) {
 
   return (
     <div
-      className={`rounded-lg border-2 p-4 transition ${
-        isRecent ? 'border-purple-300 bg-purple-50' : 'border-gray-200 bg-white'
-      }`}
+      className={`rounded-lg border-2 p-4 transition ${isRecent ? 'border-purple-300 bg-purple-50' : 'border-gray-200 bg-white'
+        }`}
     >
       <div className="flex gap-4">
         {/* Imagen */}
         <div className="flex-shrink-0">
           <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
             {adoption.petImages && adoption.petImages.length > 0 ? (
-              <img
+              <Image
                 src={adoption.petImages[0]}
                 alt={adoption.petName}
                 className="w-full h-full object-cover"

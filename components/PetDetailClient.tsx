@@ -8,7 +8,6 @@ import {
   Info,
   MessageSquare,
   Instagram,
-  Loader2,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -16,6 +15,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import PetCard from './cards/pet-card';
 import Badge from './ui/badge';
+import Loader from '@/components/ui/loader'
 
 interface Pet {
   id: string;
@@ -397,7 +397,7 @@ export default function PetDetailClient({
                   : 'bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50'
               }`}
             >
-              {isLoadingAdoption && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isLoadingAdoption && <Loader />}
               {adoptionSuccess ? '¡Solicitud enviada!' : 'Solicitar Adopción'}
             </button>
           ) : (

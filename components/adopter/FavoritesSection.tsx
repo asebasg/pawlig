@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Heart, MapPin, Loader2, Search } from 'lucide-react';
+import { Heart, MapPin, Search } from 'lucide-react';
 import Link from 'next/link';
+import Loader from '@/components/ui/loader';
+import Image from 'next/image'
 
 interface Pet {
   id: string;
@@ -137,7 +139,7 @@ export default function FavoritesSection({ userId }: FavoritesSectionProps) {
       {/* Estados */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="w-12 h-12 animate-spin text-purple-600 mb-4" />
+          <Loader />
           <p className="text-gray-500">Cargando favoritos...</p>
         </div>
       ) : error ? (
@@ -205,7 +207,7 @@ function FavoriteCard({ pet, onRemove }: FavoriteCardProps) {
       {/* Imagen */}
       <div className="relative h-48 bg-gray-200">
         {pet.images && pet.images.length > 0 ? (
-          <img
+          <Image
             src={pet.images[0]}
             alt={pet.name}
             className="w-full h-full object-cover"

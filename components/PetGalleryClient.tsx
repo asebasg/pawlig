@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import { Search } from 'lucide-react';
 import PetCard from './cards/pet-card';
-import PetFilters from './filters/pet-filters';
+import Loader from '@/components/ui/loader';
 
 interface Pet {
   id: string;
@@ -243,7 +243,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           <div className="col-span-full flex flex-col items-center justify-center py-12">
-            <Loader2 className="w-12 h-12 animate-spin text-purple-600 mb-4" />
+            <Loader />
             <p className="text-gray-500">Cargando mascotas...</p>
           </div>
         ) : error ? (

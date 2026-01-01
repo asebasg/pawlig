@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, Municipality } from "@prisma/client";
-import { Search, UserX, UserCheck, Loader2, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
+import { Search, UserX, UserCheck, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
 import BlockUserModal from "./BlockUserModal"
+import Loader from '@/components/ui/loader'
 
 interface User {
     id: string;
@@ -253,7 +254,7 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center py-12">
-                        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+                        <Loader />
                     </div>
                 ) : error ? (
                     <div className="text-center py-12 text-red-600">

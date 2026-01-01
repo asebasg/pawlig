@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Check, X, AlertCircle, Loader } from 'lucide-react';
+import { Check, X, AlertCircle } from 'lucide-react';
+import Loader from '@/components/ui/loader';
+import Image from 'next/image';
 
 interface Adopter {
   id: string;
@@ -179,7 +181,7 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader className="animate-spin mr-2" size={24} />
+        <Loader />
         <span>Cargando postulaciones...</span>
       </div>
     );
@@ -256,7 +258,7 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
                       {adoption.pet.images && adoption.pet.images.length > 0 && (
-                        <img
+                        <Image
                           src={adoption.pet.images[0]}
                           alt={adoption.pet.name}
                           className="w-10 h-10 rounded-full object-cover"
@@ -337,8 +339,8 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
               key={page}
               onClick={() => setCurrentPage(page)}
               className={`px-3 py-2 rounded-lg text-sm ${currentPage === page
-                  ? 'bg-purple-600 text-white'
-                  : 'border border-gray-300 hover:bg-gray-50'
+                ? 'bg-purple-600 text-white'
+                : 'border border-gray-300 hover:bg-gray-50'
                 }`}
             >
               {page}
