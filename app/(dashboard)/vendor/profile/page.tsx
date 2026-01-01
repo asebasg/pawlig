@@ -14,16 +14,6 @@ export const metadata: Metadata = {
   description: 'Actualiza la información de tu negocio de productos para mascotas',
 };
 
-/**
- * Página de edición de perfil de vendedor
- * Implementa HU-003: Actualización del perfil del vendedor
- * 
- * Criterios de aceptación:
- * 1. Edita información y la guarda → sistema guarda cambios y aplica inmediatamente
- * 2. Campo obligatorio vacío → sistema notifica qué campo debe ser completado
- * 
- * Ruta: /vendor/profile (solo VENDOR)
- */
 export default async function VendorProfilePage() {
   // Obtener sesión del usuario
   const session = await getServerSession(authOptions);
@@ -81,65 +71,3 @@ export default async function VendorProfilePage() {
     </div>
   );
 }
-
-/**
- * 📚 NOTAS DE IMPLEMENTACIÓN:
- * 
- * 1. SEGURIDAD:
- *    - Requiere autenticación con NextAuth
- *    - Verifica rol VENDOR antes de mostrar formulario
- *    - Redirige a login si no está autenticado
- *    - Redirige a /unauthorized si no tiene rol VENDOR
- * 
- * 2. FLUJO DE EDICIÓN (HU-003):
- *    1. Usuario VENDOR accede a /vendor/profile
- *    2. Página carga con datos actuales del perfil (GET /api/vendors/profile)
- *    3. Usuario edita campos y hace clic en "Guardar Cambios"
- *    4. Formulario valida datos localmente con Zod
- *    5. Si validación OK → envía PUT /api/vendors/profile
- *    6. Backend valida nuevamente y actualiza en MongoDB
- *    7. Respuesta con éxito o errores de validación
- *    8. Si éxito → muestra mensaje verde "Perfil actualizado exitosamente"
- *    9. Si error en campo → muestra en rojo qué debe ser corregido
- * 
- * 3. CRITERIOS DE ACEPTACIÓN HU-003:
- *    ✓ Criterio 1: "Cuando edito y guardo → sistema guarda y aplica inmediatamente"
- *      - Implementado: PUT endpoint actualiza MongoDB inmediatamente
- *      - Frontend: No necesita reload, datos persisten en formData
- *      - Visible: Mensaje de éxito confirma guardado
- *    
- *    ✓ Criterio 2: "Campo obligatorio vacío → notifica qué campo completar"
- *      - Implementado: Validación Zod con mensajes específicos
- *      - Frontend: Muestra errores en rojo debajo del campo
- *      - Backend: Retorna 400 con detalles de errores
- *      - UX: Campo se marca en rojo para visibilidad
- * 
- * 4. CAMPOS ACTUALIZABLES:
- *    - businessName (Obligatorio)
- *    - businessPhone (Opcional)
- *    - description (Opcional)
- *    - logo (Opcional, URL)
- *    - municipality (Obligatorio)
- *    - address (Obligatorio)
- * 
- * 5. CAMPOS NO ACTUALIZABLES (protegidos):
- *    - verified: Solo admin puede cambiar
- *    - rejectionReason: Solo admin asigna
- *    - createdAt: Inmutable
- *    - userId: Inmutable
- * 
- * 6. ESTADOS DEL FORMULARIO:
- *    - isFetching: Mientras carga datos iniciales
- *    - isLoading: Mientras procesa envío
- *    - successMessage: Confirma guardado
- *    - serverError: Error general
- *    - errors: Errores por campo
- * 
- * 7. VALIDACIONES (Zod):
- *    - businessName: 3-100 caracteres
- *    - businessPhone: 7-15 caracteres (opcional)
- *    - description: 20-1000 caracteres (opcional)
- *    - logo: URL válida (opcional)
- *    - municipality: Debe ser del enum Municipality
- *    - address: 5-200 caracteres
- */
