@@ -4,6 +4,12 @@ import Link from "next/link";
 import { ShieldAlert, Home, ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
+/**
+ * GET /unauthorized
+ * Descripción: Página de error genérica para mostrar mensajes de acceso denegado.
+ * Requiere: Acceso público.
+ * Implementa: Manejo de errores de autorización
+ */
 export default function UnauthorizedPage() {
     const searchParams = useSearchParams();
     const reason = searchParams.get('reason') || "unknown";
@@ -109,35 +115,26 @@ export default function UnauthorizedPage() {
     );
 }
 
-/**
- * 📚 CAMBIOS IMPLEMENTADOS:
- * 
- * 1. Mensaje para cuenta bloqueada
- *    - Razón: account_blocked
- *    - Descripción clara del bloqueo
- *    - Sugerencia de revisar email y contactar soporte
- * 
- * 2. Mensaje para solicitud de albergue
- *    - Razón: adopters_vendors_only
- *    - Explicación de quién puede solicitar
- *    - Sugerencia de verificar sesión
- * 
- * 3. Mensajes por razón:
- *    - account_blocked: Usuario bloqueado
- *    - adopters_vendors_only: Solo ADOPTER/VENDOR
- *    - admin_only: Solo ADMIN
- *    - shelter_only: Solo SHELTER
- *    - vendor_only: Solo VENDOR
- *    - unknown: Error genérico
- * 
- * 4. UX mejorada:
- *    - Iconos descriptivos (ShieldAlert)
- *    - Colores apropiados (rojo = error, amarillo = sugerencia)
- *    - Acciones claras (volver al inicio, volver atrás)
- *    - Enlace a soporte visible
- * 
- * 5. Trazabilidad:
- *    - Mensaje de bloqueo ✅
- *    - Mensaje de restricción ✅
- *    - RNF-003: Usabilidad (mensajes claros) ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Muestra mensajes de error amigables cuando un usuario intenta acceder a
+ * un recurso no autorizado o restringido. El mensaje específico se determina
+ * dinámicamente basándose en el parámetro de consulta 'reason'.
+ *
+ * Lógica Clave:
+ * - Selección de Mensaje: Utiliza un objeto 'messages' como diccionario para
+ *   mapear el código de error (reason) a un título, descripción y sugerencia
+ *   personalizados.
+ * - UX/UI: Proporciona retroalimentación visual clara con iconos y colores
+ *   de advertencia, y ofrece acciones de recuperación como volver al inicio
+ *   o contactar soporte.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconos SVG para mejorar la interfaz visual.
+ * - next/navigation: Hook useSearchParams para leer los parámetros de la URL.
+ *
  */

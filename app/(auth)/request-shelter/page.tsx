@@ -6,6 +6,12 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
+/**
+ * GET /request-shelter
+ * Descripción: Página para solicitar una cuenta de albergue.
+ * Requiere: Usuario autenticado con rol 'ADOPTER' o 'VENDOR'.
+ * Implementa: HU-003 (Solicitud de Albergue)
+ */
 export default function RequestShelterPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -107,30 +113,27 @@ export default function RequestShelterPage() {
   );
 }
 
-/**
- * 📚 CAMBIOS IMPLEMENTADOS:
- * 
- * 1. Solo ADOPTER y VENDOR pueden acceder
- *    - Validación: allowedRoles = ['ADOPTER', 'VENDOR']
- *    - SHELTER rechazado: Ya es albergue
- *    - ADMIN rechazado: No necesita ser albergue
- * 
- * 2. Redirección específica:
- *    - /unauthorized?reason=adopters_vendors_only
- *    - Mensaje personalizado en página de error
- * 
- * 3. Triple validación:
- *    - useEffect: Validación en cliente
- *    - Loading state: Validación antes de renderizar
- *    - API: Validación final en servidor
- * 
- * 4. Estados de loading:
- *    - status === 'loading': "Cargando..."
- *    - !session: "Redirigiendo..."
- *    - Rol inválido: "Redirigiendo..."
- * 
- * 5. Trazabilidad:
- *    - Solo ADOPTER y VENDOR ✅
- *    - HU-002: Solicitud de cuenta ✅
- *    - RNF-002: Seguridad (autorización) ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Página protegida que permite a usuarios con rol 'ADOPTER' o 'VENDOR' solicitar
+ * la verificación como albergue. Incluye validaciones de seguridad tanto en el
+ * cliente como en el servidor.
+ *
+ * Lógica Clave:
+ * - Protección de Ruta: Implementa una triple verificación de seguridad:
+ *   1. useEffect: Redirige si no hay sesión o el rol no es válido.
+ *   2. Renderizado Condicional: No muestra contenido hasta validar la sesión.
+ *   3. Validación de Roles: Restringe el acceso explícitamente a roles
+ *      autorizados, redirigiendo intentos no válidos a la página de
+ *      acceso no autorizado con un motivo específico.
+ *
+ * Dependencias Externas:
+ * - next-auth/react: Hooks useSession para la gestión del estado de autenticación
+ *   en el cliente.
+ * - ShelterRequestForm: Componente que encapsula la lógica del formulario.
+ *
  */
