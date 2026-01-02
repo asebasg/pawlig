@@ -53,11 +53,13 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
           isActive: user.isActive,
+          vendorId: user.vendor?.id,
+          shelterId: user.shelter?.id,
         };
       },
     }),
   ],
-  
+
   callbacks: {
     //  Callback JWT: agregar role e isActive al token
     async jwt({ token, user }) {
@@ -65,31 +67,35 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.isActive = user.isActive;
+        token.vendorId = user.vendorId;
+        token.shelterId = user.shelterId;
       }
       return token;
     },
-    
+
     //  Callback Session: pasar datos del token a la sesión del cliente
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.isActive = token.isActive as boolean;
+        session.user.vendorId = token.vendorId as string | null | undefined;
+        session.user.shelterId = token.shelterId as string | null | undefined;
       }
       return session;
     },
   },
-  
+
   pages: {
     signIn: '/login',
     error: '/login',
   },
-  
+
   session: {
     strategy: 'jwt',
     maxAge: 24 * 60 * 60, // 24 horas (RNF-002)
   },
-  
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 

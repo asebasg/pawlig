@@ -5,6 +5,8 @@ declare module 'next-auth' {
     user: {
       id: string;
       role: string;
+      vendorId?: string | null;
+      shelterId?: string | null;
       isActive: boolean; // Estado de cuenta (bloqueado/desbloqueado)
     } & DefaultSession['user'];
   }
@@ -12,6 +14,8 @@ declare module 'next-auth' {
   interface User {
     id: string;
     role: string; // Rol del usuario
+    vendorId?: string | null;
+    shelterId?: string | null;
     isActive: boolean; // Estado de cuenta (bloqueado/desbloqueado)
   }
 }
@@ -20,6 +24,8 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id: string;
     role: string;
+    vendorId?: string | null;
+    shelterId?: string | null;
     isActive: boolean; // Estado de cuenta (bloqueado/desbloqueado)
   }
 }
