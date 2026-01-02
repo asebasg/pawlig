@@ -1,5 +1,12 @@
 import React from "react";
 
+/**
+ * Ruta/Componente/Servicio: Componente Card
+ * Descripción: Un conjunto de componentes para construir contenedores de UI estilo "tarjeta" de manera consistente.
+ * Requiere: -
+ * Implementa: -
+ */
+
 interface CardProps {
   children: React.ReactNode;
   className?: string;
@@ -41,26 +48,21 @@ export function CardContent({ children, className }: { children: React.ReactNode
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * **Descripción General:**
- * Este archivo define un conjunto de componentes reutilizables para crear
- * "Cards" (tarjetas) consistentes a lo largo de la aplicación. Las tarjetas
- * son un patrón de UI fundamental para agrupar y mostrar información de
- * manera modular.
+ * Descripción General:
+ * Este archivo define un conjunto de componentes para crear "Cards" (tarjetas)
+ * consistentes. Las tarjetas son un patrón de UI fundamental para agrupar y
+ * mostrar información de manera modular.
  *
- * **Lógica Clave:**
- * - Composición: El Card se construye a través de la composición de sub-
- *   componentes (`Card`, `CardHeader`, `CardTitle`, `CardContent`). Esto
+ * Lógica Clave:
+ * - 'Composición': El Card se construye a través de la composición de sub-
+ *   componentes ('Card', 'CardHeader', 'CardTitle', 'CardContent'). Esto
  *   proporciona flexibilidad para construir diferentes tipos de tarjetas
- *   mientras se mantiene un estilo base consistente.
- * - Acento de Color: La prop `accentColor` en el componente `Card` permite
- *   añadir un borde superior de un color específico. Esto se utiliza para
- *   diferenciar visualmente las secciones temáticas (ej: Teal para info
- *   personal, Púrpura para gestión de roles), tal como lo requiere el
- *   diseño.
+ *   manteniendo un estilo base consistente.
+ * - 'Acento de Color': La propiedad 'accentColor' en el componente 'Card' permite
+ *   añadir un borde superior de un color específico para diferenciar
+ *   visualmente las secciones temáticas del dashboard de administración.
  *
- * **Dependencias Externas:**
- * - React: Para la creación de los componentes.
- * - Tailwind CSS: Utilizado para todo el estilizado a través de clases de
- *   utilidad.
+ * Dependencias Externas:
+ * - 'react': Para la creación de los componentes.
  *
  */
