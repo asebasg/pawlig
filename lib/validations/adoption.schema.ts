@@ -2,20 +2,10 @@ import { z } from 'zod';
 import { AdoptionStatus } from '@prisma/client';
 
 /**
- * Schema de validación para gestión de postulaciones
- * 
- * VALIDACIÓN DE 3 CAPAS:
- * 1. Cliente (formulario): Validación inmediata
- * 2. API (endpoints): Validación con Zod antes de BD
- * 3. Prisma: Validación de tipos en base de datos
- */
-
-// ========== ESQUEMA DE CAMBIO DE ESTADO DE POSTULACIÓN ==========
-/**
- * RFC-001: Aprobar/rechazar postulación de adopción
- * - Estados permitidos: PENDING, APPROVED, REJECTED
- * - Requerido: status
- * - Opcional: rejectionReason (requerido si status es REJECTED)
+ * Ruta/Componente/Servicio: Esquemas de Adopción
+ * Descripción: Define los esquemas de validación de Zod para las operaciones relacionadas con las postulaciones de adopción.
+ * Requiere: -
+ * Implementa: RFC-001
  */
 
 export const adoptionStatusChangeSchema = z.object({
@@ -24,7 +14,6 @@ export const adoptionStatusChangeSchema = z.object({
       message: 'Estado inválido. Debe ser PENDING, APPROVED o REJECTED',
     }),
 
-  // Razón del rechazo (obligatoria si status es REJECTED)
   rejectionReason: z
     .string()
     .min(5, 'Razón debe tener al menos 5 caracteres')
@@ -33,7 +22,6 @@ export const adoptionStatusChangeSchema = z.object({
     .nullable(),
 }).refine(
   (data) => {
-    // Si es rechazo, razón es obligatoria
     if (data.status === 'REJECTED' && !data.rejectionReason) {
       return false;
     }
@@ -47,11 +35,6 @@ export const adoptionStatusChangeSchema = z.object({
 
 export type AdoptionStatusChangeInput = z.infer<typeof adoptionStatusChangeSchema>;
 
-// ========== ESQUEMA DE CONSULTA DE POSTULACIONES ==========
-/**
- *  Obtener postulaciones del albergue
- * - Filtros opcionales: status, petId, pagination
- */
 export const adoptionQuerySchema = z.object({
   status: z
     .nativeEnum(AdoptionStatus)
@@ -77,11 +60,6 @@ export const adoptionQuerySchema = z.object({
 
 export type AdoptionQueryInput = z.infer<typeof adoptionQuerySchema>;
 
-// ========== ESQUEMA PARA QUERY PARAMS (STRINGS) ==========
-/**
- * Conversión de query params strings a números
- * Necesario porque query params son siempre strings
- */
 export const adoptionQueryStringSchema = z.object({
   status: z
     .string()
@@ -110,29 +88,34 @@ export const adoptionQueryStringSchema = z.object({
 
 export type AdoptionQueryStringInput = z.infer<typeof adoptionQueryStringSchema>;
 
-/**
- * 📚 NOTAS:
- * 
- * 1. ESTADOS DE POSTULACIÓN:
- *    - PENDING: Postulación inicial, esperando revisión
- *    - APPROVED: Postulación aprobada, adopción confirmada
- *    - REJECTED: Postulación rechazada
- * 
- * 2. CAMBIO AUTOMÁTICO DE ESTADO DE MASCOTA:
- *    - APPROVED: Pet status cambia a IN_PROCESS
- *    - Si mascota tiene adopción APPROVED: Pet status ADOPTED
- *    - REJECTED: Pet mantiene AVAILABLE (si no hay otras APPROVED)
- * 
- * 3. RAZÓN DEL RECHAZO:
- *    - Obligatoria si status es REJECTED
- *    - Se almacena en tabla Adoption para auditoría
- *    - Puede ser visible al adoptante
- * 
- * 4. VALIDACIÓN CRUZADA:
- *    - REJECTED requiere rejectionReason (refine)
- *    - Previene rechazo sin justificación
- * 
- * 5. PAGINACIÓN:
- *    - Default: page=1, limit=20
- *    - Máximo: 50 por página
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo centraliza las reglas de validación para todos los datos
+ * relacionados con las postulaciones de adopción. Utiliza Zod para crear
+ * esquemas que aseguran la integridad de los datos en la capa de API antes
+ * de que interactúen con la lógica de negocio o la base de datos.
+ *
+ * Lógica Clave:
+ * - 'adoptionStatusChangeSchema': Valida los datos para aprobar o rechazar
+ *   una postulación. Utiliza '.refine' para una validación cruzada: si el
+ *   'status' es 'REJECTED', el campo 'rejectionReason' se vuelve obligatorio.
+ *   Esto asegura que siempre haya una justificación para un rechazo.
+ * - 'adoptionQuerySchema': Define las reglas para los parámetros de consulta
+ *   de postulaciones (filtros y paginación) cuando los datos ya han sido
+ *   procesados y son del tipo correcto (ej: 'page' es un número).
+ * - 'adoptionQueryStringSchema': Un esquema especializado que maneja la
+ *   realidad de los query params de una URL, que siempre son strings.
+ *   Utiliza '.transform' para convertir los strings a los tipos de datos
+ *   esperados (ej: de ' "1" ' a '1') antes de aplicar las validaciones
+ *   del 'adoptionQuerySchema' a través de '.pipe'.
+ *
+ * Dependencias Externas:
+ * - 'zod': La librería principal para la declaración y validación de esquemas.
+ * - '@prisma/client': Se utiliza para importar el enum 'AdoptionStatus',
+ *   asegurando que los estados válidos estén sincronizados con la base de datos.
+ *
  */

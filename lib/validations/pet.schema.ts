@@ -1,23 +1,11 @@
-/**
- *  Esquemas de validación para mascotas
- * 
- * PROPÓSITO:
- * - Validar datos de entrada en cliente y servidor
- * - Garantizar cumplimiento de RN-007 (mínimo 1 foto)
- * - Validar campos obligatorios según RF-009
- * 
- * TRAZABILIDAD:
- * - HU-005: Publicación y gestión de mascota
- * - RF-009: Registro de animales para adopción
- * - RN-007: Mínimo una foto por mascota
- */
-
 import { z } from 'zod';
 import { PetStatus } from '@prisma/client';
 
 /**
- *  Enums de especies permitidas
- * Extensible para otras en el futuro
+ * Ruta/Componente/Servicio: Esquemas de Mascota
+ * Descripción: Define los esquemas de validación de Zod para las operaciones CRUD de las mascotas.
+ * Requiere: -
+ * Implementa: HU-005, RF-009, RN-007
  */
 
 export const PetSpecies = {
@@ -26,29 +14,12 @@ export const PetSpecies = {
     OTHER: "Otro"
 }
 
-/**
- *  Enum de sexos permitidos
- */
-
 export const PetSex = {
     MALE: "Macho",
     FEMALE: "Hembra"
 }
 
-/**
- *  Schema para crear una nueva mascota
- * 
- * VALIDACIONES:
- * - Nombre: 2-50 caracteres
- * - Especie: Valores predefinidos
- * - Edad: 0-30 años (opcional)
- * - Descripción: 20-1000 caracteres
- * - Imágenes: Array no vacío (RN-007)
- * - shelterId: ObjectId válido (propiedad del albergue)
- */
-
 export const createPetSchema = z.object({
-    // Datos básicos obligatorios
     name: z
         .string()
         .min(2, "El nombre debe tener al menos 2 caracteres")
@@ -84,14 +55,12 @@ export const createPetSchema = z.object({
         }
     ),
 
-    // Descripción detallada (obligatoria)
     description: z
         .string()
         .min(10, "La descripción no puede tener menos de 10 caracteres")
         .max(500, "La descripción no puede superar los 500 caracteres")
         .trim(),
 
-    // Requisitos de adopción
     requirements: z
         .string()
         .min(10, "Los requisitos para adoptar no pueden tener menos de 10 caracteres")
@@ -99,38 +68,19 @@ export const createPetSchema = z.object({
         .trim()
         .optional(),
 
-    // Imágenes (Mínimo 1 por mascota)
     images: z
         .array(z.string().url("Cada imagen debe ser una URL válida"))
         .min(1, "Debes subir al menos una foto de la mascota (RN-007)")
         .max(5, "Máximo 5 fotos permitidas"),
 
-    // Relación con el albergue
     shelterId: z
         .string()
         .regex(/^[0-9a-fA-F]{24}$/, "ID de albergue inválido"),
 });
 
-/**
- *  Schema para actualizar una mascota existente
- * 
- * DIFERENCIAS con createPetSchema:
- * - Todos los campos son opcionales (partial)
- * - No requiere shelterId (no se puede cambiar)
- * - Permite validar actualizaciones parciales
- */
-
 export const updatePetSchema = createPetSchema
     .omit({ shelterId: true })
     .partial();
-
-/**
-*  Schema para cambiar el estado de una mascota
-* 
-* USO:
-* - Criterio de aceptación: cambio de estado retira de búsqueda
-* - Estados válidos: AVAILABLE, IN_PROCESS, ADOPTED
-*/
 
 export const updatePetStatusSchema = z.object({
     status: z.nativeEnum(PetStatus, {
@@ -140,20 +90,44 @@ export const updatePetStatusSchema = z.object({
     }),
 });
 
-/**
- *  Schema para búsqueda de mascotas del albergue
- * (Reutilizable desde HU-006 con filtro por shelterId)
- */
-
 export const shelterPetsFilterSchema = z.object({
     status: z.nativeEnum(PetStatus).optional(),
     page: z.number().int().positive().default(1),
     limit: z.number().int().min(1).max(50).default(20),
 })
 
-//  ====== TIPOS TYPESCRIPT INFERIDOS ======
-
 export type CreatePetInput = z.infer<typeof createPetSchema>;
 export type UpdatePetInput = z.infer<typeof updatePetSchema>;
 export type UpdatePetStatusInput = z.infer<typeof updatePetStatusSchema>;
 export type ShelterPetsFilter = z.infer<typeof shelterPetsFilterSchema>;
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo establece las reglas de validación para los datos de las
+ * mascotas. Utiliza Zod para asegurar que cualquier dato de mascota, ya sea
+ * para creación o actualización, cumpla con los requisitos del negocio
+ * antes de llegar a la capa de servicio o a la base de datos.
+ *
+ * Lógica Clave:
+ * - 'createPetSchema': Define el esquema estricto para registrar una nueva
+ *   mascota. Incluye todas las validaciones de campos requeridos, como
+ *   longitudes de texto, valores de enums y, crucialmente, la regla de
+ *   negocio 'RN-007' que exige al menos una imagen ('images.min(1)').
+ * - 'updatePetSchema': Un esquema derivado para la actualización. Utiliza
+ *   '.omit({ shelterId: true })' para prohibir el cambio del albergue
+ *   asociado y '.partial()' para hacer que todos los campos sean opcionales,
+ *   permitiendo así actualizaciones parciales de los datos de la mascota.
+ * - 'updatePetStatusSchema': Un esquema pequeño y enfocado para manejar
+ *   únicamente el cambio de estado de una mascota, asegurando que el nuevo
+ *   estado sea uno de los valores permitidos por el enum 'PetStatus'.
+ *
+ * Dependencias Externas:
+ * - 'zod': Para la creación de todos los esquemas de validación.
+ * - '@prisma/client': Para el enum 'PetStatus', que mantiene la
+ *   consistencia de los estados con la base de datos.
+ *
+ */

@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import { Municipality, UserRole } from '@prisma/client'
 
-//  ========== ESQUEMA DE REGISTRO (ADOPTANTE) ==========
+/**
+ * Ruta/Componente/Servicio: Esquemas de Usuario
+ * Descripción: Define los esquemas de validación de Zod para las operaciones relacionadas con los usuarios, como registro, login y actualizaciones de perfil.
+ * Requiere: -
+ * Implementa: HU-001, HU-002, RN-001, RN-013
+ */
+
 export const registerUserSchema = z.object({
   email: z
     .string()
@@ -10,7 +16,7 @@ export const registerUserSchema = z.object({
 
   password: z
     .string()
-    .min(8, 'La contraseña debe tener mínimo 8 caracteres') // RN-001
+    .min(8, 'La contraseña debe tener mínimo 8 caracteres')
     .max(100, 'La contraseña es muy larga'),
 
   name: z
@@ -47,7 +53,6 @@ export const registerUserSchema = z.object({
     }, 'Debes ser mayor de 18 años'),
 });
 
-//  ========== ESQUEMA DE LOGIN ==========
 export const loginSchema = z.object({
   email: z
     .string()
@@ -59,9 +64,7 @@ export const loginSchema = z.object({
     .min(1, 'Contraseña es requerida'),
 });
 
-//  ========== ESQUEMA DE SOLICITUD DE ALBERGUE ==========
 export const shelterApplicationSchema = z.object({
-  //  ===== DATOS DEL USUARIO REPRESENTANTE =====
   email: z
     .string()
     .email('Email inválido')
@@ -69,7 +72,7 @@ export const shelterApplicationSchema = z.object({
 
   password: z
     .string()
-    .min(8, 'La contraseña debe tener mínimo 8 caracteres') // RN-001
+    .min(8, 'La contraseña debe tener mínimo 8 caracteres')
     .max(100, 'La contraseña es muy larga'),
 
   name: z
@@ -105,7 +108,6 @@ export const shelterApplicationSchema = z.object({
       return age >= 18;
     }, 'El representante debe ser mayor de 18 años'),
 
-  //  ===== DATOS DEL ALBERGUE =====
   shelterName: z
     .string()
     .min(3, 'Nombre del albergue requerido')
@@ -145,21 +147,14 @@ export const shelterApplicationSchema = z.object({
     .regex(/^@?[a-zA-Z0-9._]{1,30}$/, 'Usuario de Instagram inválido')
     .optional(),
 })
-  // Validación personalizada: Al menos un método de contacto requerido (RN-013)
   .refine(
     (data) => data.contactWhatsApp || data.contactInstagram,
     {
       message: 'Debes proporcionar al menos un método de contacto (WhatsApp o Instagram)',
-      path: ['contactWhatsApp'], // Muestra error en el campo WhatsApp
+      path: ['contactWhatsApp'],
     }
   );
 
-//  ========== TIPOS TYPESCRIPT INFERIDOS ==========
-export type RegisterUserInput = z.infer<typeof registerUserSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
-export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
-
-//  ========== ESQUEMA DE ACTUALIZACIÓN DE PERFIL DE VENDEDOR ==========
 export const vendorProfileUpdateSchema = z.object({
   businessName: z
     .string()
@@ -193,9 +188,6 @@ export const vendorProfileUpdateSchema = z.object({
     .max(200, 'Dirección muy larga'),
 });
 
-export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>;
-
-//  ========== ESQUEMA DE ACTUALIZACIÓN DE ROL (ADMIN) ==========
 export const roleUpdateSchema = z.object({
   newRole: z.nativeEnum(UserRole, {
     message: "Rol inválido",
@@ -203,60 +195,38 @@ export const roleUpdateSchema = z.object({
   reason: z.string().min(10, "La razón debe tener al menos 10 caracteres."),
 });
 
+export type RegisterUserInput = z.infer<typeof registerUserSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
+export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>;
 export type RoleUpdateInput = z.infer<typeof roleUpdateSchema>;
 
-/**
- * 📚 NOTAS DE IMPLEMENTACIÓN:
- * 
- * 1. ESQUEMA DE SOLICITUD DE ALBERGUE (shelterApplicationSchema):
- *    - NUEVO: Agregado para HU-002 (Solicitud y aprobación de cuenta)
- *    - Combina datos del usuario representante + datos del albergue
- *    - Validaciones estrictas para garantizar integridad de datos
- * 
- * 2. VALIDACIÓN DE NIT:
- *    - Formato: Solo números y guiones (ej. "123456789-0")
- *    - Opcional: Algunos albergues pequeños pueden no tener NIT formal
- *    - Si se proporciona, debe ser único (validado en el backend)
- * 
- * 3. VALIDACIÓN DE CONTACTOS (RN-013):
- *    - Al menos UN método de contacto obligatorio (WhatsApp o Instagram)
- *    - WhatsApp: Formato internacional +57300... (10-15 dígitos)
- *    - Instagram: Usuario válido (@username o username, máx 30 chars)
- *    - Validación con .refine() después del schema principal
- * 
- * 4. DIFERENCIAS CON REGISTRO DE ADOPTANTE:
- *    Adoptante:
- *      - Datos personales únicamente
- *      - Rol asignado automáticamente: ADOPTER
- *    
- *    Albergue:
- *      - Datos personales del representante
- *      - Datos del albergue (nombre, NIT, dirección, contactos)
- *      - Rol asignado: SHELTER
- *      - Estado inicial: verified = false (requiere aprobación)
- * 
- * 5. MENSAJES DE ERROR:
- *    - Claros y específicos para cada campo
- *    - Ayudan al usuario a corregir datos sin frustración
- *    - Ejemplo: "Número de WhatsApp inválido (debe incluir código de país)"
- * 
- * 6. TRAZABILIDAD:
- *    - HU-002: Solicitud y aprobación de cuenta de albergue ✅
- *    - RF-007: Administración de albergues ✅
- *    - RN-001: Contraseña mínima 8 caracteres ✅
- *    - RN-013: Al menos un contacto válido requerido ✅
- * 
- * 7. USO EN EL CÓDIGO:
- *    - Frontend: components/forms/shelter-request-form.tsx
- *      → shelterApplicationSchema.parse(formData)
- *    
- *    - Backend: app/api/auth/request-shelter-account/route.ts
- *      → shelterApplicationSchema.parse(body)
- *    
- *    - Tipado: ShelterApplicationInput para type-safety en TypeScript
- * 
- * 8. CONSISTENCIA:
- *    - Usa los mismos municipios del enum Municipality (Prisma)
- *    - Validaciones de edad y teléfono reutilizadas del registerUserSchema
- *    - Formato de contraseña idéntico (RN-001)
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo agrupa todos los esquemas de validación de Zod relacionados
+ * con la gestión de usuarios y sus perfiles. Es una pieza clave para
+ * garantizar la integridad y el formato correcto de los datos que entran
+ * al sistema a través de formularios y endpoints de API.
+ *
+ * Lógica Clave:
+ * - 'registerUserSchema': Valida el formulario de registro para nuevos
+ *   adoptantes. Incluye la regla de negocio 'RN-001' para la longitud
+ *   mínima de la contraseña y una validación de edad mínima de 18 años.
+ * - 'shelterApplicationSchema': Un esquema complejo que combina datos de un
+ *   usuario representante y los datos específicos del albergue. Utiliza
+ *   '.refine' para aplicar la regla 'RN-013', que exige al menos un
+ *   método de contacto (WhatsApp o Instagram).
+ * - 'Expresiones Regulares (regex)': Se utilizan para validaciones de
+ *   formato precisas, como en 'shelterNit' para el NIT colombiano y en
+ *   'contactWhatsApp' para números de teléfono internacionales.
+ *
+ * Dependencias Externas:
+ * - 'zod': Para la creación de todos los esquemas de validación.
+ * - '@prisma/client': Para los enums 'Municipality' y 'UserRole', que
+ *   mantienen la consistencia con las opciones definidas en la base de datos.
+ *
  */

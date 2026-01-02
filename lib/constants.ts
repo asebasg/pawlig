@@ -1,6 +1,12 @@
 import { UserRole } from "@prisma/client";
 
-// Rutas de navegación por rol
+/**
+ * Ruta/Componente/Servicio: Constantes Globales
+ * Descripción: Define constantes y datos estáticos utilizados en toda la aplicación para mantener la consistencia y facilitar el mantenimiento.
+ * Requiere: -
+ * Implementa: Múltiples (centraliza datos de UI y lógica de negocio)
+ */
+
 export const NAVIGATION_BY_ROLE = {
   ADOPTER: [
     { label: "Inicio", href: "/" },
@@ -28,7 +34,6 @@ export const NAVIGATION_BY_ROLE = {
   ]
 } as const;
 
-// Links públicos
 export const PUBLIC_LINKS = [
   { label: "Inicio", href: "/" },
   { label: "Adopciones", href: "/adopciones" },
@@ -39,7 +44,6 @@ export const PUBLIC_LINKS = [
   { label: "Terminos y Condiciones", href: "/terms" },
 ];
 
-// Opciones del menú de usuario por rol
 export const USER_MENU_OPTIONS = {
   ADOPTER: [
     { label: "Dashboard", href: "/user", icon: "LayoutDashboard" },
@@ -70,13 +74,11 @@ export const USER_MENU_OPTIONS = {
   ]
 } as const;
 
-// Opciones comunes del menú
 export const COMMON_MENU_OPTIONS = [
   { label: "Configuración", href: "/settings", icon: "Settings" },
   { label: "Ayuda", href: "/ayuda", icon: "HelpCircle" }
 ];
 
-// Enlaces del footer
 export const FOOTER_LINKS = {
   quickLinks: [
     { label: "Adopciones", href: "/adopciones" },
@@ -87,7 +89,6 @@ export const FOOTER_LINKS = {
     { label: "Términos y Condiciones", href: "/terminos" },
     { label: "Política de Privacidad", href: "/privacidad" },
   ],
-  // TODO: Hacer recursos reales y compartilos en archivos de Google Drive (PDF)
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
@@ -103,16 +104,13 @@ export const FOOTER_LINKS = {
   ]
 };
 
-// Información de contacto
 export const CONTACT_INFO = {
   email: "soporte@pawlig.com",
   phone: "+57 (4) 123-4567",
   address: "Medellín, Antioquia, Colombia"
 };
 
-// Definición de cambios de rol considerados críticos
 export const CRITICAL_ROLE_CHANGES = {
-  // Elevación a ADMIN siempre es crítica
   [`${UserRole.ADOPTER}_TO_${UserRole.ADMIN}`]: {
     message: '¿Estás seguro de promover a este Usuario a Administrador?',
     warning: 'Tendrá acceso completo al sistema.',
@@ -125,8 +123,6 @@ export const CRITICAL_ROLE_CHANGES = {
     message: '¿Promover este Vendedor a Administrador?',
     warning: 'Perderá sus permisos específicos de vendedor.',
   },
-
-  // Degradaciones que pierden permisos importantes
   [`${UserRole.SHELTER}_TO_${UserRole.ADOPTER}`]: {
     message: '¿Degradar este Albergue a Adoptante?',
     warning: 'Ya no podrá gestionar mascotas ni adopciones.',
@@ -137,7 +133,6 @@ export const CRITICAL_ROLE_CHANGES = {
   },
 } as const;
 
-// Función para verificar si un cambio de rol es crítico
 export function isCriticalRoleChange(
   currentRole: UserRole,
   newRole: UserRole
@@ -145,3 +140,36 @@ export function isCriticalRoleChange(
   const key = `${currentRole}_TO_${newRole}` as keyof typeof CRITICAL_ROLE_CHANGES;
   return key in CRITICAL_ROLE_CHANGES;
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo actúa como una fuente única de verdad (Single Source of Truth) para
+ * datos estáticos que se utilizan en múltiples partes de la aplicación. Centralizar
+ * estas constantes aquí evita la duplicación de "valores mágicos" y facilita
+ * las actualizaciones, ya que los cambios se realizan en un solo lugar.
+ *
+ * Lógica Clave:
+ * - 'NAVIGATION_BY_ROLE' y 'USER_MENU_OPTIONS': Definen la estructura de la
+ *   navegación y los menús de usuario de forma dinámica según el rol del usuario.
+ *   Esto permite que la UI se adapte automáticamente a los permisos de cada tipo de cuenta.
+ * - 'CRITICAL_ROLE_CHANGES': Este objeto define qué transiciones de roles de usuario
+ *   se consideran críticas y requieren una confirmación especial en la UI.
+ *   La clave del objeto se construye dinámicamente para representar el cambio
+ *   (ej: 'ADOPTER_TO_ADMIN'), lo que hace la lógica más legible.
+ * - 'isCriticalRoleChange': Una función de utilidad que comprueba si una transición
+ *   de rol específica está definida en el objeto 'CRITICAL_ROLE_CHANGES',
+ *   simplificando la lógica en los componentes de la interfaz de administración.
+ * - 'as const': Se utiliza para hacer que los objetos sean de solo lectura ('readonly')
+ *   y para inferir los tipos de la manera más específica posible, mejorando la
+ *   seguridad de tipos en todo el proyecto.
+ *
+ * Dependencias Externas:
+ * - '@prisma/client': Se utiliza para importar el tipo 'UserRole', asegurando que las
+ *   constantes basadas en roles estén siempre sincronizadas con el esquema de la
+ *   base de datos.
+ *
+ */
