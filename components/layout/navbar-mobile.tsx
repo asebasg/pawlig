@@ -8,6 +8,12 @@ import { signOut } from "next-auth/react";
 import { Logo } from "@/components/ui/logo";
 import { PUBLIC_LINKS, NAVIGATION_BY_ROLE } from "@/lib/constants";
 
+/**
+ * Componente: NavbarMobile
+ * Descripción: Renderiza el menú de navegación para dispositivos móviles, que se muestra como un panel deslizable.
+ * Requiere: Opcionalmente, un objeto de usuario para mostrar la navegación autenticada.
+ * Implementa: HU-005
+ */
 interface NavbarMobileProps {
   user?: {
     name?: string | null;
@@ -43,7 +49,7 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
     };
   }, [isOpen]);
 
-  const navigation = user 
+  const navigation = user
     ? NAVIGATION_BY_ROLE[user.role as keyof typeof NAVIGATION_BY_ROLE] || []
     : PUBLIC_LINKS;
 
@@ -159,3 +165,24 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
     </>
   );
 }
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * 'NavbarMobile' gestiona la experiencia de navegación en pantallas pequeñas. Consiste en un botón de tipo 'hamburguesa' que activa un panel lateral deslizable ('drawer').
+ * El contenido del panel es dinámico, mostrando enlaces públicos o enlaces específicos del rol del usuario, junto con opciones de inicio/cierre de sesión.
+ *
+ * Lógica Clave:
+ * - 'useState (isOpen)': Controla el estado de visibilidad del panel lateral.
+ * - 'useEffect (pathname)': Cierra automáticamente el panel cuando el usuario navega a una nueva página, mejorando la experiencia de usuario.
+ * - 'useEffect (isOpen)': Bloquea el 'scroll' del 'body' cuando el menú está abierto para evitar que el contenido de la página se desplace por debajo. Incluye una función de limpieza para restaurar el 'scroll'.
+ * - 'Navegación Dinámica': Al igual que la barra de navegación de escritorio, selecciona el conjunto de enlaces a mostrar ('PUBLIC_LINKS' o 'NAVIGATION_BY_ROLE') basándose en la presencia y el rol del objeto 'user'.
+ *
+ * Dependencias Externas:
+ * - 'next/navigation': Para usar el hook 'usePathname' y determinar la ruta activa.
+ * - 'next-auth/react': Para la función 'signOut'.
+ * - 'lucide-react': Para los iconos.
+ *
+ */
