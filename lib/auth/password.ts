@@ -1,22 +1,18 @@
 import bcrypt from 'bcryptjs';
 
+/**
+ * Ruta/Componente/Servicio: Servicio de Contraseñas
+ * Descripción: Proporciona funciones de utilidad para el hashing, la verificación y la validación de contraseñas de usuario.
+ * Requiere: -
+ * Implementa: RN-001, RNF-002
+ */
+
 const SALT_ROUNDS = 12;
 
-/**
- * Hashea una contraseña usando bcrypt con 12 salt rounds (RNF-002)
- * @param password - Contraseña en texto plano
- * @returns Contraseña hasheada
- */
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
 }
 
-/**
- * Compara una contraseña en texto plano con un hash
- * @param password - Contraseña en texto plano
- * @param hashedPassword - Hash almacenado en la base de datos
- * @returns true si coinciden, false si no
- */
 export async function verifyPassword(
   password: string,
   hashedPassword: string
@@ -24,12 +20,35 @@ export async function verifyPassword(
   return bcrypt.compare(password, hashedPassword);
 }
 
-/**
- * Valida que la contraseña cumpla con los requisitos mínimos (RN-001)
- * @param password - Contraseña a validar
- * @returns true si es válida, false si no
- */
 export function isValidPassword(password: string): boolean {
   // Mínimo 8 caracteres (RN-001)
   return password.length >= 8;
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo centraliza la lógica de seguridad relacionada con las contraseñas.
+ * Abstrae las operaciones de 'bcryptjs' para asegurar que el hashing y la
+ * comparación se realicen de manera consistente en toda la aplicación, siguiendo
+ * las políticas de seguridad definidas.
+ *
+ * Lógica Clave:
+ * - 'hashPassword': Utiliza 'bcrypt' para generar un hash seguro de una contraseña
+ *   en texto plano. Se configura con un 'SALT_ROUNDS' de 12 para un equilibrio
+ *   adecuado entre seguridad y rendimiento, cumpliendo el requisito 'RNF-002'.
+ * - 'verifyPassword': Compara de forma segura una contraseña en texto plano con un
+ *   hash almacenado. Utiliza la función 'compare' de 'bcrypt', que previene
+ *   ataques de temporización.
+ * - 'isValidPassword': Implementa la regla de negocio 'RN-001' que requiere que
+ *   las contraseñas tengan una longitud mínima de 8 caracteres. Sirve como una
+ *   validación básica del lado del servidor.
+ *
+ * Dependencias Externas:
+ * - 'bcryptjs': Librería utilizada para todas las operaciones de hashing y
+ *   comparación de contraseñas. Es el núcleo de la seguridad de las credenciales.
+ *
+ */
