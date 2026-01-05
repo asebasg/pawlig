@@ -74,7 +74,7 @@ export default async function UserViewPage({ params }: { params: { id: string } 
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <InfoItem icon={Mail} label="Email" value={user.email} />
               <InfoItem icon={Phone} label="Teléfono" value={user.phone} />
-              <InfoItem icon={MapPin} label="Municipio" value={'${user.municipality}, ANTIOQUIA'} />
+              <InfoItem icon={MapPin} label="Municipio" value={`${user.municipality}, ANTIOQUIA`} />
               <InfoItem icon={Calendar} label="Fecha de Nacimiento" value={formatDate(user.birthDate)} />
               <InfoItem icon={CalendarCheck2} label="Fecha de Registro" value={formatDate(user.createdAt)} />
               <div className="sm:col-span-2">

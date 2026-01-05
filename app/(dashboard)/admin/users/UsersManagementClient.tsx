@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, Municipality } from "@prisma/client";
-import { Search, UserX, UserCheck, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
-import BlockUserModal from "./BlockUserModal"
+import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
+import BlockUserButton from "@/components/admin/BlockUserButton";
 import Loader from '@/components/ui/loader'
 
 interface User {
@@ -61,10 +61,6 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
 
-    //  Modal de bloqueo
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [showBlockModal, setShowBlockModal] = useState(false);
-
     //  Cargar usuarios
     const fetchUsers = async () => {
         try {
@@ -115,19 +111,6 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
         }, 500);
         return () => clearTimeout(timeoutId);
     }, [searchQuery]);
-
-    // Abrir modal de bloqueo
-    const handleBlockClick = (user: User) => {
-        setSelectedUser(user);
-        setShowBlockModal(true);
-    }
-
-    // Callback después de bloquear/desbloquear
-    const handleBlockSuccess = () => {
-        setShowBlockModal(false);
-        setSelectedUser(null);
-        fetchUsers();
-    };
 
     // Formatear fecha
     const formatDate = (dateString: string) => {
@@ -253,8 +236,9 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
             {/* Tabla de usuarios */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 {loading ? (
-                    <div className="flex items-center justify-center py-12">
+                    <div className="flex flex-col items-center justify-center py-12 text-gray-600">
                         <Loader />
+                        <span>Cargando a todos los usuarios</span>
                     </div>
                 ) : error ? (
                     <div className="text-center py-12 text-red-600">
@@ -365,21 +349,11 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                         <Eye className="w-4 h-4" />
                                                         Ver más
                                                     </button>
-                                                    {user.role !== "ADMIN" && (
-                                                        <button
-                                                            onClick={() => handleBlockClick(user)}
-                                                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition ${user.isActive
-                                                                ? "text-red-600 hover:bg-red-50"
-                                                                : "text-green-600 hover:bg-green-50"
-                                                                }`}
-                                                        >
-                                                            {user.isActive ? (
-                                                                <UserX className="w-4 h-4" />
-                                                            ) : (
-                                                                <UserCheck className="w-4 h-4" />
-                                                            )}
-                                                        </button>
-                                                    )}
+
+                                                    <BlockUserButton
+                                                        user={user}
+                                                        onSuccess={fetchUsers}
+                                                    />
                                                 </div>
                                             </td>
                                         </tr>
@@ -415,15 +389,6 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                     </>
                 )}
             </div>
-
-            {/* Modal de bloqueo */}
-            {showBlockModal && selectedUser && (
-                <BlockUserModal
-                    user={selectedUser}
-                    onClose={() => setShowBlockModal(false)}
-                    onSuccess={handleBlockSuccess}
-                />
-            )}
         </div>
     );
 }
