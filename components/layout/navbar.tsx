@@ -28,17 +28,14 @@ export function Navbar() {
           {status === "loading" ? (
             <div className="hidden lg:flex h-10 w-96 bg-gray-100 animate-pulse rounded" />
           ) : session?.user ? (
-            <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
+            <div className="flex items-center gap-8 flex-1 justify-end">
               <NavbarAuth user={session.user} />
             </div>
           ) : (
-            <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
+            <div className="flex items-center gap-8 flex-1 justify-end">
               <NavbarPublic />
             </div>
           )}
-
-          {/* Spacer for mobile to center logo */}
-          <div className="lg:hidden w-10" />
         </div>
       </div>
     </header>
