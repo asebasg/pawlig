@@ -3,6 +3,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { toast } from "sonner";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import {
     Dialog,
@@ -43,6 +44,8 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
             return;
         }
 
+        const toastId = toast.loading(user.isActive ? "Bloqueando usuario..." : "Desbloqueando usuario...");
+
         try {
             setLoading(true);
             setError(null);
@@ -62,9 +65,15 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
                 throw new Error(data.error || "Error al procesar la acción");
             }
 
+            toast.success(user.isActive ? "Usuario bloqueado correctamente" : "Usuario desbloqueado correctamente", {
+                id: toastId
+            });
+
             onSuccess();
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Error desconocido");
+            const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+            setError(errorMessage);
+            toast.error(errorMessage, { id: toastId });
         } finally {
             setLoading(false);
         }

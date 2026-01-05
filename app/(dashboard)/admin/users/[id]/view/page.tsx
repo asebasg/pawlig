@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User as PrismaUser, AuditAction } from "@prisma/client";
 import { AuditHistoryCard } from "@/components/admin/AuditHistoryCard";
 import UserViewClient from "@/components/admin/UserViewClient";
+import UserActionsClient from "@/components/admin/UserActionsClient";
 import Link from "next/link";
 import { User, Mail, Phone, MapPin, Calendar, CheckCircle, XCircle, ArrowLeft, CalendarCheck2 } from "lucide-react";
 
@@ -87,7 +88,10 @@ export default async function UserViewPage({ params }: { params: { id: string } 
           </Card>
 
           {/* Solo mostrar gestión de roles si el usuario no es ADMIN */}
-          {user.role !== 'ADMIN' && <UserViewClient user={{ id: user.id, name: user.name, role: user.role }} />}
+          <div className="flex flex-col md:flex-row gap-6 w-full [&>*]:flex-1">
+            {user.role !== 'ADMIN' && <UserActionsClient user={{ id: user.id, name: user.name, email: user.email, isActive: user.isActive, role: user.role }} />}
+            {user.role !== 'ADMIN' && <UserViewClient user={{ id: user.id, name: user.name, role: user.role }} />}
+          </div>
         </div>
 
         {/* Columna Derecha: Auditoría */}

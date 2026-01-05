@@ -13,9 +13,12 @@ interface BlockUserButtonProps {
         role: string;
     };
     onSuccess: () => void;
+    showLabel?: boolean;
+    className?: string;
+    "aria-label"?: string; // Aceptar aria-label explícito si se pasa
 }
 
-export default function BlockUserButton({ user, onSuccess }: BlockUserButtonProps) {
+export default function BlockUserButton({ user, onSuccess, showLabel = false, className = "", ...props }: BlockUserButtonProps) {
     const [showModal, setShowModal] = useState(false);
 
     // No permitir bloquear administradores
@@ -35,13 +38,18 @@ export default function BlockUserButton({ user, onSuccess }: BlockUserButtonProp
                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition ${user.isActive
                     ? "text-red-600 hover:bg-red-50"
                     : "text-green-600 hover:bg-green-50"
-                    }`}
-                aria-label={user.isActive ? "Bloquear usuario" : "Desbloquear usuario"}
+                    } ${className}`}
+                aria-label={props["aria-label"] || `${user.isActive ? "Bloquear usuario" : "Desbloquear usuario"}`}
             >
                 {user.isActive ? (
-                    <UserX className="w-4 h-4" />
+                    <UserX className="w-5 h-5" />
                 ) : (
-                    <UserCheck className="w-4 h-4" />
+                    <UserCheck className="w-5 h-5" />
+                )}
+                {showLabel && (
+                    <span className="font-medium">
+                        {user.isActive ? "Bloquear usuario" : "Desbloquear usuario"}
+                    </span>
                 )}
             </button>
 
