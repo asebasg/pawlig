@@ -38,13 +38,12 @@ export default function RootLayout({
           {/* Footer */}
           <Footer />
           <Toaster
-            position="top-right"
+            position="top-center"
             richColors
             closeButton
+            duration={3000}
             toastOptions={{
-              style: {
-                fontFamily: "var(--font-geist-sans)",
-              },
+              className: "font-sans text-base p-1"
             }}
           />
         </SessionProvider>
