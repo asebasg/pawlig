@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Package, Plus, Minus, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { updateStockSchema } from "@/lib/validations/product.schema";
 import { ZodError } from "zod";
@@ -129,13 +130,15 @@ export default function StockUpdateModal({
                             Actualizar Stock
                         </DialogTitle>
                     </div>
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
                         disabled={isLoading}
+                        className="text-gray-400 hover:text-gray-600"
                     >
                         <X className="w-6 h-6" />
-                    </button>
+                    </Button>
                 </DialogHeader>
 
                 {/* Content */}
@@ -189,11 +192,11 @@ export default function StockUpdateModal({
 
                             {/* Input */}
                             <div className="relative">
-                                <input
+                                <Input
                                     type="number"
                                     value={newStock}
                                     onChange={handleInputChange}
-                                    className="w-20 text-center text-xl font-bold border rounded-md py-1 focus:ring-2 focus:ring-purple-500 outline-none"
+                                    className="w-24 text-center text-xl font-bold h-10 p-1"
                                     min={0}
                                 />
                             </div>
@@ -248,31 +251,52 @@ export default function StockUpdateModal({
                 </div>
 
                 <DialogFooter className="flex gap-3 p-6 pt-0 sm:justify-between w-full">
-                    <button
+                    <Button
                         type="button"
+                        variant="outline"
                         onClick={onClose}
                         disabled={isLoading}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                        className="flex-1"
                     >
                         Cancelar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
                         onClick={handleSave}
                         disabled={!hasChanges || isLoading}
-                        className="flex-1 px-4 py-2 bg-purple-600 rounded-lg font-medium text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
+                        className="flex-1 gap-2 bg-purple-600 hover:bg-purple-700 text-white"
                     >
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Guardando...
-                            </>
-                        ) : (
-                            "Guardar Cambios"
-                        )}
-                    </button>
+                        {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                        {isLoading ? "Guardando..." : "Guardar Cambios"}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Modal especializado para la actualización rápida del stock de un producto.
+ * Permite ajustes incrementales o entrada directa de valores numéricos.
+ *
+ * Lógica Clave:
+ * - useState(newStock): Mantiene el estado local del stock durante la edición.
+ * - increment/decrement: Helpers para modificar stock en pasos predefinidos (1, 5, 10).
+ * - handleSave: Valida con Zod (updateStockSchema) y envía petición PUT a la API.
+ * - hasChanges: Deshabilita el guardado si no hay modificaciones reales.
+ *
+ * Dependencias Externas:
+ * - shadcn/ui: Dialog, Button, Input para consistencia visual.
+ * - sonner: Feedback al usuario (éxito/error).
+ * - lucide-react: Iconografía (Package, Plus, Minus, etc).
+ * - zod: Validación de tipos y restricciones de negocio.
+ *
+ * Estados:
+ * - isLoading: Bloquea la interfaz durante la petición asíncrona.
+ * - isOpen: Controlado por el componente padre (ProductTable).
+ */
