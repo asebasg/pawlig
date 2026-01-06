@@ -6,7 +6,7 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 
 ---
 
-## [05-01-2026] - Migración de Estilos y Refactorización General
+## 05-01-2026 - Migración de Estilos y Refactorización General
 
 **Commits:** `7d51b22`
 **Tipo:** Refactor (Core)
@@ -14,28 +14,34 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 
 ### Descripción
 
-Este commit representa una refactorización masiva y una migración de estilos que establece la base arquitectónica del proyecto. Se ha migrado toda la base de código a un nuevo estándar de estilos, se han reorganizado los componentes y se ha establecido la configuración inicial de herramientas como ESLint, TypeScript y Next.js.
+Este commit representa una refactorización masiva del frontend y la migración completa de la base de código a una nueva arquitectura de estilos. El objetivo era modernizar la base del código, mejorar la mantenibilidad y establecer una configuración de proyecto robusta.
+
+La implementación consistió en:
+1.  **Revisión de Estilos:** Se eliminaron todos los estilos CSS anteriores y se reemplazaron con una implementación basada en Tailwind CSS.
+2.  **Reorganización de Componentes:** Los componentes de React se reestructuraron siguiendo una convención de nomenclatura y organización basada en features.
+3.  **Configuración de Herramientas:** Se configuraron desde cero herramientas de desarrollo como ESLint para el linting de código, TypeScript para el tipado estático y Next.js como framework principal.
+4.  **Actualización del Esquema de BD:** Se modificó el esquema de Prisma para alinear los modelos de datos con las nuevas necesidades de la aplicación.
 
 ### Archivos Modificados
 
 - **Configuración del Proyecto (A):**
-  - `.eslintrc.json`, `next.config.mjs`, `tailwind.config.ts`, `tsconfig.json`, `vitest.config.ts`
+  - Se añadieron y configuraron `.eslintrc.json`, `next.config.mjs`, `tailwind.config.ts`, `tsconfig.json` y `vitest.config.ts`.
 - **Estructura de la Aplicación (A):**
-  - `app/layout.tsx`, `app/page.tsx`, `middleware.ts`
+  - Se crearon los archivos base de la aplicación, incluyendo `app/layout.tsx`, `app/page.tsx` y el `middleware.ts` para la gestión de rutas.
 - **API Endpoints (A):**
-  - `app/api/...` (múltiples rutas para usuarios, mascotas, adopciones, etc.)
+  - Se implementaron múltiples rutas de API en `app/api/` para gestionar la lógica de negocio de usuarios, mascotas, adopciones y productos.
 - **Componentes de UI (A):**
-  - `components/ui/...` (todos los componentes base como `Button`, `Card`, `Input`, etc.)
+  - Se crearon todos los componentes de UI base en `components/ui/`, como `Button`, `Card`, `Input`, etc.
 - **Componentes de Formularios (A):**
-  - `components/forms/...` (formularios de login, registro, mascotas, etc.)
+  - Se implementaron todos los formularios de la aplicación en `components/forms/`, incluyendo los de login, registro y creación de mascotas.
 - **Servicios de Lógica de Negocio (A):**
-  - `lib/services/...` (servicios para usuarios, mascotas, productos, etc.)
+  - Se crearon los servicios en `lib/services/` para encapsular la lógica de negocio de usuarios, mascotas y productos.
 - **Esquema de Base de Datos (A):**
-  - `prisma/schema.prisma`
+  - Se definió el esquema inicial de la base de datos en `prisma/schema.prisma`.
 
 ---
 
-## [03-01-2026] - Documentación Estandarizada en Archivos Clave
+## 03-01-2026 - Documentación Estandarizada en Archivos Clave
 
 **Commits:** `15e4885`
 **Tipo:** Documentation (Core)
@@ -43,18 +49,23 @@ Este commit representa una refactorización masiva y una migración de estilos q
 
 ### Descripción
 
-Se ha añadido documentación estandarizada a una gran cantidad de archivos de lógica de negocio y componentes del proyecto, siguiendo las directrices establecidas en `.rules.md`. Esta documentación incluye descripciones de alto nivel, detalles de implementación y dependencias externas para mejorar la mantenibilidad y onboarding de nuevos desarrolladores.
+Para mejorar la calidad y mantenibilidad del código, se llevó a cabo una iniciativa de documentación masiva. El objetivo era asegurar que cualquier desarrollador, nuevo o existente, pudiera entender rápidamente la funcionalidad, el propósito y las dependencias de los archivos más importantes del proyecto.
+
+La implementación se basó en las directrices del archivo `.rules.md`, que estandariza el formato de la documentación. Se añadieron:
+1.  **Cabeceras de Resumen:** Un resumen de alto nivel al principio de cada archivo, describiendo su propósito.
+2.  **Notas de Implementación:** Comentarios detallados en el código, explicando la lógica de negocio y las decisiones de arquitectura.
+3.  **Descripciones de Dependencias:** Aclaraciones sobre las dependencias externas utilizadas en cada archivo.
 
 ### Archivos Modificados
 
 - **`lib/auth/auth-options.ts`** (A)
-  - Documentación detallada de la configuración de NextAuth, proveedores de autenticación y callbacks.
+  - Se añadió documentación detallada de la configuración de NextAuth, explicando el funcionamiento de los proveedores de autenticación y los callbacks.
 - **`app/api/pets/route.ts`** (A)
-  - Documentación de los endpoints de la API para la gestión de mascotas.
+  - Se documentaron los endpoints de la API para la gestión de mascotas, explicando cómo se manejan las peticiones GET, POST, etc.
 - **`components/forms/pet-form.tsx`** (A)
-  - Documentación del formulario de creación y edición de mascotas.
+  - Se añadió documentación al formulario de creación y edición de mascotas, detallando las validaciones y el manejo del estado.
 - **`middleware.ts`** (A)
-  - Documentación del middleware de autenticación y protección de rutas.
+  - Se documentó el middleware de autenticación, explicando cómo se protegen las rutas y se gestionan los roles de usuario.
 - ... y otros 100+ archivos de componentes, servicios y API.
 
 ---
