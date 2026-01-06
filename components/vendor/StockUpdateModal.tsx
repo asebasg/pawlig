@@ -6,11 +6,18 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { updateStockSchema } from "@/lib/validations/product.schema";
 import { ZodError } from "zod";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 
 /**
  * StockUpdateModal
  * Descripción: Modal para actualización rápida de inventario de productos
- * Estilo: Basado en BlockUserModal (Custom Tailwind implementation)
+ * Estilo: shadcn/ui Dialog (Customized to match BlockUserModal visual)
  */
 
 interface StockUpdateModalProps {
@@ -40,7 +47,12 @@ export default function StockUpdateModal({
         }
     }, [isOpen, product.stock]);
 
-    if (!isOpen) return null;
+    // Handle dialog open change
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            onClose();
+        }
+    }
 
     // Incrementar stock por cantidad específica
     const increment = (amount: number) => {
@@ -106,17 +118,16 @@ export default function StockUpdateModal({
     const hasChanges = newStock !== product.stock;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden [&>button]:hidden">
+                <DialogHeader className="flex flex-row items-center justify-between p-6 border-b border-gray-200">
                     <div className="flex items-center gap-3">
                         <div className="p-2 rounded-full bg-purple-100">
                             <Package className="w-5 h-5 text-purple-600" />
                         </div>
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <DialogTitle className="text-xl font-bold text-gray-900">
                             Actualizar Stock
-                        </h2>
+                        </DialogTitle>
                     </div>
                     <button
                         onClick={onClose}
@@ -125,7 +136,7 @@ export default function StockUpdateModal({
                     >
                         <X className="w-6 h-6" />
                     </button>
-                </div>
+                </DialogHeader>
 
                 {/* Content */}
                 <div className="p-6 space-y-6">
@@ -236,8 +247,7 @@ export default function StockUpdateModal({
                     </div>
                 </div>
 
-                {/* Footer / Actions */}
-                <div className="flex gap-3 p-6 pt-0">
+                <DialogFooter className="flex gap-3 p-6 pt-0 sm:justify-between w-full">
                     <button
                         type="button"
                         onClick={onClose}
@@ -261,8 +271,8 @@ export default function StockUpdateModal({
                             "Guardar Cambios"
                         )}
                     </button>
-                </div>
-            </div>
-        </div>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

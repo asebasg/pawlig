@@ -22,10 +22,10 @@ const AlertDialog = ({
 }
 
 const AlertDialogTrigger = ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-    // Note: Since this implementation is controlled via the root, trigger might be redundant 
-    // depending on usage, but we include it for structure. 
-    // In strict controlled mode, the parent handles the open state.
-    // We render children as is.
+    // Nota: Dado que esta implementación se controla a través de la raíz, el disparador podría ser redundante
+    // dependiendo del uso, pero lo incluimos por estructura.
+    // En modo controlado estricto, el padre maneja el estado de apertura.
+    // Renderizamos los hijos tal cual.
     return <div {...props}>{children}</div>
 }
 
@@ -124,9 +124,9 @@ const AlertDialogAction = React.forwardRef<
             ref={ref}
             onClick={(e) => {
                 onClick?.(e)
-                // Optionally close? User might want to keep it open until async finishes. 
-                // Standard behavior: usually developer closes it manually if controlled.
-                // But let's follow standard HTML button behavior inside form/dialog?
+                // ¿Cerrar opcionalmente? El usuario podría querer mantenerlo abierto hasta que termine la operación asíncrona.
+                // Comportamiento estándar: generalmente el desarrollador lo cierra manualmente si está controlado.
+                // ¿Pero sigamos el comportamiento estándar de los botones HTML dentro de un formulario/diálogo?
             }}
             className={`inline-flex h-10 items-center justify-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className || ""}`}
             {...props}

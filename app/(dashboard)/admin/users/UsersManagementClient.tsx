@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, Municipality } from "@prisma/client";
-import { Search, UserX, UserCheck, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
-import BlockUserModal from "./BlockUserModal"
+import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
+import BlockUserButton from "@/components/admin/BlockUserButton";
 import Loader from '@/components/ui/loader'
 
 interface User {
@@ -61,10 +61,6 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
 
-    //  Modal de bloqueo
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [showBlockModal, setShowBlockModal] = useState(false);
-
     //  Cargar usuarios
     const fetchUsers = async () => {
         try {
@@ -116,19 +112,6 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
         return () => clearTimeout(timeoutId);
     }, [searchQuery]);
 
-    // Abrir modal de bloqueo
-    const handleBlockClick = (user: User) => {
-        setSelectedUser(user);
-        setShowBlockModal(true);
-    }
-
-    // Callback después de bloquear/desbloquear
-    const handleBlockSuccess = () => {
-        setShowBlockModal(false);
-        setSelectedUser(null);
-        fetchUsers();
-    };
-
     // Formatear fecha
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("es-CO", {
@@ -141,14 +124,14 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
     // Badge de rol
     const getRoleBadge = (role: UserRole) => {
         const styles = {
-            ADMIN: "bg-purple-100 text-purple-800",
-            SHELTER: "bg-teal-100 text-teal-800",
-            VENDOR: "bg-orange-100 text-orange-800",
-            ADOPTER: "bg-blue-100 text-blue-800"
+            ADMIN: "bg-purple-100 text-purple-800 pointer-events-none",
+            SHELTER: "bg-teal-100 text-teal-800 pointer-events-none",
+            VENDOR: "bg-orange-100 text-orange-800 pointer-events-none",
+            ADOPTER: "bg-blue-100 text-blue-800 pointer-events-none"
         };
 
         const labels = {
-            ADMIN: "Admin",
+            ADMIN: "Administrador",
             SHELTER: "Albergue",
             VENDOR: "Vendedor",
             ADOPTER: "Adoptante"
@@ -164,11 +147,11 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
     // Badge de estado
     const getStatusBadge = (isActive: boolean) => {
         return isActive ? (
-            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 pointer-events-none">
                 Activo
             </span>
         ) : (
-            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 pointer-events-none">
                 Bloqueado
             </span>
         );
@@ -253,8 +236,9 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
             {/* Tabla de usuarios */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 {loading ? (
-                    <div className="flex items-center justify-center py-12">
+                    <div className="flex flex-col items-center justify-center py-12 text-gray-600">
                         <Loader />
+                        <span>Cargando a todos los usuarios</span>
                     </div>
                 ) : error ? (
                     <div className="text-center py-12 text-red-600">
@@ -277,13 +261,13 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                             </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <Shield className="w-4 h-4 text-gray-500" />
                                                 Rol
                                             </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <MessageCircleQuestion className="w-4 h-4 text-gray-500" />
                                                 Estado
                                             </div>
@@ -295,12 +279,12 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                             </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <Scroll className="w-4 h-4 text-gray-500" />
                                                 Registro
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             <div className="flex items-center justify-center gap-1">
                                                 <ShieldAlert className="w-4 h-4 text-gray-500" />
                                                 Acciones
@@ -327,16 +311,17 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 {getRoleBadge(user.role)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 {getStatusBadge(user.isActive)}
-                                                {!user.isActive && user.blockReason && (
+                                                {/* Mostrar razon del bloqueo */}
+                                                {/* {!user.isActive && user.blockReason && (
                                                     <div className="text-xs text-gray-500 mt-1 max-w-xs truncate">
                                                         {user.blockReason}
                                                     </div>
-                                                )}
+                                                )} */}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {user.shelter && (
@@ -352,7 +337,7 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                     </div>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                                 {formatDate(user.createdAt)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
@@ -365,21 +350,11 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                         <Eye className="w-4 h-4" />
                                                         Ver más
                                                     </button>
-                                                    {user.role !== "ADMIN" && (
-                                                        <button
-                                                            onClick={() => handleBlockClick(user)}
-                                                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition ${user.isActive
-                                                                ? "text-red-600 hover:bg-red-50"
-                                                                : "text-green-600 hover:bg-green-50"
-                                                                }`}
-                                                        >
-                                                            {user.isActive ? (
-                                                                <UserX className="w-4 h-4" />
-                                                            ) : (
-                                                                <UserCheck className="w-4 h-4" />
-                                                            )}
-                                                        </button>
-                                                    )}
+
+                                                    <BlockUserButton
+                                                        user={user}
+                                                        onSuccess={fetchUsers}
+                                                    />
                                                 </div>
                                             </td>
                                         </tr>
@@ -415,15 +390,6 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                     </>
                 )}
             </div>
-
-            {/* Modal de bloqueo */}
-            {showBlockModal && selectedUser && (
-                <BlockUserModal
-                    user={selectedUser}
-                    onClose={() => setShowBlockModal(false)}
-                    onSuccess={handleBlockSuccess}
-                />
-            )}
         </div>
     );
 }
