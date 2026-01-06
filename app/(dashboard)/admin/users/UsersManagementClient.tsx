@@ -124,14 +124,14 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
     // Badge de rol
     const getRoleBadge = (role: UserRole) => {
         const styles = {
-            ADMIN: "bg-purple-100 text-purple-800",
-            SHELTER: "bg-teal-100 text-teal-800",
-            VENDOR: "bg-orange-100 text-orange-800",
-            ADOPTER: "bg-blue-100 text-blue-800"
+            ADMIN: "bg-purple-100 text-purple-800 pointer-events-none",
+            SHELTER: "bg-teal-100 text-teal-800 pointer-events-none",
+            VENDOR: "bg-orange-100 text-orange-800 pointer-events-none",
+            ADOPTER: "bg-blue-100 text-blue-800 pointer-events-none"
         };
 
         const labels = {
-            ADMIN: "Admin",
+            ADMIN: "Administrador",
             SHELTER: "Albergue",
             VENDOR: "Vendedor",
             ADOPTER: "Adoptante"
@@ -147,11 +147,11 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
     // Badge de estado
     const getStatusBadge = (isActive: boolean) => {
         return isActive ? (
-            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 pointer-events-none">
                 Activo
             </span>
         ) : (
-            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 pointer-events-none">
                 Bloqueado
             </span>
         );
@@ -261,13 +261,13 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                             </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <Shield className="w-4 h-4 text-gray-500" />
                                                 Rol
                                             </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <MessageCircleQuestion className="w-4 h-4 text-gray-500" />
                                                 Estado
                                             </div>
@@ -279,12 +279,12 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                             </div>
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center justify-center gap-1">
                                                 <Scroll className="w-4 h-4 text-gray-500" />
                                                 Registro
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             <div className="flex items-center justify-center gap-1">
                                                 <ShieldAlert className="w-4 h-4 text-gray-500" />
                                                 Acciones
@@ -311,16 +311,17 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 {getRoleBadge(user.role)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 {getStatusBadge(user.isActive)}
-                                                {!user.isActive && user.blockReason && (
+                                                {/* Mostrar razon del bloqueo */}
+                                                {/* {!user.isActive && user.blockReason && (
                                                     <div className="text-xs text-gray-500 mt-1 max-w-xs truncate">
                                                         {user.blockReason}
                                                     </div>
-                                                )}
+                                                )} */}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {user.shelter && (
@@ -336,7 +337,7 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                                     </div>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                                 {formatDate(user.createdAt)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
