@@ -6,6 +6,59 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 
 ---
 
+## [05-01-2026] - Migración de Estilos y Refactorización General
+
+**Commits:** `7d51b22`
+**Tipo:** Refactor (Core)
+**Scope:** core, styles, architecture
+
+### Descripción
+
+Este commit representa una refactorización masiva y una migración de estilos que establece la base arquitectónica del proyecto. Se ha migrado toda la base de código a un nuevo estándar de estilos, se han reorganizado los componentes y se ha establecido la configuración inicial de herramientas como ESLint, TypeScript y Next.js.
+
+### Archivos Modificados
+
+- **Configuración del Proyecto (A):**
+  - `.eslintrc.json`, `next.config.mjs`, `tailwind.config.ts`, `tsconfig.json`, `vitest.config.ts`
+- **Estructura de la Aplicación (A):**
+  - `app/layout.tsx`, `app/page.tsx`, `middleware.ts`
+- **API Endpoints (A):**
+  - `app/api/...` (múltiples rutas para usuarios, mascotas, adopciones, etc.)
+- **Componentes de UI (A):**
+  - `components/ui/...` (todos los componentes base como `Button`, `Card`, `Input`, etc.)
+- **Componentes de Formularios (A):**
+  - `components/forms/...` (formularios de login, registro, mascotas, etc.)
+- **Servicios de Lógica de Negocio (A):**
+  - `lib/services/...` (servicios para usuarios, mascotas, productos, etc.)
+- **Esquema de Base de Datos (A):**
+  - `prisma/schema.prisma`
+
+---
+
+## [03-01-2026] - Documentación Estandarizada en Archivos Clave
+
+**Commits:** `15e4885`
+**Tipo:** Documentation (Core)
+**Scope:** docs, core, components
+
+### Descripción
+
+Se ha añadido documentación estandarizada a una gran cantidad de archivos de lógica de negocio y componentes del proyecto, siguiendo las directrices establecidas en `.rules.md`. Esta documentación incluye descripciones de alto nivel, detalles de implementación y dependencias externas para mejorar la mantenibilidad y onboarding de nuevos desarrolladores.
+
+### Archivos Modificados
+
+- **`lib/auth/auth-options.ts`** (A)
+  - Documentación detallada de la configuración de NextAuth, proveedores de autenticación y callbacks.
+- **`app/api/pets/route.ts`** (A)
+  - Documentación de los endpoints de la API para la gestión de mascotas.
+- **`components/forms/pet-form.tsx`** (A)
+  - Documentación del formulario de creación y edición de mascotas.
+- **`middleware.ts`** (A)
+  - Documentación del middleware de autenticación y protección de rutas.
+- ... y otros 100+ archivos de componentes, servicios y API.
+
+---
+
 ## 31-12-2025 - Gestión de Usuarios y Visualización Detallada (Admin)
 
 **Commits:** `0e3b7e3`, `78409cf`, `bba8cb4`  
@@ -748,40 +801,3 @@ Eliminación de archivos de documentación obsoletos y reorganización de estruc
   - Movimiento del archivo de cambios de estructura al directorio de documentación
 
 ---
-
-## Resumen Estadístico
-
-### Commits Totales Documentados
-
-30 commits principales
-
-### Categorías de Cambios
-
-- **Features (feat):** 12 commits
-- **Fixes (fix):** 3 commits
-- **Documentation (docs):** 7 commits
-- **Refactor:** 1 commit
-- **Chore:** 2 commits
-- **Merge:** 5 commits
-
-### Áreas Principales de Desarrollo
-
-1. **Sistema de Adopciones:** Implementación completa de funcionalidades de adopción
-2. **Autenticación y Autorización:** Páginas de login/registro y control de acceso por roles
-3. **UI/UX:** Componentes de navegación, tarjetas de mascotas, filtros y layout
-4. **Testing:** Configuración de Vitest y pruebas unitarias
-5. **Documentación:** Mejoras en README, guías de contribución y reglas de código
-6. **API:** Endpoints para mascotas, favoritos y adopciones
-
-### Archivos Más Modificados
-
-- `README.md` - 4 modificaciones
-- `lib/constants.ts` - 3 modificaciones
-- `components/layout/footer.tsx` - 3 modificaciones
-- `app/page.tsx` - 2 modificaciones
-- `lib/services/pet.service.ts` - 3 modificaciones
-
----
-
-**Última actualización:** 31-12-2025  
-**Generado automáticamente desde:** Historial de commits de Git
