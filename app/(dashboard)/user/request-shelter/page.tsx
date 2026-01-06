@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth/auth-options';
 import { ShelterRequestForm } from '@/components/forms/shelter-request-form';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { UserRole } from '@prisma/client';
 
 /**
  * PAGE /user/request-shelter
@@ -22,18 +23,13 @@ export default async function RequestShelterPage() {
   const session = await getServerSession(authOptions);
 
   //  1. Validar sesión
-  if (!session?.user) {
-    redirect('/login?callbackUrl=/user/request-shelter');
+  if (!session || !session.user) {
+    redirect('/login?callbackUrl=/user');
   }
 
   //  2. Validar roles permitidos
-  // Solo los usuarios 'ADOPTER' pueden solicitar ser albergues.
-  // Los albergues y admins no necesitan acceder aquí.
-  const allowedRoles = ['ADOPTER'];
-  if (!allowedRoles.includes(session.user.role)) {
-    // Redirigir a página de no autorizado o al dashboard
-    // Usamos query param para mostrar un mensaje específico si existe la página de error
-    redirect('/unauthorized?reason=role_not_allowed');
+  if (session.user.role !== UserRole.ADOPTER) {
+    redirect('/unauthorized?reason=adopter_only');
   }
 
   return (

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { shelterApplicationSchema, type ShelterApplicationInput } from '@/lib/validations/user.schema';
+import { shelterApplicationSchema } from '@/lib/validations/user.schema';
 import { $Enums } from '@prisma/client';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { ZodError } from 'zod';
 import Link from 'next/link';
 
 export function ShelterRequestForm() {
@@ -51,17 +52,17 @@ export function ShelterRequestForm() {
           window.location.href = '/';
         }, 2000);
       }
-    } catch (err: any) {
-      if (err.errors) {
+    } catch (err) {
+      if (err instanceof ZodError) {
         // Errores de validación de Zod
         const errors: Record<string, string> = {};
-        err.errors.forEach((e: any) => {
-          const field = e.path[0] as string;
-          errors[field] = e.message;
+        err.issues.forEach((zodError) => {
+          const field = zodError.path[0] as string;
+          errors[field] = zodError.message;
         });
         setFieldErrors(errors);
         setError('Por favor revisa los campos marcados en rojo');
-      } else if (err.response?.status === 409) {
+      } else if (err instanceof AxiosError && err.response?.status === 409) {
         // Error 409: Conflicto
         const errorData = err.response.data;
         if (errorData.code === 'EMAIL_ALREADY_EXISTS') {
@@ -71,11 +72,11 @@ export function ShelterRequestForm() {
         } else {
           setError('Los datos ingresados ya están en uso. Verifica la información.');
         }
-      } else if (err.response?.status === 403) {
+      } else if (err instanceof AxiosError && err.response?.status === 403) {
         setError('No tienes permisos para realizar esta acción. Contacta al administrador.');
-      } else if (err.response?.status === 401) {
+      } else if (err instanceof AxiosError && err.response?.status === 401) {
         setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-      } else if (err.response?.status >= 500) {
+      } else if (err instanceof AxiosError && err.response?.status && err.response.status >= 500) {
         setError('Hay un problema con el servidor. Inténtalo más tarde.');
       } else {
         setError('Ocurrió un error inesperado. Verifica tu conexión e inténtalo nuevamente.');

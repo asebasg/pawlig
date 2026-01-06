@@ -16,7 +16,7 @@ export default async function UserDashboardPage() {
     redirect('/login?callbackUrl=/user');
   }
 
-  if (session.user.role !== UserRole.ADOPTER && session.user.role !== UserRole.ADMIN) {
+  if (session.user.role !== UserRole.ADOPTER) {
     redirect('/unauthorized?reason=adopter_only');
   }
 

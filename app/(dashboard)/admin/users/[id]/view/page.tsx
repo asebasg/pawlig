@@ -80,9 +80,9 @@ export default async function UserViewPage({ params }: { params: { id: string } 
               <InfoItem icon={CalendarCheck2} label="Fecha de Registro" value={formatDate(user.createdAt)} />
               <div className="sm:col-span-2">
                 <InfoItem icon={user.isActive ? CheckCircle : XCircle} label="Estado"
-                  value={user.isActive ? "Activo" : 'Bloqueado desde ${formatDate(user.blockedAt)}'}
+                  value={user.isActive ? "Activo" : `Bloqueado desde el ${formatDate(user.blockedAt)}`}
                   valueColor={user.isActive ? "text-green-600" : "text-red-600"} />
-                {!user.isActive && user.blockReason && <p className="text-xs text-gray-500 mt-1 ml-6">Razón: {user.blockReason}</p>}
+                {!user.isActive && user.blockReason && <p className="text-xs text-gray-500 mt-1 ml-6"><strong>Razón:</strong> {user.blockReason}</p>}
               </div>
             </CardContent>
           </Card>

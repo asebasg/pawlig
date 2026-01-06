@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/utils/db";
 import { getProducts, getVendorProductStats } from "@/lib/services/product.service";
 import { ProductsClient } from "@/components/vendor/ProductsClient";
 import { VendorStats } from "@/components/vendor/VendorStats";
@@ -10,10 +11,9 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 /**
- * Resúmen:
+ *  PAGE: /vendor/products
  * Página principal del dashboard de gestión de productos para vendedores.
- * Carga datos iniciales (productos y estadísticas) y delega la interactividad
- * al componente cliente ProductsClient.
+ * Valida autenticación, rol VENDOR y estado de verificación del vendedor.
  */
 
 export default async function VendorProductsPage() {
@@ -21,20 +21,40 @@ export default async function VendorProductsPage() {
 
     // Verificar autenticación
     if (!session || !session.user) {
-        redirect("/login");
+        redirect("/login?callbackUrl=/vendor/products");
     }
 
     // Verificar rol VENDOR
     if (session.user.role !== "VENDOR") {
-        redirect("/dashboard");
+        redirect("/unauthorized?reason=vendor_only");
     }
 
-    // Obtener vendorId
+    // Obtener ID del vendor y verificar estado
     const vendorId = session.user.vendorId;
+
     if (!vendorId) {
-        redirect("/dashboard");
+        // ! Caso edge: tiene rol VENDOR pero no registro Vendor (error del sistema - VALIDACIÓN TEMPORAL)
+        redirect("/unauthorized?reason=vendor_not_verified");
     }
 
+    // Obtener datos del vendor para verificar estado de verificación
+    const vendor = await prisma.vendor.findUnique({
+        where: { id: vendorId },
+        select: { verified: true },
+    });
+
+    if (!vendor) {
+        // El vendor fue eliminado pero el usuario mantiene el rol
+        redirect("/unauthorized?reason=vendor_only");
+    }
+
+    // Verificar que el VENDOR esté verificado
+    if (!vendor.verified) {
+        // Tiene cuenta de vendedor pero aún no ha sido aprobada por admin
+        redirect("/unauthorized?reason=vendor_not_verified");
+    }
+
+    // ✅ Autenticado + ✅ Rol VENDOR + ✅ Vendor verificado
     let productsData;
     let stats;
     let error: string | undefined;
@@ -51,7 +71,7 @@ export default async function VendorProductsPage() {
         console.error("Error cargando productos de vendedor:", e);
         error = "No se pudieron cargar tus productos. Por favor intenta más tarde.";
 
-        // Fallback data para que renderice la UI vacía al menos
+        // Fallback data
         productsData = { products: [], total: 0, page: 1, totalPages: 0 };
         stats = { total: 0, inStock: 0, outOfStock: 0, lowStock: 0 };
     }
@@ -61,8 +81,8 @@ export default async function VendorProductsPage() {
             {/* Header con título y botón */}
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1>Mis Productos</h1>
-                    <p>Gestiona tu inventario</p>
+                    <h1 className="text-2xl font-bold">Mis Productos</h1>
+                    <p className="text-muted-foreground">Gestiona tu inventario</p>
                 </div>
                 <Link
                     href="/dashboard/vendor/products/new"
@@ -90,20 +110,29 @@ export default async function VendorProductsPage() {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Server Component encargado de la orquestación de datos para la vista de
- * inventario. Realiza verificaciones de seguridad (Auth + Rol) y fetching
- * de datos en paralelo para optimizar el rendimiento.
+ * Server Component que orquesta la vista de inventario del vendedor.
+ * Implementa validación robusta de estado de verificación del vendedor.
  *
  * Lógica Clave:
- * - Seguridad: Verifica sesión y rol "VENDOR" antes de intentar cualquier carga
- *   de datos. Redirige agresivamente si no se cumplen las condiciones.
- * - Manejo de Errores: Envuelve las llamadas a la BD en un bloque try-catch.
- *   Si falla, no explota con un error 500, sino que pasa un objeto de datos vacío
- *   y un mensaje de error al cliente para que `ProductsClient` muestre un Toast.
- * - Performance: Usa `Promise.all` para obtener lista de productos y estadísticas
- *   simultáneamente, reduciendo el tiempo de bloqueo del renderizado (Waterfall).
+ * - Validación en Cascada (4 niveles):
+ *   1. Autenticación → redirect /login?callbackUrl=/vendor/products (una vez autenticado, vuelve adonde estaba).
+ *   2. No tiene rol VENDOR → redirect /unauthorized (no es vendedor).
+ *   3. vendorId existe pero verified === false → redirect /unauthorized?reason=vendor_not_verified (cuenta no verificada).
+ *   4. vendor.verified === true → Todo OK.
+ * 
+ * - Flujo de Redirección según Estado:
+ *   No autenticado → /login con callback a /vendor/products
+ *   No es VENDOR → /unauthorized?reason=vendor_only
+ *   No tiene vendorId → /unauthorized?reason=vendor_only 
+ *   Tiene vendorId pero verified=false → /unauthorized?reason=vendor_not_verified (esperando aprobación)
+ *   Todo OK → Muestra dashboard
+ * 
+ * - Performance:
+ *   Una sola query adicional (vendor.verified) antes de cargar productos.
+ *   Evita cargar datos innecesarios si el usuario no está verificado.
  *
  * Dependencias Externas:
- * - Services: `getProducts`, `getVendorProductStats` (capa de datos).
- * - Componentes: `VendorStats` (presentacional), `ProductsClient` (interactivo).
+ * - Prisma: Para verificar estado vendor.verified
+ * - Services: getProducts, getVendorProductStats
+ * - Componentes: VendorStats, ProductsClient
  */

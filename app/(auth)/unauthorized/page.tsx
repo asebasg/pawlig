@@ -37,13 +37,25 @@ export default function UnauthorizedPage() {
         shelter_only: {
             title: "Acceso solo para albergues",
             description: "Esta sección está restringida para albergues verificados.",
-            suggestion: "Si representas un albergue, puedes solicitar una cuenta desde tu perfil de usuario."
+            suggestion: "Si representas un albergue, puedes solicitar una cuenta desde tu perfil de usuario. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
+        },
+        // Mensaje para cuentas con rol de SHELTER pero no verificadas
+        shelter_not_verified: {
+            title: "Acceso solo para albergues verificados",
+            description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
+            suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
         },
         // Mensaje para pagina de vendedores
         vendor_only: {
             title: "Acceso solo para vendedores",
             description: "Esta sección está restringida para vendedores verificados.",
-            suggestion: "Si eres un proveedor de productos, puedes solicitar una cuenta de vendedor."
+            suggestion: "Si eres un vendedor de productos, puedes solicitar que tu cuenta sea verificada. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
+        },
+        // Mensaje para cuentas con rol de VENDOR pero no verificadas
+        vendor_not_verified: {
+            title: "Acceso solo para vendedores verificados",
+            description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
+            suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
         },
         // Acceso general denegado
         unknown: {
