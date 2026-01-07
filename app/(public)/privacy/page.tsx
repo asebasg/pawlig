@@ -33,12 +33,12 @@ export default function PrivacyPage() {
                 </div>
                 <div>
                     <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Políticas de Privacidad de PawLig</h1>
-                    <p className="text-slate-500 font-medium">Cumplimiento Normativo Ley 1581 de 2012 (Habeas Data) y lineamientos de seguridad técnica.</p>
+                    <p className="text-slate-500 font-medium">Cumplimiento Normativo Ley 1581 de 2012 (Habeas Data) y lineamientos de seguridad técnica</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-                <aside className="hidden lg:block space-y-4 sticky top-8 h-fit">
+                <aside className="hidden lg:block space-y-4 sticky top-24 h-fit">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Secciones</h3>
                     <nav className="flex flex-col gap-2 text-sm font-medium text-slate-600">
                         <a href="#responsable" className="hover:text-primary transition-colors">1. Responsable</a>
@@ -55,9 +55,9 @@ export default function PrivacyPage() {
                 </aside>
 
                 <div className="lg:col-span-3 space-y-12 text-slate-700 leading-relaxed">
-                    <p className="text-sm text-slate-400 italic">Última revisión técnica: {lastUpdate}</p>
+                    <p className="text-sm text-slate-400 font-medium">Última revisión técnica: {lastUpdate}</p>
 
-                    <section id="responsable">
+                    <section id="responsable" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <User className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">1. Responsable del Tratamiento</h2>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
                         <p className="mb-4">
                             El responsable del tratamiento de los datos personales recolectados a través de la plataforma <strong>PawLig</strong> es <strong>Sebastián Ospina Guzmán</strong>.
                         </p>
-                        <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                        <div className="bg-slate-50 border-l-4 border-teal-500 p-5 rounded-r-xl">
                             <h4 className="font-bold text-slate-900 mb-2">Datos de Contacto:</h4>
                             <ul className="list-disc ml-5 space-y-1 text-sm">
                                 <li><strong>Domicilio:</strong> Girardota, Antioquia, Colombia.</li>
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
                         </div>
                     </section>
 
-                    <section id="recoleccion">
+                    <section id="recoleccion" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <Server className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">2. Información que Recopilamos</h2>
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
                             En <strong>PawLig</strong>, recolectamos únicamente la información necesaria para gestionar el proceso de adopción y asegurar el funcionamiento técnico de la plataforma. Clasificamos los datos en tres categorías:
                         </p>
                         <div className="space-y-4">
-                            <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                            <div className="bg-slate-50 border-l-4 border-violet-500 p-5 rounded-r-xl">
                                 <h4 className="font-bold text-slate-900 mb-2">1. Información que usted nos proporciona directamente</h4>
                                 <ul className="list-disc ml-5 space-y-1 text-sm">
                                     <li><strong>Datos de Identificación y Contacto:</strong> Nombre completo, dirección de correo electrónico y número de teléfono.</li>
@@ -109,7 +109,7 @@ export default function PrivacyPage() {
                         </div>
                     </section>
 
-                    <section id="finalidad">
+                    <section id="finalidad" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <FileCheck className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">3. Para qué usamos su información</h2>
@@ -124,7 +124,7 @@ export default function PrivacyPage() {
                         </ul>
                     </section>
 
-                    <section id="comparticion">
+                    <section id="comparticion" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <Share2 className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">4. Compartición y Transferencia de Datos</h2>
@@ -133,7 +133,7 @@ export default function PrivacyPage() {
                             En <strong>PawLig</strong> mantenemos un compromiso estricto de confidencialidad. No vendemos, alquilamos ni comercializamos sus datos personales. Sin embargo, para que la plataforma funcione, compartimos información con proveedores de servicios tecnológicos:
                         </p>
                         <div className="space-y-4">
-                            <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                            <div className="bg-slate-50 border-l-4 border-pink-500 p-5 rounded-r-xl">
                                 <h4 className="font-bold text-slate-900 mb-2">Proveedores de Servicios (Encargados del Tratamiento)</h4>
                                 <ul className="list-disc ml-5 space-y-1 text-sm">
                                     <li><strong>MongoDB Atlas:</strong> Proveedor de base de datos en la nube.</li>
@@ -147,7 +147,7 @@ export default function PrivacyPage() {
                         </div>
                     </section>
 
-                    <section id="seguridad">
+                    <section id="seguridad" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <Shield className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">5. Seguridad de la Información</h2>
@@ -167,7 +167,7 @@ export default function PrivacyPage() {
                         </div>
                     </section>
 
-                    <section id="conservacion">
+                    <section id="conservacion" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <Clock className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">6. Tiempo de Conservación y Eliminación</h2>
@@ -175,13 +175,13 @@ export default function PrivacyPage() {
                         <p className="mb-4">
                             No almacenamos su información indefinidamente. Mantenemos sus datos únicamente durante el tiempo necesario para cumplir con los fines descritos.
                         </p>
-                        <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                        <div className="bg-slate-50 border-l-4 border-x-sky-500 p-5 rounded-r-xl">
                             <h4 className="font-bold text-slate-900 mb-2">Proceso de Eliminación Sincronizada</h4>
                             <p className="text-sm">Si usted decide eliminar su cuenta, ejecutamos un borrado completo tanto en la base de datos (<strong>MongoDB</strong>) como en los servidores de imágenes (<strong>Cloudinary</strong>) para no dejar rastros digitales.</p>
                         </div>
                     </section>
 
-                    <section id="derechos">
+                    <section id="derechos" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <GitBranch className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">7. Sus Derechos sobre la Información</h2>
@@ -201,7 +201,7 @@ export default function PrivacyPage() {
                         </p>
                     </section>
 
-                    <section id="cookies">
+                    <section id="cookies" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <Cookie className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">8. Uso de Cookies y Tecnologías de Rastreo</h2>
@@ -209,7 +209,7 @@ export default function PrivacyPage() {
                         <p className="mb-4">
                             Utilizamos tecnologías de almacenamiento local y cookies estrictamente necesarias para el funcionamiento de la plataforma. No utilizamos estas tecnologías para rastrear su comportamiento fuera de nuestro sitio web ni para mostrarle publicidad personalizada.
                         </p>
-                        <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                        <div className="bg-slate-50 border-l-4 border-orange-400 p-5 rounded-r-xl">
                             <h4 className="font-bold text-slate-900 mb-2">Tecnologías Utilizadas:</h4>
                             <ul className="list-disc ml-5 space-y-1 text-sm">
                                 <li><strong>Cookies de Sesión y Autenticación:</strong> Esenciales para mantener su sesión iniciada.</li>
@@ -218,7 +218,7 @@ export default function PrivacyPage() {
                         </div>
                     </section>
 
-                    <section id="cambios">
+                    <section id="cambios" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <Bell className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">9. Cambios en esta Política de Privacidad</h2>
@@ -228,7 +228,7 @@ export default function PrivacyPage() {
                         </p>
                     </section>
 
-                    <section id="marco-legal">
+                    <section id="marco-legal" className='scroll-mt-24'>
                         <div className="flex items-center gap-3 mb-6">
                             <ShieldCheck className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900 text-left">10. Marco Legal y Aceptación</h2>

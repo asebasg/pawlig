@@ -52,7 +52,7 @@ export default function TermsPage() {
                 </aside>
 
                 <div className="lg:col-span-3 space-y-12 text-slate-700 leading-relaxed">
-                    <p className="text-sm text-slate-400 italic">Última actualización legal: {lastUpdate}</p>
+                    <p className="text-sm text-slate-400 font-medium">Última actualización legal: {lastUpdate}</p>
 
                     <section id="clausula-1" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-6">
@@ -144,7 +144,7 @@ export default function TermsPage() {
                             PawLig se reserva el derecho de modificar estos términos en cualquier momento. Los cambios significativos serán notificados.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs font-medium uppercase tracking-tighter">
-                            <div className="p-3 bg-slate-100 rounded border border-slate-200">Causas de cierre: información falsa, actividades ilícitas.</div>
+                            <div className="p-3 bg-slate-100 rounded border border-slate-200"><strong>Causas de cierre:</strong> información falsa, actividades ilícitas.</div>
                             <div className="p-3 bg-slate-100 rounded border border-slate-200">El usuario puede solicitar la eliminación de su cuenta.</div>
                             <div className="p-3 bg-slate-100 rounded border border-slate-200">El proyecto puede ser dado de baja al finalizar el ciclo académico.</div>
                         </div>
