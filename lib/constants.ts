@@ -1,7 +1,7 @@
 import { UserRole } from "@prisma/client";
 
 /**
- * Ruta/Componente/Servicio: Constantes Globales
+ * Constantes Globales
  * Descripción: Define constantes y datos estáticos utilizados en toda la aplicación para mantener la consistencia y facilitar el mantenimiento.
  * Requiere: -
  * Implementa: Múltiples (centraliza datos de UI y lógica de negocio)
@@ -86,15 +86,15 @@ export const FOOTER_LINKS = {
     { label: "Albergues", href: "/albergues" },
     { label: "Nosotros", href: "/nosotros" },
     { label: "Preguntas Frecuentes", href: "/faq" },
-    { label: "Términos y Condiciones", href: "/terminos" },
-    { label: "Política de Privacidad", href: "/privacidad" },
+    { label: "Términos y Condiciones", href: "/terms" },
+    { label: "Política de Privacidad", href: "/privacy" },
   ],
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
     { label: "Contáctanos", href: "/contacto" },
     { label: "Reportar Problema", href: "/reportar" },
-    { label: "Política de Privacidad", href: "/privacidad" }
+    { label: "Política de Privacidad", href: "/privacy" }
   ],
   social: [
     { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" },
