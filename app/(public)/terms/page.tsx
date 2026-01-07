@@ -170,7 +170,7 @@ export default function TermsPage() {
                         </p>
                         <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
                             <span className="text-xs font-semibold">support@pawlig.com</span>
-                            <Link href="https://mail.google.com/mail/?view=cm&fs=1&to=support@pawlig.com" className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-red-500 transition-all uppercase tracking-widest">
+                            <Link href="https://www.google.com/search?q=https://mail.google.com/mail/%3Fview%3Dcm%26fs%3D1%26to%3Dsupport%40pawlig.com%26su%3DREPORTE%2520-%2520" className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-red-500 transition-all uppercase tracking-widest">
                                 <Flag className="mr-2" size={22} />
                                 Reportar infracción
                             </Link>
