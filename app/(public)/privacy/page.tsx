@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import React from 'react';
-import { ArrowLeft, ShieldCheck, Eye, Lock, Cookie, Scale, Clock, UserCheck } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, User, Server, Share2, Shield, Clock, FileCheck, GitBranch, Bell, Cookie } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -32,167 +32,209 @@ export default function PrivacyPage() {
                     <ShieldCheck className="text-primary" size={40} />
                 </div>
                 <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Política de Privacidad Integral</h1>
+                    <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Políticas de Privacidad de PawLig</h1>
                     <p className="text-slate-500 font-medium">Cumplimiento Normativo Ley 1581 de 2012 (Habeas Data) y lineamientos de seguridad técnica.</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-                {/* Tabla de contenidos lateral para facilidad de lectura */}
                 <aside className="hidden lg:block space-y-4 sticky top-8 h-fit">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Secciones</h3>
                     <nav className="flex flex-col gap-2 text-sm font-medium text-slate-600">
-                        <a href="#recoleccion" className="hover:text-primary transition-colors">1. Recolección de Datos</a>
-                        <a href="#finalidad" className="hover:text-primary transition-colors">2. Finalidad del Tratamiento</a>
-                        <a href="#seguridad" className="hover:text-primary transition-colors">3. Seguridad Técnica</a>
-                        <a href="#cookies" className="hover:text-primary transition-colors">4. Gestión de Cookies</a>
-                        <a href="#terceros" className="hover:text-primary transition-colors">5. Transferencia a Terceros</a>
-                        <a href="#retencion" className="hover:text-primary transition-colors">6. Retención de Datos</a>
-                        <a href="#derechos" className="hover:text-primary transition-colors">7. Derechos del Titular</a>
+                        <a href="#responsable" className="hover:text-primary transition-colors">1. Responsable</a>
+                        <a href="#recoleccion" className="hover:text-primary transition-colors">2. Recolección</a>
+                        <a href="#finalidad" className="hover:text-primary transition-colors">3. Finalidad</a>
+                        <a href="#comparticion" className="hover:text-primary transition-colors">4. Compartición</a>
+                        <a href="#seguridad" className="hover:text-primary transition-colors">5. Seguridad</a>
+                        <a href="#conservacion" className="hover:text-primary transition-colors">6. Conservación</a>
+                        <a href="#derechos" className="hover:text-primary transition-colors">7. Derechos</a>
+                        <a href="#cookies" className="hover:text-primary transition-colors">8. Cookies</a>
+                        <a href="#cambios" className="hover:text-primary transition-colors">9. Cambios</a>
+                        <a href="#marco-legal" className="hover:text-primary transition-colors">10. Marco Legal</a>
                     </nav>
                 </aside>
 
                 <div className="lg:col-span-3 space-y-12 text-slate-700 leading-relaxed">
                     <p className="text-sm text-slate-400 italic">Última revisión técnica: {lastUpdate}</p>
 
-                    <section id="recoleccion">
+                    <section id="responsable">
                         <div className="flex items-center gap-3 mb-6">
-                            <Eye className="text-primary" size={28} />
-                            <h2 className="text-2xl font-bold text-slate-900 text-left">1. Información Recolectada y Naturaleza de los Datos</h2>
+                            <User className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">1. Responsable del Tratamiento</h2>
                         </div>
                         <p className="mb-4">
-                            PawLig recolecta datos personales de manera directa y automatizada a través de la interacción con el sistema.
-                            Clasificamos la información según el rol del usuario y la sensibilidad del dato:
+                            El responsable del tratamiento de los datos personales recolectados a través de la plataforma <strong>PawLig</strong> es <strong>Sebastián Ospina Guzmán</strong>.
+                        </p>
+                        <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                            <h4 className="font-bold text-slate-900 mb-2">Datos de Contacto:</h4>
+                            <ul className="list-disc ml-5 space-y-1 text-sm">
+                                <li><strong>Domicilio:</strong> Girardota, Antioquia, Colombia.</li>
+                                <li><strong>Correo Electrónico de Privacidad:</strong> asebasg07@gmail.com</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="recoleccion">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Server className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">2. Información que Recopilamos</h2>
+                        </div>
+                        <p className="mb-4">
+                            En <strong>PawLig</strong>, recolectamos únicamente la información necesaria para gestionar el proceso de adopción y asegurar el funcionamiento técnico de la plataforma. Clasificamos los datos en tres categorías:
                         </p>
                         <div className="space-y-4">
                             <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
-                                <h4 className="font-bold text-slate-900 mb-2">Información del Perfil de Usuario</h4>
+                                <h4 className="font-bold text-slate-900 mb-2">1. Información que usted nos proporciona directamente</h4>
                                 <ul className="list-disc ml-5 space-y-1 text-sm">
-                                    <li><strong>Identificación:</strong> Nombre completo, direcciones de correo electrónico vinculadas a vendedores de OAuth (Google/GitHub).</li>
-                                    <li><strong>Contacto:</strong> Número telefónico validado y dirección física (necesaria para visitas de inspección en adopciones o entrega de productos).</li>
-                                    <li><strong>Multimedia:</strong> Fotografías de perfil y evidencias del entorno doméstico cargadas voluntariamente en postulaciones (Procesadas vía Cloudinary).</li>
+                                    <li><strong>Datos de Identificación y Contacto:</strong> Nombre completo, dirección de correo electrónico y número de teléfono.</li>
+                                    <li><strong>Credenciales de Acceso:</strong> Contraseña (la cual es encriptada y almacenada de forma segura, siendo ilegible incluso para nosotros).</li>
+                                    <li><strong>Datos de la Mascota:</strong> Información descriptiva sobre los animales que usted publica para adopción (nombre, edad, raza, estado de salud).</li>
                                 </ul>
                             </div>
                             <div className="bg-slate-50 border-l-4 border-emerald-500 p-5 rounded-r-xl">
-                                <h4 className="font-bold text-slate-900 mb-2">Información de Albergues y Vendedores</h4>
+                                <h4 className="font-bold text-slate-900 mb-2">2. Contenido Multimedia</h4>
                                 <ul className="list-disc ml-5 space-y-1 text-sm">
-                                    <li><strong>Registros Legales:</strong> NIT, RUT y certificaciones de existencia y representación legal.</li>
-                                    <li><strong>Geolocalización:</strong> Coordenadas exactas del establecimiento para optimización de logística y visibilidad en el ecosistema del Valle de Aburrá.</li>
-                                    <li><strong>Operatividad:</strong> Inventario de productos, historial de precios y estados de salud de mascotas bajo custodia.</li>
+                                    <li>Almacenamos los archivos de imagen en nuestros servidores externos de gestión multimedia (<strong>Cloudinary</strong>).</li>
+                                    <li>Estas imágenes pueden contener metadatos técnicos (información EXIF) sobre el dispositivo o la fecha de la captura, los cuales procesamos como parte del archivo.</li>
                                 </ul>
                             </div>
-                            <p className="text-sm font-medium">
-                                🔒 <strong>Nota sobre datos sensibles:</strong> PawLig no solicita datos biométricos, de orientación política o sexual.
-                                Cualquier dato relacionado con la salud animal se considera información técnica operativa, no personal.
-                            </p>
+                            <div className="bg-slate-50 border-l-4 border-cyan-500 p-5 rounded-r-xl">
+                                <h4 className="font-bold text-slate-900 mb-2">3. Información Técnica y de Uso</h4>
+                                <ul className="list-disc ml-5 space-y-1 text-sm">
+                                    <li>Dirección IP (Protocolo de Internet) para fines de seguridad y control de acceso.</li>
+                                    <li>Tipo de navegador y sistema operativo.</li>
+                                    <li>Registros de actividad (logs) para detectar errores o intentos de acceso no autorizado.</li>
+                                </ul>
+                            </div>
                         </div>
                     </section>
 
                     <section id="finalidad">
                         <div className="flex items-center gap-3 mb-6">
-                            <UserCheck className="text-primary" size={28} />
-                            <h2 className="text-2xl font-bold text-slate-900 text-left">2. Finalidad Sistémica del Tratamiento</h2>
+                            <FileCheck className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">3. Para qué usamos su información</h2>
                         </div>
-                        <p className="mb-4">El tratamiento de sus datos se limita estrictamente a las siguientes funcionalidades del ecosistema:</p>
+                        <p className="mb-4">
+                            La información personal que recopilamos en <strong>PawLig</strong> tiene finalidades específicas, explícitas y legítimas. No procesaremos sus datos para fines distintos a los establecidos a continuación:
+                        </p>
                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <li className="p-3 border border-slate-100 rounded-lg shadow-sm font-medium">
-                                🐾 Facilitar el match entre adoptantes potenciales y albergues mediante algoritmos de afinidad.
-                            </li>
-                            <li className="p-3 border border-slate-100 rounded-lg shadow-sm font-medium">
-                                ⚖️ Mitigar riesgos de maltrato animal mediante la verificación de antecedentes y referencias en el sistema.
-                            </li>
-                            <li className="p-3 border border-slate-100 rounded-lg shadow-sm font-medium">
-                                🛒 Garantizar la trazabilidad de las transacciones comerciales en el Marketplace de vendedores.
-                            </li>
-                            <li className="p-3 border border-slate-100 rounded-lg shadow-sm font-medium">
-                                📊 Generación de reportes de impacto social (siempre de forma anonimizada y agregada).
-                            </li>
+                            <li className="p-3 border border-slate-100 rounded-lg shadow-sm font-medium">🐾 <strong>Gestión del Servicio de Adopción:</strong> Crear y gestionar su cuenta, publicar mascotas y facilitar la comunicación.</li>
+                            <li className="p-3 border border-slate-100 rounded-lg shadow-sm font-medium">️🛡️ <strong>Seguridad y Funcionamiento Técnico:</strong> Proteger la plataforma, detectar fraudes y garantizar la disponibilidad del servicio.</li>
+                            <li className="p-3 border border-slate-100 rounded-lg shadow-sm font-medium">🔔 <strong>Comunicaciones del Servicio:</strong> Enviarle notificaciones técnicas, actualizaciones de seguridad o alertas sobre sus publicaciones.</li>
                         </ul>
+                    </section>
+
+                    <section id="comparticion">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Share2 className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">4. Compartición y Transferencia de Datos</h2>
+                        </div>
+                        <p className="mb-4">
+                            En <strong>PawLig</strong> mantenemos un compromiso estricto de confidencialidad. No vendemos, alquilamos ni comercializamos sus datos personales. Sin embargo, para que la plataforma funcione, compartimos información con proveedores de servicios tecnológicos:
+                        </p>
+                        <div className="space-y-4">
+                            <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                                <h4 className="font-bold text-slate-900 mb-2">Proveedores de Servicios (Encargados del Tratamiento)</h4>
+                                <ul className="list-disc ml-5 space-y-1 text-sm">
+                                    <li><strong>MongoDB Atlas:</strong> Proveedor de base de datos en la nube.</li>
+                                    <li><strong>Cloudinary:</strong> Servicio de gestión de medios.</li>
+                                </ul>
+                            </div>
+                            <div className="bg-slate-50 border-l-4 border-emerald-500 p-5 rounded-r-xl">
+                                <h4 className="font-bold text-slate-900 mb-2">Transferencia Internacional de Datos</h4>
+                                <p className="text-sm">Su información puede ser transferida, almacenada y procesada en servidores ubicados fuera de Colombia (principalmente en Estados Unidos). Al usar <strong>PawLig</strong>, usted acepta esta transferencia.</p>
+                            </div>
+                        </div>
                     </section>
 
                     <section id="seguridad">
                         <div className="flex items-center gap-3 mb-6">
-                            <Lock className="text-primary" size={28} />
-                            <h2 className="text-2xl font-bold text-slate-900 text-left">3. Infraestructura de Seguridad Técnica</h2>
+                            <Shield className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">5. Seguridad de la Información</h2>
                         </div>
                         <p className="mb-4">
-                            Garantizamos la integridad y confidencialidad mediante estándares industriales avanzados:
+                            Implementamos medidas técnicas, administrativas y digitales para proteger sus datos personales contra acceso no autorizado, pérdida, alteración o uso indebido.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-3">
-                                <h4 className="font-bold flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full" /> Encriptación de Datos</h4>
-                                <p className="text-sm">Tránsito de datos protegido mediante <strong>TLS 1.3 (SSL)</strong>. Contraseñas (si aplica) procesadas con <strong>Argon2id o bcrypt</strong> con factor de costo dinámico.</p>
+                                <h4 className="font-bold flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full" />Cifrado en Tránsito</h4>
+                                <p className="text-sm">Toda la información viaja encriptada mediante protocolos <strong>SSL/TLS</strong>.</p>
                             </div>
                             <div className="space-y-3">
-                                <h4 className="font-bold flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full" /> Protocolo de Autenticación</h4>
-                                <p className="text-sm">Implementamos <strong>OIDC (OpenID Connect)</strong> vía Next-Auth, eliminando la necesidad de almacenar credenciales críticas en nuestros servidores.</p>
+                                <h4 className="font-bold flex items-center gap-2"><div className="w-2 h-2 bg-primary rounded-full" />Protección de Contraseñas</h4>
+                                <p className="text-sm">Sus credenciales se almacenan transformadas mediante algoritmos criptográficos robustos (<strong>hashing</strong>).</p>
                             </div>
                         </div>
+                    </section>
+
+                    <section id="conservacion">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Clock className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">6. Tiempo de Conservación y Eliminación</h2>
+                        </div>
+                        <p className="mb-4">
+                            No almacenamos su información indefinidamente. Mantenemos sus datos únicamente durante el tiempo necesario para cumplir con los fines descritos.
+                        </p>
+                        <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                            <h4 className="font-bold text-slate-900 mb-2">Proceso de Eliminación Sincronizada</h4>
+                            <p className="text-sm">Si usted decide eliminar su cuenta, ejecutamos un borrado completo tanto en la base de datos (<strong>MongoDB</strong>) como en los servidores de imágenes (<strong>Cloudinary</strong>) para no dejar rastros digitales.</p>
+                        </div>
+                    </section>
+
+                    <section id="derechos">
+                        <div className="flex items-center gap-3 mb-6">
+                            <GitBranch className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">7. Sus Derechos sobre la Información</h2>
+                        </div>
+                        <p className="font-medium text-slate-800 mb-4">
+                            Usted es el único dueño de su información personal y tiene plena facultad para controlar cómo la utilizamos. Puede ejercer los siguientes derechos:
+                        </p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm font-bold">
+                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Conocer</div>
+                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Actualizar</div>
+                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Suprimir</div>
+                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Revocar</div>
+                        </div>
+                        <p className="mt-8 text-sm bg-primary text-white p-4 rounded-xl text-center font-bold">
+                            Para cualquier solicitud, comuníquese formalmente al correo institucional:
+                            <span className="underline ml-1">asebasg07@gmail.com</span>
+                        </p>
                     </section>
 
                     <section id="cookies">
                         <div className="flex items-center gap-3 mb-6">
                             <Cookie className="text-primary" size={28} />
-                            <h2 className="text-2xl font-bold text-slate-900 text-left">4. Gestión de Cookies y Persistencia</h2>
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">8. Uso de Cookies y Tecnologías de Rastreo</h2>
                         </div>
-                        <p className="text-sm mb-4">
-                            PawLig utiliza exclusivamente cookies técnicas esenciales para el funcionamiento del servicio. No utilizamos cookies de rastreo publicitario de terceros (tracking pixels).
+                        <p className="mb-4">
+                            Utilizamos tecnologías de almacenamiento local y cookies estrictamente necesarias para el funcionamiento de la plataforma. No utilizamos estas tecnologías para rastrear su comportamiento fuera de nuestro sitio web ni para mostrarle publicidad personalizada.
                         </p>
-                        <table className="w-full text-xs border-collapse">
-                            <thead>
-                                <tr className="bg-slate-100">
-                                    <th className="p-2 text-left border">Nombre</th>
-                                    <th className="p-2 text-left border">Propósito</th>
-                                    <th className="p-2 text-left border">Duración</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className="p-2 border font-mono">next-auth.session-token</td>
-                                    <td className="p-2 border">Mantiene la sesión activa del usuario.</td>
-                                    <td className="p-2 border">30 días / Fin de sesión</td>
-                                </tr>
-                                <tr className="bg-slate-50">
-                                    <td className="p-2 border font-mono">__Secure-next-auth.callback-url</td>
-                                    <td className="p-2 border">Gestión segura de redirecciones OAuth.</td>
-                                    <td className="p-2 border">Sesión</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div className="bg-slate-50 border-l-4 border-primary p-5 rounded-r-xl">
+                            <h4 className="font-bold text-slate-900 mb-2">Tecnologías Utilizadas:</h4>
+                            <ul className="list-disc ml-5 space-y-1 text-sm">
+                                <li><strong>Cookies de Sesión y Autenticación:</strong> Esenciales para mantener su sesión iniciada.</li>
+                                <li><strong>Almacenamiento Local (Local Storage):</strong> Guardamos preferencias de configuración para mejorar la experiencia.</li>
+                            </ul>
+                        </div>
                     </section>
 
-                    <section id="retencion">
+                    <section id="cambios">
                         <div className="flex items-center gap-3 mb-6">
-                            <Clock className="text-primary" size={28} />
-                            <h2 className="text-2xl font-bold text-slate-900 text-left">5. Periodo de Retención de Datos</h2>
+                            <Bell className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">9. Cambios en esta Política de Privacidad</h2>
                         </div>
-                        <p className="text-sm">
-                            Conservaremos sus datos personales únicamente durante el tiempo necesario para cumplir con los fines para los cuales fueron recolectados:
+                        <p className="mb-4">
+                            Podemos actualizar nuestra Política de Privacidad ocasionalmente. Si realizamos modificaciones sustanciales, se lo notificaremos publicando la nueva versión en este enlace y, en caso de cambios críticos, a través de su correo electrónico.
                         </p>
-                        <ul className="list-disc ml-5 mt-2 text-sm space-y-1">
-                            <li><strong>Datos de Sesión:</strong> Eliminación inmediata tras el cierre de cuenta.</li>
-                            <li><strong>Historial de Adopciones:</strong> Almacenamiento por un periodo de 10 años (requerimiento legal para seguimiento de bienestar animal).</li>
-                            <li><strong>Transacciones Financieras:</strong> Conservación según normatividad contable vigente en Colombia.</li>
-                        </ul>
                     </section>
 
-                    <section id="derechos" className="p-8 bg-primary/5 border border-primary/10 rounded-3xl">
+                    <section id="marco-legal">
                         <div className="flex items-center gap-3 mb-6">
-                            <Scale className="text-primary" size={28} />
-                            <h2 className="text-2xl font-bold text-slate-900 text-left">6. Derechos ARCO y Protección Habeas Data</h2>
+                            <ShieldCheck className="text-primary" size={28} />
+                            <h2 className="text-2xl font-bold text-slate-900 text-left">10. Marco Legal y Aceptación</h2>
                         </div>
-                        <p className="font-medium text-slate-800 mb-4">
-                            Usted es dueño de su información. De acuerdo con la Ley 1581 de 2012, usted puede:
-                        </p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-[10px] font-bold uppercase tracking-wider">
-                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Acceder</div>
-                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Rectificar</div>
-                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Cancelar</div>
-                            <div className="p-3 bg-white rounded-lg shadow-sm border border-slate-100">Oponerse</div>
-                        </div>
-                        <p className="mt-8 text-sm bg-primary text-white p-4 rounded-xl text-center font-bold">
-                            Para cualquier solicitud, comuníquese formalmente al correo institucional:
-                            <span className="underline ml-1">protecciondatos@pawlig.com</span>
+                        <p className="mb-4">
+                            Esta Política de Privacidad se rige por las leyes de la República de Colombia, especialmente la <strong>Ley 1581 de 2012</strong>. Al registrarse en <strong>PawLig</strong>, usted confirma que ha leído, entendido y aceptado todos los términos expuestos en este documento.
                         </p>
                     </section>
                 </div>
