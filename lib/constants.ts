@@ -41,7 +41,7 @@ export const PUBLIC_LINKS = [
   { label: "Albergues", href: "/albergues" },
   { label: "Nosotros", href: "/nosotros" },
   { label: "Ayuda", href: "/help" },
-  { label: "Terminos y Condiciones", href: "/terms" },
+  { label: "Términos y Condiciones", href: "/terms" },
 ];
 
 export const USER_MENU_OPTIONS = {
@@ -165,7 +165,7 @@ export function isCriticalRoleChange(
  *   simplificando la lógica en los componentes de la interfaz de administración.
  * - 'as const': Se utiliza para hacer que los objetos sean de solo lectura ('readonly')
  *   y para inferir los tipos de la manera más específica posible, mejorando la
- *   seguridad de tipos en todo el proyecto.
+   * seguridad de tipos en todo el proyecto.
  *
  * Dependencias Externas:
  * - '@prisma/client': Se utiliza para importar el tipo 'UserRole', asegurando que las

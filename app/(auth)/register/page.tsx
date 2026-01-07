@@ -41,11 +41,11 @@ export default async function RegisterPage() {
           <p className='text-center text-xs text-gray-500'>
             Al registrarte en PawLig, aceptas nuestros {' '}
 
-            <Link href='/terminos' className='text-purple-600 hover:underline font-bold'>
-              Términos de Servicio
+            <Link href='/terms' className='text-purple-600 hover:underline font-bold'>
+              Términos y Condiciones
             </Link> {' '}
             y{' '}
-            <Link href='/privacidad' className='text-purple-600 hover:underline font-bold'>
+            <Link href='/privacy' className='text-purple-600 hover:underline font-bold'>
               Política de Privacidad
             </Link>
           </p>
