@@ -90,8 +90,8 @@ export default async function RequestShelterPage() {
           <p className="text-center text-xs text-gray-500 mt-6">
             Al enviar esta solicitud, confirmas que la información proporcionada es veraz y
             aceptas los{' '}
-            <Link href="/terminos" className="text-purple-600 hover:underline font-bold">
-              Términos de Servicio
+            <Link href="/terms" className="text-purple-600 hover:underline font-bold">
+              Términos y Condiciones
             </Link>{' '}
             de PawLig.
           </p>
