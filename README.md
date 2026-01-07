@@ -243,7 +243,7 @@ El `schema.prisma` define las siguientes entidades principales:
 
 ## 📝 Licencia
 
-Este proyecto es para fines académicos como parte del programa de Ingeniería de Sistemas de la Universidad de San Buenaventura. Todos los derechos reservados.
+Este proyecto es para fines académicos como parte del programa de Ingeniería de Software de la Universidad de San Buenaventura. Todos los derechos reservados.
 
 ---
 
