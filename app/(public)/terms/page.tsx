@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import React from 'react';
-import { ArrowLeft, FileText, Gavel, UserCheck, AlertTriangle, ShieldAlert, HeartHandshake, Mail, Scale } from 'lucide-react';
+import { ArrowLeft, FileText, Gavel, UserCheck, AlertTriangle, ShieldAlert, HeartHandshake, Mail, Scale, Flag } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -33,13 +33,13 @@ export default function TermsPage() {
                 </div>
                 <div>
                     <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Términos y Condiciones</h1>
-                    <p className="text-slate-500 font-medium">Acuerdo vinculante de uso de plataforma para el ecosistema PawLig.</p>
+                    <p className="text-slate-500 font-medium">Acuerdo vinculante de uso de plataforma para el ecosistema PawLig</p>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
                 {/* Tabla de contenidos lateral */}
-                <aside className="hidden lg:block space-y-4 sticky top-8 h-fit">
+                <aside className="hidden lg:block space-y-4 sticky top-24 h-fit">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Contenido</h3>
                     <nav className="flex flex-col gap-2 text-sm font-medium text-slate-600">
                         <a href="#clausula-1" className="hover:text-primary transition-colors">1. Naturaleza del Servicio</a>
@@ -54,7 +54,7 @@ export default function TermsPage() {
                 <div className="lg:col-span-3 space-y-12 text-slate-700 leading-relaxed">
                     <p className="text-sm text-slate-400 italic">Última actualización legal: {lastUpdate}</p>
 
-                    <section id="clausula-1">
+                    <section id="clausula-1" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-6">
                             <Gavel className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900">CLÁUSULA 1: Naturaleza del Servicio y Alcance</h2>
@@ -76,18 +76,18 @@ export default function TermsPage() {
                                     <li><strong>Trámites Externos:</strong> Una vez enviada una solicitud, la relación continúa directamente con el albergue. Trámites legales y visitas ocurren fuera de la plataforma.</li>
                                 </ul>
                             </div>
-                             <div className="mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900">
-                                <strong>Advertencia sobre Transacciones:</strong> Todas las funciones de "compra" o "pagos" dentro de PawLig son simulaciones con fines demostrativos. La plataforma no procesa dinero real ni solicita datos bancarios.
+                            <div className="mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900">
+                                <strong>Advertencia sobre Transacciones:</strong> Todas las funciones de &quot;compra&quot; o &quot;pagos&quot; dentro de PawLig son simulaciones con fines demostrativos. La plataforma no procesa dinero real ni solicita datos bancarios.
                             </div>
                         </div>
                     </section>
 
-                    <section id="clausula-2">
+                    <section id="clausula-2" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-6">
                             <UserCheck className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900">CLÁUSULA 2: Gestión de Cuentas y Seguridad</h2>
                         </div>
-                         <div className="space-y-6">
+                        <div className="space-y-6">
                             <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
                                 <h4 className="font-bold text-slate-900 mb-2">1. Requisitos para el Registro</h4>
                                 <ul className="list-disc ml-5 text-sm space-y-2">
@@ -95,19 +95,19 @@ export default function TermsPage() {
                                     <li><strong>Uso Personal:</strong> Su cuenta es personal e intransferible. Usted es responsable de mantener la confidencialidad de sus credenciales.</li>
                                 </ul>
                             </div>
-                             <p><strong>Seguridad de la Sesión:</strong> Por seguridad, su sesión activa tendrá una duración máxima de 24 horas. Una vez cumplido este tiempo, el sistema cerrará la sesión automáticamente.</p>
-                             <div>
+                            <p><strong>Seguridad de la Sesión:</strong> Por seguridad, su sesión activa tendrá una duración máxima de 24 horas. Una vez cumplido este tiempo, el sistema cerrará la sesión automáticamente.</p>
+                            <div>
                                 <h4 className="font-bold text-slate-900 mb-2">3. Procedimiento de Solicitud de Adopción</h4>
-                                 <ul className="list-disc ml-5 text-sm space-y-2">
-                                     <li>Al aplicar, sus datos de contacto serán enviados automáticamente al Albergue responsable.</li>
-                                     <li>El Albergue se comunicará con usted de forma independiente. PawLig no interviene en entrevistas ni validaciones.</li>
-                                     <li>La entrega física del animal depende del cumplimiento de los requisitos del Albergue.</li>
-                                 </ul>
+                                <ul className="list-disc ml-5 text-sm space-y-2">
+                                    <li>Al aplicar, sus datos de contacto serán enviados automáticamente al Albergue responsable.</li>
+                                    <li>El Albergue se comunicará con usted de forma independiente. PawLig no interviene en entrevistas ni validaciones.</li>
+                                    <li>La entrega física del animal depende del cumplimiento de los requisitos del Albergue.</li>
+                                </ul>
                             </div>
                         </div>
                     </section>
 
-                    <section id="clausula-3">
+                    <section id="clausula-3" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-6">
                             <ShieldAlert className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900">CLÁUSULA 3: Propiedad Intelectual</h2>
@@ -120,7 +120,7 @@ export default function TermsPage() {
                         </ul>
                     </section>
 
-                    <section id="clausula-4">
+                    <section id="clausula-4" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-6">
                             <HeartHandshake className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900">CLÁUSULA 4: Responsabilidades y Garantías</h2>
@@ -135,7 +135,7 @@ export default function TermsPage() {
                         </ul>
                     </section>
 
-                    <section id="clausula-5">
+                    <section id="clausula-5" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-6">
                             <AlertTriangle className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900">CLÁUSULA 5: Modificaciones y Suspensión</h2>
@@ -150,7 +150,7 @@ export default function TermsPage() {
                         </div>
                     </section>
 
-                     <section id="clausula-6">
+                    <section id="clausula-6" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-6">
                             <Scale className="text-primary" size={28} />
                             <h2 className="text-2xl font-bold text-slate-900">CLÁUSULA 6: Ley Aplicable y Solución de Conflictos</h2>
@@ -160,19 +160,20 @@ export default function TermsPage() {
                         </p>
                     </section>
 
-                    <section id="aceptacion-final" className="p-8 bg-slate-900 text-white rounded-3xl shadow-xl">
+                    <section id="aceptacion-final" className="scroll-mt-24 p-8 bg-slate-900 text-white rounded-3xl shadow-xl">
                         <div className="flex items-center gap-3 mb-6">
                             <Mail className="text-primary-foreground" size={28} />
                             <h2 className="text-2xl font-bold">Aceptación de los Términos</h2>
                         </div>
                         <p className="opacity-80 text-sm mb-6">
-                           Al pulsar el botón de registro, iniciar sesión o utilizar cualquier servicio de <strong>PawLig</strong>, usted confirma que ha leído, entendido y aceptado en su totalidad los presentes Términos y Condiciones de Uso. Si no está de acuerdo, deberá abstenerse de utilizar la plataforma.
+                            Al pulsar el botón de registro, iniciar sesión o utilizar cualquier servicio de <strong>PawLig</strong>, usted confirma que ha leído, entendido y aceptado en su totalidad los presentes Términos y Condiciones de Uso. Si no está de acuerdo, deberá abstenerse de utilizar la plataforma.
                         </p>
                         <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <span className="text-xs font-mono">legal@pawlig.com</span>
-                            <button className="px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-white transition-all uppercase tracking-widest">
+                            <span className="text-xs font-semibold">support@pawlig.com</span>
+                            <Link href="https://mail.google.com/mail/?view=cm&fs=1&to=support@pawlig.com" className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-red-500 transition-all uppercase tracking-widest">
+                                <Flag className="mr-2" size={22} />
                                 Reportar infracción
-                            </button>
+                            </Link>
                         </div>
                     </section>
                 </div>
