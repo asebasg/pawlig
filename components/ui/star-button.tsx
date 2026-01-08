@@ -19,7 +19,7 @@ interface StarButtonProps {
 export function StarButton({ href, className, children }: StarButtonProps) {
     const [particles, setParticles] = useState<{ id: number; emoji: string; style: React.CSSProperties }[]>([]);
 
-    const emojis = ["✨", "⭐", "🌟", "💫"];
+    const emojis = ["✨", "⭐", "🌟", "💫", "🪅", "🎉", "🎊", "🪩", "🐶", "🐱", "🐾"];
 
     const triggerExplosion = () => {
         const newParticles: { id: number; emoji: string; style: React.CSSProperties }[] = [];
