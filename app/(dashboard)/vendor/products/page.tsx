@@ -5,7 +5,8 @@ import { prisma } from "@/lib/utils/db";
 import { getProducts, getVendorProductStats } from "@/lib/services/product.service";
 import { ProductsClient } from "@/components/vendor/ProductsClient";
 import { VendorStats } from "@/components/vendor/VendorStats";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -15,6 +16,11 @@ import { Plus } from "lucide-react";
  * Página principal del dashboard de gestión de productos para vendedores.
  * Valida autenticación, rol VENDOR y estado de verificación del vendedor.
  */
+
+export const metadata: Metadata = {
+    title: "Gestiona tus productos",
+    description: "Panel de administración de productos para vendedores",
+};
 
 export default async function VendorProductsPage() {
     const session = await getServerSession(authOptions);

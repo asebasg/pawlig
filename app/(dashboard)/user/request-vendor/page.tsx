@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth/auth-options';
+import { prisma } from '@/lib/utils/db';
 import { VendorRequestForm } from '@/components/forms/vendor-request-form';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -34,6 +35,23 @@ export default async function RequestVendorPage() {
         // Redirigir a página de no autorizado o al dashboard
         // Usamos query param para mostrar un mensaje específico si existe la página de error
         redirect('/unauthorized?reason=role_not_allowed');
+    }
+
+    const userProfile = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: {
+            name: true,
+            email: true,
+            phone: true,
+            municipality: true,
+            address: true,
+            idNumber: true,
+            birthDate: true,
+        }
+    });
+
+    if (!userProfile) {
+        return redirect('/login');
     }
 
     return (
@@ -85,7 +103,7 @@ export default async function RequestVendorPage() {
                     </div>
 
                     {/* Formulario de solicitud */}
-                    <VendorRequestForm />
+                    <VendorRequestForm userProfile={userProfile} />
 
                     {/* Disclaimer legal */}
                     <p className="text-center text-xs text-gray-500 mt-6">

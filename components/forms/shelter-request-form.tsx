@@ -7,7 +7,19 @@ import axios, { AxiosError } from 'axios';
 import { ZodError } from 'zod';
 import Link from 'next/link';
 
-export function ShelterRequestForm() {
+interface ShelterRequestFormProps {
+  userProfile?: {
+    name: string;
+    email: string;
+    phone: string;
+    municipality: $Enums.Municipality;
+    address: string;
+    idNumber: string;
+    birthDate: Date;
+  };
+}
+
+export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -43,7 +55,7 @@ export function ShelterRequestForm() {
       const validatedData = shelterApplicationSchema.parse(data);
 
       // Enviar al servidor
-      const response = await axios.post('/api/auth/request-shelter-account', validatedData);
+      const response = await axios.post('/api/user/request-shelter-account', validatedData);
 
       if (response.status === 201) {
         setSuccess(true);
@@ -132,8 +144,10 @@ export function ShelterRequestForm() {
             id="name"
             name="name"
             required
+            defaultValue={userProfile?.name}
+            readOnly={!!userProfile?.name}
             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.name ? 'border-red-500' : 'border-gray-300'
-              }`}
+              } ${userProfile?.name ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             placeholder="Juan Pérez García"
           />
           {fieldErrors.name && <p className="text-red-600 text-sm mt-1">{fieldErrors.name}</p>}
@@ -149,8 +163,10 @@ export function ShelterRequestForm() {
               id="idNumber"
               name="idNumber"
               required
+              defaultValue={userProfile?.idNumber}
+              readOnly={!!userProfile?.idNumber}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.idNumber ? 'border-red-500' : 'border-gray-300'
-                }`}
+                } ${userProfile?.idNumber ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="1234567890"
             />
             {fieldErrors.idNumber && <p className="text-red-600 text-sm mt-1">{fieldErrors.idNumber}</p>}
@@ -165,8 +181,10 @@ export function ShelterRequestForm() {
               id="birthDate"
               name="birthDate"
               required
+              defaultValue={userProfile?.birthDate ? new Date(userProfile.birthDate).toISOString().split('T')[0] : ''}
+              readOnly={!!userProfile?.birthDate}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
-                }`}
+                } ${userProfile?.birthDate ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             />
             {fieldErrors.birthDate && <p className="text-red-600 text-sm mt-1">{fieldErrors.birthDate}</p>}
           </div>
@@ -182,8 +200,10 @@ export function ShelterRequestForm() {
               id="email"
               name="email"
               required
+              defaultValue={userProfile?.email}
+              readOnly={!!userProfile?.email}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'
-                }`}
+                } ${userProfile?.email ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="usuario@ejemplo.com"
             />
             {fieldErrors.email && <p className="text-red-600 text-sm mt-1">{fieldErrors.email}</p>}
@@ -198,8 +218,10 @@ export function ShelterRequestForm() {
               id="phone"
               name="phone"
               required
+              defaultValue={userProfile?.phone}
+              readOnly={!!userProfile?.phone}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
-                }`}
+                } ${userProfile?.phone ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="+573001234567"
             />
             {fieldErrors.phone && <p className="text-red-600 text-sm mt-1">{fieldErrors.phone}</p>}
@@ -215,8 +237,10 @@ export function ShelterRequestForm() {
               id="municipality"
               name="municipality"
               required
+              defaultValue={userProfile?.municipality || ""}
+              disabled={!!userProfile?.municipality}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.municipality ? 'border-red-500' : 'border-gray-300'
-                }`}
+                } ${userProfile?.municipality ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             >
               <option value="">Selecciona un municipio</option>
               {Object.values($Enums.Municipality).map((mun) => (
@@ -225,6 +249,8 @@ export function ShelterRequestForm() {
                 </option>
               ))}
             </select>
+            {userProfile?.municipality && <input type="hidden" name="municipality" value={userProfile.municipality} />}
+
             {fieldErrors.municipality && <p className="text-red-600 text-sm mt-1">{fieldErrors.municipality}</p>}
           </div>
 
@@ -237,8 +263,10 @@ export function ShelterRequestForm() {
               id="address"
               name="address"
               required
+              defaultValue={userProfile?.address}
+              readOnly={!!userProfile?.address}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.address ? 'border-red-500' : 'border-gray-300'
-                }`}
+                } ${userProfile?.address ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="Calle 10 #20-30 Apto 405"
             />
             {fieldErrors.address && <p className="text-red-600 text-sm mt-1">{fieldErrors.address}</p>}

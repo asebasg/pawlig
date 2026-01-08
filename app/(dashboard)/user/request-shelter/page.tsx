@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth/auth-options';
+import { prisma } from '@/lib/utils/db';
 import { ShelterRequestForm } from '@/components/forms/shelter-request-form';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -31,6 +32,20 @@ export default async function RequestShelterPage() {
   if (session.user.role !== UserRole.ADOPTER) {
     redirect('/unauthorized?reason=adopter_only');
   }
+
+  //  3. Fetch User Profile
+  const userProfile = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      name: true,
+      email: true,
+      phone: true,
+      municipality: true,
+      address: true,
+      idNumber: true,
+      birthDate: true,
+    }
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -80,7 +95,7 @@ export default async function RequestShelterPage() {
           </div>
 
           {/* Formulario de solicitud */}
-          <ShelterRequestForm />
+          <ShelterRequestForm userProfile={userProfile || undefined} />
 
           {/* Disclaimer legal */}
           <p className="text-center text-xs text-gray-500 mt-6">
