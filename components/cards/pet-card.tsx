@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Badge from '@/components/ui/badge';
 import { PetStatus } from '@prisma/client';
+import { cn } from '@/lib/utils';
 
 interface Pet {
   id: string;
@@ -95,7 +96,18 @@ export default function PetCard({
           )}
 
           <div className="absolute top-3 left-3">
-            <Badge status={pet.status} />
+            <Badge
+              className={cn(
+                "text-white border-0",
+                pet.status === 'AVAILABLE' && "bg-teal-500 hover:bg-teal-600",
+                pet.status === 'IN_PROCESS' && "bg-amber-500 hover:bg-amber-600",
+                pet.status === 'ADOPTED' && "bg-gray-500 hover:bg-gray-600"
+              )}
+            >
+              {pet.status === 'AVAILABLE' ? 'Disponible' :
+                pet.status === 'IN_PROCESS' ? 'En Proceso' :
+                  pet.status === 'ADOPTED' ? 'Adoptada' : pet.status}
+            </Badge>
           </div>
 
           <button
@@ -106,9 +118,8 @@ export default function PetCard({
             type="button"
           >
             <Heart
-              className={`w-5 h-5 transition-colors ${
-                isFav ? 'fill-red-500 text-red-500' : 'text-gray-600'
-              }`}
+              className={`w-5 h-5 transition-colors ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-600'
+                }`}
             />
           </button>
         </div>

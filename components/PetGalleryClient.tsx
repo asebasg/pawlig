@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import PetCard from './cards/pet-card';
 import Loader from '@/components/ui/loader';
+import PetFilters from '@/components/filters/pet-filter';
 
 interface Pet {
   id: string;
@@ -147,13 +148,9 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
   return (
     <div className="space-y-8">
       {/* Búsqueda y Filtros */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Filtrar mascotas
-        </h2>
-
-        {/* Búsqueda por texto */}
-        <div className="mb-4">
+      <div className="space-y-4">
+        {/* Búsqueda por texto - Mantenida fuera por ahora para respetar la estructura de PetFilters */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -164,79 +161,23 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
               className="text-black w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
           </div>
+          {!loading && (
+            <div className="mt-4 text-sm text-gray-600">
+              {totalCount === 0 ? (
+                'No se encontraron mascotas'
+              ) : (
+                `${totalCount} mascota${totalCount !== 1 ? 's' : ''} encontrada${totalCount !== 1 ? 's' : ''}`
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Filtros desplegables */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <select
-            value={filters.species}
-            onChange={(e) => handleFilterChange('species', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Todas las especies</option>
-            <option value="Perro">Perros</option>
-            <option value="Gato">Gatos</option>
-            <option value="Otro">Otros</option>
-          </select>
-
-          <select
-            value={filters.municipality}
-            onChange={(e) => handleFilterChange('municipality', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Todos los municipios</option>
-            <option value="MEDELLIN">Medellín</option>
-            <option value="BELLO">Bello</option>
-            <option value="ITAGUI">Itagüí</option>
-            <option value="ENVIGADO">Envigado</option>
-            <option value="SABANETA">Sabaneta</option>
-            <option value="LA_ESTRELLA">La Estrella</option>
-            <option value="CALDAS">Caldas</option>
-            <option value="COPACABANA">Copacabana</option>
-            <option value="GIRARDOTA">Girardota</option>
-            <option value="BARBOSA">Barbosa</option>
-          </select>
-
-          <select
-            value={filters.age}
-            onChange={(e) => handleFilterChange('age', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Cualquier edad</option>
-            <option value="1">Hasta 1 año</option>
-            <option value="3">Hasta 3 años</option>
-            <option value="5">Hasta 5 años</option>
-            <option value="10">Hasta 10 años</option>
-          </select>
-
-          <select
-            value={filters.sex}
-            onChange={(e) => handleFilterChange('sex', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Cualquier sexo</option>
-            <option value="Macho">Macho</option>
-            <option value="Hembra">Hembra</option>
-          </select>
-
-          <button
-            onClick={handleClearFilters}
-            className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
-          >
-            Limpiar filtros
-          </button>
-        </div>
-
-        {/* Contador de resultados */}
-        {!loading && (
-          <div className="mt-4 text-sm text-gray-600">
-            {totalCount === 0 ? (
-              'No se encontraron mascotas'
-            ) : (
-              `${totalCount} mascota${totalCount !== 1 ? 's' : ''} encontrada${totalCount !== 1 ? 's' : ''}`
-            )}
-          </div>
-        )}
+        {/* Componente de Filtros */}
+        <PetFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
       </div>
 
       {/* Galería de mascotas */}

@@ -16,6 +16,7 @@ import Image from 'next/image';
 import PetCard from './cards/pet-card';
 import Badge from './ui/badge';
 import Loader from '@/components/ui/loader'
+import { cn } from '@/lib/utils';
 
 interface Pet {
   id: string;
@@ -232,9 +233,8 @@ export default function PetDetailClient({
                 <button
                   key={idx}
                   onClick={() => setCurrentImageIndex(idx)}
-                  className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${
-                    idx === currentImageIndex ? 'border-purple-600' : 'border-gray-200'
-                  }`}
+                  className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${idx === currentImageIndex ? 'border-purple-600' : 'border-gray-200'
+                    }`}
                 >
                   <div className="relative w-full h-full">
                     <Image
@@ -256,7 +256,18 @@ export default function PetDetailClient({
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{pet.name}</h1>
-              <Badge status={pet.status} />
+              <Badge
+                className={cn(
+                  "text-white border-0",
+                  pet.status === 'AVAILABLE' && "bg-teal-500 hover:bg-teal-600",
+                  pet.status === 'IN_PROCESS' && "bg-amber-500 hover:bg-amber-600",
+                  pet.status === 'ADOPTED' && "bg-gray-500 hover:bg-gray-600"
+                )}
+              >
+                {pet.status === 'AVAILABLE' ? 'Disponible' :
+                  pet.status === 'IN_PROCESS' ? 'En Proceso' :
+                    pet.status === 'ADOPTED' ? 'Adoptada' : pet.status}
+              </Badge>
             </div>
             <button
               onClick={handleFavoriteClick}
@@ -264,9 +275,8 @@ export default function PetDetailClient({
               className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition disabled:opacity-50"
             >
               <Heart
-                className={`w-6 h-6 ${
-                  isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600'
-                }`}
+                className={`w-6 h-6 ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600'
+                  }`}
               />
             </button>
           </div>
@@ -391,11 +401,10 @@ export default function PetDetailClient({
             <button
               onClick={handleAdoptionRequest}
               disabled={isLoadingAdoption || adoptionSuccess}
-              className={`w-full py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${
-                adoptionSuccess
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50'
-              }`}
+              className={`w-full py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${adoptionSuccess
+                ? 'bg-green-100 text-green-800'
+                : 'bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50'
+                }`}
             >
               {isLoadingAdoption && <Loader />}
               {adoptionSuccess ? '¡Solicitud enviada!' : 'Solicitar Adopción'}

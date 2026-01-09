@@ -20,25 +20,25 @@ const inputVariants = cva(
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof inputVariants> {
-  label: string;
+  VariantProps<typeof inputVariants> {
+  label?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, variant, label, id, ...props }, ref) => {
     return (
       <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-          {label}
-        </label>
-        <div className="mt-1">
-          <input
-            id={id}
-            className={inputVariants({ variant, className })}
-            ref={ref}
-            {...props}
-          />
-        </div>
+        {label && (
+          <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+            {label}
+          </label>
+        )}
+        <input
+          id={id}
+          className={inputVariants({ variant, className })}
+          ref={ref}
+          {...props}
+        />
       </div>
     );
   }
