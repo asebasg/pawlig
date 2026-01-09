@@ -178,7 +178,7 @@ export default function FaqPage() {
                         </p>
                         <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
                             <span className="text-xs font-semibold">support@pawlig.com</span>
-                            <a href="mailto:support@pawlig.com?subject=Reporte%20desde%20la%20página%20de%20FAQ" className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-white transition-all uppercase tracking-widest">
+                            <a href="mailto:support@pawlig.com?subject=Reporte%20desde%20la%20página%20de%20FAQ" className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-red-500 transition-all uppercase tracking-widest">
                                 <Flag className="mr-2" size={22} />
                                 Reportar infracción
                             </a>
