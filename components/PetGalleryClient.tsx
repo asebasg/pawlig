@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
 import PetCard from './cards/pet-card';
 import Loader from '@/components/ui/loader';
-import PetFilters from '@/components/filters/pet-filter';
+import PetFilter from '@/components/filters/pet-filter';
+
 
 interface Pet {
   id: string;
@@ -146,23 +146,13 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
 
 
   return (
-    <div className="space-y-8">
-      {/* Búsqueda y Filtros */}
-      <div className="space-y-4">
-        {/* Búsqueda por texto - Mantenida fuera por ahora para respetar la estructura de PetFilters */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Buscar por nombre o raza..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="text-black w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
-          </div>
+    <div className="flex flex-col lg:flex-row gap-8">
+      {/* Sidebar de Filtros - Izquierda en desktop, arriba en móvil */}
+      <aside className="w-full lg:w-80 flex-shrink-0">
+        <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
+          {/* Contador de resultados */}
           {!loading && (
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-gray-600">
               {totalCount === 0 ? (
                 'No se encontraron mascotas'
               ) : (
@@ -170,78 +160,83 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
               )}
             </div>
           )}
+
+          {/* Componente de Filtros */}
+          <PetFilter
+            filters={filters}
+            searchQuery={searchQuery}
+            onFilterChange={handleFilterChange}
+            onSearchChange={setSearchQuery}
+            onClearFilters={handleClearFilters}
+          />
+        </div>
+      </aside>
+
+      {/* Contenido Principal - Derecha en desktop, abajo en móvil */}
+      <main className="flex-1 min-w-0">
+        {/* Galería de mascotas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {loading ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-12">
+              <Loader />
+              <p className="text-gray-500">Cargando mascotas</p>
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-red-600 mb-4">{error}</p>
+              <button
+                onClick={fetchPets}
+                className="text-purple-600 hover:underline"
+              >
+                Intentar nuevamente
+              </button>
+            </div>
+          ) : pets.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-500 mb-2">
+                No hay mascotas disponibles con estos filtros.
+              </p>
+              <p className="text-sm text-gray-400">
+                Intenta cambiar los criterios de búsqueda.
+              </p>
+            </div>
+          ) : (
+            pets.map((pet: any) => (
+              <PetCard
+                key={pet.id}
+                pet={pet}
+                userSession={userSession}
+                isFavorited={pet.isFavorited || false}
+              />
+            ))
+          )}
         </div>
 
-        {/* Componente de Filtros */}
-        <PetFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onClearFilters={handleClearFilters}
-        />
-      </div>
-
-      {/* Galería de mascotas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {loading ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-12">
-            <Loader />
-            <p className="text-gray-500">Cargando mascotas...</p>
-          </div>
-        ) : error ? (
-          <div className="col-span-full text-center py-12">
-            <p className="text-red-600 mb-4">{error}</p>
+        {/* Paginación */}
+        {totalPages > 1 && !loading && (
+          <div className="flex items-center justify-center gap-2 mt-8">
             <button
-              onClick={fetchPets}
-              className="text-purple-600 hover:underline"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
             >
-              Intentar nuevamente
+              Anterior
+            </button>
+
+            <span className="text-gray-600">
+              Página {currentPage} de {totalPages}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+            >
+              Siguiente
             </button>
           </div>
-        ) : pets.length === 0 ? (
-          <div className="col-span-full text-center py-12">
-            <p className="text-gray-500 mb-2">
-              No hay mascotas disponibles con estos filtros.
-            </p>
-            <p className="text-sm text-gray-400">
-              Intenta cambiar los criterios de búsqueda.
-            </p>
-          </div>
-        ) : (
-          pets.map((pet: any) => (
-            <PetCard
-              key={pet.id}
-              pet={pet}
-              userSession={userSession}
-              isFavorited={pet.isFavorited || false}
-            />
-          ))
         )}
-      </div>
-
-      {/* Paginación */}
-      {totalPages > 1 && !loading && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
-          >
-            Anterior
-          </button>
-
-          <span className="text-gray-600">
-            Página {currentPage} de {totalPages}
-          </span>
-
-          <button
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
-          >
-            Siguiente
-          </button>
-        </div>
-      )}
+      </main>
     </div>
   );
 }

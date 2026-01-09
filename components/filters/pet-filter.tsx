@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
@@ -55,69 +54,31 @@ const SEX_OPTIONS = [
 ];
 
 interface PetFilterProps {
-  onFiltersChange?: (filters: Record<string, string>) => void;
+  filters: {
+    species: string;
+    municipality: string;
+    age: string;
+    sex: string;
+  };
+  searchQuery: string;
+  onFilterChange: (key: string, value: string) => void;
+  onSearchChange: (value: string) => void;
+  onClearFilters: () => void;
 }
 
-export function PetFilter({ onFiltersChange }: PetFilterProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [species, setSpecies] = useState(
-    searchParams.get("species") || "all"
-  );
-  const [municipality, setMunicipality] = useState(
-    searchParams.get("municipality") || "all"
-  );
-  const [age, setAge] = useState(
-    searchParams.get("age") || "all"
-  );
-  const [sex, setSex] = useState(
-    searchParams.get("sex") || "all"
-  );
-
-  const updateURL = (filters: Record<string, string>) => {
-    const params = new URLSearchParams();
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value && value !== "all") {
-        params.set(key, value);
-      }
-    });
-
-    router.push(`/adopcion?${params.toString()}`, { scroll: false });
-  };
-
-  const handleApplyFilters = () => {
-    const filters = {
-      species: species !== "all" ? species : "",
-      municipality: municipality !== "all" ? municipality : "",
-      age: age !== "all" ? age : "",
-      sex: sex !== "all" ? sex : "",
-    };
-
-    updateURL(filters);
-    if (onFiltersChange) {
-      onFiltersChange(filters);
-    }
-  };
-
-  const handleResetFilters = () => {
-    setSpecies("all");
-    setMunicipality("all");
-    setAge("all");
-    setSex("all");
-
-    router.push("/adopcion", { scroll: false });
-    if (onFiltersChange) {
-      onFiltersChange({});
-    }
-  };
-
+export default function PetFilter({
+  filters,
+  searchQuery,
+  onFilterChange,
+  onSearchChange,
+  onClearFilters,
+}: PetFilterProps) {
   const hasActiveFilters =
-    species !== "all" ||
-    municipality !== "all" ||
-    age !== "all" ||
-    sex !== "all";
+    searchQuery ||
+    filters.species !== "" ||
+    filters.municipality !== "" ||
+    filters.age !== "" ||
+    filters.sex !== "";
 
   return (
     <div className="space-y-6">
@@ -131,7 +92,7 @@ export function PetFilter({ onFiltersChange }: PetFilterProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={handleResetFilters}
+            onClick={onClearFilters}
             className="text-muted-foreground"
           >
             <X className="h-4 w-4 mr-1" />
@@ -140,10 +101,29 @@ export function PetFilter({ onFiltersChange }: PetFilterProps) {
         )}
       </div>
 
+      {/* Búsqueda por texto */}
+      <div className="space-y-2">
+        <Label htmlFor="search">Buscar</Label>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="search"
+            type="text"
+            placeholder="Buscar por nombre o raza..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+      </div>
+
       {/* Especie */}
       <div className="space-y-3">
         <Label>Especie</Label>
-        <RadioGroup value={species} onValueChange={setSpecies}>
+        <RadioGroup
+          value={filters.species || "all"}
+          onValueChange={(val) => onFilterChange("species", val === "all" ? "" : val)}
+        >
           {SPECIES_OPTIONS.map((option) => (
             <div key={option.value} className="flex items-center gap-2">
               <RadioGroupItem value={option.value} id={option.value} />
@@ -161,7 +141,10 @@ export function PetFilter({ onFiltersChange }: PetFilterProps) {
       {/* Municipio */}
       <div className="space-y-2">
         <Label htmlFor="municipality">Municipio</Label>
-        <Select value={municipality} onValueChange={setMunicipality}>
+        <Select
+          value={filters.municipality || "all"}
+          onValueChange={(val) => onFilterChange("municipality", val === "all" ? "" : val)}
+        >
           <SelectTrigger id="municipality">
             <SelectValue placeholder="Todos los municipios" />
           </SelectTrigger>
@@ -179,7 +162,10 @@ export function PetFilter({ onFiltersChange }: PetFilterProps) {
       {/* Edad máxima */}
       <div className="space-y-2">
         <Label htmlFor="age">Edad máxima</Label>
-        <Select value={age} onValueChange={setAge}>
+        <Select
+          value={filters.age || "all"}
+          onValueChange={(val) => onFilterChange("age", val === "all" ? "" : val)}
+        >
           <SelectTrigger id="age">
             <SelectValue placeholder="Cualquier edad" />
           </SelectTrigger>
@@ -196,7 +182,10 @@ export function PetFilter({ onFiltersChange }: PetFilterProps) {
       {/* Sexo */}
       <div className="space-y-3">
         <Label>Sexo</Label>
-        <RadioGroup value={sex} onValueChange={setSex}>
+        <RadioGroup
+          value={filters.sex || "all"}
+          onValueChange={(val) => onFilterChange("sex", val === "all" ? "" : val)}
+        >
           {SEX_OPTIONS.map((option) => (
             <div key={option.value} className="flex items-center gap-2">
               <RadioGroupItem value={option.value} id={`sex-${option.value}`} />
@@ -211,10 +200,6 @@ export function PetFilter({ onFiltersChange }: PetFilterProps) {
         </RadioGroup>
       </div>
 
-      {/* Botón aplicar filtros */}
-      <Button onClick={handleApplyFilters} className="w-full">
-        Aplicar Filtros
-      </Button>
     </div>
   );
 }
@@ -225,37 +210,28 @@ export function PetFilter({ onFiltersChange }: PetFilterProps) {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Componente de filtros para el catálogo de mascotas en adopción. Maneja estado local
- * de filtros y sincroniza con URL query params para persistencia.
+ * Componente de filtros para el catálogo de mascotas en adopción. 
+ * Actúa como un componente controlado (controlled component).
  *
  * Lógica Clave:
- * - Sincronización con URL:
- *   Los filtros se sincronizan con query params en la URL mediante useSearchParams.
- *   Al aplicar filtros, se actualiza la URL con router.push().
- *   Esto permite compartir enlaces con filtros aplicados y persistencia al recargar.
+ * - Estado Controlado:
+ *   No maneja estado interno; recibe los valores actuales y funciones de cambio mediante props.
+ *   Esto permite que el componente padre (PetGalleryClient) coordine los filtros con la API.
  * 
- * - Estado Local:
- *   Cada filtro tiene su propio useState para manejar cambios antes de aplicar.
- *   Los cambios no se aplican inmediatamente, sino al hacer clic en "Aplicar Filtros".
+ * - Sincronización:
+ *   Los cambios se notifican inmediatamente al padre, quien decide cómo aplicarlos.
  * 
  * - Especies y Sexo:
  *   Usa RadioGroup para permitir selección única de forma más visual.
- *   Proporciona mejor UX que un Select para opciones limitadas.
  * 
  * - Municipio y Edad:
- *   Usa Select para opciones múltiples o cuando el espacio es limitado.
- *   Mantiene consistencia con otros componentes del sistema.
- * 
- * - Validaciones:
- *   Valores vacíos o "all" no se incluyen en query params.
- *   Esto mantiene URLs limpias y fáciles de compartir.
+ *   Usa Select para opciones con múltiples valores o listas largas.
  * 
  * - Limpiar Filtros:
- *   Botón "Limpiar" visible solo cuando hay filtros activos.
- *   Resetea todos los estados y limpia query params de la URL.
+ *   Botón "Limpiar" delegando la acción al padre mediante onClearFilters.
  *
  * Dependencias Externas:
- * - next/navigation: useRouter, useSearchParams para manejo de URL
  * - lucide-react: Iconos SlidersHorizontal, X
  * - shadcn/ui: Button, Label, RadioGroup, Select
  */
+

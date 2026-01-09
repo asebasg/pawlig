@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -58,7 +58,17 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    // Estados locales para inputs de texto (necesitan debounce)
     const [search, setSearch] = useState(searchParams.get("search") || "");
+    const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
+    const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
+
+    // Estados debounced para sincronización
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
+    const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
+    const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
+
+    // Estados para selección inmediata
     const [selectedCategories, setSelectedCategories] = useState<string[]>(
         searchParams.get("category")?.split(",").filter(Boolean) || []
     );
@@ -68,10 +78,20 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
     const [availability, setAvailability] = useState(
         searchParams.get("availability") || "all"
     );
-    const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
-    const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
 
-    const updateURL = (filters: Record<string, string | string[]>) => {
+    // Efecto de debounce para campos de texto
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+            setDebouncedMinPrice(minPrice);
+            setDebouncedMaxPrice(maxPrice);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search, minPrice, maxPrice]);
+
+    // Función centralizada para actualizar URL
+    const updateURL = useCallback((filters: Record<string, string | string[]>) => {
         const params = new URLSearchParams();
 
         Object.entries(filters).forEach(([key, value]) => {
@@ -80,37 +100,48 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
             }
         });
 
-        router.push(`/productos?${params.toString()}`, { scroll: false });
-    };
-
-    const handleApplyFilters = () => {
-        const filters = {
-            search,
-            category: selectedCategories,
-            municipality: municipality !== "all" ? municipality : "",
-            availability: availability !== "all" ? availability : "",
-            minPrice,
-            maxPrice,
-        };
-
-        updateURL(filters);
-        if (onFiltersChange) {
-            onFiltersChange(filters);
+        const queryString = params.toString();
+        // Solo actualizar si los parámetros cambiaron para evitar loops o navegaciones redundantes
+        if (queryString !== searchParams.toString()) {
+            router.push(`/productos?${queryString}`, { scroll: false });
+            if (onFiltersChange) {
+                onFiltersChange(filters);
+            }
         }
-    };
+    }, [router, searchParams, onFiltersChange]);
+
+    // Efecto principal de sincronización "Live Update"
+    useEffect(() => {
+        const filters = {
+            search: debouncedSearch,
+            minPrice: debouncedMinPrice,
+            maxPrice: debouncedMaxPrice,
+            category: selectedCategories,
+            municipality,
+            availability,
+        };
+        updateURL(filters);
+    }, [
+        debouncedSearch,
+        debouncedMinPrice,
+        debouncedMaxPrice,
+        selectedCategories,
+        municipality,
+        availability
+    ]);
 
     const handleResetFilters = () => {
         setSearch("");
+        setMinPrice("");
+        setMaxPrice("");
+        // También resetear debounced para evitar re-trigger inmediato con valores viejos
+        setDebouncedSearch("");
+        setDebouncedMinPrice("");
+        setDebouncedMaxPrice("");
+
         setSelectedCategories([]);
         setMunicipality("all");
         setAvailability("all");
-        setMinPrice("");
-        setMaxPrice("");
-
-        router.push("/productos", { scroll: false });
-        if (onFiltersChange) {
-            onFiltersChange({});
-        }
     };
 
     const handleCategoryChange = (category: string, checked: boolean) => {
@@ -159,7 +190,6 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
                         placeholder="Buscar productos..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
                         className="pl-9"
                     />
                 </div>
@@ -249,11 +279,6 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
                     </SelectContent>
                 </Select>
             </div>
-
-            {/* Botón aplicar filtros */}
-            <Button onClick={handleApplyFilters} className="w-full">
-                Aplicar Filtros
-            </Button>
         </div>
     );
 }
