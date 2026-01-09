@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { vendorProfileUpdateSchema, VendorProfileUpdateInput } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
-import axios from 'axios';
 import Image from 'next/image';
 
 /**
@@ -11,7 +13,7 @@ import Image from 'next/image';
  * Implementa HU-003: Actualización del perfil del vendedor
  */
 
-interface VendorProfile {
+interface VendorProfileResponse {
   id: string;
   businessName: string;
   businessPhone?: string;
@@ -23,151 +25,89 @@ interface VendorProfile {
   updatedAt: string;
 }
 
-interface ApiErrorResponse {
-  error: string;
-  details?: Record<string, string>;
-}
-
 export default function VendorProfileForm() {
-  const [formData, setFormData] = useState<VendorProfileUpdateInput>({
-    businessName: '',
-    businessPhone: undefined,
-    description: undefined,
-    logo: undefined,
-    municipality: Municipality.MEDELLIN,
-    address: '',
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<VendorProfileUpdateInput>({
+    resolver: zodResolver(vendorProfileUpdateSchema),
+    defaultValues: {
+      businessName: '',
+      businessPhone: '',
+      description: '',
+      logo: '',
+      municipality: Municipality.MEDELLIN,
+      address: '',
+    }
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(true);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [serverError, setServerError] = useState('');
+  const logoUrl = watch('logo'); // Observar cambios en el logo para preview
 
   // Cargar datos actuales del vendedor al montar
   useEffect(() => {
     const fetchVendorProfile = async () => {
       try {
-        const response = await axios.get<VendorProfile>('/api/vendors/profile');
-        setFormData({
-          businessName: response.data.businessName,
-          businessPhone: response.data.businessPhone,
-          description: response.data.description,
-          logo: response.data.logo,
-          municipality: response.data.municipality,
-          address: response.data.address,
+        const response = await fetch('/api/vendors/profile');
+        if (!response.ok) throw new Error("Error al cargar perfil");
+
+        const data: VendorProfileResponse = await response.json();
+
+        reset({
+          businessName: data.businessName,
+          businessPhone: data.businessPhone || '',
+          description: data.description || '',
+          logo: data.logo || '',
+          municipality: data.municipality,
+          address: data.address,
         });
       } catch (error) {
         console.error('Error fetching vendor profile:', error);
-        if (axios.isAxiosError(error) && error.response?.status === 403) {
-          setServerError('Tu cuenta está bloqueada. Contacta al administrador.');
-        } else {
-          setServerError('Error al cargar el perfil. Intenta de nuevo.');
-        }
-      } finally {
-        setIsFetching(false);
+        toast.error('Error al cargar la información del negocio');
       }
     };
 
     fetchVendorProfile();
-  }, []);
-
-  /**
-   * Maneja cambios en los inputs del formulario
-   */
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value || undefined }));
-
-    // Limpiar error del campo al editar
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-
-    // Limpiar mensaje de éxito al editar
-    if (successMessage) {
-      setSuccessMessage('');
-    }
-  };
+  }, [reset]);
 
   /**
    * Maneja el envío del formulario
    */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
-    setServerError('');
-    setSuccessMessage('');
+  const onSubmit = async (data: VendorProfileUpdateInput) => {
+    const toastId = toast.loading("Guardando cambios...");
 
     try {
-      // 1. Validar datos en el cliente con Zod
-      const validatedData = vendorProfileUpdateSchema.parse(formData);
+      const response = await fetch('/api/vendors/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-      // 2. Enviar petición al API
-      const response = await axios.put<{ message: string; vendor: VendorProfile }>(
-        '/api/vendors/profile',
-        validatedData
-      );
-
-      // 3. Mostrar mensaje de éxito
-      setSuccessMessage('¡Perfil actualizado exitosamente! Los cambios se aplicarán inmediatamente en tu tienda.');
-      setFormData(validatedData);
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data) {
-        const apiError = error.response.data as ApiErrorResponse;
-        
-        // Cuenta bloqueada
-        if (error.response.status === 403) {
-          setServerError('Tu cuenta está bloqueada. No puedes actualizar tu perfil. Contacta al administrador.');
-        } else if (apiError.details) {
-          // Errores de validación del backend
-          setErrors(apiError.details);
-        } else {
-          // Error general del servidor
-          setServerError(apiError.error || 'Error al guardar los cambios. Intenta de nuevo.');
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 403) {
+          throw new Error('Tu cuenta está bloqueada.');
         }
-      } else if (error instanceof Error) {
-        // Errores de Zod (validación en cliente)
-        if ('errors' in error) {
-          const zodError = error as any;
-          const fieldErrors: Record<string, string> = {};
-          zodError.errors.forEach((err: any) => {
-            const field = err.path[0];
-            if (typeof field === 'string') {
-              fieldErrors[field] = err.message;
-            }
-          });
-          setErrors(fieldErrors);
-        } else {
-          setServerError('Error inesperado. Intenta de nuevo.');
-        }
-      } else {
-        setServerError('Error inesperado. Intenta de nuevo.');
+        throw new Error(errorData.error || 'Error al actualizar perfil');
       }
-    } finally {
-      setIsLoading(false);
+
+      toast.success("¡Perfil actualizado exitosamente!", {
+        id: toastId,
+        description: "Los cambios se aplicarán inmediatamente en tu tienda."
+      });
+
+    } catch (error) {
+      console.error(error);
+      toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
     }
   };
-
-  if (isFetching) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
 
   const municipalities = Object.values(Municipality);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Editar Perfil de Negocio</h2>
@@ -176,66 +116,20 @@ export default function VendorProfileForm() {
         </p>
       </div>
 
-      {/* Mensaje de éxito */}
-      {successMessage && (
-        <div
-          className="bg-green-50 border border-green-200 rounded-lg p-4"
-          role="alert"
-          aria-live="polite"
-        >
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">Éxito</h3>
-              <p className="text-sm text-green-700 mt-1">{successMessage}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mensaje de error general */}
-      {serverError && (
-        <div
-          className="bg-red-50 border border-red-200 rounded-lg p-4"
-          role="alert"
-          aria-live="polite"
-        >
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <p className="text-sm text-red-700 mt-1">{serverError}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Nombre del Negocio */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Nombre del Negocio *
         </label>
         <input
+          {...register('businessName')}
           type="text"
-          name="businessName"
-          value={formData.businessName}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.businessName ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessName ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Ej: PawShop Premium"
-          required
         />
         {errors.businessName && (
-          <p className="text-red-600 text-sm mt-1">{errors.businessName}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.businessName.message}</p>
         )}
       </div>
 
@@ -245,17 +139,14 @@ export default function VendorProfileForm() {
           Teléfono del Negocio
         </label>
         <input
+          {...register('businessPhone')}
           type="tel"
-          name="businessPhone"
-          value={formData.businessPhone || ''}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.businessPhone ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessPhone ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Ej: 3001234567"
         />
         {errors.businessPhone && (
-          <p className="text-red-600 text-sm mt-1">{errors.businessPhone}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.businessPhone.message}</p>
         )}
       </div>
 
@@ -265,20 +156,14 @@ export default function VendorProfileForm() {
           Descripción del Negocio
         </label>
         <textarea
-          name="description"
-          value={formData.description || ''}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition h-32 resize-none ${
-            errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          {...register('description')}
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition h-32 resize-none ${errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Describe tu negocio, productos especiales, misión, etc. (mínimo 20 caracteres)"
         />
         {errors.description && (
-          <p className="text-red-600 text-sm mt-1">{errors.description}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.description.message}</p>
         )}
-        <p className="text-gray-500 text-xs mt-1">
-          {formData.description ? formData.description.length : 0}/1000 caracteres
-        </p>
       </div>
 
       {/* Logo URL */}
@@ -287,29 +172,33 @@ export default function VendorProfileForm() {
           URL del Logo
         </label>
         <input
+          {...register('logo')}
           type="url"
-          name="logo"
-          value={formData.logo || ''}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.logo ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.logo ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="https://ejemplo.com/logo.png"
         />
         {errors.logo && (
-          <p className="text-red-600 text-sm mt-1">{errors.logo}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.logo.message}</p>
         )}
-        {formData.logo && (
+        {logoUrl && (
           <div className="mt-3">
             <p className="text-sm text-gray-600 mb-2">Vista previa del logo:</p>
-            <Image
-              src={formData.logo}
-              alt="Logo preview"
-              className="h-16 w-16 object-cover rounded"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
+            <div className="relative h-16 w-16">
+              {/* Usamos unimg normal o NEXT Image. Si es URL externa dinamica, Next Image requiere configuración de dominio.
+                     Para seguridad, mejor usar img tag normal si no sabemos los dominios, o configurar next.config. 
+                     El código original usaba Image de next/image. Asumiré que está configurado o usaré <img /> para evitar problemas de dominios no configurados si el usuario pega cualquier link.
+                     Pero el original usaba Image. Seguiré con Image pero manejaré onError.
+                  */}
+              <Image
+                src={logoUrl}
+                alt="Logo preview"
+                className="h-16 w-16 object-cover rounded border"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
           </div>
         )}
       </div>
@@ -320,13 +209,9 @@ export default function VendorProfileForm() {
           Municipio *
         </label>
         <select
-          name="municipality"
-          value={formData.municipality}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-          required
+          {...register('municipality')}
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
         >
           <option value="">Selecciona un municipio</option>
           {municipalities.map((municipality) => (
@@ -336,7 +221,7 @@ export default function VendorProfileForm() {
           ))}
         </select>
         {errors.municipality && (
-          <p className="text-red-600 text-sm mt-1">{errors.municipality}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>
         )}
       </div>
 
@@ -346,18 +231,14 @@ export default function VendorProfileForm() {
           Dirección Física *
         </label>
         <input
+          {...register('address')}
           type="text"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Ej: Carrera 50 #10-20, Centro"
-          required
         />
         {errors.address && (
-          <p className="text-red-600 text-sm mt-1">{errors.address}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>
         )}
       </div>
 
@@ -365,10 +246,10 @@ export default function VendorProfileForm() {
       <div className="flex gap-4 pt-6">
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isSubmitting}
           className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {isLoading ? 'Guardando cambios...' : 'Guardar Cambios'}
+          {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
         </button>
         <button
           type="button"

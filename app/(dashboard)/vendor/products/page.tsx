@@ -36,26 +36,16 @@ export default async function VendorProductsPage() {
     }
 
     // Obtener ID del vendor y verificar estado
-    const vendorId = session.user.vendorId;
-
-    if (!vendorId) {
-        // ! Caso edge: tiene rol VENDOR pero no registro Vendor (error del sistema - VALIDACIÓN TEMPORAL)
-        redirect("/unauthorized?reason=vendor_not_verified");
-    }
+    const vendorId = session.user.vendorId as string;
 
     // Obtener datos del vendor para verificar estado de verificación
     const vendor = await prisma.vendor.findUnique({
-        where: { id: vendorId },
+        where: { id: vendorId as string },
         select: { verified: true },
     });
 
-    if (!vendor) {
-        // El vendor fue eliminado pero el usuario mantiene el rol
-        redirect("/unauthorized?reason=vendor_only");
-    }
-
     // Verificar que el VENDOR esté verificado
-    if (!vendor.verified) {
+    if (!vendor?.verified) {
         // Tiene cuenta de vendedor pero aún no ha sido aprobada por admin
         redirect("/unauthorized?reason=vendor_not_verified");
     }

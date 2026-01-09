@@ -1,61 +1,40 @@
-/**
- *  Página: /shelter/pets/new
- * 
- * PROPÓSITO:
- * - Formulario de creación de nueva mascota
- * - Solo accesible para albergues verificados
- * - Obtiene shelterId del usuario autenticado
- * 
- * TRAZABILIDAD:
- * - HU-005: Publicación de mascota
- * - CU-004: Publicar mascota en adopción
- * 
- * PROTECCIÓN:
- * - Middleware valida rol SHELTER
- * - Verificación adicional de albergue verificado
- */
-
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
-import PetForm from "@/components/forms/pet-form";
+import { UserRole } from "@prisma/client";
+import ProductForm from "@/components/forms/product-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { Metadata } from "next";
 
-export const metadata = {
-    title: "Publicar Mascota",
-    description: "Registra una nueva mascota para adopción en el Valle de Aburrá",
+export const metadata: Metadata = {
+    title: "Nuevo Producto | Panel de Vendedor",
+    description: "Crea y gestiona un nuevo producto para tu catálogo.",
 };
 
 export default async function NewPetPage() {
-    // Verificar autenticación
+    //  1. Verificar autenticación
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || session.user.role) {
-        redirect("/login?callbackUrl=/shelter/pets/new");
+    if (!session?.user || session.user.role !== UserRole.VENDOR) {
+        redirect("/unauthorized");
     }
 
-    // Verificar rol SHELTER
-    if (session.user.role !== "SHELTER") {
-        redirect("/unauthorized?reason=shelter_only");
-    }
-
-    // Obtener datos del vendor para verificar estado de verificación
-    const shelter = await prisma.shelter.findUnique({
+    //  2. Obtener datos del albergue
+    const vendor = await prisma.vendor.findUnique({
         where: { userId: session.user.id },
         select: {
             id: true,
-            name: true,
             verified: true,
         },
     });
 
-    if (!shelter?.verified) {
-        redirect("/unauthorized?reason=shelter_not_verified")
+    //  3. Validaciones
+    if (!vendor) {
+        redirect("/vendor");
     }
 
-    // Renderizar formulario
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:p-6">
             <div className="max-w-4xl mx-auto">
@@ -90,7 +69,7 @@ export default async function NewPetPage() {
 
                 {/* Formulario */}
                 <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8">
-                    <PetForm mode="create" shelterId={shelter.id} />
+                    <ProductForm mode="create" vendorId={vendor.id} />
                 </div>
             </div>
         </div>

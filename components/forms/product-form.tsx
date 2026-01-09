@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProductSchema, type CreateProductInput } from "@/lib/validations/product.schema";
-import { Upload, X, AlertCircle, CheckCircle } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { toast } from "sonner";
 import Loader from '@/components/ui/loader';
 import Image from 'next/image';
 
@@ -20,6 +21,7 @@ import Image from 'next/image';
 interface ProductFormProps {
     mode?: "create" | "edit";
     initialData?: Partial<CreateProductInput> & { id?: string };
+    vendorId: string;
 }
 
 export default function ProductForm({ mode = "create", initialData }: ProductFormProps) {
@@ -29,8 +31,6 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
     //  Estados del componente
     const [images, setImages] = useState<string[]>(initialData?.images || []);
     const [uploadingImages, setUploadingImages] = useState(false);
-    const [submitError, setSubmitError] = useState<string | null>(null);
-    const [submitSuccess, setSubmitSuccess] = useState(false);
 
     //  React Hook Form con Zod
     const {
@@ -61,12 +61,11 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
 
         //  Validar límite de 5 imágenes
         if (images.length + files.length > 5) {
-            setSubmitError("Máximo 5 fotos permitidas");
+            toast.error("Máximo 5 fotos permitidas");
             return;
         }
 
         setUploadingImages(true);
-        setSubmitError(null);
 
         try {
             const uploadPromises = Array.from(files).map(async (file) => {
@@ -110,7 +109,7 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
             setValue("images", newImages, { shouldValidate: true });
         } catch (error) {
             console.error("Error uploading images:", error);
-            setSubmitError(error instanceof Error ? error.message : "Error al subir imágenes");
+            toast.error(error instanceof Error ? error.message : "Error al subir imágenes");
         } finally {
             setUploadingImages(false);
         }
@@ -131,8 +130,7 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
      *  Envío del formulario a API
      */
     const onSubmit = async (data: CreateProductInput) => {
-        setSubmitError(null);
-        setSubmitSuccess(false);
+        const toastId = toast.loading(mode === "create" ? "Publicando producto..." : "Guardando cambios...");
 
         try {
             const url = mode === "create"
@@ -147,49 +145,28 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
                 body: JSON.stringify(data),
             });
 
-            const result = await response.json();
-
             if (!response.ok) {
-                // Handling specific Zod errors from API structure if needed, or generic error
-                if (result.details) {
-                    // Could map server errors to form fields here if desired
-                    throw new Error(result.error || "Datos inválidos");
-                }
-                throw new Error(result.error || "Error al guardar producto");
+                throw new Error("Error al publicar el producto");
             }
 
-            setSubmitSuccess(true);
+            toast.success(
+                `¡Producto ${mode === "create" ? "publicado" : "actualizado"} exitosamente!`,
+                { id: toastId }
+            );
 
             //  Redireccionar después de 1.5 segundos
             setTimeout(() => {
-                router.push("/vendor/inventory"); // Asumiendo ruta de inventario
+                router.push("/vendor/products"); // Asumiendo ruta de inventario
                 router.refresh();
             }, 1500);
         } catch (error) {
             console.error("Submit error:", error);
-            setSubmitError(error instanceof Error ? error.message : "Error inesperado");
+            toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* MENSAJE DE ERROR GLOBAL */}
-            {submitError && (
-                <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <p className="text-sm">{submitError}</p>
-                </div>
-            )}
-
-            {/* MENSAJE DE ÉXITO */}
-            {submitSuccess && (
-                <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                    <p className="text-sm">
-                        ¡Producto {mode === "create" ? "publicado" : "actualizado"} exitosamente! Redirigiendo...
-                    </p>
-                </div>
-            )}
 
             {/* SECCIÓN 1: DATOS BÁSICOS */}
             <div className="space-y-4">

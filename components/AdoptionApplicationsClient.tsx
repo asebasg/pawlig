@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useCallback } from 'react';
 import { Check, X, AlertCircle } from 'lucide-react';
 import Loader from '@/components/ui/loader';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 interface Adopter {
   id: string;
@@ -37,8 +37,6 @@ interface Adoption {
   pet: Pet;
 }
 
-interface AdoptionApplicationsClientProps { }
-
 export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClientProps) {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +61,7 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
   const [selectedAdoptionForApprove, setSelectedAdoptionForApprove] = useState<string | null>(null);
 
   // Cargar postulaciones
-  const fetchAdoptions = async () => {
+  const fetchAdoptions = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -73,42 +71,62 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
       params.append('page', currentPage.toString());
       params.append('limit', '20');
 
-      const response = await axios.get(`/api/shelters/adoptions?${params.toString()}`);
+      const response = await fetch(`/api/shelters/adoptions?${params.toString()}`);
+      const data = await response.json();
 
-      if (response.data.success) {
-        setAdoptions(response.data.data);
-        setTotalPages(response.data.pagination.totalPages);
-        setTotalCount(response.data.pagination.totalCount);
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al cargar postulaciones');
+      }
+
+      if (data.success) {
+        setAdoptions(data.data);
+        setTotalPages(data.pagination.totalPages);
+        setTotalCount(data.pagination.totalCount);
       }
     } catch (err: any) {
       console.error('Error cargando postulaciones:', err);
-      setError(err.response?.data?.error || 'Error al cargar postulaciones');
+      const errorMessage = err.message || 'Error al cargar postulaciones';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, currentPage]);
 
   useEffect(() => {
     fetchAdoptions();
-  }, [statusFilter, currentPage]);
+  }, [fetchAdoptions]);
 
   // Manejar aprobación
   const handleApprove = async (adoptionId: string) => {
+    const toastId = toast.loading('Aprobando solicitud...');
     try {
       setIsSubmitting(true);
-      const response = await axios.patch(`/api/adoptions/${adoptionId}`, {
-        status: 'APPROVED',
+      const response = await fetch(`/api/adoptions/${adoptionId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'APPROVED',
+        }),
       });
 
-      if (response.data.data) {
-        // Actualizar lista
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al aprobar postulación');
+      }
+
+      if (data.data) {
+        toast.success('Solicitud aprobada exitosamente', { id: toastId });
         await fetchAdoptions();
         setShowApproveModal(false);
         setSelectedAdoptionForApprove(null);
       }
     } catch (err: any) {
       console.error('Error aprobando postulación:', err);
-      alert(err.response?.data?.error || 'Error al aprobar postulación');
+      toast.error(err.message || 'Error al aprobar postulación', { id: toastId });
     } finally {
       setIsSubmitting(false);
     }
@@ -119,19 +137,33 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
     if (!selectedAdoptionId) return;
 
     if (!rejectionReason.trim()) {
-      alert('Por favor, ingresa una razón para el rechazo');
+      toast.error('Por favor, ingresa una razón para el rechazo');
       return;
     }
 
+    const toastId = toast.loading('Rechazando solicitud...');
+
     try {
       setIsSubmitting(true);
-      const response = await axios.patch(`/api/adoptions/${selectedAdoptionId}`, {
-        status: 'REJECTED',
-        rejectionReason: rejectionReason.trim(),
+      const response = await fetch(`/api/adoptions/${selectedAdoptionId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'REJECTED',
+          rejectionReason: rejectionReason.trim(),
+        }),
       });
 
-      if (response.data.data) {
-        // Actualizar lista
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al rechazar postulación');
+      }
+
+      if (data.data) {
+        toast.success('Solicitud rechazada exitosamente', { id: toastId });
         await fetchAdoptions();
         setShowRejectModal(false);
         setSelectedAdoptionId(null);
@@ -139,7 +171,7 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
       }
     } catch (err: any) {
       console.error('Error rechazando postulación:', err);
-      alert(err.response?.data?.error || 'Error al rechazar postulación');
+      toast.error(err.message || 'Error al rechazar postulación', { id: toastId });
     } finally {
       setIsSubmitting(false);
     }
@@ -182,7 +214,7 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
     return (
       <div className="flex items-center justify-center py-12">
         <Loader />
-        <span>Cargando postulaciones...</span>
+        <span className="ml-2">Cargando postulaciones...</span>
       </div>
     );
   }
@@ -191,6 +223,12 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-red-800">{error}</p>
+        <button
+          onClick={() => fetchAdoptions()}
+          className="mt-2 text-sm text-red-600 underline hover:text-red-800"
+        >
+          Intentar de nuevo
+        </button>
       </div>
     );
   }
@@ -261,7 +299,9 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
                         <Image
                           src={adoption.pet.images[0]}
                           alt={adoption.pet.name}
-                          className="w-10 h-10 rounded-full object-cover"
+                          width={40}
+                          height={40}
+                          className="rounded-full object-cover"
                         />
                       )}
                       <div>
@@ -362,7 +402,7 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Confirmar Aprobación</h3>
             <p className="text-gray-600 mb-6">
-              ¿Estás seguro de que deseas aprobar esta postulación? La mascota pasará al estado "En Proceso" de adopción.
+              ¿Estás seguro de que deseas aprobar esta postulación? La mascota pasará al estado &quot;En Proceso&quot; de adopción.
             </p>
             <div className="flex gap-3">
               <button
@@ -436,28 +476,12 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
  *    - Paginación de 20 resultados por página
  *    - Estados visuales con colores e iconos
  * 
- * 2. ACCIONES:
- *    - Aprobar: Solo disponible si PENDING
- *    - Rechazar: Solo disponible si PENDING
- *    - Modal de confirmación para ambas acciones
- *    - Modal de rechazo requiere razón
+ * 2. MIGRACIÓN AXIOS -> FETCH:
+ *    - Se eliminó axios para reducir el bundle size
+ *    - Se usa la API fetch nativa dentro de useEffect
  * 
- * 3. ESTADOS VISUALES:
- *    - PENDING: Amarillo con alerta
- *    - APPROVED: Verde con checkmark
- *    - REJECTED: Rojo con X
- * 
- * 4. UX MEJORAS:
- *    - Imagen de mascota en tabla
- *    - Información del adoptante en filas
- *    - Botones contextuales según estado
- *    - Carga automática al cambiar filtros
- * 
- * 5. VALIDACIÓN:
- *    - Razón del rechazo obligatoria (mínimo 5 caracteres)
- *    - Confirmación antes de acciones irreversibles
- * 
- * 6. ACTUALIZACIÓN:
- *    - Automática después de aprobar/rechazar
- *    - Recarga lista completa con nuevos datos
+ * 3. UX MEJORAS:
+ *    - Feedback visual con 'sonner' (toasts) para éxito/error
+ *    - Loader durante la carga de datos
+ *    - Mensajes de error amigables
  */

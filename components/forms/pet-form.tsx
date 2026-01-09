@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createPetSchema, PetSpecies, PetSex, type CreatePetInput } from "@/lib/validations/pet.schema";
-import { Upload, X, AlertCircle, CheckCircle } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { toast } from "sonner";
 import Loader from "@/components/ui/loader";
 import Image from "next/image";
 
@@ -33,8 +34,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
     // Estados del componente
     const [images, setImages] = useState<string[]>(initialData?.images || []);
     const [uploadingImages, setUploadingImages] = useState(false);
-    const [submitError, setSubmitError] = useState<string | null>(null);
-    const [submitSuccess, setSubmitSuccess] = useState(false);
 
     // React Hook Form con Zod
     const {
@@ -79,12 +78,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
         // Validar límite de imágenes
         if (images.length + files.length > MAX_IMAGES) {
-            setSubmitError(`Máximo ${MAX_IMAGES} fotos permitidas`);
+            toast.error(`Máximo ${MAX_IMAGES} fotos permitidas`);
             return;
         }
 
         setUploadingImages(true);
-        setSubmitError(null);
 
         try {
             const uploadPromises = Array.from(files).map(async (file) => {
@@ -128,7 +126,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             setValue("images", newImages, { shouldValidate: true });
         } catch (error) {
             console.error("Error uploading images:", error);
-            setSubmitError(error instanceof Error ? error.message : "Error al subir imágenes");
+            toast.error(error instanceof Error ? error.message : "Error al subir imágenes");
         } finally {
             setUploadingImages(false);
         }
@@ -153,8 +151,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
      * - EDIT: PUT /api/pets/[id]
      */
     const onSubmit = async (data: CreatePetInput) => {
-        setSubmitError(null);
-        setSubmitSuccess(false);
+        const toastId = toast.loading(mode === "create" ? "Publicando mascota..." : "Guardando cambios...");
 
         try {
             const url = mode === "create" ? "/api/pets" : `/api/pets/${initialData?.id}`;
@@ -172,7 +169,10 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 throw new Error(result.error || "Error al guardar mascota");
             }
 
-            setSubmitSuccess(true);
+            toast.success(
+                `¡Mascota ${mode === "create" ? "publicada" : "actualizada"} exitosamente!`,
+                { id: toastId }
+            );
 
             // Redireccionar después de 1.5 segundos
             setTimeout(() => {
@@ -181,29 +181,12 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             }, 1500);
         } catch (error) {
             console.error("Submit error:", error);
-            setSubmitError(error instanceof Error ? error.message : "Error inesperado");
+            toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* MENSAJE DE ERROR GLOBAL */}
-            {submitError && (
-                <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <p className="text-sm">{submitError}</p>
-                </div>
-            )}
-
-            {/* MENSAJE DE ÉXITO */}
-            {submitSuccess && (
-                <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                    <p className="text-sm">
-                        ¡Mascota {mode === "create" ? "publicada" : "actualizada"} exitosamente! Redirigiendo...
-                    </p>
-                </div>
-            )}
 
             {/* SECCIÓN 1: DATOS BÁSICOS */}
             <div className="space-y-4">

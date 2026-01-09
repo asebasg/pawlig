@@ -1,11 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { vendorApplicationSchema } from '@/lib/validations/user.schema';
 import { $Enums } from '@prisma/client';
-import axios, { AxiosError } from 'axios';
-import { ZodError } from 'zod';
 import Link from 'next/link';
+import { z } from 'zod';
+
+type VendorApplicationInput = z.infer<typeof vendorApplicationSchema>;
 
 interface VendorRequestFormProps {
     userProfile?: {
@@ -20,112 +24,74 @@ interface VendorRequestFormProps {
 }
 
 export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
-    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setFieldErrors({});
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm<VendorApplicationInput>({
+        resolver: zodResolver(vendorApplicationSchema),
+        defaultValues: {
+            email: userProfile?.email || '',
+            name: userProfile?.name || '',
+            phone: userProfile?.phone || '',
+            municipality: userProfile?.municipality || $Enums.Municipality.MEDELLIN,
+            address: userProfile?.address || '',
+            idNumber: userProfile?.idNumber || '',
+            birthDate: userProfile?.birthDate ? new Date(userProfile.birthDate).toISOString().split('T')[0] : '',
+            // Campos del negocio vacíos
+            businessName: '',
+            businessMunicipality: $Enums.Municipality.MEDELLIN,
+            businessAddress: '',
+            businessDescription: '',
+            businessPhone: '',
+        },
+    });
 
-        const formData = new FormData(e.currentTarget);
-        const data = {
-            email: formData.get('email'),
-            password: formData.get('password'),
-            name: formData.get('name'),
-            phone: formData.get('phone'),
-            municipality: formData.get('municipality'),
-            address: formData.get('address'),
-            idNumber: formData.get('idNumber'),
-            birthDate: formData.get('birthDate'),
-            businessName: formData.get('businessName'),
-            businessMunicipality: formData.get('businessMunicipality'),
-            businessAddress: formData.get('businessAddress'),
-            businessDescription: formData.get('businessDescription'),
-            businessPhone: formData.get('businessPhone'),
-        };
+    const onSubmit = async (data: VendorApplicationInput) => {
+        const toastId = toast.loading("Enviando solicitud...");
 
         try {
-            // Validar con el schema
-            const validatedData = vendorApplicationSchema.parse(data);
+            const response = await fetch('/api/user/request-vendor-account', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
 
-            // Enviar al servidor
-            const response = await axios.post('/api/user/request-vendor-account', validatedData);
+            if (!response.ok) {
+                const errorData = await response.json();
 
-            if (response.status === 201) {
-                setSuccess(true);
-                e.currentTarget.reset();
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 2000);
-            }
-        } catch (err) {
-            if (err instanceof ZodError) {
-                // Errores de validación de Zod
-                const errors: Record<string, string> = {};
-                err.issues.forEach((zodError) => {
-                    const field = zodError.path[0] as string;
-                    errors[field] = zodError.message;
-                });
-                setFieldErrors(errors);
-                setError('Por favor revisa los campos marcados en rojo');
-            } else if (err instanceof AxiosError && err.response?.status === 409) {
-                // Error 409: Conflicto
-                const errorData = err.response.data;
-                if (errorData.code === 'EMAIL_ALREADY_EXISTS') {
-                    setError('Este correo electrónico ya está registrado. Por favor, intenta con uno distinto o inicia sesión en tu cuenta.');
-                } else if (errorData.code === 'PENDING_REQUEST_EXISTS') {
-                    setError('Ya tienes una solicitud de albergue en proceso. Espera la respuesta del administrador.');
-                } else {
-                    setError('Los datos ingresados ya están en uso. Verifica la información.');
+                if (response.status === 409) {
+                    if (errorData.code === 'EMAIL_ALREADY_EXISTS') {
+                        throw new Error('Este correo electrónico ya está registrado. Por favor, inicia sesión.');
+                    } else if (errorData.code === 'PENDING_REQUEST_EXISTS') {
+                        throw new Error('Ya tienes una solicitud en proceso.');
+                    } else {
+                        throw new Error('Los datos ingresados ya están en uso.');
+                    }
                 }
-            } else if (err instanceof AxiosError && err.response?.status === 403) {
-                setError('No tienes permisos para realizar esta acción. Contacta al administrador.');
-            } else if (err instanceof AxiosError && err.response?.status === 401) {
-                setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-            } else if (err instanceof AxiosError && err.response?.status && err.response.status >= 500) {
-                setError('Hay un problema con el servidor. Inténtalo más tarde.');
-            } else {
-                setError('Ocurrió un error inesperado. Verifica tu conexión e inténtalo nuevamente.');
+
+                throw new Error(errorData.error || 'Error al enviar la solicitud');
             }
-        } finally {
-            setLoading(false);
+
+            toast.success("¡Solicitud enviada exitosamente!", {
+                id: toastId,
+                description: "Un administrador revisará tu solicitud."
+            });
+
+            // Redireccionar al inicio
+            router.push('/');
+            router.refresh();
+
+        } catch (error) {
+            console.error(error);
+            toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
         }
     };
 
-    if (success) {
-        return (
-            <div className="block">
-                <div className="w-full max-w-2xl mx-auto p-6 bg-green-50 border border-green-200 rounded-lg">
-                    <h3 className="text-lg font-semibold text-green-800 mb-2">¡Solicitud enviada exitosamente!</h3>
-                    <p className="text-green-700">
-                        Tu solicitud ha sido recibida. Un administrador la revisará y te notificará en breve sobre el estado de tu aprobación.
-                        Te recomendamos estar atento a tu correo electrónico.
-                    </p>
-                </div>
-                <div className="mt-4 flex justify-center">
-                    <Link
-                        href="/"
-                        className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-800 transition"
-                    >
-                        Ir al inicio
-                    </Link>
-                </div>
-            </div>
-
-        );
-    }
-
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto space-y-8">
-            {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-800">{error}</p>
-                </div>
-            )}
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl mx-auto space-y-8">
 
             {/* Sección: Datos del Representante */}
             <fieldset className="space-y-4 border-b pb-6">
@@ -138,17 +104,15 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                         Nombre Completo <span className='text-red-500 font-bold'>*</span>
                     </label>
                     <input
+                        {...register('name')}
                         type="text"
                         id="name"
-                        name="name"
-                        required
-                        defaultValue={userProfile?.name}
                         readOnly={!!userProfile?.name}
-                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.name ? 'border-red-500' : 'border-gray-300'
+                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.name ? 'border-red-500' : 'border-gray-300'
                             } ${userProfile?.name ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                         placeholder="Juan Pérez García"
                     />
-                    {fieldErrors.name && <p className="text-red-600 text-sm mt-1">{fieldErrors.name}</p>}
+                    {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -157,17 +121,15 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Número de Identificación <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('idNumber')}
                             type="text"
                             id="idNumber"
-                            name="idNumber"
-                            required
-                            defaultValue={userProfile?.idNumber}
                             readOnly={!!userProfile?.idNumber}
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.idNumber ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.idNumber ? 'border-red-500' : 'border-gray-300'
                                 } ${userProfile?.idNumber ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                             placeholder="1234567890"
                         />
-                        {fieldErrors.idNumber && <p className="text-red-600 text-sm mt-1">{fieldErrors.idNumber}</p>}
+                        {errors.idNumber && <p className="text-red-600 text-sm mt-1">{errors.idNumber.message}</p>}
                     </div>
 
                     <div>
@@ -175,16 +137,14 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Fecha de Nacimiento <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('birthDate')}
                             type="date"
                             id="birthDate"
-                            name="birthDate"
-                            required
-                            defaultValue={userProfile?.birthDate ? new Date(userProfile.birthDate).toISOString().split('T')[0] : ''}
                             readOnly={!!userProfile?.birthDate}
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.birthDate ? 'border-red-500' : 'border-gray-300'
                                 } ${userProfile?.birthDate ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                         />
-                        {fieldErrors.birthDate && <p className="text-red-600 text-sm mt-1">{fieldErrors.birthDate}</p>}
+                        {errors.birthDate && <p className="text-red-600 text-sm mt-1">{errors.birthDate.message}</p>}
                     </div>
                 </div>
 
@@ -194,17 +154,15 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Email <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('email')}
                             type="email"
                             id="email"
-                            name="email"
-                            required
-                            defaultValue={userProfile?.email}
                             readOnly={!!userProfile?.email}
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'
                                 } ${userProfile?.email ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                             placeholder="usuario@ejemplo.com"
                         />
-                        {fieldErrors.email && <p className="text-red-600 text-sm mt-1">{fieldErrors.email}</p>}
+                        {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
                     </div>
 
                     <div>
@@ -212,17 +170,15 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Teléfono <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('phone')}
                             type="tel"
                             id="phone"
-                            name="phone"
-                            required
-                            defaultValue={userProfile?.phone}
                             readOnly={!!userProfile?.phone}
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'
                                 } ${userProfile?.phone ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                             placeholder="+573001234567"
                         />
-                        {fieldErrors.phone && <p className="text-red-600 text-sm mt-1">{fieldErrors.phone}</p>}
+                        {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>}
                     </div>
                 </div>
 
@@ -232,12 +188,10 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Municipio <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <select
+                            {...register('municipality')}
                             id="municipality"
-                            name="municipality"
-                            required
-                            defaultValue={userProfile?.municipality || ""}
                             disabled={!!userProfile?.municipality}
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.municipality ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.municipality ? 'border-red-500' : 'border-gray-300'
                                 } ${userProfile?.municipality ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                         >
                             <option value="">Selecciona un municipio</option>
@@ -247,15 +201,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                                 </option>
                             ))}
                         </select>
-                        {/* Hidden input for disabled select to ensure data is submitted if using FormData, 
-                            though FormData usually ignores disabled inputs, we might need to append it manually or ensure 
-                            defaultValue is sufficient if re-enabling on submit. 
-                            However, the request collects data from FormData(e.currentTarget). Disabled inputs are NOT included int FormData.
-                            We need to ensure the value is sent. Let's add a hidden input if disabled. 
-                        */}
-                        {userProfile?.municipality && <input type="hidden" name="municipality" value={userProfile.municipality} />}
-
-                        {fieldErrors.municipality && <p className="text-red-600 text-sm mt-1">{fieldErrors.municipality}</p>}
+                        {errors.municipality && <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>}
                     </div>
 
                     <div>
@@ -263,17 +209,15 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Dirección <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('address')}
                             type="text"
                             id="address"
-                            name="address"
-                            required
-                            defaultValue={userProfile?.address}
                             readOnly={!!userProfile?.address}
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.address ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.address ? 'border-red-500' : 'border-gray-300'
                                 } ${userProfile?.address ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                             placeholder="Calle 10 #20-30 Apto 405"
                         />
-                        {fieldErrors.address && <p className="text-red-600 text-sm mt-1">{fieldErrors.address}</p>}
+                        {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>}
                     </div>
                 </div>
 
@@ -283,24 +227,26 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Contraseña <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('password')}
                             type="password"
                             id="password"
-                            name="password"
-                            required
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.password ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.password ? 'border-red-500' : 'border-gray-300'
                                 }`}
-                            placeholder="Ingresa tu contraseña actual"
+                            placeholder="Ingresa tu contraseña"
                         />
-                        {fieldErrors.password && <p className="text-red-600 text-sm mt-1">{fieldErrors.password}</p>}
-                        <p className="mt-2 text-sm text-purple-700">
-                            ¿Olvidaste tu contraseña?{' '}
-                            <Link
-                                href="/forgot-password"
-                                className="font-semibold underline hover:text-purple-900"
-                            >
-                                Recupérala aquí
-                            </Link>
-                        </p>
+                        {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>}
+
+                        {!userProfile && (
+                            <p className="mt-2 text-sm text-purple-700">
+                                ¿Olvidaste tu contraseña?{' '}
+                                <Link
+                                    href="/forgot-password"
+                                    className="font-semibold underline hover:text-purple-900"
+                                >
+                                    Recupérala aquí
+                                </Link>
+                            </p>
+                        )}
                     </div>
                 </div>
             </fieldset>
@@ -316,15 +262,14 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                         Nombre del Negocio <span className='text-red-500 font-bold'>*</span>
                     </label>
                     <input
+                        {...register('businessName')}
                         type="text"
                         id="businessName"
-                        name="businessName"
-                        required
-                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.businessName ? 'border-red-500' : 'border-gray-300'
+                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.businessName ? 'border-red-500' : 'border-gray-300'
                             }`}
                         placeholder="Pet Shop El Amigo FIel"
                     />
-                    {fieldErrors.businessName && <p className="text-red-600 text-sm mt-1">{fieldErrors.businessName}</p>}
+                    {errors.businessName && <p className="text-red-600 text-sm mt-1">{errors.businessName.message}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -333,10 +278,9 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Municipio del Negocio <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <select
+                            {...register('businessMunicipality')}
                             id="businessMunicipality"
-                            name="businessMunicipality"
-                            required
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.businessMunicipality ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.businessMunicipality ? 'border-red-500' : 'border-gray-300'
                                 }`}
                         >
                             <option value="">Selecciona un municipio</option>
@@ -346,8 +290,8 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                                 </option>
                             ))}
                         </select>
-                        {fieldErrors.businessMunicipality && (
-                            <p className="text-red-600 text-sm mt-1">{fieldErrors.businessMunicipality}</p>
+                        {errors.businessMunicipality && (
+                            <p className="text-red-600 text-sm mt-1">{errors.businessMunicipality.message}</p>
                         )}
                     </div>
 
@@ -356,15 +300,14 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Dirección del Negocio <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('businessAddress')}
                             type="text"
                             id="businessAddress"
-                            name="businessAddress"
-                            required
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.businessAddress ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.businessAddress ? 'border-red-500' : 'border-gray-300'
                                 }`}
                             placeholder="Calle Principal #100"
                         />
-                        {fieldErrors.businessAddress && <p className="text-red-600 text-sm mt-1">{fieldErrors.businessAddress}</p>}
+                        {errors.businessAddress && <p className="text-red-600 text-sm mt-1">{errors.businessAddress.message}</p>}
                     </div>
                 </div>
 
@@ -373,15 +316,15 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                         Descripción del Negocio
                     </label>
                     <textarea
+                        {...register('businessDescription')}
                         id="businessDescription"
-                        name="businessDescription"
                         rows={4}
-                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none resize-none ${fieldErrors.businessDescription ? 'border-red-500' : 'border-gray-300'
+                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none resize-none ${errors.businessDescription ? 'border-red-500' : 'border-gray-300'
                             }`}
                         placeholder="Cuéntanos sobre tu negocio, qué productos vendes y cuál es tu especialidad..."
                     />
-                    {fieldErrors.businessDescription && (
-                        <p className="text-red-600 text-sm mt-1">{fieldErrors.businessDescription}</p>
+                    {errors.businessDescription && (
+                        <p className="text-red-600 text-sm mt-1">{errors.businessDescription.message}</p>
                     )}
                 </div>
 
@@ -391,16 +334,15 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             Teléfono o WhatsApp de Contacto <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
+                            {...register('businessPhone')}
                             type="tel"
                             id="businessPhone"
-                            name="businessPhone"
-                            required
-                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.businessPhone ? 'border-red-500' : 'border-gray-300'
+                            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.businessPhone ? 'border-red-500' : 'border-gray-300'
                                 }`}
                             placeholder="+573001234567"
                         />
-                        {fieldErrors.businessPhone && (
-                            <p className="text-red-600 text-sm mt-1">{fieldErrors.businessPhone}</p>
+                        {errors.businessPhone && (
+                            <p className="text-red-600 text-sm mt-1">{errors.businessPhone.message}</p>
                         )}
                     </div>
                 </div>
@@ -417,10 +359,10 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                 </button>
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={isSubmitting}
                     className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
                 >
-                    {loading ? 'Enviando...' : 'Enviar Solicitud'}
+                    {isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
                 </button>
             </div>
         </form>
