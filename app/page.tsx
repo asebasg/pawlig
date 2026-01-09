@@ -5,7 +5,7 @@ import { prisma } from "@/lib/utils/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import PetCard from "@/components/cards/pet-card";
-import { StarButton } from "@/components/ui/star-button";
+import { ConfettiButton } from "@/components/ui/confetti-button";
 import { Metadata } from 'next';
 
 /**
@@ -405,12 +405,12 @@ export default async function Home() {
             ¡Dale una oportunidad al amor, anímate a adoptar!
           </p>
 
-          <StarButton
+          <ConfettiButton
             href="/register"
             className="inline-block bg-white text-purple-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-purple-100 transition-colors"
           >
             ¡Adopta y transforma la<br />vida de un animalito!
-          </StarButton>
+          </ConfettiButton>
 
           <p className="mt-6 text-sm">
             ¿Ya tienes una cuenta? <Link href="/login" className="underline font-semibold">Inicia sesión</Link>

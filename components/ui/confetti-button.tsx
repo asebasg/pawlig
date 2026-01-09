@@ -4,19 +4,19 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 /**
- * Ruta/Componente/Servicio: Componente StarButton
- * Descripción: Un componente de enlace estilizado que dispara una animación de partículas (estrellas) al pasar el cursor sobre él.
+ * Ruta/Componente/Servicio: Componente ConfettiButton
+ * Descripción: Un componente de enlace estilizado que dispara una animación de partículas (confeti) al pasar el cursor sobre él.
  * Requiere: -
  * Implementa: -
  */
 
-interface StarButtonProps {
+interface ConfettiButtonProps {
     href: string;
     className?: string;
     children: React.ReactNode;
 }
 
-export function StarButton({ href, className, children }: StarButtonProps) {
+export function ConfettiButton({ href, className, children }: ConfettiButtonProps) {
     const [particles, setParticles] = useState<{ id: number; emoji: string; style: React.CSSProperties }[]>([]);
 
     const emojis = ["✨", "⭐", "🌟", "💫", "🪅", "🎉", "🎊", "🪩", "🐶", "🐱", "🐾"];
