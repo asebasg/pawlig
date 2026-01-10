@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import PetCard from './cards/pet-card';
+import { PetCard } from './cards/pet-card';
+import { FavoriteButton } from '@/components/ui/favorite-button';
 import Loader from '@/components/ui/loader';
 import PetFilter from '@/components/filters/pet-filter';
 import { AlertCircle, FishOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PetStatus } from '@prisma/client';
+import Link from 'next/link';
 
 /**
  * Componente: PetGalleryClient
@@ -228,8 +230,19 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
               <PetCard
                 key={pet.id}
                 pet={pet}
-                userSession={userSession}
-                isFavorited={pet.isFavorited || false}
+                accentColor="none"
+                imageOverlay={
+                  <FavoriteButton
+                    petId={pet.id}
+                    initialIsFavorited={pet.isFavorited || false}
+                    userSession={userSession}
+                  />
+                }
+                footer={
+                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                    <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
+                  </Button>
+                }
               />
             ))
           )}

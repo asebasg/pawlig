@@ -44,8 +44,6 @@ export const USER_MENU_OPTIONS = {
   ADOPTER: [
     { label: "Dashboard", href: "/user", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/user/profile", icon: "User" },
-    { label: "Mis Favoritos", href: "/user/favorites", icon: "Heart" },
-    { label: "Mis Postulaciones", href: "/user/adoptions", icon: "FileText" },
     { label: "Solicitar Albergue", href: "/user/request-shelter", icon: "Plus" },
     { label: "Solicitar Vendedor", href: "/user/request-vendor", icon: "Plus" },
   ],

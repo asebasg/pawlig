@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Heart, MapPin, Search } from 'lucide-react';
+import { Heart, Search, HeartPlus } from 'lucide-react';
 import Link from 'next/link';
 import Loader from '@/components/ui/loader';
-import Image from 'next/image'
+import { PetCard, PetCardData } from '@/components/cards/pet-card';
+import { Button } from '@/components/ui/button';
 
 interface Pet {
   id: string;
@@ -26,7 +27,6 @@ interface Pet {
   addedToFavoritesAt: string;
 }
 
-
 /**
  * Componente: Sección de Mascotas Favoritas
  * 
@@ -46,6 +46,7 @@ export default function FavoritesSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [removingId, setRemovingId] = useState<string | null>(null);
 
   // Cargar favoritos
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function FavoritesSection() {
   // Remover de favoritos
   const handleRemoveFavorite = async (petId: string) => {
     try {
+      setRemovingId(petId);
       const response = await fetch(`/api/pets/${petId}/favorite`, {
         method: 'POST',
       });
@@ -91,6 +93,8 @@ export default function FavoritesSection() {
     } catch (err) {
       console.error('Error:', err);
       setError('Error al remover de favoritos');
+    } finally {
+      setRemovingId(null);
     }
   };
 
@@ -107,8 +111,9 @@ export default function FavoritesSection() {
     <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          ❤️ Mis Mascotas Favoritas
+        <h2 className="flex flex-inline items-center text-2xl font-bold text-gray-900 mb-2">
+          <HeartPlus size={26} className="mr-2" />
+          Mis Mascotas Favoritas
         </h2>
         <p className="text-gray-600">
           {favorites.length === 0
@@ -169,116 +174,46 @@ export default function FavoritesSection() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFavorites.map((pet) => (
-            <FavoriteCard
-              key={pet.id}
-              pet={pet}
-              onRemove={handleRemoveFavorite}
-            />
-          ))}
+          {filteredFavorites.map((pet) => {
+            const petData: PetCardData = {
+              id: pet.id,
+              name: pet.name,
+              images: pet.images,
+              species: pet.species,
+              breed: pet.breed,
+              age: pet.age,
+              sex: pet.sex,
+              shelter: pet.shelter,
+            };
+
+            return (
+              <PetCard
+                key={pet.id}
+                pet={petData}
+                accentColor="none"
+                imageOverlay={
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleRemoveFavorite(pet.id);
+                    }}
+                    disabled={removingId === pet.id}
+                    className="absolute top-0 right-0 p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition disabled:opacity-50 z-20 group/heart"
+                    title="Remover de favoritos"
+                  >
+                    <Heart className="w-5 h-5 fill-red-500 text-red-500 transition-transform group-hover/heart:scale-110" />
+                  </button>
+                }
+                footer={
+                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                    <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
+                  </Button>
+                }
+              />
+            );
+          })}
         </div>
       )}
     </section>
   );
 }
-
-/**
- * Componente: Tarjeta de Mascota Favorita
- */
-interface FavoriteCardProps {
-  pet: Pet;
-  onRemove: (petId: string) => void;
-}
-
-function FavoriteCard({ pet, onRemove }: FavoriteCardProps) {
-  const [removing, setRemoving] = useState(false);
-
-  const handleRemove = async () => {
-    setRemoving(true);
-    await onRemove(pet.id);
-    setRemoving(false);
-  };
-
-  return (
-    <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg overflow-hidden border border-purple-100 hover:shadow-md transition">
-      {/* Imagen */}
-      <div className="relative h-48 bg-gray-200">
-        {pet.images && pet.images.length > 0 ? (
-          <Image
-            src={pet.images[0]}
-            alt={pet.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            Sin foto
-          </div>
-        )}
-
-        {/* Botón para remover */}
-        <button
-          onClick={handleRemove}
-          disabled={removing}
-          className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition disabled:opacity-50"
-          title="Remover de favoritos"
-        >
-          <Heart className="w-5 h-5 fill-red-500 text-red-500" />
-        </button>
-      </div>
-
-      {/* Info */}
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          {pet.name}
-        </h3>
-
-        <div className="text-sm text-gray-600 space-y-1 mb-3">
-          <p className="font-medium">
-            {pet.species} {pet.breed && `• ${pet.breed}`}
-          </p>
-          {pet.age && (
-            <p>
-              {pet.age} año{pet.age !== 1 ? 's' : ''}
-              {pet.sex && ` • ${pet.sex}`}
-            </p>
-          )}
-        </div>
-
-        {/* Albergue */}
-        <div className="bg-white rounded-lg p-2 mb-3 border border-gray-200">
-          <div className="flex items-start gap-2">
-            <MapPin className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm">
-              <p className="font-semibold text-gray-900">{pet.shelter.name}</p>
-              <p className="text-gray-600">{pet.shelter.municipality}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Acciones */}
-        <Link
-          href={`/adopciones/${pet.id}`}
-          className="block w-full text-center bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition font-medium"
-        >
-          Ver detalles
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-/**
- * CARACTERÍSTICAS IMPLEMENTADAS:
- * 
- * ✅ Carga asincrónica de favoritos
- * ✅ Búsqueda/filtro en tiempo real
- * ✅ Remover mascotas de favoritos con botón corazón
- * ✅ Información detallada de mascota y albergue
- * ✅ Estado de carga y errores
- * ✅ Mensaje si no hay favoritos (con CTA)
- * ✅ Responsive design (1-3 columnas)
- * ✅ Iconos y diseño visual coherente
- * ✅ Actualización dinámica del estado local
- */

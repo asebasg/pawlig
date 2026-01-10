@@ -4,8 +4,10 @@ import { Heart, HouseHeart, Shield, ClipboardCheck, Package, CheckCircle, Search
 import { prisma } from "@/lib/utils/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
-import PetCard from "@/components/cards/pet-card";
+import { PetCard } from "@/components/cards/pet-card";
 import { StarButton } from "@/components/ui/star-button";
+import { FavoriteButton } from "@/components/ui/favorite-button";
+import { Button } from "@/components/ui/button";
 import { Metadata } from 'next';
 
 /**
@@ -232,24 +234,48 @@ export default async function Home() {
                 </Link>
               </div>
             ) : (
-              featuredPets.map((pet) => (
-                <div key={pet.id} className="h-full">
-                  <PetCard
-                    pet={pet}
-                    userSession={
-                      session?.user
-                        ? {
-                          id: session.user.id,
-                          name: session.user.name || "",
-                          email: session.user.email || "",
-                          role: session.user.role,
-                        }
-                        : null
-                    }
-                    isFavorited={favoritePetIds.includes(pet.id)}
-                  />
-                </div>
-              ))
+              featuredPets.map((pet) => {
+                const petData = {
+                  id: pet.id,
+                  name: pet.name,
+                  images: pet.images,
+                  species: pet.species,
+                  breed: pet.breed,
+                  age: pet.age,
+                  sex: pet.sex,
+                  shelter: pet.shelter,
+                };
+
+                return (
+                  <div key={pet.id} className="h-full">
+                    <PetCard
+                      pet={petData}
+                      accentColor="purple"
+                      imageOverlay={
+                        <FavoriteButton
+                          petId={pet.id}
+                          initialIsFavorited={favoritePetIds.includes(pet.id)}
+                          userSession={
+                            session?.user
+                              ? {
+                                id: session.user.id,
+                                name: session.user.name || "",
+                                email: session.user.email || "",
+                                role: session.user.role,
+                              }
+                              : null
+                          }
+                        />
+                      }
+                      footer={
+                        <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                          <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
+                        </Button>
+                      }
+                    />
+                  </div>
+                );
+              })
             )}
           </div>
         </div>

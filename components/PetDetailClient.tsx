@@ -13,8 +13,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import PetCard from './cards/pet-card';
+import { PetCard } from './cards/pet-card';
 import Badge from './ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -437,11 +438,13 @@ export default function PetDetailClient({
             {similarPets.map((similarPet) => (
               <PetCard
                 key={similarPet.id}
-                pet={{
-                  ...similarPet,
-                  description: '',
-                }}
-                userSession={userSession}
+                pet={similarPet}
+                accentColor="none"
+                footer={
+                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                    <Link href={`/adopciones/${similarPet.id}`}>Ver detalles</Link>
+                  </Button>
+                }
               />
             ))}
           </div>

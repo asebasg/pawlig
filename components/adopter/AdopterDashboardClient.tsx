@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import FavoritesSection from './FavoritesSection';
 import AdoptionsSection from './AdoptionsSection';
+import CartSection from './CartSection';
+import { HeartPlus, ClipboardClock, ShoppingCart } from 'lucide-react';
 
 interface User {
   id: string;
@@ -32,7 +34,7 @@ interface AdopterDashboardClientProps {
 export default function AdopterDashboardClient({
   userSession,
 }: AdopterDashboardClientProps) {
-  const [activeTab, setActiveTab] = useState<'adoptions' | 'favorites'>('adoptions');
+  const [activeTab, setActiveTab] = useState<'adoptions' | 'favorites' | 'cart'>('adoptions');
 
   if (!userSession?.id) {
     return (
@@ -48,21 +50,33 @@ export default function AdopterDashboardClient({
       <div className="flex gap-2 mb-8 border-b border-gray-200">
         <button
           onClick={() => setActiveTab('adoptions')}
-          className={`px-4 py-3 font-medium transition border-b-2 ${activeTab === 'adoptions'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
+          className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'adoptions'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
         >
-          📋 Mis Solicitudes de Adopción
+          <ClipboardClock size={24} className="mr-2" />
+          Mis Solicitudes de Adopción
         </button>
         <button
           onClick={() => setActiveTab('favorites')}
-          className={`px-4 py-3 font-medium transition border-b-2 ${activeTab === 'favorites'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
+          className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'favorites'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
         >
-          ❤️ Mis Mascotas Favoritas
+          <HeartPlus size={24} className='mr-2' />
+          Mis Mascotas Favoritas
+        </button>
+        <button
+          onClick={() => setActiveTab('cart')}
+          className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'cart'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
+        >
+          <ShoppingCart size={24} className="mr-2" />
+          Mi Carrito
         </button>
       </div>
 
@@ -73,6 +87,9 @@ export default function AdopterDashboardClient({
         )}
         {activeTab === 'favorites' && (
           <FavoritesSection />
+        )}
+        {activeTab === 'cart' && (
+          <CartSection />
         )}
       </div>
     </div>

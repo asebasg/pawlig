@@ -2,17 +2,18 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 const cardVariants = cva(
-  "bg-white shadow-md rounded-lg overflow-hidden border-t-4",
+  "bg-white shadow-md rounded-lg overflow-hidden",
   {
     variants: {
       accentColor: {
-        default: "border-t-gray-200",
-        teal: "border-t-teal-500",
-        orange: "border-t-orange-500",
-        purple: "border-t-purple-600",
-        red: "border-t-red-600",
-        blue: "border-t-blue-600",
-        green: "border-t-green-600",
+        default: "border-t-4 border-t-gray-200",
+        teal: "border-t-4 border-t-teal-500",
+        orange: "border-t-4 border-t-orange-500",
+        purple: "border-t-4 border-t-purple-600",
+        red: "border-t-4 border-t-red-600",
+        blue: "border-t-4 border-t-blue-600",
+        green: "border-t-4 border-t-green-600",
+        none: "border-t-0",
       },
     },
     defaultVariants: {
