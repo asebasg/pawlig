@@ -9,7 +9,6 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import Link from 'next/link';
-import NotificationBanner from './NotificationBanner';
 import Loader from '@/components/ui/loader';
 import Image from 'next/image';
 
@@ -42,9 +41,6 @@ interface AdoptionStats {
   rejected: number;
 }
 
-interface AdoptionsSectionProps {
-  userId: string;
-}
 
 /**
  * Componente: Sección de Solicitudes de Adopción
@@ -62,7 +58,8 @@ interface AdoptionsSectionProps {
  * - Ver estado de solicitudes de adopción activas
  * - Recibir notificación destacada de cambios de estado
  */
-export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
+// El componente obtiene los datos mediante la sesión del servidor, no requiere props externas
+export default function AdoptionsSection() {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [stats, setStats] = useState<AdoptionStats>({
     pending: 0,
@@ -72,9 +69,6 @@ export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
-  const [notificationAdoption, setNotificationAdoption] = useState<Adoption | null>(
-    null
-  );
 
   // Cargar solicitudes
   useEffect(() => {
@@ -95,14 +89,6 @@ export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
         const data = await response.json();
         setAdoptions(data.data || []);
         setStats(data.stats || { pending: 0, approved: 0, rejected: 0 });
-
-        // Buscar y mostrar adoptiones recientes
-        const recentAdoptions = (data.data || []).filter(
-          (a: Adoption) => a.isRecent
-        );
-        if (recentAdoptions.length > 0) {
-          setNotificationAdoption(recentAdoptions[0]);
-        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
       } finally {
@@ -122,11 +108,6 @@ export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
 
   return (
     <section className="bg-white rounded-lg shadow-sm p-6">
-      {/* Notificación destacada */}
-      {notificationAdoption && (
-        <NotificationBanner adoption={notificationAdoption} />
-      )}
-
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -176,8 +157,8 @@ export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
               key={filter.value}
               onClick={() => setSelectedStatus(filter.value)}
               className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${selectedStatus === filter.value
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-purple-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
             >
               {filter.label}
@@ -250,7 +231,7 @@ export default function AdoptionsSection({ userId }: AdoptionsSectionProps) {
 interface StatCardProps {
   label: string;
   value: number;
-  icon: any;
+  icon: React.ElementType;
   color: 'yellow' | 'green' | 'red';
 }
 
@@ -321,12 +302,14 @@ function AdoptionCard({ adoption, isRecent }: AdoptionCardProps) {
       <div className="flex gap-4">
         {/* Imagen */}
         <div className="flex-shrink-0">
-          <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
+          <div className="relative w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
             {adoption.petImages && adoption.petImages.length > 0 ? (
               <Image
                 src={adoption.petImages[0]}
                 alt={adoption.petName}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="80px"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">

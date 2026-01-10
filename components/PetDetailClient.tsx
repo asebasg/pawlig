@@ -15,8 +15,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import PetCard from './cards/pet-card';
 import Badge from './ui/badge';
-import Loader from '@/components/ui/loader'
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Pet {
   id: string;
@@ -98,6 +98,7 @@ export default function PetDetailClient({
   const images = pet.images || [];
   const hasMultipleImages = images.length > 1;
 
+
   // Navegación de galería
   const goToPrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -140,6 +141,7 @@ export default function PetDetailClient({
       return;
     }
 
+    const toastId = toast.loading("Solicitando adopción");
     try {
       setIsLoadingAdoption(true);
 
@@ -157,20 +159,21 @@ export default function PetDetailClient({
       if (!response.ok) {
         const error = await response.json();
         if (response.status === 409) {
-          alert('Ya tienes una solicitud de adopción para esta mascota');
+          toast.error('Ya tienes una solicitud de adopción para esta mascota', { id: toastId });
         } else {
-          alert(error.error || 'Error al crear solicitud');
+          toast.error(error.error || 'Error al crear solicitud', { id: toastId });
         }
         return;
       }
 
+      toast.success("¡Solicitud enviada!", { id: toastId });
       setAdoptionSuccess(true);
       setTimeout(() => {
         window.location.href = '/user';
       }, 2000);
     } catch (error) {
       console.error('Error:', error);
-      alert('Error al crear solicitud de adopción');
+      toast.error('Error al crear solicitud de adopción');
     } finally {
       setIsLoadingAdoption(false);
     }
@@ -406,7 +409,7 @@ export default function PetDetailClient({
                 : 'bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50'
                 }`}
             >
-              {isLoadingAdoption && <Loader />}
+              {isLoadingAdoption}
               {adoptionSuccess ? '¡Solicitud enviada!' : 'Solicitar Adopción'}
             </button>
           ) : (

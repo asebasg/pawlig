@@ -48,21 +48,19 @@ export default function AdopterDashboardClient({
       <div className="flex gap-2 mb-8 border-b border-gray-200">
         <button
           onClick={() => setActiveTab('adoptions')}
-          className={`px-4 py-3 font-medium transition border-b-2 ${
-            activeTab === 'adoptions'
+          className={`px-4 py-3 font-medium transition border-b-2 ${activeTab === 'adoptions'
               ? 'border-purple-600 text-purple-600'
               : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
+            }`}
         >
           📋 Mis Solicitudes de Adopción
         </button>
         <button
           onClick={() => setActiveTab('favorites')}
-          className={`px-4 py-3 font-medium transition border-b-2 ${
-            activeTab === 'favorites'
+          className={`px-4 py-3 font-medium transition border-b-2 ${activeTab === 'favorites'
               ? 'border-purple-600 text-purple-600'
               : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
+            }`}
         >
           ❤️ Mis Mascotas Favoritas
         </button>
@@ -71,10 +69,10 @@ export default function AdopterDashboardClient({
       {/* Tab Content */}
       <div className="animate-in fade-in duration-200">
         {activeTab === 'adoptions' && (
-          <AdoptionsSection userId={userSession.id} />
+          <AdoptionsSection />
         )}
         {activeTab === 'favorites' && (
-          <FavoritesSection userId={userSession.id} />
+          <FavoritesSection />
         )}
       </div>
     </div>

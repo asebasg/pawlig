@@ -26,9 +26,6 @@ interface Pet {
   addedToFavoritesAt: string;
 }
 
-interface FavoritesSectionProps {
-  userId: string;
-}
 
 /**
  * Componente: Sección de Mascotas Favoritas
@@ -44,7 +41,7 @@ interface FavoritesSectionProps {
  * - HU-004: Visualización del Panel de Usuario
  * - Ver mascotas favoritas guardadas
  */
-export default function FavoritesSection({ userId }: FavoritesSectionProps) {
+export default function FavoritesSection() {
   const [favorites, setFavorites] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -210,7 +207,9 @@ function FavoriteCard({ pet, onRemove }: FavoriteCardProps) {
           <Image
             src={pet.images[0]}
             alt={pet.name}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
