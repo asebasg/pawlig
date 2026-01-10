@@ -33,7 +33,7 @@ export default function LoginForm() {
      * Manejo del envío del formulario
      */
     const onSubmit = async (data: LoginInput) => {
-        const toastId = toast.loading("Iniciando sesión...");
+        // const toastId = toast.loading("Iniciando sesión...");
 
         try {
             // Intentar autenticación con NextAuth
@@ -49,20 +49,22 @@ export default function LoginForm() {
                 if (result.error.includes('Cuenta bloqueada')) {
                     errorMessage = result.error; // Mostrar mensaje específico de bloqueo
                 }
-
-                toast.error(errorMessage, { id: toastId });
+                // toast.error(errorMessage, { id: toastId });
+                console.error(errorMessage);
                 return;
             }
 
             if (result?.ok) {
-                toast.success("¡Bienvenido de vuelta!", { id: toastId });
+                const session = await (await import("next-auth/react")).getSession();
+                const userName = session?.user?.name || 'Usuario';
+                toast.success(`¡Bienvenido de vuelta, ${userName}!`);
                 // Redirigir
                 router.push(callbackUrl);
                 router.refresh();
             }
         } catch (error) {
             console.error(error);
-            toast.error("Error inesperado al iniciar sesión", { id: toastId });
+            // toast.error("Error inesperado al iniciar sesión", { id: toastId });
         }
     };
 

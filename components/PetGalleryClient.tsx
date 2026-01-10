@@ -1,9 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PetCard from './cards/pet-card';
 import Loader from '@/components/ui/loader';
 import PetFilter from '@/components/filters/pet-filter';
+import { AlertCircle, FishOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { PetStatus } from '@prisma/client';
+
+/**
+ * Componente: PetGalleryClient
+ * Descripción: Gestiona la visualización, filtrado y búsqueda de mascotas disponibles para adopción.
+ * Requiere: Sesión de usuario (opcional para visualización, obligatoria para favoritos).
+ * Implementa: HU-006 (Filtro y búsqueda), RF-010 (Búsqueda y filtrado), RF-005 (Sistema de favoritos).
+ */
 
 
 interface Pet {
@@ -13,7 +23,7 @@ interface Pet {
   breed: string | null;
   age: number | null;
   sex: string | null;
-  status: string;
+  status: PetStatus;
   description: string;
   images: string[];
   shelter: {
@@ -21,6 +31,7 @@ interface Pet {
     name: string;
     municipality: string;
   };
+  isFavorited?: boolean;
 }
 
 interface UserSession {
@@ -67,7 +78,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
   };
 
   // Cargar mascotas desde API
-  const fetchPets = async () => {
+  const fetchPets = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -105,8 +116,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
 
           if (favResponse.ok) {
             const favData = await favResponse.json();
-            // Agregar info de favoritos a cada mascota
-            petsData.forEach((pet: any) => {
+            petsData.forEach((pet: Pet) => {
               pet.isFavorited = favData.favorites?.includes(pet.id) || false;
             });
           }
@@ -123,12 +133,11 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, currentPage, searchQuery, userSession?.id]);
 
-  // Efecto para cargar mascotas al cambiar filtros o página
   useEffect(() => {
     fetchPets();
-  }, [filters, currentPage]);
+  }, [fetchPets]);
 
   // Búsqueda con debounce
   useEffect(() => {
@@ -141,9 +150,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
-
-
+  }, [searchQuery, fetchPets, currentPage]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
@@ -153,11 +160,11 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
           {/* Contador de resultados */}
           {!loading && (
             <div className="mb-4 text-sm text-gray-600">
-              {totalCount === 0 ? (
+              <span className="font-semibold">{totalCount === 0 ? (
                 'No se encontraron mascotas'
               ) : (
                 `${totalCount} mascota${totalCount !== 1 ? 's' : ''} encontrada${totalCount !== 1 ? 's' : ''}`
-              )}
+              )}</span>
             </div>
           )}
 
@@ -182,26 +189,42 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
               <p className="text-gray-500">Cargando mascotas</p>
             </div>
           ) : error ? (
-            <div className="col-span-full text-center py-12">
-              <p className="text-red-600 mb-4">{error}</p>
-              <button
-                onClick={fetchPets}
-                className="text-purple-600 hover:underline"
+            <div className="col-span-full bg-white rounded-lg border p-12 text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                Error al cargar mascotas
+              </h3>
+              <p className="text-gray-600 mb-6">{error}</p>
+              <Button
+                onClick={() => fetchPets()}
+                className="bg-purple-600 hover:bg-purple-700 mx-auto"
               >
-                Intentar nuevamente
-              </button>
+                Reintentar
+              </Button>
             </div>
           ) : pets.length === 0 ? (
-            <div className="col-span-full text-center py-12">
-              <p className="text-gray-500 mb-2">
-                No hay mascotas disponibles con estos filtros.
+            <div className="col-span-full bg-white rounded-lg border border-purple-100 p-12 text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FishOff className="w-8 h-8 text-purple-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-purple-800 mb-2">
+                No se encontraron mascotas
+              </h3>
+              <p className="text-purple-600 mb-6">
+                Intenta ajustar los filtros para ver más resultados
               </p>
-              <p className="text-sm text-gray-400">
-                Intenta cambiar los criterios de búsqueda.
-              </p>
+              <Button
+                onClick={handleClearFilters}
+                variant="outline"
+                className="border-purple-300 text-purple-700 hover:bg-purple-50 mx-auto"
+              >
+                Limpiar filtros
+              </Button>
             </div>
           ) : (
-            pets.map((pet: any) => (
+            pets.map((pet) => (
               <PetCard
                 key={pet.id}
                 pet={pet}
@@ -241,33 +264,25 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
   );
 }
 
-/**
- * MEJORAS IMPLEMENTADAS:
- * 
- * 1. ✅ Filtros funcionales con estado y onChange
- * 2. ✅ Integración completa con API /api/pets
- * 3. ✅ Búsqueda por texto con debounce (500ms)
- * 4. ✅ Manejo de errores con try-catch
- * 5. ✅ Paginación funcional (12 mascotas por página)
- * 6. ✅ Loading states apropiados
- * 7. ✅ Municipios desde constante (fácil de mantener)
- * 8. ✅ Componente PetCard separado y reutilizable
- * 9. ✅ Sistema de favoritos con autenticación
- * 10. ✅ Contador de resultados
- * 11. ✅ Botón de limpiar filtros
- * 12. ✅ Estados vacíos y de error con UX clara
- * 13. ✅ Iconos de Lucide React
- * 14. ✅ Responsive design mejorado
- * 15. ✅ Hover effects en cards
- * 
- * SEGURIDAD:
- * - ✅ Validación de userSession antes de acciones protegidas
- * - ✅ Redirección a login si no autenticado
- * - ✅ Manejo seguro de errores sin exponer detalles
- * - ✅ Sanitización de query params en servidor (API)
- * 
- * TRAZABILIDAD:
- * - HU-006: Filtro y búsqueda ✅
- * - RF-010: Búsqueda y filtrado ✅
- * - RF-005: Sistema de favoritos ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es el cliente principal para la galería de mascotas. Centraliza la 
+ * lógica de obtención de datos desde la API, el manejo de filtros y la paginación.
+ *
+ * Lógica Clave:
+ * - fetchPets: Realiza peticiones GET a /api/pets construyendo dinámicamente los 
+ *   query params según el estado de los filtros y la página actual.
+ * - Debounce: Implementa un retraso de 500ms en la búsqueda por texto para reducir
+ *   el número de peticiones innecesarias al servidor.
+ * - Favoritos: Si el usuario está autenticado, verifica qué mascotas están marcadas
+ *   como favoritas mediante una petición POST a /api/user/favorites/check.
+ *
+ * Dependencias Externas:
+ * - Lucide React: Utilizado para la iconografía de la interfaz (AlertCircle, FishOff, etc).
+ * - API /api/pets: Endpoint principal para obtener el listado de mascotas.
+ *
  */

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
+import { UserRole } from '@prisma/client';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
@@ -29,12 +30,9 @@ export default async function RequestVendorPage() {
 
     //  2. Validar roles permitidos
     // Solo los usuarios 'ADOPTER' pueden solicitar ser vendedor.
-    // Los vendedor y admins no necesitan acceder aquí.
-    const allowedRoles = ['ADOPTER'];
-    if (!allowedRoles.includes(session.user.role)) {
-        // Redirigir a página de no autorizado o al dashboard
-        // Usamos query param para mostrar un mensaje específico si existe la página de error
-        redirect('/unauthorized?reason=role_not_allowed');
+    if (session.user.role !== UserRole.ADOPTER) {
+        // Redirigir a página de no autorizado
+        redirect('/unauthorized?reason=adopter_only');
     }
 
     const userProfile = await prisma.user.findUnique({

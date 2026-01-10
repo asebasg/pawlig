@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
+import { UserRole } from '@prisma/client';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/utils/db';
 import Image from 'next/image';
@@ -16,6 +17,10 @@ export default async function AdoptionsPage() {
 
   if (!session?.user) {
     redirect('/login?callbackUrl=/user/adoptions');
+  }
+
+  if (session.user.role !== UserRole.ADOPTER) {
+    redirect('/unauthorized?reason=adopter_only');
   }
 
   const adoptions = await prisma.adoption.findMany({

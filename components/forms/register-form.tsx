@@ -50,7 +50,7 @@ export default function RegisterForm() {
    * Maneja el envío del formulario
    */
   const onSubmit = async (data: RegisterUserInput) => {
-    const toastId = toast.loading("Creando cuenta...");
+    let toastId;
 
     try {
       // 1. Enviar petición al API
@@ -65,14 +65,17 @@ export default function RegisterForm() {
       if (!response.ok) {
         // Manejo específico de email duplicado
         if (responseData.code === 'EMAIL_ALREADY_EXISTS') {
-          toast.error("Este correo ya está registrado", {
-            id: toastId,
-            action: {
-              label: "Recuperar",
-              onClick: () => router.push(responseData.recoveryUrl || '/forgot-password'),
-            },
-            duration: 8000, // Dar tiempo para ver la acción
-          });
+          /**
+           * toast.error("Este correo ya está registrado", {
+           *   id: toastId,
+           *   action: {
+           *     label: "Recuperar",
+           *     onClick: () => router.push(responseData.recoveryUrl || '/forgot-password'),
+           *   },
+           *   duration: 8000, // Dar tiempo para ver la acción
+           * });
+           */
+          console.error(responseData);
           return;
         }
 
@@ -82,7 +85,7 @@ export default function RegisterForm() {
 
       // 2. Registro exitoso: iniciar sesión automáticamente
       // Actualizamos el toast a loading de inicio de sesión
-      toast.loading("Iniciando sesión automática...", { id: toastId });
+      // toast.loading("Iniciando sesión automática...", { id: toastId });
 
       const signInResult = await signIn('credentials', {
         email: data.email,
@@ -91,12 +94,13 @@ export default function RegisterForm() {
       });
 
       if (signInResult?.error) {
-        toast.error('Cuenta creada, pero error al iniciar sesión automática', { id: toastId });
+        // toast.error('Cuenta creada, pero error al iniciar sesión automática', { id: toastId });
+        console.error(signInResult.error);
         return;
       }
 
       // 3. Redirigir
-      toast.success("¡Bienvenido a PawLig!", { id: toastId });
+      toast.success(`¡Bienvenido a PawLig, ${data.name}!`);
       router.push('/adopciones');
       router.refresh();
 

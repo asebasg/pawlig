@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
+import { UserRole } from '@prisma/client';
 import { prisma } from '@/lib/utils/db';
 import PetCard from '@/components/cards/pet-card';
 
@@ -15,6 +16,10 @@ export default async function FavoritesPage() {
 
   if (!session?.user) {
     redirect('/login?callbackUrl=/user/favorites');
+  }
+
+  if (session.user.role !== UserRole.ADOPTER) {
+    redirect('/unauthorized?reason=adopter_only');
   }
 
   const favorites = await prisma.favorite.findMany({

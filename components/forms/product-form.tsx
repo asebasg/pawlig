@@ -21,7 +21,6 @@ import Image from 'next/image';
 interface ProductFormProps {
     mode?: "create" | "edit";
     initialData?: Partial<CreateProductInput> & { id?: string };
-    vendorId: string;
 }
 
 export default function ProductForm({ mode = "create", initialData }: ProductFormProps) {
@@ -156,7 +155,7 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
 
             //  Redireccionar después de 1.5 segundos
             setTimeout(() => {
-                router.push("/vendor/products"); // Asumiendo ruta de inventario
+                router.push("/vendor/products");
                 router.refresh();
             }, 1500);
         } catch (error) {
@@ -388,7 +387,7 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
  * subida de imágenes y validación en tiempo real.
  *
  * Lógica Clave:
- * - Reutiliza el patrón de PetForm para mantener consistencia (react-hook-form + zod).
+ * - Reutiliza el patrón de diseño para mantener consistencia (react-hook-form + zod).
  * - Maneja estados asíncronos para la subida de imágenes antes del envío del formulario.
  * - Flujo de Datos:
  *   1. El usuario completa campos y sube imágenes.

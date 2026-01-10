@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
+import { UserRole } from '@prisma/client';
 import { hashPassword } from '@/lib/auth/password';
 import { vendorApplicationSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
@@ -23,8 +24,8 @@ export async function POST(request: Request) {
         }
 
         //  Solo ADOPTER puede solicitar cuenta de vendedor
-        const allowedRoles = ['ADOPTER'];
-        if (!allowedRoles.includes(session.user.role)) {
+        const allowedRoles: UserRole[] = [UserRole.ADOPTER];
+        if (!allowedRoles.includes(session.user.role as UserRole)) {
             return NextResponse.json(
                 {
                     error: 'No autorizado',

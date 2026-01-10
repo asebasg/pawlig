@@ -9,30 +9,37 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Nuevo Producto | Panel de Vendedor",
+    title: "Nuevo Producto - Panel de Vendedor",
     description: "Crea y gestiona un nuevo producto para tu catálogo.",
 };
 
-export default async function NewPetPage() {
+export default async function NewProductPage() {
     //  1. Verificar autenticación
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || session.user.role !== UserRole.VENDOR) {
-        redirect("/unauthorized");
+    // No esta autenticado
+    if (!session?.user) {
+        redirect("/login?callbackUrl=/vendor/products/new");
     }
 
-    //  2. Obtener datos del albergue
+    // No tiene el rol VENDOR
+    if (session.user.role !== UserRole.VENDOR) {
+        redirect("/unauthorized?reason=vendor_only");
+    }
+
+    // Obtener ID del vendor y verificar estado
+    const vendorId = session.user.vendorId as string;
+
+    // Obtener datos del vendor para verificar estado de verificación
     const vendor = await prisma.vendor.findUnique({
-        where: { userId: session.user.id },
-        select: {
-            id: true,
-            verified: true,
-        },
+        where: { id: vendorId as string },
+        select: { verified: true },
     });
 
-    //  3. Validaciones
-    if (!vendor) {
-        redirect("/vendor");
+    // Usuario con rol VENDOR no esta verificado
+    if (!vendor?.verified) {
+        // Tiene cuenta de vendedor pero aún no ha sido aprobada por admin
+        redirect("/unauthorized?reason=vendor_not_verified");
     }
 
     return (
@@ -41,16 +48,16 @@ export default async function NewPetPage() {
                 {/* Header */}
                 <div className="mb-8">
                     <Link
-                        href="/shelter/pets"
+                        href="/vendor/products"
                         className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        Volver a Mis Mascotas
+                        Volver a Mis Productos
                     </Link>
                     <div className="text-center">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Publicar Nueva Mascota</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Publicar Nuevo Producto</h1>
                         <p className="mt-2 text-sm sm:text-base text-gray-600">
-                            Completa el formulario para registrar una mascota en adopción. Los campos marcados con{" "}
+                            Completa el formulario para registrar un producto en tu inventario. Los campos marcados con{" "}
                             <span className="text-red-500">*</span> son obligatorios.
                         </p>
                         {/* Tips de buenas prácticas */}
@@ -58,18 +65,18 @@ export default async function NewPetPage() {
                     <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <h3 className="font-semibold text-blue-900 mb-2">💡 Tips para una buena publicación</h3>
                         <ul className="text-sm text-blue-800 space-y-1">
-                            <li>• Usa fotos de alta calidad con buena iluminación</li>
-                            <li>• Sé honesto en la descripción del carácter y comportamiento</li>
-                            <li>• Incluye información sobre vacunas y esterilización</li>
-                            <li>• Especifica claramente los requisitos de adopción</li>
-                            <li>• Actualiza el estado cuando la mascota sea adoptada</li>
+                            <li>• Usa fotos claras y con fondo neutro</li>
+                            <li>• Describe detalladamente las características técnicas</li>
+                            <li>• Mantén el stock actualizado para evitar cancelaciones</li>
+                            <li>• Responde rápido a las dudas de los clientes</li>
+                            <li>• Asegúrate de que el precio sea competitivo</li>
                         </ul>
                     </div>
                 </div>
 
                 {/* Formulario */}
                 <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8">
-                    <ProductForm mode="create" vendorId={vendor.id} />
+                    <ProductForm mode="create" />
                 </div>
             </div>
         </div>

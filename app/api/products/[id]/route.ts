@@ -6,6 +6,7 @@ import {
     updateProduct,
     deleteProduct,
 } from "@/lib/services/product.service";
+import { UserRole } from "@prisma/client";
 import { updateProductSchema } from "@/lib/validations/product.schema";
 import { ZodError } from "zod";
 
@@ -66,7 +67,7 @@ export async function PUT(
         }
 
         // Verificar rol VENDOR
-        if (session.user.role !== "VENDOR") {
+        if (session.user.role !== UserRole.VENDOR) {
             return NextResponse.json(
                 { error: "Solo vendedores pueden editar productos" },
                 { status: 403 }
@@ -161,7 +162,7 @@ export async function DELETE(
         }
 
         // Verificar rol VENDOR
-        if (session.user.role !== "VENDOR") {
+        if (session.user.role !== UserRole.VENDOR) {
             return NextResponse.json(
                 { error: "Solo vendedores pueden eliminar productos" },
                 { status: 403 }

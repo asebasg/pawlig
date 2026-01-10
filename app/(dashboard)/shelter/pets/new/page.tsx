@@ -19,6 +19,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
+import { UserRole } from "@prisma/client";
 import PetForm from "@/components/forms/pet-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -32,12 +33,12 @@ export default async function NewPetPage() {
     // Verificar autenticación
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || session.user.role) {
+    if (!session?.user) {
         redirect("/login?callbackUrl=/shelter/pets/new");
     }
 
     // Verificar rol SHELTER
-    if (session.user.role !== "SHELTER") {
+    if (session.user.role !== UserRole.SHELTER) {
         redirect("/unauthorized?reason=shelter_only");
     }
 

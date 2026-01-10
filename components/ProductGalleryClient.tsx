@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ProductFilter } from "@/components/filters/product-filter";
 import { ProductCard } from "@/components/cards/product-card";
 import Loader from "@/components/ui/loader";
@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, PackageX, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
+/**
+ * Componente: ProductGalleryClient
+ * Descripción: Gestiona la visualización, filtrado y paginación del catálogo de productos para mascotas.
+ * Requiere: Acceso a /api/products para obtención de datos.
+ * Implementa: HU-004 (Galería de productos), RF-012 (Filtrado de productos).
+ */
 
 const ITEMS_PER_PAGE = 12;
 
@@ -43,11 +50,6 @@ export default function ProductGalleryClient() {
     const [appliedFilters, setAppliedFilters] = useState<Record<string, string | string[]>>({});
     const [error, setError] = useState<string | null>(null);
 
-    // Cargar productos iniciales
-    useEffect(() => {
-        fetchProducts();
-    });
-
     // Función para construir query params desde filtros
     const buildQueryParams = (
         filters: Record<string, string | string[]>,
@@ -71,8 +73,8 @@ export default function ProductGalleryClient() {
     };
 
     // Función para hacer fetch de productos
-    const fetchProducts = async (
-        filters: Record<string, string | string[]> = {},
+    const fetchProducts = useCallback(async (
+        filters: Record<string, string | string[]> = appliedFilters,
         page: number = 1
     ) => {
         try {
@@ -101,7 +103,11 @@ export default function ProductGalleryClient() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [appliedFilters]);
+
+    useEffect(() => {
+        fetchProducts({}, 1);
+    }, [fetchProducts]);
 
     // Manejar cambios en los filtros
     const handleFiltersChange = (filters: Record<string, string | string[]>) => {
@@ -166,7 +172,7 @@ export default function ProductGalleryClient() {
 
                     {/* Estado de error */}
                     {!isLoading && error && (
-                        <div className="bg-white rounded-lg border border-red-200 p-12 text-center">
+                        <div className="bg-white rounded-lg border p-12 text-center">
                             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <AlertCircle className="w-8 h-8 text-red-500" />
                             </div>
@@ -319,3 +325,26 @@ export default function ProductGalleryClient() {
         </div>
     );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente actúa como el orquestador principal de la vista de productos, 
+ * integrando filtros laterales con una rejilla de resultados paginada.
+ *
+ * Lógica Clave:
+ * - buildQueryParams: Utilidad interna para serializar el objeto de filtros y el 
+ *   número de página en una cadena compatible con URLSearchParams.
+ * - fetchProducts: Centraliza las llamadas a la API, manejando estados de carga,
+ *   errores y actualización de la paginación.
+ * - scrollIntoView: Mejora la UX al desplazar la vista al inicio de la galería 
+ *   automáticamente después de cambiar de página.
+ *
+ * Dependencias Externas:
+ * - Sonner: Utilizado para notificaciones emergentes de éxito (carrito) o error.
+ * - Lucide React: Iconografía para navegación y estados (Chevron, PackageX, etc).
+ *
+ */

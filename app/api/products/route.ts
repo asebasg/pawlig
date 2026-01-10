@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { getProducts, createProduct } from "@/lib/services/product.service";
+import { UserRole } from "@prisma/client";
 import { createProductSchema } from "@/lib/validations/product.schema";
 import { ZodError } from "zod";
 
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Verificar rol VENDOR
-        if (session.user.role !== "VENDOR") {
+        if (session.user.role !== UserRole.VENDOR) {
             return NextResponse.json(
                 { error: "Solo vendedores pueden crear productos" },
                 { status: 403 }
