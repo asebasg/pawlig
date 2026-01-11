@@ -5,6 +5,12 @@ import BlockUserButton from "@/components/admin/BlockUserButton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SquareChartGantt } from "lucide-react";
 
+/**
+ * Descripción: Contenedor cliente para acciones administrativas rápidas sobre un usuario (como bloqueo).
+ * Requiere: Objeto de usuario básico.
+ * Implementa: Interfaz de gestión rápida en perfil de usuario.
+ */
+
 interface UserActionsClientProps {
     user: {
         id: string;
@@ -32,9 +38,9 @@ export default function UserActionsClient({ user }: UserActionsClientProps) {
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-col">
                         <div className="w-full">
-                            <BlockUserButton 
-                                user={user} 
-                                onSuccess={() => router.refresh()} 
+                            <BlockUserButton
+                                user={user}
+                                onSuccess={() => router.refresh()}
                                 showLabel={true}
                                 className="justify-start"
                             />
@@ -45,3 +51,22 @@ export default function UserActionsClient({ user }: UserActionsClientProps) {
         </Card>
     );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente agrupa acciones críticas que se pueden realizar sobre una cuenta
+ * de usuario en una tarjeta visualmente diferenciada.
+ *
+ * Lógica Clave:
+ * - useRouter: Utilizado para refrescar la ruta actual tras una acción exitosa.
+ * - Composición: Delega la lógica específica de bloqueo al componente 'BlockUserButton'.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Para iconografía de gestión.
+ * - @/components/ui/card: Para estructura de contenedor consistente.
+ *
+ */

@@ -12,6 +12,12 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+/**
+ * Descripción: Modal de confirmación para cambios de rol de usuario que implican riesgos o pérdida de datos.
+ * Requiere: Propiedades de rol actual, nuevo rol y estado de apertura.
+ * Implementa: Salvaguarda de integridad de datos en gestión de usuarios.
+ */
+
 interface RoleChangeModalProps {
   isOpen: boolean;
   onClose: () => void;

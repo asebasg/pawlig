@@ -11,12 +11,12 @@ import { PetStatus } from '@prisma/client';
 import Link from 'next/link';
 
 /**
- * Componente: PetGalleryClient
+ * GET /api/pets
+ * POST /api/user/favorites/check
  * Descripción: Gestiona la visualización, filtrado y búsqueda de mascotas disponibles para adopción.
  * Requiere: Sesión de usuario (opcional para visualización, obligatoria para favoritos).
  * Implementa: HU-006 (Filtro y búsqueda), RF-010 (Búsqueda y filtrado), RF-005 (Sistema de favoritos).
  */
-
 
 interface Pet {
   id: string;

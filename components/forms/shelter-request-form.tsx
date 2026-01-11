@@ -8,6 +8,13 @@ import { shelterApplicationSchema, ShelterApplicationInput } from '@/lib/validat
 import { $Enums } from '@prisma/client';
 import Link from 'next/link';
 
+/**
+ * POST /api/user/request-shelter-account
+ * Descripción: Formulario para solicitar una cuenta de refugio o entidad de rescate.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-009 (Registro de animales), RF-010 (Solicitud de cuenta de refugio).
+ */
+
 interface ShelterRequestFormProps {
   userProfile?: {
     name: string;
@@ -52,20 +59,6 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
     const toastId = toast.loading("Enviando solicitud...");
 
     try {
-      // Agregar password si no viene en userProfile (asumiendo que si viene userProfile es un user existente y no pide password? 
-      // Espera, el schema pide password. Si el usuario ya existe (userProfile), ¿necesitamos password?
-      // Revisando el código original:
-      // const data = { email: formData.get('email'), password: formData.get('password'), ... }
-      // Siempre enviaba password.
-      // El userProfile se usa para PRE-LLENAR datos, pero el input de password siempre estaba vacío en el original y requerido?
-      // En el original: defaultValue={userProfile?.email}, pero el password input NO tenía defaultValue y era required.
-      // Entonces se pide password también para nuevos usuarios.
-      // PERO, si el usuario ya está logueado (userProfile existe), ¿deberíamos pedir password?
-      // El backend seguramente crea un usuario nuevo si no existe.
-      // Si el usuario ya existe, el backend podría rechazar por "EMAIL_ALREADY_EXISTS" a menos que sea una solicitud de "upgrade".
-      // El endpoint es `/api/user/request-shelter-account`.
-      // Asumiré que siempre valida el schema completo, incluyendo password.
-
       const response = await fetch('/api/user/request-shelter-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -203,21 +196,6 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
             <select
               {...register('municipality')}
               id="municipality"
-              // Nota: disabled no envía valor en form submit nativo, pero register de RHF sí debería tomar el valor si usamos defaultValues? 
-              // RHF no incluye campos deshabilitados en handleSubmit si es HTML nativo disabled, 
-              // pero aquí controlamos con state? No, usamos {...register}.
-              // Si ponemos disabled, el usuario no puede cambiarlo.
-              // Para asegurar que se envíe, en RHF se envía? Sí, RHF toma el valor del input. 
-              // EXCEPTO si el input está disabled, el navegador no lo incluye en el evento submit normal, pero RHF gestiona el estado interno?
-              // En HTML standard, disabled inputs no se envían.
-              // En RHF, si usas handleSubmit, data contiene los valores del estado interno.
-              // PERO, si registraste un input y luego lo deshabilitas, ¿RHF lo excluye?
-              // Verifiquemos: RHF sigue las reglas de HTML standard por defecto para validación?
-              // Lo mejor es usar readOnly para inputs de texto. Para select no hay readOnly.
-              // Para select, si hay userProfile.municipality, podemos dejarlo disabled y en el onSubmit, si falta, RHF nos daría error si fuera required?
-              // El valor está en defaultValues.
-              // Si el usuario edita y está disabled, no cambia.
-              // Truco: Si está disabled, agregar un input hidden con el valor.
               disabled={!!userProfile?.municipality}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.municipality ? 'border-red-500' : 'border-gray-300'
                 } ${userProfile?.municipality ? 'bg-gray-100 cursor-not-allowed' : ''}`}
@@ -229,26 +207,6 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
                 </option>
               ))}
             </select>
-            {/* Si está disabled el select, aseguramos el envío del valor con RHF? 
-                RHF documentation dice: "HTML standard behavior: disabled inputs result in undefined values".
-                Solución: No usar disabled en el registro, o usar un hidden input, o (mejor) manejarlo en el onSubmit fusionando defaultValues?
-                Mejor solución simple: Si userProfile.municipality existe, renderizamos un input hidden y mostramos el select disabled SIN registrarlo, o lo registramos pero sabemos que fallará?
-                Mejor: Si hay userProfile, renderizar el select como disabled (visual) pero NO registrarlo, y registrar un input hidden con el valor?
-                O simplemente NO ponerlo disabled, sino usar un estilo que parezca disabled y prevenir cambio con CSS/JS? No, pointer-events-none.
-                O la opción más robusta:
-                Si hay userProfile.municipality, el select está disabled.
-                El valor DEBE venir de defaultValues.
-                PERO RHF strip disabled inputs.
-                Entonces en onSubmit, si data.municipality es undefined, fallback a userProfile.municipality? No, data será validado por zodResolver antes de llegar a onSubmit.
-                Si es undefined, Zod fallará.
-                Solución: Usar un Controller o, simplemente, pointer-events-none y bg-gray-100 en lugar de disabled real para el select.
-             */}
-            <style jsx>{`
-                .read-only-select {
-                    pointer-events: none;
-                    background-color: #f3f4f6;
-                }
-             `}</style>
 
             {errors.municipality && <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>}
           </div>
@@ -441,3 +399,26 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
     </form>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Formulario extenso para la solicitud de creación de cuentas de refugio, 
+ * capturando datos tanto del representante legal como de la entidad.
+ *
+ * Lógica Clave:
+ * - Pre-llenado: Utiliza el perfil del usuario autenticado para agilizar el 
+ *   proceso de solicitud.
+ * - Validación Cruzada: Asegura que el municipio del representante y el del 
+ *   albergue sean coherentes con los enums del sistema.
+ * - Manejo de Errores de API: Identifica conflictos como solicitudes pendientes 
+ *   duplicadas para informar correctamente al usuario.
+ *
+ * Dependencias Externas:
+ * - zod: Para la validación estricta de la estructura de la solicitud.
+ * - sonner: Para feedback granular sobre el estado del envío.
+ *
+ */

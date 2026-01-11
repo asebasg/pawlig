@@ -1,6 +1,13 @@
-'use client'
+'use client';
 
 import React from 'react';
+import Image from 'next/image';
+
+/**
+ * Descripción: Sección del carrito de compras para el usuario adoptante.
+ * Requiere: Estado local o global de items del carrito.
+ * Implementa: HU-004 (Visualización del Panel de Usuario).
+ */
 
 interface CartItem {
   id: string;
@@ -45,15 +52,17 @@ const CartSection: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                <img 
-                  src={item.imageUrl} 
-                  alt={item.name} 
-                  className="w-20 h-20 object-cover rounded-md bg-gray-100" 
+                <Image
+                  src={item.imageUrl}
+                  alt={item.name}
+                  width={80}
+                  height={80}
+                  className="object-cover rounded-md bg-gray-100"
                 />
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{item.name}</h3>
                   <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
-                  <button 
+                  <button
                     onClick={() => removeItem(item.id)}
                     className="text-xs text-red-500 mt-2 hover:underline"
                   >
@@ -95,3 +104,21 @@ const CartSection: React.FC = () => {
 };
 
 export default CartSection;
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente representa el carrito de compras dentro del perfil del usuario.
+ * Actualmente funciona como un boilerplate con datos locales.
+ *
+ * Lógica Clave:
+ * - removeItem: Gestiona la eliminación de productos del carrito en el estado local.
+ * - subtotal: Cálculo reactivo del precio total basado en los items presentes.
+ *
+ * Dependencias Externas:
+ * - Ninguna significativa (UI nativa de Tailwind).
+ *
+ */

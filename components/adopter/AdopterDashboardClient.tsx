@@ -6,6 +6,12 @@ import AdoptionsSection from './AdoptionsSection';
 import CartSection from './CartSection';
 import { HeartPlus, ClipboardClock, ShoppingCart } from 'lucide-react';
 
+/**
+ * Descripción: Dashboard principal para el usuario adoptante con sistema de pestañas para gestionar solicitudes, favoritos y carrito.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-004 (Visualización del Panel de Usuario).
+ */
+
 interface User {
   id: string;
   name?: string;
@@ -17,20 +23,6 @@ interface AdopterDashboardClientProps {
   userSession: User;
 }
 
-/**
- * Componente Cliente: Dashboard del Adoptante
- * 
- * Funcionalidad:
- * - Integra FavoritesSection y AdoptionsSection
- * - Sistema de navegación por tabs
- * - Sincronización de datos entre secciones
- * 
- * Requerimientos:
- * - HU-004: Visualización del Panel de Usuario
- * - Ver mascotas favoritas
- * - Ver estado de solicitudes de adopción
- * - Notificaciones destacadas de cambios
- */
 export default function AdopterDashboardClient({
   userSession,
 }: AdopterDashboardClientProps) {
@@ -96,13 +88,21 @@ export default function AdopterDashboardClient({
   );
 }
 
-/**
- * NOTAS TÉCNICAS:
- * 
- * - Componente cliente que maneja el estado de navegación
- * - Delega rendering de secciones a componentes especializados
- * - Ambas secciones cargan datos de forma independiente
- * - Sistema de tabs sin dependencias externas
- * - Diseño consistente con el resto del proyecto
- * - Animación suave al cambiar de tab
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente orquestador gestiona la navegación interna del perfil del adoptante,
+ * alternando entre diferentes secciones funcionales.
+ *
+ * Lógica Clave:
+ * - Sistema de Tabs: Uso de estado local 'activeTab' para renderizado condicional de componentes.
+ * - Sincronización: Las secciones actúan como componentes independientes que gestionan sus propios datos.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconografía para las pestañas de navegación.
+ * - Secciones: FavoritesSection, AdoptionsSection, CartSection.
+ *
  */

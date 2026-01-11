@@ -14,6 +14,13 @@ import { PetCard, PetCardData } from '@/components/cards/pet-card';
 import Badge from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
+/**
+ * GET /api/adopter/adoptions
+ * Descripción: Muestra el historial y estado de las solicitudes de adopción realizadas por el usuario.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-004 (Visualización del Panel de Usuario).
+ */
+
 interface Adoption {
   id: string;
   petId: string;
@@ -44,22 +51,6 @@ interface AdoptionStats {
 }
 
 
-/**
- * Componente: Sección de Solicitudes de Adopción
- * 
- * Características:
- * - Lista todas las solicitudes de adopción del usuario
- * - Filtrado por estado (PENDING, APPROVED, REJECTED)
- * - Notificación destacada para cambios recientes (< 24h)
- * - Información detallada del albergue y mascota
- * - Estados visuales y badges
- * - Contacto directo con albergues
- * 
- * Requerimientos:
- * - HU-004: Visualización del Panel de Usuario
- * - Ver estado de solicitudes de adopción activas
- * - Recibir notificación destacada de cambios de estado
- */
 // El componente obtiene los datos mediante la sesión del servidor, no requiere props externas
 export default function AdoptionsSection() {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
@@ -315,3 +306,26 @@ function StatCard({ label, value, icon: Icon, color }: StatCardProps) {
     </div>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Esta sección proporciona al adoptante una vista clara de sus procesos de adopción
+ * en curso y finalizados, con estadísticas rápidas y filtros de estado.
+ *
+ * Lógica Clave:
+ * - Fetching de Datos: Obtiene solicitudes específicas del usuario desde el endpoint del adoptante.
+ * - Integración con PetCard: Transforma los datos de la solicitud para que coincidan 
+ *   con la interfaz PetCardData, manteniendo la consistencia visual.
+ * - Feedback por Estado: Cambia los colores de acento y badges según el estado de la adopción.
+ * - Contacto Directo: Habilita botones de WhatsApp solo cuando la solicitud es aprobada.
+ *
+ * Dependencias Externas:
+ * - next/link: Para navegación entre el dashboard y las vistas de detalle.
+ * - lucide-react: Para iconografía de estados y estadísticas.
+ * - @/components/ui: Button, Badge, Loader.
+ *
+ */

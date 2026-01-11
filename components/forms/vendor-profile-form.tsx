@@ -9,8 +9,11 @@ import { Municipality } from '@prisma/client';
 import Image from 'next/image';
 
 /**
- * Componente de formulario para actualizar perfil de vendedor
- * Implementa HU-003: Actualización del perfil del vendedor
+ * GET /api/vendors/profile
+ * PUT /api/vendors/profile
+ * Descripción: Formulario para la gestión del perfil comercial del vendedor, incluyendo logo y descripción.
+ * Requiere: Sesión de usuario con rol VENDOR.
+ * Implementa: HU-003 (Actualización del perfil del vendedor).
  */
 
 interface VendorProfileResponse {
@@ -124,7 +127,7 @@ export default function VendorProfileForm() {
         <input
           {...register('businessName')}
           type="text"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessName ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessName ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="Ej: PawShop Premium"
         />
@@ -141,7 +144,7 @@ export default function VendorProfileForm() {
         <input
           {...register('businessPhone')}
           type="tel"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessPhone ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessPhone ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="Ej: 3001234567"
         />
@@ -155,11 +158,12 @@ export default function VendorProfileForm() {
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Descripción del Negocio
         </label>
-        <textarea
+        <input
           {...register('description')}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition h-32 resize-none ${errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          type="text"
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
-          placeholder="Describe tu negocio, productos especiales, misión, etc. (mínimo 20 caracteres)"
+          placeholder="Describe tu negocio, productos especiales, misión, etc."
         />
         {errors.description && (
           <p className="text-red-600 text-sm mt-1">{errors.description.message}</p>
@@ -174,7 +178,7 @@ export default function VendorProfileForm() {
         <input
           {...register('logo')}
           type="url"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.logo ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.logo ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="https://ejemplo.com/logo.png"
         />
@@ -185,11 +189,6 @@ export default function VendorProfileForm() {
           <div className="mt-3">
             <p className="text-sm text-gray-600 mb-2">Vista previa del logo:</p>
             <div className="relative h-16 w-16">
-              {/* Usamos unimg normal o NEXT Image. Si es URL externa dinamica, Next Image requiere configuración de dominio.
-                     Para seguridad, mejor usar img tag normal si no sabemos los dominios, o configurar next.config. 
-                     El código original usaba Image de next/image. Asumiré que está configurado o usaré <img /> para evitar problemas de dominios no configurados si el usuario pega cualquier link.
-                     Pero el original usaba Image. Seguiré con Image pero manejaré onError.
-                  */}
               <Image
                 src={logoUrl}
                 alt="Logo preview"
@@ -210,7 +209,7 @@ export default function VendorProfileForm() {
         </label>
         <select
           {...register('municipality')}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
         >
           <option value="">Selecciona un municipio</option>
@@ -233,7 +232,7 @@ export default function VendorProfileForm() {
         <input
           {...register('address')}
           type="text"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="Ej: Carrera 50 #10-20, Centro"
         />
@@ -267,3 +266,26 @@ export default function VendorProfileForm() {
     </form>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este formulario le otorga al vendedor el control sobre su presencia de marca en 
+ * la plataforma, permitiendo la personalización de su perfil comercial.
+ *
+ * Lógica Clave:
+ * - Vista Previa Reactiva: Utiliza el hook watch() para renderizar el logo en tiempo 
+ *   real mientras el usuario edita la URL, mejorando la confianza en el cambio.
+ * - Integración con la Tienda: Los cambios persisten en el perfil del Vendedor y se 
+ *   reflejan en todas sus publicaciones de productos.
+ * - Validación de URL: Zod asegura que el campo de logo sea una URL válida para 
+ *   prevenir errores de carga de imágenes en el catálogo.
+ *
+ * Dependencias Externas:
+ * - next/image: Para la renderización optimizada de la vista previa del logo.
+ * - react-hook-form: Motor de gestión de inputs para perfiles comerciales.
+ *
+ */

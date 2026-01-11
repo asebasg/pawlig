@@ -10,10 +10,9 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 /**
- * Resumen:
- * Componente de tarjeta de producto para el catálogo público.
- * Muestra imagen, información básica del producto, precio, stock y acciones.
- * Refactorizado para usar Card de shadcn y soportar personalización.
+ * Descripción: Tarjeta de producto para el catálogo público.
+ * Requiere: Objeto de producto con información de precio, stock y vendedor.
+ * Implementa: HU-004 (Galería de productos).
  */
 
 interface ProductCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -171,3 +170,28 @@ export function ProductCard({
         </Link>
     );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es la pieza fundamental para la visualización de productos en el
+ * catálogo público, proporcionando una vista previa atractiva y funcional que
+ * incentiva la conversión.
+ *
+ * Lógica Clave:
+ * - formatPrice: Formatea valores numéricos a moneda colombiana (COP) de forma legible.
+ * - getStockBadge: Determina visualmente la disponibilidad del producto mediante
+ *   insignias de "Agotado" o "Stock Bajo" según el inventario.
+ * - handleAddToCart: Gestiona la adición al carrito deteniendo la propagación para
+ *   evitar la navegación accidental al detalle del producto.
+ * - accentColor: Permite una personalización visual dinámica del borde y los iconos.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconografía para carrito, ubicación y tienda.
+ * - next/image: Optimización de imágenes de producto con placeholders.
+ * - next/link: Navegación integrada hacia la página de detalles.
+ *
+ */

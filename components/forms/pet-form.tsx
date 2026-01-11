@@ -12,10 +12,11 @@ import Loader from "@/components/ui/loader";
 import Image from "next/image";
 
 /**
- * Componente: PetForm
- * Descripción: Formulario completo para crear y editar mascotas. Permite la validación de datos en tiempo real, subida de imágenes a Cloudinary y gestión de estados de carga/error.
- * Requiere: shelterId (prop), configuración de Cloudinary en servidor.
- * Implementa: HU-005 (Publicación y gestión de mascota), RF-009 (Registro de animales), RN-007 (Mínimo una foto).
+ * POST /api/pets
+ * PUT /api/pets/[id]
+ * Descripción: Formulario para la creación y edición de perfiles de mascotas con soporte para múltiples imágenes.
+ * Requiere: Identificador del refugio (shelterId).
+ * Implementa: HU-005 (Publicación y gestión de mascota).
  */
 
 interface PetFormProps {
@@ -60,17 +61,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
     /**
      * FUNCIÓN: handleImageUpload
      * Upload de imágenes a Cloudinary
-     *
-     * FLUJO:
-     * 1. Leer archivo como base64
-     * 2. Enviar a /api/upload (endpoint dedicado)
-     * 3. Recibir URL de Cloudinary
-     * 4. Agregar a array de imágenes
-     *
-     * VALIDACIONES:
-     * - Máximo 5 imágenes (RN-007)
-     * - Formatos: JPEG, PNG
-     * - Tamaño máximo: 5MB
      */
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -145,10 +135,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
     /**
      * FUNCIÓN: onSubmit
      * Envío del formulario a API
-     *
-     * FLUJO:
-     * - CREATE: POST /api/pets
-     * - EDIT: PUT /api/pets/[id]
      */
     const onSubmit = async (data: CreatePetInput) => {
         const toastId = toast.loading(mode === "create" ? "Publicando mascota..." : "Guardando cambios...");
@@ -420,44 +406,19 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * PetForm es un componente de cliente ('use client') diseñado para la
- * creación y edición de perfiles de mascotas. Es un formulario complejo que
- * integra validación, subida de archivos y comunicación con la API,
- * proporcionando una experiencia de usuario interactiva y robusta.
+ * Este formulario integral permite la gestión de mascotas, incluyendo la carga
+ * asíncrona de imágenes y validaciones robustas mediante esquemas de Zod.
  *
  * Lógica Clave:
- * - Manejo de Estado del Formulario:
- *   - Se utiliza 'react-hook-form' para gestionar el estado de los campos del
- *     formulario, incluyendo sus valores, errores y estado de envío.
- *   - La integración con 'zodResolver' permite una validación de datos en
- *     tiempo real basada en el esquema 'createPetSchema', mejorando la UX al
- *     proporcionar feedback inmediato.
- *
- * - Subida de Imágenes a Cloudinary:
- *   - La función 'handleImageUpload' es asíncrona y maneja la subida de
- *     imágenes a un endpoint propio ('/api/upload'), que a su vez se
- *     comunica con Cloudinary.
- *   - Realiza validaciones en el cliente (tamaño, tipo de archivo, cantidad)
- *     para evitar cargas innecesarias y mejorar el rendimiento.
- *   - El estado 'uploadingImages' se utiliza para deshabilitar el botón de
- *     envío y mostrar un indicador de carga, previniendo envíos incompletos.
- *
- * - Manejo de Estado Local:
- *   - 'useState' se usa para gestionar el estado que no pertenece a 'react-hook-form',
- *     como el array de URLs de imágenes ('images'), los estados de carga
- *     ('uploadingImages'), y los mensajes de error/éxito del envío ('submitError',
- *     'submitSuccess').
- *
- * - Modo Dinámico (Crear/Editar):
- *   - El componente acepta una prop 'mode' que puede ser 'create' o 'edit'.
- *   - Esta prop determina la URL del endpoint y el método HTTP a utilizar
- *     ('POST' para crear, 'PUT' para editar), haciendo el formulario reutilizable.
- *   - 'initialData' se utiliza para pre-llenar el formulario en modo de edición.
+ * - handleImageUpload: Gestiona la subida de hasta 5 imágenes a Cloudinary mediante 
+ *   un endpoint de API intermedio, asegurando validaciones de tamaño y tipo.
+ * - Modo Dual: Soporta creación y edición mediante lógicas condicionadas por el 'mode'.
+ * - Integración con Zod: Asegura la integridad de los datos antes de persistirlos 
+ *   en la base de datos.
  *
  * Dependencias Externas:
- * - 'react-hook-form' y '@hookform/resolvers/zod': Son cruciales para la
- *   gestión del formulario y la validación basada en esquemas de Zod.
- * - 'lucide-react': Proporciona los íconos utilizados en la interfaz para
- *   mejorar la claridad visual.
+ * - cloudinary (via API): Para almacenamiento optimizado de imágenes.
+ * - react-hook-form: Gestión eficiente del estado y validación del formulario.
+ * - sonner: Retroalimentación inmediata al usuario sobre acciones críticas.
  *
  */

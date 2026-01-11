@@ -19,6 +19,15 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
+/**
+ * GET /api/pets/[id]
+ * POST /api/pets/[id]/favorite
+ * POST /api/user/adoptions
+ * Descripción: Componente de detalle para una mascota, con galería, información del refugio y solicitud de adopción.
+ * Requiere: Usuario autenticado (para favoritos y solicitudes).
+ * Implementa: Visualización detallada de mascotas y gestión de interés.
+ */
+
 interface Pet {
   id: string;
   name: string;
@@ -73,17 +82,6 @@ interface PetDetailClientProps {
   similarPets: SimilarPet[];
 }
 
-/**
- * Componente Cliente: Detalle de Mascota
- * 
- * Características:
- * - Galería de imágenes con navegación
- * - Información completa de mascota
- * - Sistema de favoritos
- * - Botón de solicitud de adopción
- * - Información del albergue
- * - Recomendaciones de mascotas similares
- */
 export default function PetDetailClient({
   pet,
   isFavorited: initialIsFavorited,
@@ -454,25 +452,24 @@ export default function PetDetailClient({
   );
 }
 
-/**
- * CARACTERÍSTICAS IMPLEMENTADAS:
- * 
- * ✅ Galería de imágenes con navegación
- * ✅ Indicador de posición de imagen
- * ✅ Miniaturas de galería
- * ✅ Sistema de favoritos
- * ✅ Botón de solicitud de adopción
- * ✅ Información completa de mascota
- * ✅ Información del albergue
- * ✅ Enlaces de contacto (WhatsApp, Instagram)
- * ✅ Requisitos de adopción
- * ✅ Mascotas similares
- * ✅ Diseño responsive
- * ✅ Animaciones y transiciones
- * ✅ Manejo de estados y errores
- * 
- * REQUERIMIENTOS CUMPLIDOS:
- * - HU-005: Galería pública detallada ✅
- * - RF-005: Sistema de favoritos ✅
- * - Solicitud de adopción ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente proporciona una vista detallada de una mascota específica, permitiendo
+ * a los usuarios ver su galería, conocer al refugio y postularse para adopción.
+ *
+ * Lógica Clave:
+ * - Galería: Manejo de estado local para el índice de la imagen actual y navegación circular.
+ * - handleFavoriteClick: Alterna el estado de favorito del usuario para esta mascota.
+ * - handleAdoptionRequest: Gestiona el envío de la solicitud inicial de adopción.
+ * - Similitud: Muestra componentes PetCard filtrados por criterios de similitud.
+ *
+ * Dependencias Externas:
+ * - next/image: Para carga optimizada y prioritaria de las imágenes de la mascota.
+ * - sonner: Para feedback interactivo durante las peticiones asíncronas.
+ * - lucide-react: Para iconografía de características y redes sociales.
+ *
  */

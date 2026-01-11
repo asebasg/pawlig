@@ -9,6 +9,12 @@ import Link from 'next/link';
 import { loginSchema, LoginInput } from "@/lib/validations/user.schema";
 import { PawPrint } from 'lucide-react';
 
+/**
+ * Descripción: Formulario de inicio de sesión con validación Zod e integración con NextAuth.
+ * Requiere: Configuración de proveedores en NextAuth y esquemas de validación.
+ * Implementa: Autenticación de usuarios.
+ */
+
 export default function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -33,8 +39,6 @@ export default function LoginForm() {
      * Manejo del envío del formulario
      */
     const onSubmit = async (data: LoginInput) => {
-        // const toastId = toast.loading("Iniciando sesión...");
-
         try {
             // Intentar autenticación con NextAuth
             const result = await signIn('credentials', {
@@ -49,8 +53,7 @@ export default function LoginForm() {
                 if (result.error.includes('Cuenta bloqueada')) {
                     errorMessage = result.error; // Mostrar mensaje específico de bloqueo
                 }
-                // toast.error(errorMessage, { id: toastId });
-                console.error(errorMessage);
+                toast.error(errorMessage);
                 return;
             }
 
@@ -64,7 +67,7 @@ export default function LoginForm() {
             }
         } catch (error) {
             console.error(error);
-            // toast.error("Error inesperado al iniciar sesión", { id: toastId });
+            toast.error("Error inesperado al iniciar sesión");
         }
     };
 
@@ -166,36 +169,26 @@ export default function LoginForm() {
                 </div>
             </div>
         </form>
-    )
+    );
 };
 
-/**
- * 📚 NOTAS TÉCNICAS:
- * 
- * 1. INTEGRACIÓN CON NEXTAUTH:
- *    - signIn('credentials') llama al CredentialsProvider configurado
- *    - NextAuth valida contra lib/auth/auth-options.ts
- *    - Si válido: Crea sesión JWT automáticamente
- *    - Si inválido: Retorna error en result.error
- * 
- * 2. MANEJO DE REDIRECCIONES:
- *    - callbackUrl: URL donde el usuario quería ir originalmente
- *    - Si no hay callbackUrl: redirige a /adopciones por defecto
- *    - router.refresh(): Actualiza la sesión en componentes de servidor
- * 
- * 3. ERRORES COMUNES DE NEXTAUTH:
- *    - 'CredentialsSignin': Credenciales incorrectas (genérico)
- *    - 'Usuario no encontrado': Email no existe
- *    - 'Contraseña incorrecta': Password inválido
- *    - Todos se muestran como "Email o contraseña incorrectos" (seguridad)
- * 
- * 4. SEGURIDAD:
- *    - No revelar si el email existe o no (previene enumeración)
- *    - autoComplete habilitado para gestores de contraseñas
- *    - Enlace visible a recuperación de contraseña
- * 
- * 5. ACCESIBILIDAD:
- *    - aria-required, aria-invalid, aria-describedby
- *    - role="alert" en mensajes de error
- *    - Estados de loading con spinner visible
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente maneja la autenticación de usuarios mediante el flujo de
+ * credenciales de NextAuth, asegurando una experiencia fluida y segura.
+ *
+ * Lógica Clave:
+ * - signIn('credentials'): Orquesta la validación contra el backend a través de NextAuth.
+ * - callbackUrl: Soporta la redirección inteligente tras el login exitoso.
+ * - Validación Zod: Asegura que los datos tengan el formato correcto antes de enviarlos.
+ *
+ * Dependencias Externas:
+ * - next-auth: Para la gestión de sesiones y autenticación.
+ * - react-hook-form: Para el manejo eficiente del estado del formulario.
+ * - sonner: Para notificaciones de éxito o error.
+ *
  */

@@ -1,10 +1,18 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Check, X, AlertCircle } from 'lucide-react';
+import { Check, X, AlertCircle, LucideIcon } from 'lucide-react';
 import Loader from '@/components/ui/loader';
 import Image from 'next/image';
 import { toast } from 'sonner';
+
+/**
+ * GET /api/shelters/adoptions
+ * PATCH /api/adoptions/[id]
+ * Descripción: Componente de cliente para gestionar las solicitudes de adopción recibidas por un refugio.
+ * Requiere: Usuario autenticado con rol de refugio (SHELTER).
+ * Implementa: Gestión de postulaciones de adopción.
+ */
 
 interface Adopter {
   id: string;
@@ -37,7 +45,7 @@ interface Adoption {
   pet: Pet;
 }
 
-export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClientProps) {
+export default function AdoptionApplicationsClient() {
   const [adoptions, setAdoptions] = useState<Adoption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -83,9 +91,9 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
         setTotalPages(data.pagination.totalPages);
         setTotalCount(data.pagination.totalCount);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error cargando postulaciones:', err);
-      const errorMessage = err.message || 'Error al cargar postulaciones';
+      const errorMessage = err instanceof Error ? err.message : 'Error al cargar postulaciones';
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -124,9 +132,10 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
         setShowApproveModal(false);
         setSelectedAdoptionForApprove(null);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error aprobando postulación:', err);
-      toast.error(err.message || 'Error al aprobar postulación', { id: toastId });
+      const errorMessage = err instanceof Error ? err.message : 'Error al aprobar postulación';
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setIsSubmitting(false);
     }
@@ -169,16 +178,17 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
         setSelectedAdoptionId(null);
         setRejectionReason('');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error rechazando postulación:', err);
-      toast.error(err.message || 'Error al rechazar postulación', { id: toastId });
+      const errorMessage = err instanceof Error ? err.message : 'Error al rechazar postulación';
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { label: string; bgColor: string; textColor: string; icon: any }> = {
+    const statusConfig: Record<string, { label: string; bgColor: string; textColor: string; icon: LucideIcon }> = {
       PENDING: {
         label: 'Pendiente',
         bgColor: 'bg-yellow-100',
@@ -467,21 +477,23 @@ export default function AdoptionApplicationsClient({ }: AdoptionApplicationsClie
   );
 }
 
-/**
- * 📚 NOTAS TÉCNICAS:
- * 
- * 1. FUNCIONALIDADES:
- *    - Tabla de postulaciones con información del adoptante y mascota
- *    - Filtro por estado (PENDING, APPROVED, REJECTED)
- *    - Paginación de 20 resultados por página
- *    - Estados visuales con colores e iconos
- * 
- * 2. MIGRACIÓN AXIOS -> FETCH:
- *    - Se eliminó axios para reducir el bundle size
- *    - Se usa la API fetch nativa dentro de useEffect
- * 
- * 3. UX MEJORAS:
- *    - Feedback visual con 'sonner' (toasts) para éxito/error
- *    - Loader durante la carga de datos
- *    - Mensajes de error amigables
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente permite a los refugios visualizar, filtrar, aprobar o rechazar
+ * las solicitudes de adopción para sus mascotas.
+ *
+ * Lógica Clave:
+ * - fetchAdoptions: Recupera las postulaciones desde la API con soporte para filtros y paginación.
+ * - handleApprove/handleReject: Realizan actualizaciones parciales (PATCH) del estado de la adopción.
+ * - getStatusBadge: Genera elementos visuales descriptivos para los diferentes estados de la postulación.
+ *
+ * Dependencias Externas:
+ * - sonner: Para notificaciones en tiempo real sobre el estado de las operaciones.
+ * - lucide-react: Para iconografía consistente.
+ * - next/image: Para optimización de imágenes de mascotas.
+ *
  */

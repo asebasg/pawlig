@@ -4,6 +4,13 @@ import { useState } from "react";
 import { UserX, UserCheck } from "lucide-react";
 import BlockUserModal from "@/app/(dashboard)/admin/users/BlockUserModal";
 
+/**
+ * POST /api/admin/users/[id]/block
+ * Descripción: Botón para alternar el estado de bloqueo de un usuario con modal de confirmación.
+ * Requiere: Usuario autenticado con privilegios de administrador.
+ * Implementa: Gestión de estado de cuenta de usuario.
+ */
+
 interface BlockUserButtonProps {
     user: {
         id: string;
@@ -63,3 +70,24 @@ export default function BlockUserButton({ user, onSuccess, showLabel = false, cl
         </>
     );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente proporciona un botón interactivo que permite bloquear o 
+ * desbloquear a un usuario, integrando un modal para capturar la razón de la acción.
+ *
+ * Lógica Clave:
+ * - Filtro Admin: El componente retorna null si el usuario a gestionar tiene rol 'ADMIN',
+ *   previniendo que administradores se auto-bloqueen o bloqueen a otros.
+ * - Integración de Modal: Gestiona el estado de apertura de 'BlockUserModal'.
+ * - Callback onSuccess: Permite notificar al componente padre para refrescar los datos.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Para iconos de estado de cuenta (UserX, UserCheck).
+ * - BlockUserModal: Componente para gestionar la lógica de negocio del bloqueo.
+ *
+ */

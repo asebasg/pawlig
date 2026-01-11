@@ -7,6 +7,14 @@ import Loader from '@/components/ui/loader';
 import { PetCard, PetCardData } from '@/components/cards/pet-card';
 import { Button } from '@/components/ui/button';
 
+/**
+ * GET /api/adopter/favorites
+ * POST /api/pets/[id]/favorite
+ * Descripción: Muestra y gestiona la lista de mascotas marcadas como favoritas por el adoptante.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-004 (Visualización del Panel de Usuario), RF-005 (Sistema de favoritos).
+ */
+
 interface Pet {
   id: string;
   name: string;
@@ -27,20 +35,6 @@ interface Pet {
   addedToFavoritesAt: string;
 }
 
-/**
- * Componente: Sección de Mascotas Favoritas
- * 
- * Características:
- * - Lista todas las mascotas marcadas como favoritas por el usuario
- * - Permite remover mascotas de favoritos
- * - Muestra información del albergue y contacto
- * - Estado de carga y errores
- * - Redirección a detalles de mascota
- * 
- * Requerimientos:
- * - HU-004: Visualización del Panel de Usuario
- * - Ver mascotas favoritas guardadas
- */
 export default function FavoritesSection() {
   const [favorites, setFavorites] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -217,3 +211,26 @@ export default function FavoritesSection() {
     </section>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Esta sección permite al usuario gestionar sus mascotas favoritas, permitiendo
+ * búsqueda rápida y eliminación de intereses directamente desde el dashboard.
+ *
+ * Lógica Clave:
+ * - Sincronización Local: Al remover un favorito, se actualiza el estado local 
+ *   inmediatamente para reflejar el cambio sin recargar la página.
+ * - Búsqueda de Texto: Filtra localmente el array de favoritos por nombre, especie, 
+ *   raza o nombre del albergue.
+ * - PetCard Reutilizable: Utiliza el componente estándar de tarjeta con un overlay 
+ *   específico para la acción de remover.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconos Heart, Search, HeartPlus.
+ * - @/components/ui: Loader, Button.
+ *
+ */

@@ -9,6 +9,13 @@ import { $Enums } from '@prisma/client';
 import Link from 'next/link';
 import { z } from 'zod';
 
+/**
+ * POST /api/user/request-vendor-account
+ * Descripción: Formulario para solicitar una cuenta de vendedor comercial.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-010 (Gestión de productos), RF-011 (Solicitud de cuenta de vendedor).
+ */
+
 type VendorApplicationInput = z.infer<typeof vendorApplicationSchema>;
 
 interface VendorRequestFormProps {
@@ -368,3 +375,26 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
         </form>
     );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Formulario orquestador para la postulación de usuarios al rol de Vendedor, 
+ * capturando la estructura básica del negocio para su posterior validación.
+ *
+ * Lógica Clave:
+ * - Onboarding Asistido: Facilita el llenado del formulario mediante la inyección 
+ *   de datos del perfil ya existente del adoptante.
+ * - Validación por Etapas: El backend recibe esta solicitud y la marca como 
+ *   'verified: false' hasta que un administrador revise los datos comerciales.
+ * - Restricciones de Redundancia: El frontend previene el envío múltiple de 
+ *   solicitudes mediante el manejo de estados de carga y errores 409 del servidor.
+ *
+ * Dependencias Externas:
+ * - next/navigation: Para redirigir al usuario tras el envío exitoso de la propuesta.
+ * - sonner: Framework de notificaciones para confirmación de recepción.
+ *
+ */

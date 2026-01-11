@@ -11,8 +11,10 @@ import Link from 'next/link';
 import { PawPrint } from 'lucide-react';
 
 /**
- * Componente de formulario de registro para nuevos adoptantes
- * Implementa HU-001 con validación en cliente y manejo de errores mejorado
+ * POST /api/auth/register
+ * Descripción: Formulario de registro para nuevos adoptantes con inicio de sesión automático tras el éxito.
+ * Requiere: Configuración de API de autenticación y esquemas de validación de usuario.
+ * Implementa: HU-001 (Registro de usuario).
  */
 
 //  Interfaz para respuestas de error estructuradas
@@ -50,8 +52,6 @@ export default function RegisterForm() {
    * Maneja el envío del formulario
    */
   const onSubmit = async (data: RegisterUserInput) => {
-    let toastId;
-
     try {
       // 1. Enviar petición al API
       const response = await fetch('/api/auth/register', {
@@ -65,28 +65,14 @@ export default function RegisterForm() {
       if (!response.ok) {
         // Manejo específico de email duplicado
         if (responseData.code === 'EMAIL_ALREADY_EXISTS') {
-          /**
-           * toast.error("Este correo ya está registrado", {
-           *   id: toastId,
-           *   action: {
-           *     label: "Recuperar",
-           *     onClick: () => router.push(responseData.recoveryUrl || '/forgot-password'),
-           *   },
-           *   duration: 8000, // Dar tiempo para ver la acción
-           * });
-           */
-          console.error(responseData);
+          toast.error("Este correo ya está registrado");
           return;
         }
-
         // Error general
         throw new Error(responseData.error || 'Error al registrar usuario');
       }
 
       // 2. Registro exitoso: iniciar sesión automáticamente
-      // Actualizamos el toast a loading de inicio de sesión
-      // toast.loading("Iniciando sesión automática...", { id: toastId });
-
       const signInResult = await signIn('credentials', {
         email: data.email,
         password: data.password,
@@ -94,7 +80,7 @@ export default function RegisterForm() {
       });
 
       if (signInResult?.error) {
-        // toast.error('Cuenta creada, pero error al iniciar sesión automática', { id: toastId });
+        toast.error('Cuenta creada, pero error al iniciar sesión automática');
         console.error(signInResult.error);
         return;
       }
@@ -106,12 +92,12 @@ export default function RegisterForm() {
 
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
+      toast.error(error instanceof Error ? error.message : "Error inesperado");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-md mx-auto">
       <div className="text-center mb-8">
         <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-4 mx-auto">
           <PawPrint className="w-12 h-12 text-orange-700" />
@@ -324,29 +310,26 @@ export default function RegisterForm() {
   );
 }
 
-/**
- * 📚 NOTAS DE IMPLEMENTACIÓN:
- * 
- * 1. MEJORAS DE UX:
- *    - Alert diferenciado por color (rojo = error, amarillo = advertencia)
- *    - Enlace directo a recuperación de contraseña
- *    - Limpieza automática de sugerencia al editar email
- * 
- * 2. ACCESIBILIDAD:
- *    - role="alert" en mensajes de error
- *    - aria-live="polite" en alerta principal
- *    - aria-invalid en campos con error
- *    - aria-describedby vincula errores con inputs
- * 
- * 3. ESTADOS MANEJADOS:
- *    - showRecoverySuggestion: Controla visibilidad de sugerencia
- *    - recoveryUrl: URL dinámica desde el backend
- *    - serverError: Mensaje principal de error
- * 
- * 4. FLUJO DE EMAIL DUPLICADO:
- *    1. Usuario ingresa email existente
- *    2. Backend responde con code: 'EMAIL_ALREADY_EXISTS'
- *    3. Frontend detecta el código
- *    4. Muestra alerta amarilla con enlace de recuperación
- *    5. Usuario puede hacer clic directamente o editar el email
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente orquesta el registro de nuevos usuarios adoptantes, 
+ * integrando validaciones de mayoría de edad y unicidad de correo.
+ *
+ * Lógica Clave:
+ * - Auto-Login: Tras un registro exitoso, se dispara inmediatamente signIn() para
+ *   mejorar la fluidez del onboarding del usuario.
+ * - Validación Cronológica: Restringe la fecha de nacimiento para asegurar que
+ *   el usuario sea mayor de 18 años según RN-001.
+ * - Sincronización con Prisma: Utiliza el enum 'Municipality' para garantizar
+ *   la integridad de la ubicación geográfica del usuario.
+ *
+ * Dependencias Externas:
+ * - next-auth: Para la sesión inmediata post-registro.
+ * - react-hook-form: Gestión de inputs y validación reactiva.
+ * - lucide-react: Iconografía de la marca PawLig.
+ *
  */

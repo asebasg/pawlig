@@ -9,7 +9,7 @@ import { PackageX, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 /**
- * Componente: ProductGalleryClient
+ * GET /api/products
  * Descripción: Gestiona la visualización, filtrado y paginación del catálogo de productos para mascotas.
  * Requiere: Acceso a /api/products para obtención de datos.
  * Implementa: HU-004 (Galería de productos), RF-012 (Filtrado de productos).

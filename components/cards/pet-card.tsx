@@ -8,10 +8,13 @@ import Badge from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
-// ==========================================
-// Tipos de Datos Normalizados
-// ==========================================
+/**
+ * Descripción: Tarjeta estandarizada para mostrar información resumida de una mascota.
+ * Requiere: Datos de mascota normalizados (PetCardData).
+ * Implementa: Componente UI reutilizable para galerías y listas.
+ */
 
+//  Tipos de Datos Normalizados
 export interface PetCardData {
   id: string;
   name: string;
@@ -27,9 +30,7 @@ export interface PetCardData {
   status?: string;
 }
 
-// ==========================================
-// Props del Componente
-// ==========================================
+//  Props del Componente
 
 export interface PetCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Datos de la mascota normalizados */
@@ -46,12 +47,6 @@ export interface PetCardProps extends React.HTMLAttributes<HTMLDivElement> {
   imageClassName?: string;
 }
 
-/**
- * Componente: PetCard
- * 
- * Tarjeta estandarizada para mostrar información de mascotas.
- * Utiliza los componentes base de shadcn/ui (Card) y soporta personalización flexible.
- */
 export function PetCard({
   pet,
   aspectRatio = 'square',
@@ -165,3 +160,27 @@ export function PetCard({
     </Link>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es una de las piezas centrales de la UI, diseñado para ser
+ * extremadamente flexible mediante el uso de slots (imageOverlay, footer).
+ *
+ * Lógica Clave:
+ * - Normalización: Utiliza la interfaz 'PetCardData' para asegurar que pueda 
+ *   renderizar datos de diferentes fuentes (API general, favoritos, etc).
+ * - Layout Flexible: El uso de 'mt-auto' en el contenido y pie de página asegura 
+ *   que las tarjetas mantengan un alineamiento consistente en grids.
+ * - Accesibilidad: El componente entero está envuelto en un 'Link' para facilitar 
+ *   la navegación, pero el overlay permite 'pointer-events-auto' para acciones hijas.
+ *
+ * Dependencias Externas:
+ * - next/image: Para visualización optimizada de las fotos de las mascotas.
+ * - lucide-react: Iconografía de MapPin, Info, Calendar.
+ * - @/components/ui/card: Componente base para estructura y bordes.
+ *
+ */

@@ -12,10 +12,11 @@ import Loader from '@/components/ui/loader';
 import Image from 'next/image';
 
 /**
- * Componente: ProductForm
- * Descripción: Formulario reutilizable para crear y editar productos con validación y manejo de imágenes.
- * Requiere: Usuario autenticado (preferiblemente VENDOR), Cloudinary configurado
- * Implementa: HU-010 (Gestión de productos), RF-012 (Publicación de productos)
+ * POST /api/products
+ * PUT /api/products/[id]
+ * Descripción: Formulario para la gestión de productos comerciales, con soporte para múltiples imágenes y categorías.
+ * Requiere: Sesión de usuario con rol VENDOR.
+ * Implementa: HU-010 (Gestión de productos comerciales).
  */
 
 interface ProductFormProps {
@@ -149,7 +150,7 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
             }
 
             toast.success(
-                `¡Producto ${mode === "create" ? "publicado" : "actualizado"} exitosamente!`,
+                `¡Producto ${mode === "create" ? "publicado" : "actualizada"} exitosamente!`,
                 { id: toastId }
             );
 
@@ -383,20 +384,17 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Formulario reutilizable para la creación y edición de productos, con soporte para
+ * Formulario reutilizable para la gestión de productos, con soporte para
  * subida de imágenes y validación en tiempo real.
  *
  * Lógica Clave:
- * - Reutiliza el patrón de diseño para mantener consistencia (react-hook-form + zod).
- * - Maneja estados asíncronos para la subida de imágenes antes del envío del formulario.
- * - Flujo de Datos:
- *   1. El usuario completa campos y sube imágenes.
- *   2. Las imágenes se suben a Cloudinary via /api/upload y se obtienen URLs.
- *   3. Se valida todo el schema con Zod.
- *   4. Se envía la data limpia a la API (/api/products o /api/products/[id]).
- * - Adapta la UI a los campos específicos de Producto (Precio, Stock, Categoría).
+ * - handleImageUpload: Orquesta la subida de assets a Cloudinary antes del registro final.
+ * - Validación Zod: Garantiza que el precio, stock y categoría sean válidos.
+ * - Comportamiento Dual: Funciona tanto para creación como para edición (POST/PUT).
  *
  * Dependencias Externas:
- * - Cloudinary (via API local) para gestión de assets.
- * - Zod para validación estricta.
+ * - react-hook-form: Motor de gestión de estados del formulario.
+ * - sonner: Framework de notificaciones para retroalimentación visual.
+ * - lucide-react: Set de iconos para la interfaz.
+ *
  */

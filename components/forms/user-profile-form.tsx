@@ -8,8 +8,11 @@ import { registerUserSchema } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
 
 /**
- * Componente de formulario para actualizar perfil de usuario adoptante
- * Implementa HU-003: Actualización del perfil del usuario
+ * GET /api/users/profile
+ * PUT /api/users/profile
+ * Descripción: Formulario para consultar y actualizar la información del perfil del usuario adoptante.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-003 (Actualización del perfil del usuario).
  */
 
 // Schema parcial para actualización (sin email ni password)
@@ -63,11 +66,6 @@ export default function UserProfileForm() {
   // Cargar datos actuales del usuario al montar
   useEffect(() => {
     const fetchUserProfile = async () => {
-      // Usamos toast id para evitar parpadeos si queremos, o simplemente un loading state global
-      // RHF tiene isLoading en formState?? No, solo isSubmitting. isLoading es nuevo en v7.48?
-      // En v7 standard es isLoading? No, es isLoading (async defaultValues).
-      // Pero aquí estamos fetching manual.
-      // Simplemente fetch y reset.
       try {
         const response = await fetch('/api/users/profile');
         if (!response.ok) throw new Error("Error al cargar perfil");
@@ -111,10 +109,6 @@ export default function UserProfileForm() {
         throw new Error(errorData.error || 'Error al actualizar perfil');
       }
 
-      // Actualizar datos del formulario con lo que volvió del servidor (opcional, o mantener lo enviado)
-      // const updatedData = await response.json();
-      // reset(updatedData.user); // Si la respuesta trae el usuario actualizado
-
       toast.success("¡Perfil actualizado exitosamente!", {
         id: toastId,
         description: "Los cambios se aplicarán inmediatamente."
@@ -127,9 +121,6 @@ export default function UserProfileForm() {
   };
 
   const municipalities = Object.values(Municipality);
-
-  // Si no hay datos cargados, podríamos mostrar un skeleton. 
-  // Por simplicidad, el form se renderiza vacío y se llena rápido.
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
@@ -149,7 +140,7 @@ export default function UserProfileForm() {
         <input
           {...register('name')}
           type="text"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="Ej: Juan Pérez García"
         />
@@ -166,7 +157,7 @@ export default function UserProfileForm() {
         <input
           {...register('phone')}
           type="tel"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="Ej: 3001234567"
         />
@@ -183,7 +174,7 @@ export default function UserProfileForm() {
         <input
           {...register('idNumber')}
           type="text"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.idNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.idNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="Ej: 1234567890"
         />
@@ -200,7 +191,7 @@ export default function UserProfileForm() {
         <input
           {...register('birthDate')}
           type="date"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.birthDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.birthDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
         />
         {errors.birthDate && (
@@ -215,7 +206,7 @@ export default function UserProfileForm() {
         </label>
         <select
           {...register('municipality')}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
         >
           <option value="">Selecciona un municipio</option>
@@ -238,7 +229,7 @@ export default function UserProfileForm() {
         <input
           {...register('address')}
           type="text"
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
             }`}
           placeholder="Ej: Carrera 50 #10-20, Apartamento 5"
         />
@@ -272,3 +263,26 @@ export default function UserProfileForm() {
     </form>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente permite al usuario gestionar su identidad digital dentro de la 
+ * plataforma, asegurando que los datos de contacto estén siempre vigentes.
+ *
+ * Lógica Clave:
+ * - Pick Schema: Reutiliza el esquema de registro mediante .pick() para asegurar 
+ *   que las reglas de validación sean consistentes en toda la app.
+ * - Sincronización Inicial: Utiliza useEffect para poblar el formulario con los 
+ *   datos actuales del usuario servidor tras el montaje.
+ * - Validación de Seguridad: Verifica el estado de bloqueo de la cuenta antes de 
+ *   permitir cualquier modificación persistente.
+ *
+ * Dependencias Externas:
+ * - react-hook-form: Para la gestión reactiva de los campos del perfil.
+ * - sonner: Para notificaciones de éxito persistentes tras la actualización.
+ *
+ */
