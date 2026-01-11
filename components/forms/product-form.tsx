@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-import { useForm } from "react-hook-form";
+import { useForm, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProductSchema, type CreateProductInput } from "@/lib/validations/product.schema";
 import { Upload, X } from "lucide-react";
@@ -151,7 +150,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
             }
 
             toast.success(
-                `¡Producto ${mode === "create" ? "publicado" : "actualizada"} exitosamente!`,
+                `¡Producto ${mode === "create" ? "publicado" : "actualizado"} exitosamente!`,
                 { id: toastId }
             );
 
@@ -166,8 +165,13 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
         }
     };
 
+    const onInvalid = (errors: FieldErrors<CreateProductInput>) => {
+        console.error("Validation Errors:", errors);
+        toast.error("Por favor, revisa los campos marcados en rojo.");
+    };
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
 
             {/* SECCIÓN 1: DATOS BÁSICOS */}
             <div className="space-y-4">

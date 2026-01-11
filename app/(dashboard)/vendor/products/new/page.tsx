@@ -76,7 +76,7 @@ export default async function NewProductPage() {
 
                 {/* Formulario */}
                 <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8">
-                    <ProductForm mode="create" />
+                    <ProductForm mode="create" vendorId={vendorId} />
                 </div>
             </div>
         </div>

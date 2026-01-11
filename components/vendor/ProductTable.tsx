@@ -62,20 +62,20 @@ export function ProductTable({
     const getStockBadge = (stock: number) => {
         if (stock === 0) {
             return (
-                <Badge variant="destructive" className="font-semibold">
+                <Badge variant="red" className="font-semibold">
                     Agotado
                 </Badge>
             );
         }
         if (stock <= 10) {
             return (
-                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                <Badge variant="yellow" className="font-semibold">
                     Stock Bajo ({stock})
                 </Badge>
             );
         }
         return (
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Badge variant="green" className="font-semibold">
                 {stock} unidades
             </Badge>
         );
@@ -103,7 +103,9 @@ export function ProductTable({
 
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.error || "Error al eliminar producto");
+                toast.error("Error", {
+                    description: error.error || "Error del servidor",
+                });
             }
 
             toast.success("Producto eliminado", {
@@ -138,7 +140,7 @@ export function ProductTable({
                     Comienza agregando tu primer producto a la tienda
                 </p>
                 <Button asChild>
-                    <Link href="/dashboard/vendor/products/new">Agregar Producto</Link>
+                    <Link href="/vendor/products/new">Agregar Producto</Link>
                 </Button>
             </div>
         );
@@ -178,7 +180,16 @@ export function ProductTable({
                                     </div>
                                 </TableCell>
 
-                                <TableCell className="font-medium">{product.name}</TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium text-sm md:text-base">
+                                            {product.name}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground line-clamp-1">
+                                            {product.description}
+                                        </span>
+                                    </div>
+                                </TableCell>
 
                                 <TableCell className="text-center">{formatPrice(product.price)}</TableCell>
 

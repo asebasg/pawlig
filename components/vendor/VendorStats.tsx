@@ -24,7 +24,7 @@ export function VendorStats({ stats }: VendorStatsProps) {
             icon: Package,
             color: "text-blue-600",
             bgColor: "bg-blue-100",
-            accentColor: "teal",
+            accentColor: "blue",
         },
         {
             title: "En Stock",
@@ -35,20 +35,20 @@ export function VendorStats({ stats }: VendorStatsProps) {
             accentColor: "green",
         },
         {
-            title: "Agotados",
-            value: stats.outOfStock,
-            icon: XCircle,
-            color: "text-red-600",
-            bgColor: "bg-red-100",
-            accentColor: "red",
-        },
-        {
             title: "Stock Bajo",
             value: stats.lowStock,
             icon: AlertTriangle,
             color: "text-yellow-600",
             bgColor: "bg-yellow-100",
             accentColor: "yellow",
+        },
+        {
+            title: "Agotados",
+            value: stats.outOfStock,
+            icon: XCircle,
+            color: "text-red-600",
+            bgColor: "bg-red-100",
+            accentColor: "red",
         },
     ] as const;
 

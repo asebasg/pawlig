@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Package, Plus, Minus, Loader2, X } from "lucide-react";
+import { Package, Plus, Minus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -120,33 +120,23 @@ export default function StockUpdateModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden [&>button]:hidden">
-                <DialogHeader className="flex flex-row items-center justify-between p-6 border-b border-gray-200">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-full bg-purple-100">
-                            <Package className="w-5 h-5 text-purple-600" />
-                        </div>
-                        <DialogTitle className="text-xl font-bold text-gray-900">
-                            Actualizar Stock
-                        </DialogTitle>
+            <DialogContent className="sm:max-w-md bg-white">
+                <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-gray-200">
+                    <div className="p-3 rounded-full bg-purple-100">
+                        <Package className="w-10 h-10 text-purple-600" />
                     </div>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        disabled={isLoading}
-                        className="text-gray-400 hover:text-gray-600"
-                    >
-                        <X className="w-6 h-6" />
-                    </Button>
+                    <DialogTitle className="text-xl font-bold text-gray-900">
+                        Actualizar Stock
+                    </DialogTitle>
+
                 </DialogHeader>
 
                 {/* Content */}
-                <div className="p-6 space-y-6">
+                <div className="pb-2">
                     <div className="bg-gray-50 rounded-lg p-4 text-center">
-                        <p className="text-sm text-gray-600 mb-1">Stock Actual</p>
+                        <p className="text-sm text-gray-600 mb-1 font-semibold">Stock actual del producto:</p>
                         <p className="text-2xl font-bold text-gray-900">
-                            {product.stock} <span className="text-sm font-normal text-gray-500">unidades</span>
+                            {product.stock} <span className="text-sm font-normal text-gray-500">{product.stock === 1 ? 'unidad' : 'unidades'}</span>
                         </p>
                         <p className="text-sm font-medium mt-1 text-purple-600">
                             {product.name}
@@ -250,7 +240,7 @@ export default function StockUpdateModal({
                     </div>
                 </div>
 
-                <DialogFooter className="flex gap-3 p-6 pt-0 sm:justify-between w-full">
+                <DialogFooter className="flex gap-3 pt-2 sm:justify-between w-full">
                     <Button
                         type="button"
                         variant="outline"

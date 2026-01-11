@@ -27,7 +27,7 @@ const Dialog = ({
 const DialogTrigger = ({ children, onClick, ...props }: React.HTMLAttributes<HTMLDivElement> & { onClick?: () => void }) => {
     const { onOpenChange } = React.useContext(DialogContext)
     return (
-        <div onClick={(e) => {
+        <div onClick={() => {
             onClick?.()
             onOpenChange?.(true)
         }} {...props}>
@@ -85,7 +85,7 @@ const DialogHeader = ({
     ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
     <div
-        className={`flex flex-col space-y-1.5 text-left ${className || ""}`}
+        className={`flex flex-col space-y-1 text-left ${className || ""}`}
         {...props}
     />
 )
