@@ -3,8 +3,8 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { ShoppingCart, MapPin, Store } from 'lucide-react';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Badge from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -37,7 +37,7 @@ interface ProductCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function ProductCard({
     product,
     onAddToCart,
-    accentColor = 'default',
+    accentColor = 'purple',
     className,
     ...props
 }: ProductCardProps) {
@@ -85,7 +85,7 @@ export function ProductCard({
         <Link href={`/productos/${product.id}`} className="block h-full">
             <Card
                 className={cn(
-                    "group h-full flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1",
+                    "group overflow-hidden transition-all duration-300 hover:shadow-2xl h-full flex flex-col",
                     isOutOfStock && "opacity-75",
                     className
                 )}
@@ -93,46 +93,56 @@ export function ProductCard({
                 {...props}
             >
                 {/* Header: Imagen */}
-                <CardHeader className="p-0 border-b border-gray-100 relative overflow-hidden bg-gray-100">
+                <div className="relative overflow-hidden w-full">
                     <div className="relative w-full aspect-square">
                         <Image
                             src={mainImage}
                             alt={product.name}
                             fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+                            className="object-cover transition-transform duration-500 pointer-events-none"
                             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
                         />
                         {getStockBadge()}
                     </div>
-                </CardHeader>
+                </div>
 
                 {/* Content: Info Producto */}
                 <CardContent className="p-4 flex-1 flex flex-col gap-2">
                     {/* Categoría */}
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">
-                        {product.category}
-                    </p>
-
                     {/* Nombre */}
-                    <h3 className="font-bold text-gray-900 leading-tight mb-1 line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+                    <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
                         {product.name}
                     </h3>
 
-                    {/* Precio */}
-                    <p className="text-lg font-bold text-primary mt-1">
-                        {formatPrice(product.price)}
-                    </p>
+                    {/* Precio y Categoría */}
+                    <div className="flex items-center justify-between gap-2 mt-auto">
+                        <p className="text-xl font-bold text-primary">
+                            {formatPrice(product.price)}
+                        </p>
+                        <Badge variant="secondary" className="font-normal bg-secondary/50 text-secondary-foreground text-[10px] px-2 py-0 uppercase">
+                            {product.category}
+                        </Badge>
+                    </div>
 
-                    {/* Vendedor */}
-                    <div className="mt-auto pt-2 space-y-1 text-xs text-muted-foreground border-t border-gray-50">
-                        <p className="flex items-center gap-1">
-                            <span className="font-medium">📍</span>
-                            <span className="truncate">{product.vendor.municipality}</span>
-                        </p>
-                        <p className="flex items-center gap-1">
-                            <span className="font-medium">🏪</span>
-                            <span className="truncate">{product.vendor.businessName}</span>
-                        </p>
+                    {/* Vendedor y Ubicación */}
+                    <div className="pt-3 space-y-1.5 text-sm text-gray-600 font-medium border-t border-gray-50 mt-2">
+                        <div className="flex items-center gap-1.5">
+                            <Store className={cn(
+                                "w-4 h-4",
+                                accentColor === 'purple' ? 'text-purple-600' :
+                                    accentColor === 'orange' ? 'text-orange-600' :
+                                        accentColor === 'teal' ? 'text-teal-600' :
+                                            accentColor === 'green' ? 'text-green-600' :
+                                                accentColor === 'red' ? 'text-red-600' :
+                                                    accentColor === 'blue' ? 'text-blue-600' :
+                                                        'text-primary'
+                            )} />
+                            <span className="line-clamp-1">{product.vendor.businessName}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-muted-foreground font-normal">
+                            <MapPin className="w-4 h-4" />
+                            <span className="line-clamp-1">{product.vendor.municipality}</span>
+                        </div>
                     </div>
                 </CardContent>
 

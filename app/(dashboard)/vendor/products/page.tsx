@@ -81,7 +81,7 @@ export default async function VendorProductsPage() {
                     <p className="text-muted-foreground">Gestiona tu inventario</p>
                 </div>
                 <Link
-                    href="/dashboard/vendor/products/new"
+                    href="/vendor/products/new"
                     className={cn(buttonVariants({ variant: "default" }))}
                 >
                     <Plus className="mr-2 h-4 w-4" /> Agregar Producto
