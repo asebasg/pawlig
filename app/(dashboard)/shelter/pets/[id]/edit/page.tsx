@@ -39,24 +39,35 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function EditPetPage({ params }: PageProps) {
-    //  1. Autenticación
+    // 1. Autenticación
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || session.user.role !== UserRole.SHELTER) {
-        redirect("/unauthorized");
+    // Verificar autenticación
+    if (!session?.user) {
+        redirect("/login?callbackUrl=/shelter/pets");
     }
 
-    //  2. Obtener albergue
+    // Verificar rol SHELTER
+    if (session.user.role !== UserRole.SHELTER) {
+        redirect("/unauthorized?reason=shelter_only");
+    }
+
+    // Obtener ID del albergue y verificar estado
+    const shelterId = session.user.shelterId as string;
+
+    // Obtener datos del albergue para verificar estado de verificación
     const shelter = await prisma.shelter.findUnique({
-        where: { userId: session.user.id },
+        where: { id: shelterId as string },
         select: { id: true, verified: true },
     });
 
-    if (!shelter || !shelter.verified) {
-        redirect("/shelter");
+    // Verificar que el SHELTER esté verificado
+    if (!shelter?.verified) {
+        // Tiene cuenta de albergue pero aún no ha sido aprobada por admin
+        redirect("/unauthorized?reason=shelter_not_verified");
     }
 
-    //  3. Obtener mascota
+    //  2. Obtener mascota
     const pet = await prisma.pet.findUnique({
         where: { id: params.id },
         select: {
@@ -74,32 +85,14 @@ export default async function EditPetPage({ params }: PageProps) {
         },
     });
 
-    //  4. Validaciones
+    //  3. Validaciones
     if (!pet) {
         notFound();
     }
 
-    //  Verificar propiedad
+    // Verificar propiedad
     if (pet.shelterId !== shelter.id) {
-        return (
-            <div className="min-h-screen bg-gray-50 p-4 sm:p-6 flex items-center justify-center">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 sm:p-6 text-center max-w-md w-full mx-4">
-                    <h2 className="text-xl font-semibold text-red-900 mb-2">
-                        Acceso Denegado
-                    </h2>
-                    <p className="text-red-800 mb-4">
-                        No tienes permiso para editar esta mascota.
-                    </p>
-                    <Link
-                        href="/shelter/pets"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                        Volver a Mis Mascotas
-                    </Link>
-                </div>
-            </div>
-        );
+        redirect("/unauthorized?reason=wrong_pet");
     }
     return (
         <div className="min-h-screen bg-gray-50 p-4 sm:p-6">

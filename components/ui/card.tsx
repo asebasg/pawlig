@@ -9,6 +9,7 @@ const cardVariants = cva(
         default: "border-t-4 border-t-gray-200",
         teal: "border-t-4 border-t-teal-500",
         orange: "border-t-4 border-t-orange-500",
+        yellow: "border-t-4 border-t-yellow-400",
         purple: "border-t-4 border-t-purple-600",
         red: "border-t-4 border-t-red-600",
         blue: "border-t-4 border-t-blue-600",

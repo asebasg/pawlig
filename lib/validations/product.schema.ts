@@ -38,45 +38,16 @@ export const createProductSchema = z.object({
     .array(z.string().url("Cada imagen debe ser una URL válida"))
     .min(1, "Debe subir al menos 1 imagen del producto")
     .max(5, "No puede subir más de 5 imágenes"),
+
+  vendorId: z
+    .string()
+    .regex(/^[0-9a-fA-F]{24}$/, "ID de vendedor inválido"),
 });
 
 // Esquema para actualización de productos (PUT /api/products/:id)
-export const updateProductSchema = z.object({
-  name: z
-    .string()
-    .min(3, "El nombre debe tener al menos 3 caracteres")
-    .max(100, "El nombre no puede exceder 100 caracteres")
-    .optional(),
-
-  price: z
-    .number()
-    .positive("El precio debe ser mayor a 0")
-    .max(999999999, "El precio es demasiado alto")
-    .optional(),
-
-  stock: z
-    .number()
-    .int("El stock debe ser un número entero")
-    .min(0, "El stock no puede ser negativo")
-    .optional(),
-
-  category: z
-    .string()
-    .min(1, "Debe seleccionar una categoría")
-    .optional(),
-
-  description: z
-    .string()
-    .min(20, "La descripción debe tener al menos 20 caracteres")
-    .max(1000, "La descripción no puede exceder 1000 caracteres")
-    .optional(),
-
-  images: z
-    .array(z.string().url("Cada imagen debe ser una URL válida"))
-    .min(1, "Debe tener al menos 1 imagen del producto")
-    .max(5, "No puede tener más de 5 imágenes")
-    .optional(),
-});
+export const updateProductSchema = createProductSchema
+  .omit({ vendorId: true })
+  .partial();
 
 // Esquema para actualización específica de stock (PUT /api/products/:id/stock)
 export const updateStockSchema = z.object({

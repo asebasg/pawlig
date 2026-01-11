@@ -45,6 +45,12 @@ export default function UnauthorizedPage() {
             description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
             suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
         },
+        // Mascota equivocada (no pertenece al albergue)
+        wrong_pet: {
+            title: "Mascota no autorizada",
+            description: "No tienes permisos para acceder o gestionar esta mascota.",
+            suggestion: "Asegúrate de que la mascota pertenece a tu albergue y que has iniciado sesión con la cuenta correcta."
+        },
         // Mensaje para pagina de vendedores
         vendor_only: {
             title: "Acceso solo para vendedores",
@@ -56,6 +62,12 @@ export default function UnauthorizedPage() {
             title: "Acceso solo para vendedores verificados",
             description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
             suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
+        },
+        // Producto equivocado (no pertenece al vendedor)
+        wrong_product: {
+            title: "Producto no autorizado",
+            description: "No tienes permisos para acceder o gestionar este producto.",
+            suggestion: "Asegúrate de que el producto pertenece a tu catálogo y que has iniciado sesión con la cuenta correcta."
         },
         // Acceso general denegado
         unknown: {

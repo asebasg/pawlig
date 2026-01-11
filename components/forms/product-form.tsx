@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createProductSchema, type CreateProductInput } from "@/lib/validations/product.schema";
 import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
-import Loader from '@/components/ui/loader';
 import Image from 'next/image';
 
 /**
@@ -22,9 +21,10 @@ import Image from 'next/image';
 interface ProductFormProps {
     mode?: "create" | "edit";
     initialData?: Partial<CreateProductInput> & { id?: string };
+    vendorId: string;
 }
 
-export default function ProductForm({ mode = "create", initialData }: ProductFormProps) {
+export default function ProductForm({ mode = "create", initialData, vendorId }: ProductFormProps) {
     const router = useRouter();
 
 
@@ -48,6 +48,7 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
             category: initialData?.category || "",
             description: initialData?.description || "",
             images: initialData?.images || [],
+            vendorId,
         },
     });
 
@@ -320,7 +321,6 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
                         >
                             {uploadingImages ? (
                                 <>
-                                    <Loader />
                                     <span className="text-sm font-medium text-purple-600">Subiendo imágenes...</span>
                                 </>
                             ) : (
@@ -366,7 +366,6 @@ export default function ProductForm({ mode = "create", initialData }: ProductFor
                 >
                     {isSubmitting ? (
                         <>
-                            <Loader />
                             <span>{mode === "create" ? "Publicando..." : "Guardando..."}</span>
                         </>
                     ) : (

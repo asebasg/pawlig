@@ -66,98 +66,98 @@ export function PetCard({
   };
 
   return (
-    <Link href={`/adopciones/${pet.id}`} className="block h-full">
-      <Card
-        className={cn(
-          "group overflow-hidden transition-all duration-300 hover:shadow-2xl h-full flex flex-col",
-          className
-        )}
-        accentColor={accentColor}
-        {...props}
-      >
-        {/* Contenedor de Imagen y Overlays (Flush to edges) */}
-        <div className="relative overflow-hidden w-full">
-          <div className={cn("relative w-full", aspectRatioClasses[aspectRatio], imageClassName)}>
-            {pet.images && pet.images.length > 0 ? (
-              <Image
-                src={pet.images[0]}
-                alt={pet.name}
-                fill
-                className="object-cover transition-transform duration-500 pointer-events-none"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm bg-gray-200">
-                Sin foto disponible
-              </div>
-            )}
+    <Card
+      className={cn(
+        "group relative overflow-hidden transition-all duration-300 hover:shadow-2xl h-full flex flex-col",
+        className
+      )}
+      accentColor={accentColor}
+      {...props}
+    >
+      {/* Enlace absoluto para cubrir toda la tarjeta (manteniendo botones accesibles) */}
+      <Link href={`/adopciones/${pet.id}`} className="absolute inset-0 z-0" aria-label={`Ver detalles de ${pet.name}`} />
 
-            {/* Slot para contenido sobre la imagen (badges, favoritos) */}
-            {imageOverlay && (
-              <div className="absolute inset-0 z-10 p-3 pointer-events-none">
-                <div className="w-full h-full relative pointer-events-auto">
-                  {imageOverlay}
-                </div>
+      {/* Contenedor de Imagen y Overlays (Flush to edges) */}
+      <div className="relative overflow-hidden w-full z-10 pointer-events-none">
+        <div className={cn("relative w-full", aspectRatioClasses[aspectRatio], imageClassName)}>
+          {pet.images && pet.images.length > 0 ? (
+            <Image
+              src={pet.images[0]}
+              alt={pet.name}
+              fill
+              className="object-cover transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm bg-gray-200">
+              Sin foto disponible
+            </div>
+          )}
+
+          {/* Slot para contenido sobre la imagen (badges, favoritos) */}
+          {imageOverlay && (
+            <div className="absolute inset-0 z-20 p-3 pointer-events-auto">
+              <div className="w-full h-full relative">
+                {imageOverlay}
               </div>
-            )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Content: Información de la mascota */}
+      <CardContent className="p-4 flex-1 flex flex-col gap-3 z-10 pointer-events-none">
+        {/* Título y Especie */}
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-1 group-hover:text-primary transition-colors">
+            {pet.name}
+          </h3>
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Info className="w-4 h-4" />
+            <span className="line-clamp-1">
+              {pet.species} {pet.breed && `• ${pet.breed}`}
+            </span>
           </div>
         </div>
 
-        {/* Content: Información de la mascota */}
-        <CardContent className="p-4 flex-1 flex flex-col gap-3">
-          {/* Título y Especie */}
-          <div>
-            <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-1 group-hover:text-primary transition-colors">
-              {pet.name}
-            </h3>
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Info className="w-4 h-4" />
-              <span className="line-clamp-1">
-                {pet.species} {pet.breed && `• ${pet.breed}`}
-              </span>
-            </div>
-          </div>
+        {/* Detalles: Edad y Sexo */}
+        <div className="flex flex-wrap gap-2">
+          {pet.age !== null && pet.age !== undefined && (
+            <Badge variant="secondary" className="font-normal bg-secondary/50 text-secondary-foreground hover:bg-secondary/60">
+              <Calendar className="w-3 h-3 mr-1" />
+              {pet.age} año{pet.age !== 1 ? 's' : ''}
+            </Badge>
+          )}
+          {pet.sex && (
+            <Badge variant="outline" className="font-normal border-gray-200 text-gray-600">
+              {pet.sex}
+            </Badge>
+          )}
+        </div>
 
-          {/* Detalles: Edad y Sexo */}
-          <div className="flex flex-wrap gap-2">
-            {pet.age !== null && pet.age !== undefined && (
-              <Badge variant="secondary" className="font-normal bg-secondary/50 text-secondary-foreground hover:bg-secondary/60">
-                <Calendar className="w-3 h-3 mr-1" />
-                {pet.age} año{pet.age !== 1 ? 's' : ''}
-              </Badge>
-            )}
-            {pet.sex && (
-              <Badge variant="outline" className="font-normal border-gray-200 text-gray-600">
-                {pet.sex}
-              </Badge>
-            )}
-          </div>
+        {/* Ubicación (Bottom aligned within content) */}
+        <div className="mt-auto pt-2 flex items-center gap-1.5 text-sm text-gray-600 font-medium border-t border-gray-50">
+          <MapPin className={cn(
+            "w-4 h-4",
+            accentColor === 'purple' ? 'text-purple-600' :
+              accentColor === 'orange' ? 'text-orange-600' :
+                accentColor === 'teal' ? 'text-teal-600' :
+                  accentColor === 'green' ? 'text-green-600' :
+                    accentColor === 'red' ? 'text-red-600' :
+                      accentColor === 'blue' ? 'text-blue-600' :
+                        'text-primary'
+          )} />
+          <span className="line-clamp-1">{pet.shelter.name}, {pet.shelter.municipality}</span>
+        </div>
+      </CardContent>
 
-          {/* Ubicación (Bottom aligned within content) */}
-          <div className="mt-auto pt-2 flex items-center gap-1.5 text-sm text-gray-600 font-medium border-t border-gray-50">
-            <MapPin className={cn(
-              "w-4 h-4",
-              // Ajustar color del icono según el acento si se desea, por ahora estático o dinámico
-              accentColor === 'purple' ? 'text-purple-600' :
-                accentColor === 'orange' ? 'text-orange-600' :
-                  accentColor === 'teal' ? 'text-teal-600' :
-                    accentColor === 'green' ? 'text-green-600' :
-                      accentColor === 'red' ? 'text-red-600' :
-                        accentColor === 'blue' ? 'text-blue-600' :
-                          'text-primary'
-            )} />
-            <span className="line-clamp-1">{pet.shelter.name}, {pet.shelter.municipality}</span>
-          </div>
-        </CardContent>
-
-        {/* Footer: Acciones */}
-        {footer && (
-          <CardFooter className="p-4 pt-0 mt-auto">
-            {footer}
-          </CardFooter>
-        )}
-      </Card>
-    </Link>
+      {/* Footer: Acciones */}
+      {footer && (
+        <CardFooter className="p-4 pt-0 mt-auto z-20">
+          {footer}
+        </CardFooter>
+      )}
+    </Card>
   );
 }
 
@@ -175,8 +175,12 @@ export function PetCard({
  *   renderizar datos de diferentes fuentes (API general, favoritos, etc).
  * - Layout Flexible: El uso de 'mt-auto' en el contenido y pie de página asegura 
  *   que las tarjetas mantengan un alineamiento consistente en grids.
- * - Accesibilidad: El componente entero está envuelto en un 'Link' para facilitar 
- *   la navegación, pero el overlay permite 'pointer-events-auto' para acciones hijas.
+ * - Accesibilidad: Se utiliza un enlace absoluto transparente que cubre el Card 
+ *   para mantener el área de clic sin anidar elementos interactivos (botones/links), 
+ *   evitando así errores de hidratación en Next.js.
+ * - Pointer events: Se usa 'pointer-events-none' en las capas de texto para que 
+ *   los clics pasen al Link absoluto, mientras que los slots para botones usan 
+ *   'pointer-events-auto' para seguir siendo interactivos.
  *
  * Dependencias Externas:
  * - next/image: Para visualización optimizada de las fotos de las mascotas.

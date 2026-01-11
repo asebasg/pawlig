@@ -150,19 +150,19 @@ export function ProductTable({
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[80px]">Imagen</TableHead>
+                            <TableHead className="w-[120px]">Imagen</TableHead>
                             <TableHead>Nombre</TableHead>
-                            <TableHead>Precio</TableHead>
-                            <TableHead>Stock</TableHead>
-                            <TableHead>Categoría</TableHead>
-                            <TableHead className="text-right">Acciones</TableHead>
+                            <TableHead className="text-center">Precio</TableHead>
+                            <TableHead className="text-center">Stock</TableHead>
+                            <TableHead className="text-center">Categoría</TableHead>
+                            <TableHead className="text-center">Acciones</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {products.map((product) => (
                             <TableRow key={product.id}>
                                 <TableCell>
-                                    <div className="relative h-16 w-16 rounded-md overflow-hidden bg-muted">
+                                    <div className="relative h-16 w-16 rounded-md overflow-hidden bg-muted mx-auto">
                                         {product.images.length > 0 ? (
                                             <Image
                                                 src={product.images[0]}
@@ -180,19 +180,22 @@ export function ProductTable({
 
                                 <TableCell className="font-medium">{product.name}</TableCell>
 
-                                <TableCell>{formatPrice(product.price)}</TableCell>
+                                <TableCell className="text-center">{formatPrice(product.price)}</TableCell>
 
-                                <TableCell>{getStockBadge(product.stock)}</TableCell>
+                                <TableCell className="text-center">{getStockBadge(product.stock)}</TableCell>
 
-                                <TableCell>
-                                    <Badge variant="outline">{product.category}</Badge>
+                                <TableCell className="text-center">
+                                    <Badge variant="outline">
+                                        {product.category.charAt(0).toUpperCase() +
+                                            product.category.slice(1).toLowerCase()}
+                                    </Badge>
                                 </TableCell>
 
-                                <TableCell className="text-right">
-                                    <div className="flex items-center justify-end gap-2">
+                                <TableCell className="text-center">
+                                    <div className="flex items-center justify-center gap-2">
                                         <Button variant="ghost" size="icon" asChild>
                                             <Link
-                                                href={`/dashboard/vendor/products/${product.id}/edit`}
+                                                href={`/vendor/products/${product.id}/edit`}
                                             >
                                                 <Edit className="h-4 w-4" />
                                                 <span className="sr-only">Editar producto</span>
@@ -209,7 +212,7 @@ export function ProductTable({
                                         </Button>
 
                                         <Button
-                                            variant="ghost"
+                                            variant="destructive"
                                             size="icon"
                                             onClick={() => handleOpenDeleteDialog(product)}
                                         >
@@ -256,7 +259,7 @@ export function ProductTable({
                             <span className="font-semibold">{selectedProduct?.name}</span>?
                             Esta acción no se puede deshacer.
                             {selectedProduct && selectedProduct.stock > 0 && (
-                                <span className="block mt-2 text-yellow-600">
+                                <span className="block mt-2 text-yellow-600 font-semibold">
                                     ⚠️ Este producto aún tiene {selectedProduct.stock} unidades en
                                     stock.
                                 </span>

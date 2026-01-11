@@ -1,4 +1,3 @@
-// Importaciones
 import { Package, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -8,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * del vendedor mediante tarjetas visuales con métricas clave.
  */
 
-// Interface props
 interface VendorStatsProps {
     stats: {
         total: number;
@@ -18,7 +16,6 @@ interface VendorStatsProps {
     };
 }
 
-// Estructura JSX
 export function VendorStats({ stats }: VendorStatsProps) {
     const statCards = [
         {
@@ -27,6 +24,7 @@ export function VendorStats({ stats }: VendorStatsProps) {
             icon: Package,
             color: "text-blue-600",
             bgColor: "bg-blue-100",
+            accentColor: "teal",
         },
         {
             title: "En Stock",
@@ -34,6 +32,7 @@ export function VendorStats({ stats }: VendorStatsProps) {
             icon: CheckCircle,
             color: "text-green-600",
             bgColor: "bg-green-100",
+            accentColor: "green",
         },
         {
             title: "Agotados",
@@ -41,6 +40,7 @@ export function VendorStats({ stats }: VendorStatsProps) {
             icon: XCircle,
             color: "text-red-600",
             bgColor: "bg-red-100",
+            accentColor: "red",
         },
         {
             title: "Stock Bajo",
@@ -48,23 +48,24 @@ export function VendorStats({ stats }: VendorStatsProps) {
             icon: AlertTriangle,
             color: "text-yellow-600",
             bgColor: "bg-yellow-100",
+            accentColor: "yellow",
         },
-    ];
+    ] as const;
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {statCards.map((stat) => (
-                <Card key={stat.title}>
+                <Card key={stat.title} accentColor={stat.accentColor}>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <div className={`p-2 mb-2 rounded-full ${stat.bgColor}`}>
+                            <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                        </div>
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             {stat.title}
                         </CardTitle>
-                        <div className={`p-2 rounded-full ${stat.bgColor}`}>
-                            <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{stat.value}</div>
+                        <div className="text-2xl font-bold text-center">{stat.value}</div>
                     </CardContent>
                 </Card>
             ))}

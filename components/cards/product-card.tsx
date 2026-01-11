@@ -81,93 +81,99 @@ export function ProductCard({
     const isOutOfStock = product.stock === 0;
 
     return (
-        <Link href={`/productos/${product.id}`} className="block h-full">
-            <Card
-                className={cn(
-                    "group overflow-hidden transition-all duration-300 hover:shadow-2xl h-full flex flex-col",
-                    isOutOfStock && "opacity-75",
-                    className
-                )}
-                accentColor={accentColor}
-                {...props}
-            >
-                {/* Header: Imagen */}
-                <div className="relative overflow-hidden w-full">
-                    <div className="relative w-full aspect-square">
-                        <Image
-                            src={mainImage}
-                            alt={product.name}
-                            fill
-                            className="object-cover transition-transform duration-500 pointer-events-none"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
-                        />
-                        {getStockBadge()}
-                    </div>
+        <Card
+            className={cn(
+                "group relative overflow-hidden transition-all duration-300 hover:shadow-2xl h-full flex flex-col",
+                isOutOfStock && "opacity-75",
+                className
+            )}
+            accentColor={accentColor}
+            {...props}
+        >
+            {/* Enlace absoluto para cubrir toda la tarjeta (manteniendo botones accesibles) */}
+            <Link
+                href={`/productos/${product.id}`}
+                className="absolute inset-0 z-0"
+                aria-label={`Ver detalles de ${product.name}`}
+            />
+
+            {/* Header: Imagen */}
+            <div className="relative overflow-hidden w-full z-10 pointer-events-none">
+                <div className="relative w-full aspect-square">
+                    <Image
+                        src={mainImage}
+                        alt={product.name}
+                        fill
+                        className="object-cover transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
+                    />
+                    {getStockBadge()}
+                </div>
+            </div>
+
+            {/* Content: Info Producto */}
+            <CardContent className="p-4 flex-1 flex flex-col gap-2 z-10 pointer-events-none">
+                {/* Categoría */}
+                {/* Nombre */}
+                <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
+                    {product.name}
+                </h3>
+
+                {/* Precio y Categoría */}
+                <div className="flex items-center justify-between gap-2 mt-auto">
+                    <p className="text-xl font-bold text-primary">
+                        {formatPrice(product.price)}
+                    </p>
+                    <Badge variant="secondary" className="font-normal bg-secondary/50 text-secondary-foreground text-[10px] px-2 py-0 uppercase">
+                        {product.category}
+                    </Badge>
                 </div>
 
-                {/* Content: Info Producto */}
-                <CardContent className="p-4 flex-1 flex flex-col gap-2">
-                    {/* Categoría */}
-                    {/* Nombre */}
-                    <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
-                        {product.name}
-                    </h3>
-
-                    {/* Precio y Categoría */}
-                    <div className="flex items-center justify-between gap-2 mt-auto">
-                        <p className="text-xl font-bold text-primary">
-                            {formatPrice(product.price)}
-                        </p>
-                        <Badge variant="secondary" className="font-normal bg-secondary/50 text-secondary-foreground text-[10px] px-2 py-0 uppercase">
-                            {product.category}
-                        </Badge>
+                {/* Vendedor y Ubicación */}
+                <div className="pt-3 space-y-1.5 text-sm text-gray-600 font-medium border-t border-gray-50 mt-2">
+                    <div className="flex items-center gap-1.5">
+                        <Store className={cn(
+                            "w-4 h-4",
+                            accentColor === 'purple' ? 'text-purple-600' :
+                                accentColor === 'orange' ? 'text-orange-600' :
+                                    accentColor === 'teal' ? 'text-teal-600' :
+                                        accentColor === 'green' ? 'text-green-600' :
+                                            accentColor === 'red' ? 'text-red-600' :
+                                                accentColor === 'blue' ? 'text-blue-600' :
+                                                    'text-primary'
+                        )} />
+                        <span className="line-clamp-1">{product.vendor.businessName}</span>
                     </div>
-
-                    {/* Vendedor y Ubicación */}
-                    <div className="pt-3 space-y-1.5 text-sm text-gray-600 font-medium border-t border-gray-50 mt-2">
-                        <div className="flex items-center gap-1.5">
-                            <Store className={cn(
-                                "w-4 h-4",
-                                accentColor === 'purple' ? 'text-purple-600' :
-                                    accentColor === 'orange' ? 'text-orange-600' :
-                                        accentColor === 'teal' ? 'text-teal-600' :
-                                            accentColor === 'green' ? 'text-green-600' :
-                                                accentColor === 'red' ? 'text-red-600' :
-                                                    accentColor === 'blue' ? 'text-blue-600' :
-                                                        'text-primary'
-                            )} />
-                            <span className="line-clamp-1">{product.vendor.businessName}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-muted-foreground font-normal">
-                            <MapPin className="w-4 h-4" />
-                            <span className="line-clamp-1">{product.vendor.municipality}</span>
-                        </div>
+                    <div className="flex items-center gap-1.5 text-muted-foreground font-normal">
+                        <MapPin className="w-4 h-4" />
+                        <span className="line-clamp-1">{product.vendor.municipality}</span>
                     </div>
-                </CardContent>
+                </div>
+            </CardContent>
 
-                {/* Footer: Acciones */}
-                <CardFooter className="p-4 pt-0 mt-auto flex gap-2">
-                    <Button
-                        variant="outline"
-                        className="flex-1"
-                        size="sm"
-                    >
-                        Ver Detalles
-                    </Button>
+            {/* Footer: Acciones */}
+            <CardFooter className="p-4 pt-0 mt-auto flex gap-2 z-20">
+                <Button
+                    variant="outline"
+                    className="flex-1"
+                    size="sm"
+                    asChild
+                >
+                    <Link href={`/productos/${product.id}`}>Ver Detalles</Link>
+                </Button>
 
-                    <Button
-                        variant="default"
-                        size="icon"
-                        className="h-9 w-9 shrink-0"
-                        onClick={handleAddToCart}
-                        disabled={isOutOfStock}
-                        title={isOutOfStock ? "Producto agotado" : "Agregar al carrito"}
-                    >
-                        <ShoppingCart className="h-4 w-4" />
-                    </Button>
-                </CardFooter>
-            </Card>
-        </Link>
+                <Button
+                    variant="default"
+                    size="icon"
+                    className="h-9 w-9 shrink-0 relative"
+                    onClick={handleAddToCart}
+                    disabled={isOutOfStock}
+                    title={isOutOfStock ? "Producto agotado" : "Agregar al carrito"}
+                >
+                    <ShoppingCart className="h-4 w-4" />
+                </Button>
+            </CardFooter>
+        </Card>
     );
 }
 
