@@ -5,9 +5,8 @@ import { ProductFilter } from "@/components/filters/product-filter";
 import { ProductCard } from "@/components/cards/product-card";
 import Loader from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, PackageX, AlertCircle } from "lucide-react";
+import { PackageX, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 /**
  * Componente: ProductGalleryClient
@@ -160,19 +159,27 @@ export default function ProductGalleryClient() {
             </aside>
 
             {/* Galería de productos */}
-            <main className="flex-1">
-                <div id="products-gallery" className="scroll-mt-4">
-                    {/* Estado de carga */}
-                    {isLoading && (
-                        <div className="flex flex-col items-center justify-center py-20">
-                            <Loader className="mb-4" />
-                            <p className="text-purple-600 text-sm">Cargando productos</p>
-                        </div>
-                    )}
+            <main className="flex-1 min-w-0">
+                {/* Contador de resultados */}
+                {!isLoading && (
+                    <div className="mb-4 text-sm text-gray-600">
+                        <span className="font-semibold">{total === 0 ? (
+                            'No se encontraron productos'
+                        ) : (
+                            `${total} producto${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}`
+                        )}</span>
+                    </div>
+                )}
 
-                    {/* Estado de error */}
-                    {!isLoading && error && (
-                        <div className="bg-white rounded-lg border p-12 text-center">
+                {/* Grid de productos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {isLoading ? (
+                        <div className="col-span-full flex flex-col items-center justify-center py-12">
+                            <Loader />
+                            <p className="text-gray-500">Cargando productos</p>
+                        </div>
+                    ) : error ? (
+                        <div className="col-span-full bg-white rounded-lg border p-12 text-center">
                             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <AlertCircle className="w-8 h-8 text-red-500" />
                             </div>
@@ -182,16 +189,13 @@ export default function ProductGalleryClient() {
                             <p className="text-gray-600 mb-6">{error}</p>
                             <Button
                                 onClick={() => fetchProducts(appliedFilters, currentPage)}
-                                className="bg-purple-600 hover:bg-purple-700"
+                                className="bg-purple-600 hover:bg-purple-700 mx-auto"
                             >
                                 Reintentar
                             </Button>
                         </div>
-                    )}
-
-                    {/* Estado vacío */}
-                    {!isLoading && !error && products.length === 0 && (
-                        <div className="bg-white rounded-lg border-purple-100 p-12 text-center">
+                    ) : products.length === 0 ? (
+                        <div className="col-span-full bg-white rounded-lg border border-purple-100 p-12 text-center">
                             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <PackageX className="w-8 h-8 text-purple-500" />
                             </div>
@@ -204,124 +208,47 @@ export default function ProductGalleryClient() {
                             <Button
                                 onClick={handleResetFilters}
                                 variant="outline"
-                                className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                                className="border-purple-300 text-purple-700 hover:bg-purple-50 mx-auto"
                             >
                                 Limpiar filtros
                             </Button>
                         </div>
-                    )}
-
-                    {/* Grid de productos */}
-                    {!isLoading && !error && products.length > 0 && (
-                        <>
-                            {/* Información de resultados */}
-                            <div className="mb-6 text-sm text-purple-600">
-                                Mostrando{" "}
-                                <span className="font-semibold">
-                                    {(currentPage - 1) * ITEMS_PER_PAGE + 1}
-                                </span>
-                                {" - "}
-                                <span className="font-semibold">
-                                    {Math.min(currentPage * ITEMS_PER_PAGE, total)}
-                                </span>
-                                {" de "}
-                                <span className="font-semibold">{total}</span>
-                                {total === 1 ? " producto" : " productos"}
-                            </div>
-
-                            {/* Grid responsive */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                                {products.map((product) => (
-                                    <ProductCard
-                                        key={product.id}
-                                        accentColor='none'
-                                        product={product}
-                                        onAddToCart={handleAddToCart}
-                                    />
-                                ))}
-                            </div>
-
-                            {/* Paginación */}
-                            {totalPages > 1 && (
-                                <div className="flex items-center justify-center gap-2 mt-8">
-                                    {/* Botón Previous */}
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                        className={cn(
-                                            "gap-1",
-                                            currentPage === 1 && "opacity-50 cursor-not-allowed"
-                                        )}
-                                    >
-                                        <ChevronLeft className="h-4 w-4" />
-                                        Anterior
-                                    </Button>
-
-                                    {/* Números de página */}
-                                    <div className="flex items-center gap-1">
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                                            // Mostrar solo páginas relevantes (primera, última, actual y vecinas)
-                                            const showPage =
-                                                page === 1 ||
-                                                page === totalPages ||
-                                                Math.abs(page - currentPage) <= 1;
-
-                                            const showEllipsis =
-                                                (page === 2 && currentPage > 3) ||
-                                                (page === totalPages - 1 && currentPage < totalPages - 2);
-
-                                            if (showEllipsis) {
-                                                return (
-                                                    <span
-                                                        key={page}
-                                                        className="px-2 py-1 text-gray-400 text-sm"
-                                                    >
-                                                        ...
-                                                    </span>
-                                                );
-                                            }
-
-                                            if (!showPage) return null;
-
-                                            return (
-                                                <Button
-                                                    key={page}
-                                                    variant={page === currentPage ? "default" : "outline"}
-                                                    size="sm"
-                                                    onClick={() => handlePageChange(page)}
-                                                    className={cn(
-                                                        "min-w-[2.5rem]",
-                                                        page === currentPage &&
-                                                        "bg-purple-600 hover:bg-purple-700 text-white"
-                                                    )}
-                                                >
-                                                    {page}
-                                                </Button>
-                                            );
-                                        })}
-                                    </div>
-
-                                    {/* Botón Next */}
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
-                                        className={cn(
-                                            "gap-1",
-                                            currentPage === totalPages && "opacity-50 cursor-not-allowed"
-                                        )}
-                                    >
-                                        Siguiente
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            )}
-                        </>
+                    ) : (
+                        products.map((product) => (
+                            <ProductCard
+                                key={product.id}
+                                accentColor='none'
+                                product={product}
+                                onAddToCart={handleAddToCart}
+                            />
+                        ))
                     )}
                 </div>
+
+                {/* Paginación */}
+                {totalPages > 1 && !isLoading && (
+                    <div className="flex items-center justify-center gap-2 mt-8">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+                        >
+                            Anterior
+                        </button>
+
+                        <span className="text-gray-600">
+                            Página {currentPage} de {totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                )}
             </main>
         </div>
     );
