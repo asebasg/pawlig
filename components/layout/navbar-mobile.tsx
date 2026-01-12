@@ -8,6 +8,16 @@ import { signOut } from "next-auth/react";
 import { Logo } from "@/components/ui/logo";
 import { PUBLIC_LINKS, NAVIGATION_BY_ROLE } from "@/lib/constants";
 
+/**
+ * Descripción: Componente que implementa la navegación móvil completa,
+ *              incluyendo el botón de menú (hamburguesa), el menú lateral
+ *              desplegable (drawer) y la lógica de estado asociada.
+ * Requiere: Opcionalmente, el objeto 'user' para mostrar la navegación
+ *           autenticada o la pública.
+ * Implementa: Requisito de layout para una experiencia de usuario responsiva
+ *             en dispositivos móviles.
+ */
+
 interface NavbarMobileProps {
   user?: {
     name?: string | null;
@@ -21,29 +31,32 @@ const roleLabels = {
   ADMIN: "Administrador",
   SHELTER: "Albergue",
   VENDOR: "Vendedor",
-  ADOPTER: "Adoptante"
+  ADOPTER: "Adoptante",
 };
 
 export function NavbarMobile({ user }: NavbarMobileProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  // Cierra el menú automáticamente al cambiar de ruta.
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
+  // Bloquea el scroll del body cuando el menú está abierto.
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
+    // Función de limpieza para restaurar el scroll.
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
-  const navigation = user 
+  const navigation = user
     ? NAVIGATION_BY_ROLE[user.role as keyof typeof NAVIGATION_BY_ROLE] || []
     : PUBLIC_LINKS;
 
@@ -89,13 +102,19 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
                   {user.image ? (
-                    <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
+                    <img
+                      src={user.image}
+                      alt={user.name || ""}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <User size={24} className="text-purple-600" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 truncate">{user.name}</p>
+                  <p className="font-semibold text-gray-900 truncate">
+                    {user.name}
+                  </p>
                   <p className="text-sm text-gray-500 truncate">{user.email}</p>
                 </div>
               </div>
@@ -159,3 +178,37 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
     </>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente maneja toda la lógica de la navegación en dispositivos móviles.
+ * Es un componente con estado ('stateful') que controla la visibilidad del menú
+ * lateral (drawer) y adapta su contenido según el estado de autenticación del usuario.
+ *
+ * Lógica Clave:
+ * - 'Gestión de Estado (useState)': El estado 'isOpen' es un booleano que determina
+ *   si el menú lateral está visible. Es controlado por los botones de abrir y cerrar.
+ * - 'Efectos Secundarios (useEffect)':
+ *   1. Se utiliza un 'useEffect' para observar cambios en 'pathname'. Si la ruta
+ *      cambia (el usuario navega a otra página), el menú se cierra automáticamente.
+ *   2. Otro 'useEffect' observa el estado 'isOpen'. Cuando el menú se abre, se
+ *      añade 'overflow: hidden' al 'body' para prevenir el scroll de la página
+ *      principal. La función de limpieza del efecto se encarga de remover este
+ *      estilo cuando el componente se desmonta o el menú se cierra.
+ * - 'Navegación Dinámica': Al igual que 'NavbarAuth', determina qué enlaces mostrar
+ *   ('PUBLIC_LINKS' o 'NAVIGATION_BY_ROLE') basándose en la presencia del objeto 'user'.
+ * - 'Renderizado Condicional': El pie del menú lateral muestra botones de
+ *   'Iniciar Sesión'/'Registrarse' o un perfil de usuario y botón de 'Cerrar Sesión'
+ *   dependiendo de si el usuario está autenticado.
+ *
+ * Dependencias Externas:
+ * - 'next/auth/react': Para la función 'signOut'.
+ * - 'react': Para 'useState' y 'useEffect'.
+ * - 'next/link', 'next/navigation': Para la navegación y detección de ruta activa.
+ * - 'lucide-react', '@/components/ui/logo', '@/lib/constants'.
+ *
+ */

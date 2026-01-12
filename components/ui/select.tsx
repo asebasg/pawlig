@@ -3,6 +3,15 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
+/**
+ * Descripción: Componente de UI para menús desplegables que estandariza la
+ *              apariencia, el comportamiento y la accesibilidad de los selects.
+ * Requiere: Un 'id' y una 'label' para accesibilidad, y los elementos '<option>'
+ *           como 'children'.
+ * Implementa: Requisito de UI para todos los formularios de la aplicación que
+ *             requieran selección de opciones de una lista predefinida.
+ */
+
 const selectVariants = cva(
   "block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-purple-600 sm:text-sm",
   {
@@ -28,7 +37,10 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, variant, label, id, children, ...props }, ref) => {
     return (
       <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-gray-700"
+        >
           {label}
         </label>
         <div className="mt-1">
@@ -54,28 +66,24 @@ export { Select };
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * **Descripción General:**
- * Este archivo define un componente `Select` reutilizable y accesible para
- * toda la aplicación. Abstrae un elemento `<select>` de HTML nativo y lo
- * estiliza con Tailwind CSS, además de integrar la accesibilidad.
+ * Descripción General:
+ * Este componente encapsula un elemento '<select>' de HTML y su '<label>'
+ * correspondiente para crear un campo de selección desplegable estandarizado,
+ * accesible y reutilizable en toda la aplicación.
  *
- * **Lógica Clave:**
- * - Reenvío de Ref (forwardRef): `React.forwardRef` se utiliza para permitir
- *   que los componentes padres obtengan una referencia (`ref`) al elemento
- *   `<select>` subyacente. Esto es esencial para integrarse con librerías
- *   de formularios como React Hook Form.
- * - Accesibilidad: El componente asocia una `<label>` con el `<select>` a
- *   través del atributo `htmlFor`, lo cual es crucial para los lectores de
- *   pantalla y mejora la experiencia de usuario.
- * - Variantes de Estilo: Se utiliza `class-variance-authority` (cva) para
- *   manejar variantes de estilo (ej: `default`, `error`). Esto permite
- *   cambiar la apariencia del select fácilmente (ej: mostrar un borde rojo
- *   en caso de error de validación) sin tener que escribir lógica de clases
- *   condicionales en el componente.
+ * Lógica Clave:
+ * - 'Accesibilidad': La asociación explícita de 'label' con 'select' a través del
+ *   prop 'htmlFor' (usando el 'id') es fundamental para la correcta interpretación
+ *   por parte de los lectores de pantalla.
+ * - 'React.forwardRef': Se utiliza para permitir que librerías de gestión de
+ *   formularios (como React Hook Form) puedan registrar y controlar este
+ *   componente de forma nativa.
+ * - 'cva (class-variance-authority)': Gestiona las variantes visuales del
+ *   componente, especialmente el estado de 'error', que proporciona
+ *   retroalimentación visual inmediata al usuario.
  *
- * **Dependencias Externas:**
- * - React: Para la creación del componente.
- * - class-variance-authority: Para la gestión de variantes de estilo de
- *   manera programática y limpia.
+ * Dependencias Externas:
+ * - 'react': Utilizado para la creación del componente y el 'forwardRef'.
+ * - 'class-variance-authority': Herramienta para la gestión de variantes de CSS.
  *
  */

@@ -3,6 +3,14 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
+/**
+ * Descripción: Componente de UI que proporciona un botón reutilizable con
+ *              múltiples variantes de estilo y tamaño.
+ * Requiere: Props estándar de un botón HTML y las variantes opcionales 'variant' y 'size'.
+ * Implementa: Requisito fundamental del sistema de diseño para interacciones
+ *             de usuario consistentes en toda la aplicación.
+ */
+
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-600 disabled:opacity-50 disabled:pointer-events-none",
   {
@@ -50,29 +58,27 @@ export { Button, buttonVariants };
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * **Descripción General:**
- * Este archivo define un componente `Button` reutilizable y altamente
- * personalizable para toda la aplicación. Proporciona una base consistente
- * para todos los botones, asegurando un estilo uniforme y un comportamiento
- * predecible.
+ * Descripción General:
+ * Este archivo define un componente 'Button' altamente reutilizable y personalizable,
+ * sirviendo como la base para todas las interacciones de botones en la aplicación
+ * para garantizar consistencia visual y de comportamiento.
  *
- * **Lógica Clave:**
- * - class-variance-authority (cva): Es la biblioteca central utilizada aquí
- *   para definir diferentes variantes de estilo (`variant`) y tamaño (`size`).
- *   Esto permite crear múltiples tipos de botones (primario, destructivo,
- *   contorno) con diferentes tamaños sin duplicar clases de CSS. El código
-- *   es más limpio y fácil de mantener.
- * - Reenvío de Ref (forwardRef): `React.forwardRef` permite a los
- *   componentes padres acceder al elemento `<button>` subyacente. Esto
- *   es útil para casos de uso avanzados, como la gestión del foco.
- * - Accesibilidad: El estilo `focus` visible (`ring-2`) es una parte
- *   esencial de la accesibilidad, ya que proporciona una indicación clara
- *   para los usuarios que navegan con el teclado. Los estados `disabled`
- *   también se manejan visualmente para indicar que un botón no está
- *   activo.
+ * Lógica Clave:
+ * - 'cva (class-variance-authority)': Se utiliza esta biblioteca para definir de
+ *   manera programática las variantes de estilo ('variant') y tamaño ('size').
+ *   Permite una API declarativa para combinar clases de Tailwind CSS, lo que
+ *   simplifica la creación y el mantenimiento de múltiples estilos de botones.
+ * - 'React.forwardRef': El componente utiliza 'forwardRef' para permitir que los
+ *   componentes padres obtengan una referencia al elemento 'button' subyacente del DOM.
+ *   Esto es esencial para casos de uso avanzados como la gestión del foco o la
+ *   integración con otras bibliotecas.
+ * - 'Accesibilidad': Los estilos se enfocan en la accesibilidad, con indicadores
+ *   claros de foco ('focus:ring-2') y estados deshabilitados visualmente
+ *   distintivos ('disabled:opacity-50').
  *
- * **Dependencias Externas:**
- * - React: Para la creación del componente.
- * - class-variance-authority: Para la gestión de variantes de estilo.
+ * Dependencias Externas:
+ * - 'react': Utilizado para la creación de componentes y el 'forwardRef'.
+ * - 'class-variance-authority': Herramienta clave para la gestión de variantes
+ *   de clases CSS.
  *
  */

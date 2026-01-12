@@ -1,6 +1,14 @@
-'use client';
+"use client";
 
-import { Municipality } from '@prisma/client';
+import { Municipality } from "@prisma/client";
+
+/**
+ * Descripción: Componente de UI para filtrar mascotas en el catálogo público por
+ *              especie, municipio, edad y sexo.
+ * Requiere: Un objeto 'filters' con el estado actual y funciones 'callback' para
+ *           manejar los cambios y la limpieza de los filtros.
+ * Implementa: HU-005 (Búsqueda y filtrado de mascotas).
+ */
 
 interface PetFiltersProps {
   filters: {
@@ -14,16 +22,16 @@ interface PetFiltersProps {
 }
 
 const MUNICIPALITIES = [
-  { value: 'MEDELLIN', label: 'Medellín' },
-  { value: 'BELLO', label: 'Bello' },
-  { value: 'ITAGUI', label: 'Itagüí' },
-  { value: 'ENVIGADO', label: 'Envigado' },
-  { value: 'SABANETA', label: 'Sabaneta' },
-  { value: 'LA_ESTRELLA', label: 'La Estrella' },
-  { value: 'CALDAS', label: 'Caldas' },
-  { value: 'COPACABANA', label: 'Copacabana' },
-  { value: 'GIRARDOTA', label: 'Girardota' },
-  { value: 'BARBOSA', label: 'Barbosa' },
+  { value: "MEDELLIN", label: "Medellín" },
+  { value: "BELLO", label: "Bello" },
+  { value: "ITAGUI", label: "Itagüí" },
+  { value: "ENVIGADO", label: "Envigado" },
+  { value: "SABANETA", label: "Sabaneta" },
+  { value: "LA_ESTRELLA", label: "La Estrella" },
+  { value: "CALDAS", label: "Caldas" },
+  { value: "COPACABANA", label: "Copacabana" },
+  { value: "GIRARDOTA", label: "Girardota" },
+  { value: "BARBOSA", label: "Barbosa" },
 ];
 
 export default function PetFilters({
@@ -51,7 +59,7 @@ export default function PetFilters({
           </label>
           <select
             value={filters.species}
-            onChange={(e) => onFilterChange('species', e.target.value)}
+            onChange={(e) => onFilterChange("species", e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Todas</option>
@@ -68,7 +76,7 @@ export default function PetFilters({
           </label>
           <select
             value={filters.municipality}
-            onChange={(e) => onFilterChange('municipality', e.target.value)}
+            onChange={(e) => onFilterChange("municipality", e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Todos</option>
@@ -87,7 +95,7 @@ export default function PetFilters({
           </label>
           <select
             value={filters.age}
-            onChange={(e) => onFilterChange('age', e.target.value)}
+            onChange={(e) => onFilterChange("age", e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Cualquier edad</option>
@@ -105,7 +113,7 @@ export default function PetFilters({
           </label>
           <select
             value={filters.sex}
-            onChange={(e) => onFilterChange('sex', e.target.value)}
+            onChange={(e) => onFilterChange("sex", e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="">Cualquiera</option>
@@ -117,3 +125,31 @@ export default function PetFilters({
     </div>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente presenta una interfaz de usuario cohesiva que permite a los
+ * usuarios refinar la búsqueda de mascotas en la galería principal. Funciona como
+ * un componente controlado, delegando la gestión del estado de los filtros a su
+ * componente padre.
+ *
+ * Lógica Clave:
+ * - 'onFilterChange': Cada vez que un usuario selecciona una opción, esta función
+ *   'callback' se invoca con la clave del filtro ('species', 'municipality', etc.)
+ *   y el nuevo valor, permitiendo al componente padre actualizar el estado.
+ * - 'onClearFilters': Proporciona una manera sencilla para que el usuario
+ *   restablezca todos los filtros a sus valores por defecto a través de un
+ *   único 'callback'.
+ * - 'MUNICIPALITIES': Se utiliza una constante local para poblar las opciones de
+ *   municipios, manteniendo la lista desacoplada de la base de datos para
+ *   mejorar el rendimiento del renderizado en el cliente.
+ *
+ * Dependencias Externas:
+ * - '@prisma/client': Se utiliza para el tipado de 'Municipality', asegurando
+ *   consistencia con el esquema de la base de datos.
+ *
+ */

@@ -5,6 +5,14 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/ui/logo";
 import { PUBLIC_LINKS } from "@/lib/constants";
 
+/**
+ * Descripción: Componente de UI que renderiza la barra de navegación para
+ *              usuarios no autenticados (visitantes).
+ * Requiere: Acceso a la constante 'PUBLIC_LINKS' para los enlaces de navegación.
+ * Implementa: Requisito de layout para la navegación principal en las páginas
+ *             públicas de la aplicación.
+ */
+
 export function NavbarPublic() {
   const pathname = usePathname();
 
@@ -48,3 +56,28 @@ export function NavbarPublic() {
     </>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente define la barra de navegación para la vista pública del sitio,
+ * es decir, para usuarios que no han iniciado sesión. Muestra los enlaces de
+ * navegación principales y los botones de 'Iniciar Sesión' y 'Registrarse'.
+ *
+ * Lógica Clave:
+ * - 'Enlaces Públicos': Los enlaces de navegación se obtienen de la constante
+ *   'PUBLIC_LINKS'. Se utiliza 'slice(0, 4)' para mostrar solo un subconjunto
+ *   de estos enlaces en la barra principal, manteniendo la interfaz limpia.
+ * - 'Indicador de Enlace Activo': Al igual que en 'NavbarAuth', se utiliza el
+ *   hook 'usePathname' para determinar la ruta actual y aplicar un estilo
+ *   visual al enlace activo, mejorando la usabilidad.
+ *
+ * Dependencias Externas:
+ * - 'next/link', 'next/navigation': Para la navegación y la detección de la
+ *   ruta activa.
+ * - '@/lib/constants': Para obtener la lista de enlaces de navegación públicos.
+ *
+ */
