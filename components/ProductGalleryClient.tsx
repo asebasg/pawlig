@@ -179,7 +179,7 @@ export default function ProductGalleryClient() {
                             <p className="text-gray-500">Cargando productos</p>
                         </div>
                     ) : error ? (
-                        <div className="col-span-full bg-white rounded-lg border p-12 text-center">
+                        <div className="col-span-full p-12 text-center">
                             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <AlertCircle className="w-8 h-8 text-red-500" />
                             </div>
@@ -195,7 +195,7 @@ export default function ProductGalleryClient() {
                             </Button>
                         </div>
                     ) : products.length === 0 ? (
-                        <div className="col-span-full bg-white rounded-lg border border-purple-100 p-12 text-center">
+                        <div className="col-span-full p-12 text-center">
                             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <PackageX className="w-8 h-8 text-purple-500" />
                             </div>

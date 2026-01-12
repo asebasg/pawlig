@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import PaymentModal from './products/PaymentModal';
 
 /**
  * GET /api/products/[id]
@@ -81,6 +82,8 @@ export default function ProductDetailClient({
     similarProducts,
 }: ProductDetailClientProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
     const images = product.images || [];
     const hasMultipleImages = images.length > 1;
@@ -98,6 +101,19 @@ export default function ProductDetailClient({
     const handleAddToCart = () => {
         // Implementación futura del carrito
         toast.success(`"${product.name}" agregado al carrito`);
+    };
+
+    const handleOpenPaymentModal = () => setIsPaymentModalOpen(true);
+    const handleClosePaymentModal = () => setIsPaymentModalOpen(false);
+
+    const handleConfirmPayment = () => {
+        setIsProcessingPayment(true);
+        const toastId = toast.loading("Procesando pago simulado...");
+        setTimeout(() => {
+            setIsProcessingPayment(false);
+            setIsPaymentModalOpen(false);
+            toast.success("¡Gracias por tu compra simulada!", { id: toastId });
+        }, 2000);
     };
 
     const formatPrice = (amount: number) => {
@@ -290,6 +306,14 @@ export default function ProductDetailClient({
                                         WhatsApp
                                     </a>
                                 )}
+                                <Button
+                                    onClick={handleOpenPaymentModal}
+                                    variant="outline"
+                                    className="w-full"
+                                >
+                                    <ShoppingCart className="w-4 h-4 mr-2" />
+                                    Comprar
+                                </Button>
                             </div>
                         </div>
 
@@ -310,6 +334,13 @@ export default function ProductDetailClient({
                     </CardContent>
                 </Card>
             </div>
+
+            <PaymentModal
+                isOpen={isPaymentModalOpen}
+                onClose={handleClosePaymentModal}
+                onConfirm={handleConfirmPayment}
+                isLoading={isProcessingPayment}
+            />
 
             {/* Productos Similares */}
             {similarProducts.length > 0 && (
