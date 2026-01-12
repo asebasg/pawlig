@@ -108,11 +108,11 @@ export default function ProductDetailClient({
 
     const handleConfirmPayment = () => {
         setIsProcessingPayment(true);
-        toast.loading("Procesando pago simulado...");
+        const toastId = toast.loading("Procesando pago simulado...");
         setTimeout(() => {
             setIsProcessingPayment(false);
             setIsPaymentModalOpen(false);
-            toast.success("¡Gracias por tu compra simulada!");
+            toast.success("¡Gracias por tu compra simulada!", { id: toastId });
         }, 2000);
     };
 
