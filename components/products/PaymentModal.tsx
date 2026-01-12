@@ -2,6 +2,13 @@
 
 import { CreditCard, ShieldAlert, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 
 /**
  * PaymentModal
@@ -22,34 +29,35 @@ export default function PaymentModal({
   onConfirm,
   isLoading,
 }: PaymentModalProps) {
-  if (!isOpen) {
-    return null;
-  }
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose();
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-        {/* Encabezado */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div className="p-3 rounded-full bg-sky-100">
-                <CreditCard className="w-10 h-10 text-sky-600" />
-            </div>
-            <h2 className="text-xl font-bold text-gray-900">Finalizar Compra</h2>
-        </div>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md bg-white">
+        <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-gray-200">
+          <div className="p-3 rounded-full bg-sky-100">
+            <CreditCard className="w-10 h-10 text-sky-600" />
+          </div>
+          <DialogTitle className="text-xl font-bold text-gray-900">
+            Finalizar Compra
+          </DialogTitle>
+        </DialogHeader>
 
-        {/* Cuerpo del Contenido */}
         <div className="p-6 text-center">
-            <div className="flex justify-center mb-4">
-                <ShieldAlert className="w-16 h-16 text-amber-500" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Aviso Importante</h3>
-            <p className="text-gray-600">
-                Esta es una transacción simulada. No se procesarán pagos reales y no se solicitará información bancaria.
-            </p>
+          <div className="flex justify-center mb-4">
+            <ShieldAlert className="w-16 h-16 text-amber-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Aviso Importante</h3>
+          <p className="text-gray-600">
+            Esta es una transacción simulada. No se procesarán pagos reales y no se solicitará información bancaria.
+          </p>
         </div>
 
-        {/* Pie de Página (Acciones) */}
-        <div className="flex gap-4 p-6 border-t border-gray-200">
+        <DialogFooter className="flex gap-3 pt-2 sm:justify-between w-full">
           <Button
             type="button"
             variant="outline"
@@ -68,9 +76,9 @@ export default function PaymentModal({
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isLoading ? "Procesando..." : "Comprar"}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
