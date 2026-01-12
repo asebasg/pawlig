@@ -3,11 +3,11 @@
 import { CreditCard, ShieldAlert, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 
 /**
@@ -49,11 +49,16 @@ export default function PaymentModal({
 
         <div className="p-6 text-center">
           <div className="flex justify-center mb-4">
-            <ShieldAlert className="w-16 h-16 text-amber-500" />
+            <div className="p-4 rounded-full bg-amber-100">
+              <ShieldAlert className="w-16 h-16 text-amber-500" />
+            </div>
           </div>
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Aviso Importante</h3>
           <p className="text-gray-600">
-            Esta es una transacción simulada. No se procesarán pagos reales y no se solicitará información bancaria.
+            Esta es una <span className="font-bold">transacción simulada</span>. No se procesarán pagos reales y no se solicitará información bancaria.
+          </p>
+          <p className="mt-4 text-gray-600">
+            Consulta nuestros <a href="/terms" className="text-purple-700 font-semibold underline">Términos y Condiciones</a> para más información.
           </p>
         </div>
 
@@ -69,9 +74,10 @@ export default function PaymentModal({
           </Button>
           <Button
             type="button"
+            variant="default"
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 gap-2 bg-sky-600 hover:bg-sky-700 text-white"
+            className="flex-1 gap-2"
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isLoading ? "Procesando..." : "Comprar"}
