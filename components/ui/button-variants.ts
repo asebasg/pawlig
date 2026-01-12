@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
  * Este archivo NO tiene "use client" para permitir su uso en Server Components.
  */
 export const buttonVariants = cva(
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-600 disabled:opacity-50 disabled:pointer-events-none",
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black/20 disabled:opacity-50 disabled:pointer-events-none",
     {
         variants: {
             variant: {

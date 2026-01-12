@@ -217,7 +217,7 @@ export default function ProductGalleryClient() {
                         products.map((product) => (
                             <ProductCard
                                 key={product.id}
-                                accentColor='none'
+                                accentColor="none"
                                 product={product}
                                 onAddToCart={handleAddToCart}
                             />

@@ -130,9 +130,40 @@ export async function getProductById(id: string) {
                     businessName: true,
                     municipality: true,
                     address: true,
+                    description: true,
+                    businessPhone: true,
                 },
             },
         },
+    });
+}
+
+/**
+ * Obtener productos similares (misma categoría)
+ * @param currentId - ID actual para excluir
+ * @param vendorId - ID del vendedor (opcional, para priorizar mismo vendedor)
+ * @param category - Categoría del producto
+ */
+export async function getSimilarProducts(currentId: string, vendorId: string, category: string) {
+    return await prisma.product.findMany({
+        where: {
+            id: { not: currentId },
+            category: category,
+            stock: { gt: 0 } // Solo productos disponibles
+        },
+        include: {
+            vendor: {
+                select: {
+                    id: true,
+                    businessName: true,
+                    municipality: true,
+                }
+            }
+        },
+        take: 3,
+        orderBy: {
+            createdAt: 'desc'
+        }
     });
 }
 

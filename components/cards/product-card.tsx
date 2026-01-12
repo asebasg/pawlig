@@ -30,7 +30,7 @@ interface ProductCardProps extends React.HTMLAttributes<HTMLDivElement> {
     };
     onAddToCart?: (productId: string) => void;
     /** Color de acento para el borde superior */
-    accentColor?: 'default' | 'teal' | 'orange' | 'purple' | 'red' | 'blue' | 'green' | 'none';
+    accentColor?: 'default' | 'teal' | 'orange' | 'yellow' | 'purple' | 'red' | 'blue' | 'green' | 'none';
 }
 
 export function ProductCard({
@@ -59,7 +59,7 @@ export function ProductCard({
     const getStockBadge = () => {
         if (product.stock === 0) {
             return (
-                <Badge variant="destructive" className="absolute top-2 right-2 z-10">
+                <Badge variant="red" className="absolute top-2 right-2 z-10">
                     Agotado
                 </Badge>
             );
@@ -67,7 +67,7 @@ export function ProductCard({
         if (product.stock <= 10) {
             return (
                 <Badge
-                    variant="secondary"
+                    variant="yellow"
                     className="absolute top-2 right-2 z-10 bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
                 >
                     Stock Bajo
@@ -115,16 +115,16 @@ export function ProductCard({
             <CardContent className="p-4 flex-1 flex flex-col gap-2 z-10 pointer-events-none">
                 {/* Categoría */}
                 {/* Nombre */}
-                <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
+                <h3 className="text-lg text-center font-bold text-gray-900 leading-tight mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
                     {product.name}
                 </h3>
 
                 {/* Precio y Categoría */}
                 <div className="flex items-center justify-between gap-2 mt-auto">
                     <p className="text-xl font-bold text-primary">
-                        {formatPrice(product.price)}
+                        {formatPrice(product.price)} COP
                     </p>
-                    <Badge variant="secondary" className="font-normal bg-secondary/50 text-secondary-foreground text-[10px] px-2 py-0 uppercase">
+                    <Badge variant="teal" className="py-0 px-2 font-normal uppercase">
                         {product.category}
                     </Badge>
                 </div>
@@ -133,20 +133,14 @@ export function ProductCard({
                 <div className="pt-3 space-y-1.5 text-sm text-gray-600 font-medium border-t border-gray-50 mt-2">
                     <div className="flex items-center gap-1.5">
                         <Store className={cn(
-                            "w-4 h-4",
-                            accentColor === 'purple' ? 'text-purple-600' :
-                                accentColor === 'orange' ? 'text-orange-600' :
-                                    accentColor === 'teal' ? 'text-teal-600' :
-                                        accentColor === 'green' ? 'text-green-600' :
-                                            accentColor === 'red' ? 'text-red-600' :
-                                                accentColor === 'blue' ? 'text-blue-600' :
-                                                    'text-primary'
+                            "w-5 h-5",
+                            "text-teal-600",
                         )} />
-                        <span className="line-clamp-1">{product.vendor.businessName}</span>
+                        <span className="line-clamp-1 text-teal-600">{product.vendor.businessName}</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-muted-foreground font-normal">
-                        <MapPin className="w-4 h-4" />
-                        <span className="line-clamp-1">{product.vendor.municipality}</span>
+                        <MapPin className="w-5 h-5" />
+                        <span className="line-clamp-1">{product.vendor.municipality}, ANTIOQUIA</span>
                     </div>
                 </div>
             </CardContent>
@@ -170,7 +164,7 @@ export function ProductCard({
                     disabled={isOutOfStock}
                     title={isOutOfStock ? "Producto agotado" : "Agregar al carrito"}
                 >
-                    <ShoppingCart className="h-4 w-4" />
+                    <ShoppingCart className="h-5 w-5" />
                 </Button>
             </CardFooter>
         </Card>
