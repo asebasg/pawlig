@@ -2,7 +2,7 @@
 name: Refactorización
 about: Proponer mejoras al código existente sin cambiar su funcionalidad
 title: "\U0001F527 [REFACTOR] - "
-labels: ''
+labels: refactor
 assignees: ''
 
 ---
