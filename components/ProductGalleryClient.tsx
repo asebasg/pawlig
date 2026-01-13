@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ProductFilter, ProductFilterState } from "@/components/filters/product-filter";
+import { ProductFilter } from "@/components/filters/product-filter";
 import { ProductCard } from "@/components/cards/product-card";
 import Loader from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
@@ -38,91 +38,32 @@ function ProductGalleryContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // 1. Estados iniciales basándonos en la URL actual
-    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-    const [filters, setFilters] = useState<ProductFilterState>({
-        category: searchParams.get("category") || "all",
-        municipality: searchParams.get("municipality") || "all",
-        minPrice: searchParams.get("minPrice") || "",
-        maxPrice: searchParams.get("maxPrice") || "",
-        availability: searchParams.get("availability") || "all",
-    });
-
     // Estados de datos
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Paginación
-    const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
-    const [totalPages, setTotalPages] = useState(1);
+    // Paginación (derivada de searchParams para sincronización, pero mantenemos estado local para UI inmediata si se desea)
     const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+    const currentPage = Number(searchParams.get("page")) || 1;
 
-    // Estado debounced para activar efectos de red
-    const [debouncedState, setDebouncedState] = useState({
-        search: searchQuery,
-        filters: filters,
-    });
-
-    // Sincronizar URL externa (ej: botón atrás) con estado local
-    useEffect(() => {
-        setSearchQuery(searchParams.get("search") || "");
-        setFilters({
-            category: searchParams.get("category") || "all",
-            municipality: searchParams.get("municipality") || "all",
-            minPrice: searchParams.get("minPrice") || "",
-            maxPrice: searchParams.get("maxPrice") || "",
-            availability: searchParams.get("availability") || "all",
-        });
-        setCurrentPage(Number(searchParams.get("page")) || 1);
-    }, [searchParams]);
-
-    // Debounce de cambios locales -> Estado efectivo
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedState({
-                search: searchQuery,
-                filters: filters,
-            });
-        }, 500); // 500ms debounce
-        return () => clearTimeout(timer);
-    }, [searchQuery, filters]);
-
-    // Función para construir Query String
-    const buildQueryString = useCallback((search: string, currentFilters: ProductFilterState, page: number) => {
-        const params = new URLSearchParams();
-
-        if (search) params.set("search", search);
-
-        if (currentFilters.category !== "all") params.set("category", currentFilters.category);
-        if (currentFilters.municipality !== "all") params.set("municipality", currentFilters.municipality);
-        if (currentFilters.availability !== "all") params.set("availability", currentFilters.availability);
-        if (currentFilters.minPrice) params.set("minPrice", currentFilters.minPrice);
-        if (currentFilters.maxPrice) params.set("maxPrice", currentFilters.maxPrice);
-
-        params.set("page", page.toString());
-        params.set("limit", ITEMS_PER_PAGE.toString());
-
-        return params.toString();
-    }, []);
-
-    // Efecto principal: Fetch datos y actualizar URL cuando cambia el estado debounced o página
+    // Efecto principal: Fetch datos cuando searchParams cambia
     useEffect(() => {
         const fetchProducts = async () => {
             setIsLoading(true);
             setError(null);
 
             try {
-                const queryString = buildQueryString(debouncedState.search, debouncedState.filters, currentPage);
-
-                // Actualizar URL (shallow replace para no ensuciar historial excesivamente si se desea, o push)
-                // Usamos push para permitir navegación
-                // Solo navegar si cambió algo (evita loops si el useEffect se dispara por init)
-                // Nota: comparamos sin 'limit' a veces, pero mejor comparar string completa generada vs actual
-                // Pero cuidado: searchParams puede tener orden distinto.
+                // Construir query string directamente desde searchParams
+                // Nos aseguramos de incluir 'limit' si no está
+                const params = new URLSearchParams(searchParams.toString());
+                if (!params.has("limit")) {
+                    params.set("limit", ITEMS_PER_PAGE.toString());
+                }
 
                 // Fetch
-                const response = await fetch(`/api/products?${queryString}`);
+                const response = await fetch(`/api/products?${params.toString()}`);
                 if (!response.ok) throw new Error("Error cargando productos");
 
                 const data: ProductsResponse = await response.json();
@@ -130,17 +71,6 @@ function ProductGalleryContent() {
                 setProducts(data.products);
                 setTotal(data.total);
                 setTotalPages(data.totalPages);
-
-                // Sincronización URL visual (si difiere)
-                // Esto es importante: si actualizamos URL aquí, disparará el useEffect de [searchParams] arriba.
-                // Para evitar loop: verificamos si los params son semánticamente iguales.
-                // Una estrategia común es actualizar URL *antes* del fetch en los handlers, pero aquí usamos debounce.
-                // ESTRATEGIA: La UI manda. Si el debounce cambió, actualizamos URL.
-                // El useEffect de [searchParams] debe distinguir si la actualización vino de aquí.
-                // Como Nextjs Router shallow routing no siempre es fácil de detectar, usaremos comparación simple.
-
-                // Simplemente hacemos push. Si la URL es igual, Nextjs suele ignorarlo o reemplazar.
-                router.replace(`/productos?${queryString}`, { scroll: false });
 
             } catch (err) {
                 console.error(err);
@@ -152,39 +82,23 @@ function ProductGalleryContent() {
         };
 
         fetchProducts();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedState, currentPage]);
-    // Omitimos router/searchParams para evitar reactividad circular. 
-    // Solo reaccionamos a cambios PROPIOS del estado (debouncedState, currentPage).
-
-    // Handlers
-    const handleSearchChange = (val: string) => {
-        setSearchQuery(val);
-        setCurrentPage(1); // Reset page on search
-    };
-
-    const handleFilterChange = (key: keyof ProductFilterState, val: string) => {
-        setFilters(prev => ({ ...prev, [key]: val }));
-        setCurrentPage(1); // Reset page on filter
-    };
+    }, [searchParams]);
 
     const handleClearFilters = () => {
-        setSearchQuery("");
-        setFilters({
-            category: "all",
-            municipality: "all",
-            minPrice: "",
-            maxPrice: "",
-            availability: "all",
-        });
-        setCurrentPage(1);
+        router.push("/productos");
+        // El componente ProductFilter escuchará el cambio de URL y se reseteará, 
+        // o podemos confiar en que ProductFilter maneje su propio reset si le pasamos una prop controlada,
+        // pero ProductFilter actualmente maneja su propio estado basado en URL.
+        // Al navegar a /productos limpiaremos los params.
     };
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
-            setCurrentPage(newPage);
+            const params = new URLSearchParams(searchParams.toString());
+            params.set("page", newPage.toString());
             // Scroll top
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            router.push(`/productos?${params.toString()}`);
         }
     };
 
@@ -197,13 +111,7 @@ function ProductGalleryContent() {
             {/* Sidebar */}
             <aside className="w-full lg:w-80 flex-shrink-0">
                 <div className="sticky top-20 bg-card rounded-lg border shadow-sm p-6">
-                    <ProductFilter
-                        filters={filters}
-                        searchQuery={searchQuery}
-                        onFilterChange={handleFilterChange}
-                        onSearchChange={handleSearchChange}
-                        onClearFilters={handleClearFilters}
-                    />
+                    <ProductFilter />
                 </div>
             </aside>
 
