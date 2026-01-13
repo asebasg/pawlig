@@ -1,20 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { ProductFilter } from "@/components/filters/product-filter";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ProductFilter, ProductFilterState } from "@/components/filters/product-filter";
 import { ProductCard } from "@/components/cards/product-card";
 import Loader from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { PackageX, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
-/**
- * GET /api/products
- * Descripción: Gestiona la visualización, filtrado y paginación del catálogo de productos para mascotas.
- * Requiere: Acceso a /api/products para obtención de datos.
- * Implementa: HU-004 (Galería de productos), RF-012 (Filtrado de productos).
- */
-
+// Constantes
 const ITEMS_PER_PAGE = 12;
 
 interface Product {
@@ -39,214 +34,240 @@ interface ProductsResponse {
     totalPages: number;
 }
 
-export default function ProductGalleryClient() {
-    // Estados locales
+function ProductGalleryContent() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // 1. Estados iniciales basándonos en la URL actual
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+    const [filters, setFilters] = useState<ProductFilterState>({
+        category: searchParams.get("category") || "all",
+        municipality: searchParams.get("municipality") || "all",
+        minPrice: searchParams.get("minPrice") || "",
+        maxPrice: searchParams.get("maxPrice") || "",
+        availability: searchParams.get("availability") || "all",
+    });
+
+    // Estados de datos
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [total, setTotal] = useState(0);
-    const [appliedFilters, setAppliedFilters] = useState<Record<string, string | string[]>>({});
     const [error, setError] = useState<string | null>(null);
 
-    // Función para construir query params desde filtros
-    const buildQueryParams = (
-        filters: Record<string, string | string[]>,
-        page?: number
-    ): string => {
+    // Paginación
+    const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
+
+    // Estado debounced para activar efectos de red
+    const [debouncedState, setDebouncedState] = useState({
+        search: searchQuery,
+        filters: filters,
+    });
+
+    // Sincronizar URL externa (ej: botón atrás) con estado local
+    useEffect(() => {
+        setSearchQuery(searchParams.get("search") || "");
+        setFilters({
+            category: searchParams.get("category") || "all",
+            municipality: searchParams.get("municipality") || "all",
+            minPrice: searchParams.get("minPrice") || "",
+            maxPrice: searchParams.get("maxPrice") || "",
+            availability: searchParams.get("availability") || "all",
+        });
+        setCurrentPage(Number(searchParams.get("page")) || 1);
+    }, [searchParams]);
+
+    // Debounce de cambios locales -> Estado efectivo
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedState({
+                search: searchQuery,
+                filters: filters,
+            });
+        }, 500); // 500ms debounce
+        return () => clearTimeout(timer);
+    }, [searchQuery, filters]);
+
+    // Función para construir Query String
+    const buildQueryString = useCallback((search: string, currentFilters: ProductFilterState, page: number) => {
         const params = new URLSearchParams();
 
-        Object.entries(filters).forEach(([key, value]) => {
-            if (value && value !== "all" && (Array.isArray(value) ? value.length > 0 : true)) {
-                params.set(key, Array.isArray(value) ? value.join(",") : String(value));
-            }
-        });
+        if (search) params.set("search", search);
 
-        if (page) {
-            params.set("page", String(page));
-        }
+        if (currentFilters.category !== "all") params.set("category", currentFilters.category);
+        if (currentFilters.municipality !== "all") params.set("municipality", currentFilters.municipality);
+        if (currentFilters.availability !== "all") params.set("availability", currentFilters.availability);
+        if (currentFilters.minPrice) params.set("minPrice", currentFilters.minPrice);
+        if (currentFilters.maxPrice) params.set("maxPrice", currentFilters.maxPrice);
 
-        params.set("limit", String(ITEMS_PER_PAGE));
+        params.set("page", page.toString());
+        params.set("limit", ITEMS_PER_PAGE.toString());
 
         return params.toString();
-    };
+    }, []);
 
-    // Función para hacer fetch de productos
-    const fetchProducts = useCallback(async (
-        filters: Record<string, string | string[]> = appliedFilters,
-        page: number = 1
-    ) => {
-        try {
+    // Efecto principal: Fetch datos y actualizar URL cuando cambia el estado debounced o página
+    useEffect(() => {
+        const fetchProducts = async () => {
             setIsLoading(true);
             setError(null);
 
-            const queryParams = buildQueryParams(filters, page);
-            const response = await fetch(`/api/products?${queryParams}`);
+            try {
+                const queryString = buildQueryString(debouncedState.search, debouncedState.filters, currentPage);
 
-            if (!response.ok) {
-                throw new Error("Error al cargar productos");
+                // Actualizar URL (shallow replace para no ensuciar historial excesivamente si se desea, o push)
+                // Usamos push para permitir navegación
+                // Solo navegar si cambió algo (evita loops si el useEffect se dispara por init)
+                // Nota: comparamos sin 'limit' a veces, pero mejor comparar string completa generada vs actual
+                // Pero cuidado: searchParams puede tener orden distinto.
+
+                // Fetch
+                const response = await fetch(`/api/products?${queryString}`);
+                if (!response.ok) throw new Error("Error cargando productos");
+
+                const data: ProductsResponse = await response.json();
+
+                setProducts(data.products);
+                setTotal(data.total);
+                setTotalPages(data.totalPages);
+
+                // Sincronización URL visual (si difiere)
+                // Esto es importante: si actualizamos URL aquí, disparará el useEffect de [searchParams] arriba.
+                // Para evitar loop: verificamos si los params son semánticamente iguales.
+                // Una estrategia común es actualizar URL *antes* del fetch en los handlers, pero aquí usamos debounce.
+                // ESTRATEGIA: La UI manda. Si el debounce cambió, actualizamos URL.
+                // El useEffect de [searchParams] debe distinguir si la actualización vino de aquí.
+                // Como Nextjs Router shallow routing no siempre es fácil de detectar, usaremos comparación simple.
+
+                // Simplemente hacemos push. Si la URL es igual, Nextjs suele ignorarlo o reemplazar.
+                router.replace(`/productos?${queryString}`, { scroll: false });
+
+            } catch (err) {
+                console.error(err);
+                setError("No se pudieron cargar los productos.");
+                toast.error("Error de conexión");
+            } finally {
+                setIsLoading(false);
             }
+        };
 
-            const data: ProductsResponse = await response.json();
+        fetchProducts();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedState, currentPage]);
+    // Omitimos router/searchParams para evitar reactividad circular. 
+    // Solo reaccionamos a cambios PROPIOS del estado (debouncedState, currentPage).
 
-            setProducts(data.products);
-            setTotal(data.total);
-            setTotalPages(data.totalPages);
-            setCurrentPage(data.page);
-        } catch (err) {
-            console.error("Error fetching products:", err);
-            setError(err instanceof Error ? err.message : "Error desconocido");
-            toast.error("Error al cargar productos", {
-                description: "Por favor, intenta de nuevo más tarde",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    }, [appliedFilters]);
-
-    useEffect(() => {
-        fetchProducts({}, 1);
-    }, [fetchProducts]);
-
-    // Manejar cambios en los filtros
-    const handleFiltersChange = (filters: Record<string, string | string[]>) => {
-        setAppliedFilters(filters);
-        fetchProducts(filters, 1); // Resetear a primera página
+    // Handlers
+    const handleSearchChange = (val: string) => {
+        setSearchQuery(val);
+        setCurrentPage(1); // Reset page on search
     };
 
-    // Manejar cambio de página
+    const handleFilterChange = (key: keyof ProductFilterState, val: string) => {
+        setFilters(prev => ({ ...prev, [key]: val }));
+        setCurrentPage(1); // Reset page on filter
+    };
+
+    const handleClearFilters = () => {
+        setSearchQuery("");
+        setFilters({
+            category: "all",
+            municipality: "all",
+            minPrice: "",
+            maxPrice: "",
+            availability: "all",
+        });
+        setCurrentPage(1);
+    };
+
     const handlePageChange = (newPage: number) => {
-        // Validar rango
-        if (newPage < 1 || newPage > totalPages) return;
-
-        fetchProducts(appliedFilters, newPage);
-
-        // Scroll al inicio de la galería
-        const gallery = document.getElementById("products-gallery");
-        if (gallery) {
-            gallery.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            // Scroll top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
-    // Manejar agregar al carrito
-    const handleAddToCart = async () => {
-        try {
-            // TODO: Implementar lógica de carrito cuando esté disponible
-            // Por ahora solo mostramos un toast de éxito
-            toast.success("Producto agregado al carrito", {
-                description: "Puedes continuar comprando o ir al carrito",
-            });
-        } catch {
-            toast.error("Error al agregar al carrito", {
-                description: "Por favor, intenta de nuevo",
-            });
-        }
-    };
-
-    // Manejar reset de filtros (desde empty state)
-    const handleResetFilters = () => {
-        setAppliedFilters({});
-        fetchProducts({}, 1);
+    const handleAddToCart = () => {
+        toast.success("Producto agregado al carrito");
     };
 
     return (
         <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar de filtros (Desktop) y Drawer (Mobile) */}
+            {/* Sidebar */}
             <aside className="w-full lg:w-80 flex-shrink-0">
-                <div className="sticky top-4 bg-white rounded-lg p-6">
-                    <ProductFilter onFiltersChange={handleFiltersChange} />
+                <div className="sticky top-20 bg-card rounded-lg border shadow-sm p-6">
+                    <ProductFilter
+                        filters={filters}
+                        searchQuery={searchQuery}
+                        onFilterChange={handleFilterChange}
+                        onSearchChange={handleSearchChange}
+                        onClearFilters={handleClearFilters}
+                    />
                 </div>
             </aside>
 
-            {/* Galería de productos */}
+            {/* Main Content */}
             <main className="flex-1 min-w-0">
-                {/* Contador de resultados */}
                 {!isLoading && (
-                    <div className="mb-4 text-sm text-gray-600">
-                        <span className="font-semibold">{total === 0 ? (
-                            'No se encontraron productos'
-                        ) : (
-                            `${total} producto${total !== 1 ? 's' : ''} encontrado${total !== 1 ? 's' : ''}`
-                        )}</span>
+                    <div className="mb-6 flex items-center justify-between">
+                        <p className="text-muted-foreground">
+                            Mostrando {products.length} de {total} resultados
+                        </p>
                     </div>
                 )}
 
-                {/* Grid de productos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="products-gallery">
                     {isLoading ? (
-                        <div className="col-span-full flex flex-col items-center justify-center py-12">
+                        <div className="col-span-full py-20 flex justify-center">
                             <Loader />
-                            <p className="text-gray-500">Cargando productos</p>
                         </div>
                     ) : error ? (
-                        <div className="col-span-full p-12 text-center">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <AlertCircle className="w-8 h-8 text-red-500" />
-                            </div>
-                            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                                Error al cargar productos
-                            </h3>
-                            <p className="text-gray-600 mb-6">{error}</p>
-                            <Button
-                                onClick={() => fetchProducts(appliedFilters, currentPage)}
-                                className="bg-purple-600 hover:bg-purple-700 mx-auto"
-                            >
-                                Reintentar
-                            </Button>
+                        <div className="col-span-full py-20 text-center">
+                            <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold">Ha ocurrido un error</h3>
+                            <p className="text-muted-foreground mb-4">{error}</p>
+                            <Button onClick={() => window.location.reload()}>Recargar página</Button>
                         </div>
                     ) : products.length === 0 ? (
-                        <div className="col-span-full p-12 text-center">
-                            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <PackageX className="w-8 h-8 text-purple-500" />
-                            </div>
-                            <h3 className="text-xl font-semibold text-purple-800 mb-2">
-                                No se encontraron productos
-                            </h3>
-                            <p className="text-purple-600 mb-6">
-                                Intenta ajustar los filtros para ver más resultados
-                            </p>
-                            <Button
-                                onClick={handleResetFilters}
-                                variant="outline"
-                                className="border-purple-300 text-purple-700 hover:bg-purple-50 mx-auto"
-                            >
-                                Limpiar filtros
-                            </Button>
+                        <div className="col-span-full py-20 text-center bg-muted/30 rounded-lg border-2 border-dashed">
+                            <PackageX className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold">No se encontraron productos</h3>
+                            <p className="text-muted-foreground mb-4">Intenta ajustar los filtros de búsqueda</p>
+                            <Button variant="outline" onClick={handleClearFilters}>Limpiar filtros</Button>
                         </div>
                     ) : (
-                        products.map((product) => (
+                        products.map(product => (
                             <ProductCard
                                 key={product.id}
-                                accentColor="none"
                                 product={product}
+                                accentColor="none"
                                 onAddToCart={handleAddToCart}
                             />
                         ))
                     )}
                 </div>
 
-                {/* Paginación */}
-                {totalPages > 1 && !isLoading && (
-                    <div className="flex items-center justify-center gap-2 mt-8">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
+                {/* Pagination */}
+                {!isLoading && totalPages > 1 && (
+                    <div className="mt-8 flex justify-center gap-2">
+                        <Button
+                            variant="outline"
                             disabled={currentPage === 1}
-                            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+                            onClick={() => handlePageChange(currentPage - 1)}
                         >
                             Anterior
-                        </button>
-
-                        <span className="text-gray-600">
+                        </Button>
+                        <span className="flex items-center px-4 font-medium">
                             Página {currentPage} de {totalPages}
                         </span>
-
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
+                        <Button
+                            variant="outline"
                             disabled={currentPage === totalPages}
-                            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+                            onClick={() => handlePageChange(currentPage + 1)}
                         >
                             Siguiente
-                        </button>
+                        </Button>
                     </div>
                 )}
             </main>
@@ -254,25 +275,10 @@ export default function ProductGalleryClient() {
     );
 }
 
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * Este componente actúa como el orquestador principal de la vista de productos, 
- * integrando filtros laterales con una rejilla de resultados paginada.
- *
- * Lógica Clave:
- * - buildQueryParams: Utilidad interna para serializar el objeto de filtros y el 
- *   número de página en una cadena compatible con URLSearchParams.
- * - fetchProducts: Centraliza las llamadas a la API, manejando estados de carga,
- *   errores y actualización de la paginación.
- * - scrollIntoView: Mejora la UX al desplazar la vista al inicio de la galería 
- *   automáticamente después de cambiar de página.
- *
- * Dependencias Externas:
- * - Sonner: Utilizado para notificaciones emergentes de éxito (carrito) o error.
- * - Lucide React: Iconografía para navegación y estados (Chevron, PackageX, etc).
- *
- */
+export default function ProductGalleryClient() {
+    return (
+        <Suspense fallback={<div className="p-8 flex justify-center"><Loader /></div>}>
+            <ProductGalleryContent />
+        </Suspense>
+    );
+}

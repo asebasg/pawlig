@@ -19,7 +19,7 @@ interface VendorStatsProps {
 export function VendorStats({ stats }: VendorStatsProps) {
     const statCards = [
         {
-            title: "Total Productos",
+            title: "Productos Totales",
             value: stats.total,
             icon: Package,
             color: "text-blue-600",

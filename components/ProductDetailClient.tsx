@@ -9,7 +9,8 @@ import {
     Tag,
     DollarSign,
     Package,
-    ShoppingCart
+    ShoppingCart,
+    CreditCard
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -226,7 +227,10 @@ export default function ProductDetailClient({
                             <div className="text-center">
                                 <Tag className="w-5 h-5 text-purple-600 mx-auto mb-2" />
                                 <p className="text-sm text-gray-600">Categoría</p>
-                                <p className="font-semibold text-gray-900">{product.category}</p>
+                                <p className="font-semibold text-gray-900">
+                                    {product.category.charAt(0).toUpperCase() +
+                                        product.category.slice(1).toLowerCase()}
+                                </p>
                             </div>
 
                             {/* Precio */}
@@ -291,46 +295,53 @@ export default function ProductDetailClient({
                             </div>
                         )}
 
-                        {/* Contacto */}
-                        <div className="mb-6 pb-6 border-b border-gray-200">
-                            <p className="text-sm font-semibold text-gray-900 mb-3">Contactar Vendedor</p>
-                            <div className="flex flex-col gap-2">
+                        {/* Opciones rápidas */}
+                        <div className="flex flex-col gap-4">
+                            <p className="text-sm font-semibold text-gray-900">Algunas opciones rápidas</p>
+
+                            <div className="flex gap-2">
                                 {product.vendor.businessPhone && (
                                     <a
                                         href={`https://wa.me/${product.vendor.businessPhone}?text=Hola, estoy interesado en el producto ${product.name}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium text-sm"
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium text-sm shadow-sm"
                                     >
                                         <MessageSquare className="w-4 h-4" />
                                         WhatsApp
                                     </a>
                                 )}
-                                <Button
-                                    onClick={handleOpenPaymentModal}
-                                    variant="outline"
-                                    className="w-full"
-                                >
-                                    <ShoppingCart className="w-4 h-4 mr-2" />
-                                    Comprar
-                                </Button>
+
+                                {/* CTA - Agregar al Carrito */}
+                                {product.stock > 0 ? (
+                                    <Button
+                                        onClick={handleAddToCart}
+                                        className="flex-1 py-2 text-sm"
+                                        variant="outline"
+                                    >
+                                        <ShoppingCart className="w-4 h-4 mr-2" />
+                                        Al Carrito
+                                    </Button>
+                                ) : (
+                                    <div className="flex-1 py-2 px-4 rounded-lg bg-gray-100 text-gray-500 text-center font-medium text-sm">
+                                        Sin Stock
+                                    </div>
+                                )}
                             </div>
+
+                            <Button
+                                onClick={handleOpenPaymentModal}
+                                variant="default"
+                                className="w-full py-6 text-base font-bold shadow-lg"
+                                disabled={product.stock <= 0}
+                            >
+                                <CreditCard className="w-5 h-5 mr-2" />
+                                Comprar ahora
+                            </Button>
                         </div>
 
-                        {/* CTA - Agregar al Carrito */}
-                        {product.stock > 0 ? (
-                            <Button
-                                onClick={handleAddToCart}
-                                className="w-full py-6 text-base"
-                            >
-                                <ShoppingCart className="w-5 h-5 mr-2" />
-                                Agregar al Carrito
-                            </Button>
-                        ) : (
-                            <div className="w-full py-3 px-4 rounded-lg bg-gray-100 text-gray-700 text-center font-semibold">
-                                Producto Agotado
-                            </div>
-                        )}
+
+
                     </CardContent>
                 </Card>
             </div>
