@@ -138,10 +138,10 @@ function ProductGalleryContent() {
                             <Button onClick={() => window.location.reload()}>Recargar página</Button>
                         </div>
                     ) : products.length === 0 ? (
-                        <div className="col-span-full py-20 text-center bg-muted/30 rounded-lg border-2 border-dashed">
-                            <PackageX className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold">No se encontraron productos</h3>
-                            <p className="text-muted-foreground mb-4">Intenta ajustar los filtros de búsqueda</p>
+                        <div className="col-span-full py-20 text-center">
+                            <PackageX className="h-12 w-12 text-muted-foreground mx-auto mb-4 text-purple-500" />
+                            <h3 className="text-lg font-semibold text-purple-800">No se encontraron productos</h3>
+                            <p className="text-muted-foreground mb-4 text-purple-800">Intenta ajustar los filtros de búsqueda</p>
                             <Button variant="outline" onClick={handleClearFilters}>Limpiar filtros</Button>
                         </div>
                     ) : (
