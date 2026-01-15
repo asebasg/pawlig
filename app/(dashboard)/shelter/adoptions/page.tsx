@@ -5,6 +5,7 @@ import { prisma } from '@/lib/utils/db';
 import AdoptionApplicationsClient from '@/components/AdoptionApplicationsClient';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { UserRole } from '@prisma/client';
 
 /**
  * Página del panel de postulaciones para albergues
@@ -17,31 +18,29 @@ import { ArrowLeft } from 'lucide-react';
  */
 
 export const metadata = {
-  title: 'Postulaciones - Panel del Albergue',
+  title: 'Postulaciones',
   description: 'Gestiona las postulaciones de adopción de tu albergue',
 };
 
 export default async function ShelterAdoptionsPage() {
-  // 1. Obtener sesión del usuario
   const session = await getServerSession(authOptions);
-
-  // 2. Verificar autenticación
-  if (!session?.user) {
-    redirect('/login');
+  // Verificar autenticación, rol y verificación de rol
+  if (!session || !session.user) {
+    redirect("/login?callbackUrl=/shelter/adoptions");
   }
 
-  // 3. Verificar rol (solo SHELTER)
-  if (session.user.role !== 'SHELTER') {
-    redirect('/unauthorized?reason=shelter_only');
+  if (session.user.role !== UserRole.SHELTER) {
+    redirect("/unauthorized?reason=shelter_only");
   }
-
-  // 4. Verificar que el usuario tiene un albergue registrado
-  const shelter = await prisma.shelter.findFirst({
-    where: { userId: session.user.id },
+  // Obtener id de SHELTER
+  const shelterId = session.user.shelterId as string;
+  const shelter = await prisma.shelter.findUnique({
+    where: { id: shelterId as string },
+    select: { id: true, name: true, verified: true },
   });
 
-  if (!shelter) {
-    redirect('/unauthorized?reason=no_shelter');
+  if (!shelter?.verified) {
+    redirect("/unauthorized?reason=shelter_not_verified");
   }
 
   // 5. Obtener conteo de mascotas
@@ -159,13 +158,13 @@ export default async function ShelterAdoptionsPage() {
               <strong>Pendiente:</strong> Nueva postulación que espera tu revisión. Puedes aprobar o rechazar.
             </li>
             <li>
-              <strong>Aprobada:</strong> Postulación aceptada. La mascota pasará automáticamente al estado "En Proceso" de adopción.
+              <strong>Aprobada:</strong> Postulación aceptada. La mascota pasará automáticamente al estado &quot;En Proceso de adopción&quot;.
             </li>
             <li>
               <strong>Rechazada:</strong> Postulación rechazada. Se requiere proporcionar una razón.
             </li>
             <li>
-              <strong>Adopción completada:</strong> Cuando una postulación es aprobada, la mascota pasa a estado "Adoptada".
+              <strong>Adopción completada:</strong> Cuando una postulación es aprobada, la mascota pasa a estado &quot;Adoptada&quot;.
             </li>
           </ul>
         </div>

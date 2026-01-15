@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, HouseHeart, Shield, ClipboardCheck, Package, CheckCircle, Search, Flame, PawPrint } from "lucide-react";
+import { Heart, HouseHeart, Shield, ClipboardCheck, Package, CheckCircle, Search, Flame, PawPrint, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/utils/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
@@ -201,8 +201,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Sección Mascotas Destacadas (DATOS REALES) */}
-      <section className="py-20 bg-purple-50">
+      {/* Sección Mascotas Destacadas */}
+      <section className="pb-10 pt-5 bg-purple-50">
         <div className="max-w-7xl mx-auto px-8">
           <div className="flex items-center justify-between mb-12">
             <h2 className="text-3xl font-bold text-purple-800">
@@ -213,7 +213,7 @@ export default async function Home() {
               className="text-purple-700 hover:text-purple-800 font-semibold flex items-center gap-2 hover:translate-x-1 transition-transform"
             >
               Ver todas las mascotas
-              <span>→</span>
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
 
@@ -282,7 +282,7 @@ export default async function Home() {
       </section>
 
       {/* Sección ¿Sabías Que? */}
-      <section className="py-10 bg-gradient-to-b from-purple-50 via-purple-300 to-purple-500 text-white relative overflow-hidden">
+      <section className="pb-10 pt-5 bg-gradient-to-b from-purple-50 via-purple-300 to-purple-500 text-white relative overflow-hidden">
         <section className="py-4 mb-4"> {/* bg-purple-50 */}
           <div className="max-w-7xl mx-auto px-8">
             <h2 className="text-4xl font-bold text-center text-purple-800 mb-12">

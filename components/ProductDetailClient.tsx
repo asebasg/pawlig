@@ -131,7 +131,7 @@ export default function ProductDetailClient({
                 <Card className="mb-6 overflow-hidden" accentColor="none">
                     <CardContent className="p-0">
                         {/* Imagen Principal */}
-                        <div className="relative h-96 bg-gray-200">
+                        <div className="relative h-96 bg-gray-200 overflow-hidden rounded-t-lg">
                             {images.length > 0 ? (
                                 <Image
                                     src={images[currentImageIndex]}
@@ -358,7 +358,7 @@ export default function ProductDetailClient({
                 <div className="lg:col-span-3 mt-12 border-t pt-12">
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">Otros productos que podrían interesarte</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {similarProducts.map((similarProduct) => (
+                        {similarProducts.slice(0, 3).map((similarProduct) => (
                             <ProductCard
                                 key={similarProduct.id}
                                 product={similarProduct}

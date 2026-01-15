@@ -22,9 +22,9 @@ export const NAVIGATION_BY_ROLE = {
   ],
   ADMIN: [
     { label: "Dashboard", href: "/admin" },
-    { label: "Adopciones", href: "/adopciones" },
-    { label: "Productos", href: "/productos" },
-    { label: "Albergues", href: "/albergues" },
+    { label: "Usuarios", href: "/admin/users" },
+    { label: "Albergues", href: "/admin/shelters" },
+    { label: "Vendedores", href: "/admin/vendors" },
   ]
 } as const;
 
@@ -34,9 +34,6 @@ export const PUBLIC_LINKS = [
   { label: "Adopciones", href: "/adopciones" },
   { label: "Productos", href: "/productos" },
   { label: "Albergues", href: "/albergues" },
-  { label: "Nosotros", href: "/nosotros" },
-  { label: "Ayuda", href: "/help" },
-  { label: "Terminos y Condiciones", href: "/terms" },
 ];
 
 // Opciones del menú de usuario por rol
@@ -61,9 +58,6 @@ export const USER_MENU_OPTIONS = {
   ],
   ADMIN: [
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
-    { label: "Gestión Usuarios", href: "/admin/users", icon: "Users" },
-    { label: "Gestión Albergues", href: "/admin/shelters", icon: "Home" },
-    { label: "Gestión Vendedores", href: "/admin/vendors", icon: "ShoppingCart" },
     { label: "Reportes", href: "/admin/reports", icon: "FileText" },
     { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" }
   ]
@@ -81,24 +75,24 @@ export const FOOTER_LINKS = {
     { label: "Adopciones", href: "/adopciones" },
     { label: "Productos", href: "/productos" },
     { label: "Albergues", href: "/albergues" },
-    { label: "Nosotros", href: "/nosotros" },
     { label: "Preguntas Frecuentes", href: "/faq" },
-    { label: "Términos y Condiciones", href: "/terminos" },
-    { label: "Política de Privacidad", href: "/privacidad" },
+    { label: "Nosotros", href: "/nosotros" },
   ],
-  // TODO: Hacer recursos reales y compartilos en archivos de Google Drive (PDF)
+  // TODO: Crear una página de recursos adicionales (anidado en GitHub Pages)
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
-    { label: "Contáctanos", href: "/contacto" },
-    { label: "Reportar Problema", href: "/reportar" },
-    { label: "Política de Privacidad", href: "/privacidad" }
+    { label: "Manual del Usuario", href: "/guide" },
+    { label: "Reportar Problema", href: "https://github.com/asebasg/pawlig/issues/new/choose" },
+    { label: "Términos y Condiciones", href: "/terminos" },
+    { label: "Política de Privacidad", href: "/privacidad" },
   ],
   social: [
     { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" },
     { label: "Instagram", href: "https://instagram.com/pawlig", icon: "Instagram" },
     { label: "Facebook", href: "https://facebook.com/pawlig", icon: "Facebook" },
     { label: "Twitter", href: "https://twitter.com/pawlig", icon: "Twitter" },
+    { label: "GitHub", href: "https://github.com/asebasg/pawlig", icon: "Github" },
   ]
 };
 

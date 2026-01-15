@@ -2,14 +2,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/utils/db";
-import { getProducts, getVendorProductStats } from "@/lib/services/product.service";
 import { ProductsClient } from "@/components/vendor/ProductsClient";
 import { VendorStats } from "@/components/vendor/VendorStats";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
+import { UserRole } from "@prisma/client";
 
 /**
  *  PAGE: /vendor/products
@@ -22,63 +22,127 @@ export const metadata: Metadata = {
     description: "Panel de administración de productos para vendedores",
 };
 
-export default async function VendorProductsPage() {
-    const session = await getServerSession(authOptions);
+// Definimos props de la página
+interface PageProps {
+    searchParams: { [key: string]: string | string[] | undefined };
+}
 
-    // Verificar autenticación
+export default async function VendorProductsPage({ searchParams }: PageProps) {
+    const session = await getServerSession(authOptions)
+    // Verificar autenticación, rol y verificación de rol
     if (!session || !session.user) {
         redirect("/login?callbackUrl=/vendor/products");
     }
 
-    // Verificar rol VENDOR
-    if (session.user.role !== "VENDOR") {
+    if (session.user.role !== UserRole.VENDOR) {
         redirect("/unauthorized?reason=vendor_only");
     }
 
-    // Obtener ID del vendor y verificar estado
+    // Obtener id de VENDOR
     const vendorId = session.user.vendorId as string;
-
-    // Obtener datos del vendor para verificar estado de verificación
     const vendor = await prisma.vendor.findUnique({
         where: { id: vendorId as string },
-        select: { verified: true },
+        select: { id: true, verified: true },
     });
 
-    // Verificar que el VENDOR esté verificado
     if (!vendor?.verified) {
-        // Tiene cuenta de vendedor pero aún no ha sido aprobada por admin
         redirect("/unauthorized?reason=vendor_not_verified");
     }
 
-    // ✅ Autenticado + ✅ Rol VENDOR + ✅ Vendor verificado
-    let productsData;
-    let stats;
-    let error: string | undefined;
+    // 2. Parsear filtros y paginación
+    const categoryFilter = searchParams.categoryId as string | undefined;
+    const page = parseInt(searchParams.page as string || "1");
+    const limit = 12;
 
-    // Obtener productos del vendedor (parallel fetch safe)
-    try {
-        const [fetchedProductsData, fetchedStats] = await Promise.all([
-            getProducts({ vendorId, page: 1, limit: 50 }),
-            getVendorProductStats(vendorId)
-        ]);
-        productsData = fetchedProductsData;
-        stats = fetchedStats;
-    } catch (e) {
-        console.error("Error cargando productos de vendedor:", e);
-        error = "No se pudieron cargar tus productos. Por favor intenta más tarde.";
+    // 3. Construir query base
+    const where = {
+        vendorId: vendor.id,
+        ...(categoryFilter && { category: categoryFilter }),
+    };
 
-        // Fallback data
-        productsData = { products: [], total: 0, page: 1, totalPages: 0 };
-        stats = { total: 0, inStock: 0, outOfStock: 0, lowStock: 0 };
-    }
+    // 4. Obtener productos y conteo total (Parallel fetching)
+    const [products] = await Promise.all([
+        prisma.product.findMany({
+            where,
+            select: {
+                id: true,
+                name: true,
+                price: true,
+                stock: true,
+                category: true,
+                images: true,
+                description: true,
+                updatedAt: true,
+                vendorId: true,
+                createdAt: true,
+                vendor: {
+                    select: {
+                        id: true,
+                        businessName: true,
+                        municipality: true,
+                        address: true,
+                    }
+                },
+                _count: {
+                    select: {
+                        orderItems: true
+                    }
+                }
+            },
+            orderBy: { createdAt: "desc" },
+            skip: (page - 1) * limit,
+            take: limit,
+        }),
+        prisma.product.count({ where }),
+    ]);
+
+    // Calculamos métricas de negocio
+    const inventoryStats = await prisma.product.aggregate({
+        where: { vendorId: vendor.id },
+        _sum: {
+            stock: true,
+        },
+        _count: {
+            id: true // Total de productos únicos
+        }
+    });
+
+    const lowStockCount = await prisma.product.count({
+        where: {
+            vendorId: vendor.id,
+            stock: { lte: 5 } // Alerta de stock bajo si hay 5 o menos
+        }
+    });
+
+    const inStockCount = await prisma.product.count({
+        where: { vendorId: vendor.id, stock: { gt: 0 } }
+    });
+
+    const outOfStockCount = await prisma.product.count({
+        where: { vendorId: vendor.id, stock: 0 }
+    });
+
+
+    // Estructurar datos para la vista
+    // Adaptamos al formato que espera VendorStats actualmente
+    const stats = {
+        total: inventoryStats._count.id || 0,
+        inStock: inStockCount,
+        outOfStock: outOfStockCount,
+        lowStock: lowStockCount,
+    };
 
     return (
         <div className="container mx-auto py-8 px-4">
             {/* Header con título y botón */}
             <div className="flex justify-between items-center mb-6">
+                <Link href="/vendor" className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                    <ArrowLeft className="w-4 h-4" />
+                    Volver al Dashboard
+                </Link>
                 <div>
                     <h1 className="text-2xl font-bold">Mis Productos</h1>
-                    <p className="text-muted-foreground">Gestiona tu inventario</p>
+                    <p className="text-gray-500">Gestiona tu inventario</p>
                 </div>
                 <Link
                     href="/vendor/products/new"
@@ -93,8 +157,7 @@ export default async function VendorProductsPage() {
 
             {/* Tabla de productos (Client Component) */}
             <ProductsClient
-                initialProducts={productsData.products}
-                error={error}
+                initialProducts={products}
             />
         </div>
     );

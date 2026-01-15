@@ -56,16 +56,16 @@ export function VendorStats({ stats }: VendorStatsProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {statCards.map((stat) => (
                 <Card key={stat.title} accentColor={stat.accentColor}>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <div className={`p-2 mb-2 rounded-full ${stat.bgColor}`}>
+                    <CardHeader className="flex flex-row items-center justify-start gap-4">
+                        <div className={`p-2 rounded-full ${stat.bgColor}`}>
                             <stat.icon className={`h-8 w-8 ${stat.color}`} />
                         </div>
-                        <CardTitle className="text-sm font-medium text-muted-foreground">
+                        <CardTitle className="text-sm font-semibold">
                             {stat.title}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-center">{stat.value}</div>
+                        <div className="text-2xl font-extrabold text-center">{stat.value}</div>
                     </CardContent>
                 </Card>
             ))}

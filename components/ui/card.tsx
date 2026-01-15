@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
   "bg-white shadow-md rounded-lg overflow-hidden",
@@ -29,7 +30,7 @@ const Card = React.forwardRef<
 >(({ className, accentColor, ...props }, ref) => (
   <div
     ref={ref}
-    className={`${cardVariants({ accentColor })} ${className || ""}`}
+    className={cn(cardVariants({ accentColor }), className)}
     {...props}
   />
 ))
@@ -41,7 +42,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={`p-4 border-b border-gray-200 flex flex-col space-y-1.5 ${className || ""}`}
+    className={cn("p-4 border-b border-gray-200 flex flex-col space-y-1.5", className)}
     {...props}
   />
 ))
@@ -53,7 +54,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={`text-lg font-semibold text-gray-800 leading-none tracking-tight ${className || ""}`}
+    className={cn("text-lg font-semibold text-gray-800 leading-none tracking-tight", className)}
     {...props}
   />
 ))
@@ -65,7 +66,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={`text-sm text-gray-500 ${className || ""}`}
+    className={cn("text-sm text-gray-500", className)}
     {...props}
   />
 ))
@@ -75,7 +76,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={`p-4 pt-4 ${className || ""}`} {...props} />
+  <div ref={ref} className={cn("p-4 pt-4", className)} {...props} />
 ))
 CardContent.displayName = "CardContent"
 
@@ -85,7 +86,7 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={`flex items-center p-4 pt-0 ${className || ""}`}
+    className={cn("flex items-center p-4 pt-0", className)}
     {...props}
   />
 ))

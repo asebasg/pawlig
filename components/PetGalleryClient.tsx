@@ -159,16 +159,6 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
       {/* Sidebar de Filtros - Izquierda en desktop, arriba en móvil */}
       <aside className="w-full lg:w-80 flex-shrink-0">
         <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
-          {/* Contador de resultados */}
-          {!loading && (
-            <div className="mb-4 text-sm text-gray-600">
-              <span className="font-semibold">{totalCount === 0 ? (
-                'No se encontraron mascotas'
-              ) : (
-                `${totalCount} mascota${totalCount !== 1 ? 's' : ''} encontrada${totalCount !== 1 ? 's' : ''}`
-              )}</span>
-            </div>
-          )}
 
           {/* Componente de Filtros */}
           <PetFilter
@@ -183,12 +173,19 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
 
       {/* Contenido Principal - Derecha en desktop, abajo en móvil */}
       <main className="flex-1 min-w-0">
+        {!loading && (
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-gray-500 dark:text-gray-400">
+              Mostrando {pets.length} de {totalCount} resultados
+            </p>
+          </div>
+        )}
         {/* Galería de mascotas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {loading ? (
             <div className="col-span-full flex flex-col items-center justify-center py-12">
               <Loader />
-              <p className="text-gray-500">Cargando mascotas</p>
+              <p className="text-gray-500 dark:text-gray-400">Cargando mascotas...</p>
             </div>
           ) : error ? (
             <div className="col-span-full bg-white rounded-lg border p-12 text-center">

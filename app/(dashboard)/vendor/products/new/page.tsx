@@ -14,31 +14,23 @@ export const metadata: Metadata = {
 };
 
 export default async function NewProductPage() {
-    //  1. Verificar autenticación
     const session = await getServerSession(authOptions);
-
-    // No esta autenticado
-    if (!session?.user) {
+    // Verificar autenticación, rol y verificación de rol
+    if (!session || !session.user) {
         redirect("/login?callbackUrl=/vendor/products/new");
     }
 
-    // No tiene el rol VENDOR
     if (session.user.role !== UserRole.VENDOR) {
         redirect("/unauthorized?reason=vendor_only");
     }
-
-    // Obtener ID del vendor y verificar estado
+    // Obtener id de VENDOR
     const vendorId = session.user.vendorId as string;
-
-    // Obtener datos del vendor para verificar estado de verificación
     const vendor = await prisma.vendor.findUnique({
         where: { id: vendorId as string },
-        select: { verified: true },
+        select: { id: true, verified: true },
     });
 
-    // Usuario con rol VENDOR no esta verificado
     if (!vendor?.verified) {
-        // Tiene cuenta de vendedor pero aún no ha sido aprobada por admin
         redirect("/unauthorized?reason=vendor_not_verified");
     }
 

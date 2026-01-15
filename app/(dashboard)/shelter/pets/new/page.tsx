@@ -30,30 +30,24 @@ export const metadata = {
 };
 
 export default async function NewPetPage() {
-    // Verificar autenticación
     const session = await getServerSession(authOptions);
-
-    if (!session?.user) {
+    // Verificar autenticación, rol y verificación de rol
+    if (!session || !session.user) {
         redirect("/login?callbackUrl=/shelter/pets/new");
     }
 
-    // Verificar rol SHELTER
     if (session.user.role !== UserRole.SHELTER) {
         redirect("/unauthorized?reason=shelter_only");
     }
-
-    // Obtener datos del vendor para verificar estado de verificación
+    // Obtener id de SHELTER
+    const shelterId = session.user.shelterId as string;
     const shelter = await prisma.shelter.findUnique({
-        where: { userId: session.user.id },
-        select: {
-            id: true,
-            name: true,
-            verified: true,
-        },
+        where: { id: shelterId as string },
+        select: { id: true, verified: true },
     });
 
     if (!shelter?.verified) {
-        redirect("/unauthorized?reason=shelter_not_verified")
+        redirect("/unauthorized?reason=shelter_not_verified");
     }
 
     // Renderizar formulario

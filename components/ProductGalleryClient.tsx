@@ -110,7 +110,7 @@ function ProductGalleryContent() {
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
             <aside className="w-full lg:w-80 flex-shrink-0">
-                <div className="sticky top-20 bg-card rounded-lg border shadow-sm p-6">
+                <div className="sticky top-20 p-6">
                     <ProductFilter />
                 </div>
             </aside>
@@ -119,7 +119,7 @@ function ProductGalleryContent() {
             <main className="flex-1 min-w-0">
                 {!isLoading && (
                     <div className="mb-6 flex items-center justify-between">
-                        <p className="text-muted-foreground">
+                        <p className="text-gray-500 dark:text-gray-400">
                             Mostrando {products.length} de {total} resultados
                         </p>
                     </div>
@@ -127,21 +127,22 @@ function ProductGalleryContent() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="products-gallery">
                     {isLoading ? (
-                        <div className="col-span-full py-20 flex justify-center">
+                        <div className="col-span-full flex flex-col items-center justify-center py-12">
                             <Loader />
+                            <p className="text-gray-500 dark:text-gray-400">Cargando productos...</p>
                         </div>
                     ) : error ? (
                         <div className="col-span-full py-20 text-center">
                             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
                             <h3 className="text-lg font-semibold">Ha ocurrido un error</h3>
-                            <p className="text-muted-foreground mb-4">{error}</p>
+                            <p className="text-gray-500 dark:text-gray-400 mb-4">{error}</p>
                             <Button onClick={() => window.location.reload()}>Recargar página</Button>
                         </div>
                     ) : products.length === 0 ? (
                         <div className="col-span-full py-20 text-center">
-                            <PackageX className="h-12 w-12 text-muted-foreground mx-auto mb-4 text-purple-500" />
+                            <PackageX className="h-12 w-12 mx-auto mb-4 text-purple-500" />
                             <h3 className="text-lg font-semibold text-purple-800">No se encontraron productos</h3>
-                            <p className="text-muted-foreground mb-4 text-purple-800">Intenta ajustar los filtros de búsqueda</p>
+                            <p className="mb-4 text-purple-800">Intenta ajustar los filtros de búsqueda</p>
                             <Button variant="outline" onClick={handleClearFilters}>Limpiar filtros</Button>
                         </div>
                     ) : (

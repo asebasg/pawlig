@@ -193,7 +193,7 @@ export default function PetDetailClient({
         <Card className="mb-6 overflow-hidden" accentColor="none">
           <CardContent className="p-0">
             {/* Imagen Principal */}
-            <div className="relative h-96 bg-gray-200">
+            <div className="relative h-96 bg-gray-200 overflow-hidden rounded-t-lg">
               {images.length > 0 ? (
                 <Image
                   src={images[currentImageIndex]}
@@ -423,8 +423,13 @@ export default function PetDetailClient({
                   adoptionSuccess ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-purple-600 hover:bg-purple-700'
                 )}
               >
-                {isLoadingAdoption && "Enviando..."}
-                {!isLoadingAdoption && adoptionSuccess ? '¡Solicitud enviada!' : 'Solicitar Adopción'}
+                {isLoadingAdoption ? (
+                  "Enviando..."
+                ) : adoptionSuccess ? (
+                  "¡Solicitud enviada!"
+                ) : (
+                  "Solicitar Adopción"
+                )}
               </Button>
             ) : (
               <div className="w-full py-3 px-4 rounded-lg bg-gray-100 text-gray-700 text-center font-semibold">
@@ -449,7 +454,7 @@ export default function PetDetailClient({
         <div className="lg:col-span-3 mt-12 border-t pt-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">Otras mascotas que podrían interesarte</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {similarPets.map((similarPet) => (
+            {similarPets.slice(0, 3).map((similarPet) => (
               <PetCard
                 key={similarPet.id}
                 pet={similarPet}

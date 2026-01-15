@@ -33,37 +33,29 @@ export async function generateMetadata({ params }: PageProps) {
     });
 
     return {
-        title: pet ? `Editar ${pet.name} | PawLig` : "Editar Mascota | PawLig",
+        title: pet ? `Editar a ${pet.name}` : "Editar Mascota",
         description: "Actualiza la información de tu mascota en adopción",
     };
 }
 
 export default async function EditPetPage({ params }: PageProps) {
-    // 1. Autenticación
     const session = await getServerSession(authOptions);
-
-    // Verificar autenticación
-    if (!session?.user) {
+    // Verificar autenticación, rol y verificación de rol
+    if (!session || !session.user) {
         redirect("/login?callbackUrl=/shelter/pets");
     }
 
-    // Verificar rol SHELTER
     if (session.user.role !== UserRole.SHELTER) {
         redirect("/unauthorized?reason=shelter_only");
     }
-
-    // Obtener ID del albergue y verificar estado
+    // Obtener id de SHELTER
     const shelterId = session.user.shelterId as string;
-
-    // Obtener datos del albergue para verificar estado de verificación
     const shelter = await prisma.shelter.findUnique({
         where: { id: shelterId as string },
         select: { id: true, verified: true },
     });
 
-    // Verificar que el SHELTER esté verificado
     if (!shelter?.verified) {
-        // Tiene cuenta de albergue pero aún no ha sido aprobada por admin
         redirect("/unauthorized?reason=shelter_not_verified");
     }
 

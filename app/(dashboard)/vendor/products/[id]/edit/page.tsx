@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps) {
     });
 
     return {
-        title: product ? `Editar ${product.name} - PawLig` : "Editar Producto - PawLig",
+        title: product ? `Editar ${product.name}` : "Editar Producto",
         description: "Actualiza la información de tu producto",
     };
 }
@@ -28,28 +28,23 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function EditProductPage({ params }: PageProps) {
 
     const session = await getServerSession(authOptions)
-    // Verificar autenticación
+    // Verificar autenticación, rol y verificación de rol
     if (!session || !session.user) {
         redirect("/login?callbackUrl=/vendor/products");
     }
 
-    // Verificar rol VENDOR
     if (session.user.role !== UserRole.VENDOR) {
         redirect("/unauthorized?reason=vendor_only");
     }
 
-    // Obtener ID del vendor y verificar estado
+    // Obtener id de VENDOR
     const vendorId = session.user.vendorId as string;
-
-    // Obtener datos del vendor para verificar estado de verificación
     const vendor = await prisma.vendor.findUnique({
         where: { id: vendorId as string },
         select: { id: true, verified: true },
     });
 
-    // Verificar que el VENDOR esté verificado
     if (!vendor?.verified) {
-        // Tiene cuenta de vendedor pero aún no ha sido aprobada por admin
         redirect("/unauthorized?reason=vendor_not_verified");
     }
 
@@ -68,12 +63,11 @@ export default async function EditProductPage({ params }: PageProps) {
         },
     });
 
-    //  3. Validaciones
+    // Validaciones de propiedad
     if (!product) {
         notFound();
     }
 
-    // Verificar propiedad
     if (product.vendorId !== vendor.id) {
         redirect("/unauthorized?reason=wrong_product");
     }

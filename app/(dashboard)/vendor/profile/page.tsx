@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import VendorProfileForm from '@/components/forms/vendor-profile-form';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { prisma } from '@/lib/utils/db';
+import { UserRole } from '@prisma/client';
 
 /**
  * Metadata para SEO
@@ -15,17 +17,25 @@ export const metadata: Metadata = {
 };
 
 export default async function VendorProfilePage() {
-  // Obtener sesión del usuario
-  const session = await getServerSession(authOptions);
-
-  // Verificar autenticación
-  if (!session?.user) {
-    redirect('/login?callbackUrl=/vendor/profile');
+  const session = await getServerSession(authOptions)
+  // Verificar autenticación, rol y verificación de rol
+  if (!session || !session.user) {
+    redirect("/login?callbackUrl=/vendor/profile");
   }
 
-  // Verificar rol de vendedor
-  if (session.user.role !== 'VENDOR') {
-    redirect('/unauthorized');
+  if (session.user.role !== UserRole.VENDOR) {
+    redirect("/unauthorized?reason=vendor_only");
+  }
+
+  // Obtener id de VENDOR
+  const vendorId = session.user.vendorId as string;
+  const vendor = await prisma.vendor.findUnique({
+    where: { id: vendorId as string },
+    select: { id: true, verified: true },
+  });
+
+  if (!vendor?.verified) {
+    redirect("/unauthorized?reason=vendor_not_verified");
   }
 
   return (
