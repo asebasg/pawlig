@@ -126,14 +126,6 @@ export default function UnauthorizedPage() {
                         </button>
                     </div>
                 </div>
-
-                {/* Footer */}
-                <p className="text-center text-sm text-gray-500 mt-6">
-                    ¿Necesitas ayuda?{" "}
-                    <Link href="/contacto" className="text-purple-600 hover:underline">
-                        Contacta con soporte
-                    </Link>
-                </p>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, Municipality } from "@prisma/client";
 import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
@@ -37,15 +37,7 @@ interface User {
     };
 }
 
-interface UsersManagementClientProps {
-    adminUser: {
-        id: string;
-        email: string;
-        name: string;
-    }
-}
-
-export default function UsersManagementClient({ adminUser }: UsersManagementClientProps) {
+export default function UsersManagementClient() {
     const router = useRouter();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
@@ -62,7 +54,7 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
     const [totalCount, setTotalCount] = useState(0);
 
     //  Cargar usuarios
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -93,12 +85,12 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
         } finally {
             setLoading(false)
         }
-    };
+    }, [roleFilter, statusFilter, searchQuery, currentPage]);
 
     //  Efecto para cargar usuarios al cambiar filtros o paginas
     useEffect(() => {
         fetchUsers();
-    }, [roleFilter, statusFilter, currentPage]);
+    }, [fetchUsers]);
 
     // Búsqueda con debounce
     useEffect(() => {
@@ -110,7 +102,7 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
             }
         }, 500);
         return () => clearTimeout(timeoutId);
-    }, [searchQuery]);
+    }, [searchQuery, currentPage, fetchUsers]);
 
     // Formatear fecha
     const formatDate = (dateString: string) => {
@@ -316,7 +308,7 @@ export default function UsersManagementClient({ adminUser }: UsersManagementClie
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 {getStatusBadge(user.isActive)}
-                                                {/* Mostrar razon del bloqueo */}
+                                                {/* Mostrar razón del bloqueo */}
                                                 {/* {!user.isActive && user.blockReason && (
                                                     <div className="text-xs text-gray-500 mt-1 max-w-xs truncate">
                                                         {user.blockReason}
