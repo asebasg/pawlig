@@ -51,6 +51,7 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
 
     // 2. Parsear filtros y paginación
     const categoryFilter = searchParams.categoryId as string | undefined;
+    const searchQuery = searchParams.q as string | undefined;
     const page = parseInt(searchParams.page as string || "1");
     const limit = 12;
 
@@ -58,6 +59,12 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
     const where = {
         vendorId: vendor.id,
         ...(categoryFilter && { category: categoryFilter }),
+        ...(searchQuery && {
+            OR: [
+                { name: { contains: searchQuery, mode: 'insensitive' as const } },
+                { description: { contains: searchQuery, mode: 'insensitive' as const } },
+            ],
+        }),
     };
 
     // 4. Obtener productos y conteo total (Parallel fetching)
@@ -96,6 +103,35 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
         prisma.product.count({ where }),
     ]);
 
+    // 5. Estadísticas de inventario GENERAL (sin filtros de búsqueda ni categoría)
+    // Estas son para mostrar el total absoluto de productos del vendedor
+    const categoryStats = await prisma.product.groupBy({
+        by: ["category"],
+        where: { vendorId: vendor.id },
+        _count: true,
+    });
+
+    // 6. Estadísticas de BÚSQUEDA (solo con filtro de búsqueda, SIN filtro de categoría)
+    // Estas son las que usaremos para los badges dinámicos
+    const searchWhere = {
+        vendorId: vendor.id,
+        ...(searchQuery && {
+            OR: [
+                { name: { contains: searchQuery, mode: 'insensitive' as const } },
+                { description: { contains: searchQuery, mode: 'insensitive' as const } },
+            ],
+        }),
+    };
+
+    const [searchCategoryStats, searchTotalCount] = await Promise.all([
+        prisma.product.groupBy({
+            by: ["category"],
+            where: searchWhere,
+            _count: true,
+        }),
+        prisma.product.count({ where: searchWhere }),
+    ]);
+
     // Calculamos métricas de negocio
     const inventoryStats = await prisma.product.aggregate({
         where: { vendorId: vendor.id },
@@ -122,6 +158,10 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
         where: { vendorId: vendor.id, stock: 0 }
     });
 
+    const allProductsCount = await prisma.product.count({
+        where: { vendorId: vendor.id }
+    });
+
 
     // Estructurar datos para la vista
     // Adaptamos al formato que espera VendorStats actualmente
@@ -131,6 +171,21 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
         outOfStock: outOfStockCount,
         lowStock: lowStockCount,
     };
+
+    const categories = categoryStats
+        .map(c => ({
+            name: c.category,
+            count: c._count
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name)); // Orden alfabético
+
+    // Estadísticas de búsqueda para badges dinámicos
+    const searchCategories = searchCategoryStats
+        .map(c => ({
+            name: c.category,
+            count: c._count
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <div className="container mx-auto py-8 px-4">
@@ -158,6 +213,10 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
             {/* Tabla de productos (Client Component) */}
             <ProductsClient
                 initialProducts={products}
+                categories={categories}
+                allCount={allProductsCount}
+                searchCategories={searchCategories}
+                searchTotalCount={searchTotalCount}
             />
         </div>
     );

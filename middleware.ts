@@ -1,6 +1,14 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
+// Definición local de UserRole para evitar importar @prisma/client en Edge Runtime
+enum UserRole {
+  ADMIN = "ADMIN",
+  SHELTER = "SHELTER",
+  VENDOR = "VENDOR",
+  ADOPTER = "ADOPTER",
+}
+
 /**
  * Middleware: Control de Acceso
  * Descripción: Intercepta las solicitudes a rutas protegidas para verificar la autenticación y autorización del usuario.
@@ -19,26 +27,25 @@ export default withAuth(
       );
     }
 
-    //  Protección de ruta /request-shelter
-    // Solo usuarios con rol ADOPTER o VENDOR pueden solicitar ser albergue
-    if (path === "/request-shelter") {
+    //  Protección de rutas de solicitud (Hacerse Albergue o Vendedor)
+    // Solo usuarios básicos (ADOPTER) pueden solicitar escalar a otro rol
+    if (path === "/request-shelter" || path === "/request-vendor") {
       if (!token) {
         return NextResponse.redirect(
-          new URL("/login?callbackUrl=/request-shelter", req.url)
+          new URL(`/login?callbackUrl=${path}`, req.url)
         );
       }
 
-      const allowedRoles = ["ADOPTER", "VENDOR"];
-      if (!allowedRoles.includes(token.role as string)) {
+      if (token.role !== UserRole.ADOPTER) {
         return NextResponse.redirect(
-          new URL("/unauthorized?reason=adopters_vendors_only", req.url)
+          new URL("/unauthorized?reason=adopter_only", req.url)
         );
       }
     }
 
     //  Protección de rutas administrativas
     if (path.startsWith("/admin")) {
-      if (!token || token.role !== "ADMIN") {
+      if (!token || token.role !== UserRole.ADMIN) {
         return NextResponse.redirect(
           new URL("/unauthorized?reason=admin_only", req.url)
         );
@@ -47,7 +54,7 @@ export default withAuth(
 
     //  Protección de rutas de albergues
     if (path.startsWith("/shelter")) {
-      if (!token || token.role !== "SHELTER") {
+      if (!token || token.role !== UserRole.SHELTER) {
         return NextResponse.redirect(
           new URL("/unauthorized?reason=shelter_only", req.url)
         );
@@ -56,7 +63,7 @@ export default withAuth(
 
     //  Protección de rutas de vendedores
     if (path.startsWith("/vendor")) {
-      if (!token || token.role !== "VENDOR") {
+      if (!token || token.role !== UserRole.VENDOR) {
         return NextResponse.redirect(
           new URL("/unauthorized?reason=vendor_only", req.url)
         );

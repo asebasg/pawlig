@@ -247,7 +247,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                         type="number"
                         id="price"
                         min="0"
-                        step="0.01"
+                        step="1"
                         placeholder="Ej: 25000"
                         className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />

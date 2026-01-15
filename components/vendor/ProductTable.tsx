@@ -152,7 +152,7 @@ export function ProductTable({
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[120px]">Imagen</TableHead>
+                            <TableHead className="w-[120px] text-center">Imagen</TableHead>
                             <TableHead>Nombre</TableHead>
                             <TableHead className="text-center">Precio</TableHead>
                             <TableHead className="text-center">Stock</TableHead>
@@ -185,7 +185,7 @@ export function ProductTable({
                                         <span className="font-medium text-sm md:text-base">
                                             {product.name}
                                         </span>
-                                        <span className="text-xs text-muted-foreground line-clamp-1">
+                                        <span className="text-xs text-muted-foreground max-w-[500px] break-words whitespace-normal">
                                             {product.description}
                                         </span>
                                     </div>

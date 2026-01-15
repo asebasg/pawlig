@@ -22,10 +22,10 @@ export default function UnauthorizedPage() {
             suggestion: "Revisa tu correo electrónico para más detalles sobre el motivo del bloqueo. Si crees que es un error, contacta con soporte."
         },
         // Mensaje para solicitud de albergue
-        adopters_vendors_only: {
-            title: "Acceso solo para adoptantes y vendedores",
-            description: "Solo usuarios con rol de adoptante o vendedor pueden solicitar cuentas de albergue.",
-            suggestion: "Si ya eres albergue o administrador, no necesitas solicitar una cuenta nueva. Si eres adoptante o vendedor, asegúrate de haber iniciado sesión."
+        adopter_only: {
+            title: "Acceso solo para adoptantes",
+            description: "Solo usuarios con rol de adoptante pueden solicitar cuentas de albergue o vendedor.",
+            suggestion: "Si ya eres albergue o vendedor, no necesitas solicitar una cuenta nueva. Si eres adoptante, asegúrate de haber iniciado sesión."
         },
         // Mensaje para pagina de administradores
         admin_only: {
