@@ -287,9 +287,6 @@ export default function AdoptionApplicationsClient() {
                   Adoptante
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Contacto
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                   Estado
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -322,12 +319,6 @@ export default function AdoptionApplicationsClient() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <p className="font-medium text-gray-900">{adoption.adopter.name}</p>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-600">
-                      <p>{adoption.adopter.phone}</p>
-                      <p className="text-xs text-gray-500">{adoption.adopter.email}</p>
-                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(adoption.status)}

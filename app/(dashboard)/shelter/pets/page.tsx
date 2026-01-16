@@ -189,7 +189,7 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
                             className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                         >
                             <Plus className="w-5 h-5" />
-                            Publicar Primera Mascota
+                            Publicar Mascota
                         </Link>
                     </div>
                 ) : (

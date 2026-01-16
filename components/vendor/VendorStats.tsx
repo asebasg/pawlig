@@ -8,19 +8,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  */
 
 interface VendorStatsProps {
-    stats: {
-        total: number;
-        inStock: number;
-        outOfStock: number;
-        lowStock: number;
-    };
+    total: number;
+    inStock: number;
+    outOfStock: number;
+    lowStock: number;
 }
 
-export function VendorStats({ stats }: VendorStatsProps) {
+export function VendorStats({ total, inStock, outOfStock, lowStock }: VendorStatsProps) {
     const statCards = [
         {
             title: "Productos Totales",
-            value: stats.total,
+            value: total,
             icon: Package,
             color: "text-blue-600",
             bgColor: "bg-blue-100",
@@ -28,7 +26,7 @@ export function VendorStats({ stats }: VendorStatsProps) {
         },
         {
             title: "En Stock",
-            value: stats.inStock,
+            value: inStock,
             icon: CheckCircle,
             color: "text-green-600",
             bgColor: "bg-green-100",
@@ -36,7 +34,7 @@ export function VendorStats({ stats }: VendorStatsProps) {
         },
         {
             title: "Stock Bajo",
-            value: stats.lowStock,
+            value: lowStock,
             icon: AlertTriangle,
             color: "text-yellow-600",
             bgColor: "bg-yellow-100",
@@ -44,7 +42,7 @@ export function VendorStats({ stats }: VendorStatsProps) {
         },
         {
             title: "Agotados",
-            value: stats.outOfStock,
+            value: outOfStock,
             icon: XCircle,
             color: "text-red-600",
             bgColor: "bg-red-100",

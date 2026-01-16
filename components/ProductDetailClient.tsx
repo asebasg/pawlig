@@ -10,13 +10,14 @@ import {
     DollarSign,
     Package,
     ShoppingCart,
-    CreditCard
+    CreditCard,
+    Map
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductCard } from './cards/product-card';
 import Badge from './ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -268,12 +269,12 @@ export default function ProductDetailClient({
                     <CardHeader>
                         <div className="mb-6">
                             <CardTitle className="text-lg font-semibold text-gray-900 mb-2 text-center">Vendido por</CardTitle>
-                            <Link href={`#`} className="text-purple-600 hover:text-purple-700 font-semibold text-lg block text-center">
+                            <p className="text-purple-600 font-bold text-xl block text-center">
                                 {product.vendor.businessName}
-                            </Link>
+                            </p>
                             <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mt-1">
                                 <MapPin className="w-4 h-4" />
-                                <span>{product.vendor.municipality}</span>
+                                <span>{product.vendor.municipality}, ANTIOQUIA</span>
                             </div>
                         </div>
                     </CardHeader>
@@ -282,23 +283,31 @@ export default function ProductDetailClient({
                         {/* Dirección */}
                         {product.vendor.address && (
                             <div className="mb-4 pb-4 border-b border-gray-200">
-                                <p className="text-sm text-gray-600 mb-1">Ubicación</p>
-                                <p className="text-sm text-gray-900">{product.vendor.address}</p>
+                                <p className="text-sm text-gray-900 mb-2 font-semibold">Ubicación</p>
+                                <div className="flex items-center justify-between text-sm text-gray-600">
+                                    <p className="text-sm text-gray-900">{product.vendor.address}</p>
+                                    <Link
+                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(product.vendor.address)}`}
+                                        target="_blank"
+                                        className={cn(buttonVariants({ variant: 'outline' }), "w-fit")}
+                                    >
+                                        <Map className="w-5 h-5 mr-1" />
+                                        Ver en Google Maps
+                                    </Link>
+                                </div>
                             </div>
                         )}
 
                         {/* Descripción del Vendedor */}
                         {product.vendor.description && (
                             <div className="mb-6 pb-6 border-b border-gray-200">
-                                <p className="text-sm text-gray-600 mb-2">Acerca del Vendedor</p>
+                                <p className="text-sm text-gray-900 mb-2 font-semibold">Acerca del Vendedor</p>
                                 <p className="text-sm text-gray-700 line-clamp-3">{product.vendor.description}</p>
                             </div>
                         )}
 
                         {/* Opciones rápidas */}
                         <div className="flex flex-col gap-4">
-                            <p className="text-sm font-semibold text-gray-900">Algunas opciones rápidas</p>
-
                             <div className="flex gap-2">
                                 {product.vendor.businessPhone && (
                                     <a

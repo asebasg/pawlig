@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { prisma } from "@/lib/utils/db";
+import Image from 'next/image';
 
 /**
  * Resumen: Página placeholder para la gestión de pedidos del vendedor.
@@ -43,15 +44,22 @@ export default async function VendorMetricsPage() {
 
     return (
         <div className="container mx-auto py-8 px-4">
-            <Link href="/vendor" className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+            <Link href="/vendor" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
                 <ArrowLeft className="w-4 h-4" />
                 Volver al Dashboard
             </Link>
             <h1 className="text-2xl font-bold">Métricas de Ventas</h1>
             <p className="text-gray-500 dark:text-gray-400 mb-4">Panel de información de tus métricas de productos</p>
-            <div className="p-8 border rounded-lg bg-gray-50 text-center">
-                <p className="text-lg text-gray-600">Esta sección está en desarrollo.</p>
-                <p className="text-sm text-gray-400 mt-2">Pronto podrás visualizar y gestionar tus métricas aquí.</p>
+            <div className="flex flex-col p-8 border rounded-lg bg-gray-50 items-center text-center justify-center">
+                <p className="text-lg text-gray-600">Esta sección está en desarrollo</p>
+                <p className="text-sm text-gray-400 mt-2 mb-10">Pronto podrás visualizar y gestionar tus métricas aquí</p>
+                <Image
+                    src='/images/under_construction.png'
+                    alt="En construcción..."
+                    width={350}
+                    height={350}
+                    className="object-cover pointer-events-none"
+                />
                 <Button asChild className="mt-6">
                     <Link href="/vendor">Volver al Dashboard</Link>
                 </Button>

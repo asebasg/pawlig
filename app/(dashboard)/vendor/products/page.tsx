@@ -162,24 +162,13 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
         where: { vendorId: vendor.id }
     });
 
-
-    // Estructurar datos para la vista
-    // Adaptamos al formato que espera VendorStats actualmente
-    const stats = {
-        total: inventoryStats._count.id || 0,
-        inStock: inStockCount,
-        outOfStock: outOfStockCount,
-        lowStock: lowStockCount,
-    };
-
     const categories = categoryStats
         .map(c => ({
             name: c.category,
             count: c._count
         }))
-        .sort((a, b) => a.name.localeCompare(b.name)); // Orden alfabético
+        .sort((a, b) => a.name.localeCompare(b.name));
 
-    // Estadísticas de búsqueda para badges dinámicos
     const searchCategories = searchCategoryStats
         .map(c => ({
             name: c.category,
@@ -189,15 +178,14 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
 
     return (
         <div className="container mx-auto py-8 px-4">
-            {/* Header con título y botón */}
             <div className="flex justify-between items-center mb-6">
-                <Link href="/vendor" className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
-                    <ArrowLeft className="w-4 h-4" />
-                    Volver al Dashboard
-                </Link>
                 <div>
-                    <h1 className="text-2xl font-bold">Mis Productos</h1>
-                    <p className="text-gray-500">Gestiona tu inventario</p>
+                    <Link href="/vendor" className="inline-flex items-center gap-2 mb-2 text-purple-600 hover:text-purple-700 text-sm font-semibold transition-colors">
+                        <ArrowLeft className="w-4 h-4" />
+                        Volver al Dashboard
+                    </Link>
+                    <h1 className="text-3xl font-bold">Mis Productos</h1>
+                    <p className="text-gray-500">Gestiona y administra tu inventario de productos</p>
                 </div>
                 <Link
                     href="/vendor/products/new"
@@ -207,10 +195,13 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
                 </Link>
             </div>
 
-            {/* Estadísticas */}
-            <VendorStats stats={stats} />
+            <VendorStats
+                total={inventoryStats._count.id || 0}
+                inStock={inStockCount}
+                outOfStock={outOfStockCount}
+                lowStock={lowStockCount}
+            />
 
-            {/* Tabla de productos (Client Component) */}
             <ProductsClient
                 initialProducts={products}
                 categories={categories}

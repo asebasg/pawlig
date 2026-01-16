@@ -52,7 +52,7 @@ export default function VendorDashboardClient({ userSession }: VendorDashboardCl
 
     return (
         <div className="space-y-2">
-            <div className="bg-white p-2 rounded-2xl">
+            <div className="bg-white p-2 rounded-2xl mb-4">
                 <h2 className="text-2xl font-semibold text-gray-800">
                     ¡Hola de nuevo, <span className="text-primary">{userSession.name}</span>! 👋
                 </h2>

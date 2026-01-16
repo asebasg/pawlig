@@ -10,17 +10,20 @@ export const NAVIGATION_BY_ROLE = {
   ],
   SHELTER: [
     { label: "Inicio", href: "/" },
-    { label: "Adopciones", href: "/adopciones" },
+    { label: "Dashboard", href: "/shelter" },
     { label: "Mis Mascotas", href: "/shelter/pets" },
-    { label: "Postulaciones", href: "/shelter/adoptions" }
+    { label: "Postulaciones", href: "/shelter/adoptions" },
+    { label: "Adopciones", href: "/adopciones" },
   ],
   VENDOR: [
     { label: "Inicio", href: "/" },
-    { label: "Productos", href: "/productos" },
+    { label: "Dashboard", href: "/vendor" },
     { label: "Mis Productos", href: "/vendor/products" },
-    { label: "Órdenes", href: "/vendor/orders" }
+    { label: "Órdenes", href: "/vendor/orders" },
+    { label: "Productos", href: "/productos" },
   ],
   ADMIN: [
+    { label: "Inicio", href: "/" },
     { label: "Dashboard", href: "/admin" },
     { label: "Usuarios", href: "/admin/users" },
     { label: "Albergues", href: "/admin/shelters" },
@@ -45,21 +48,23 @@ export const USER_MENU_OPTIONS = {
     { label: "Solicitar Vendedor", href: "/user/request-vendor", icon: "Plus" },
   ],
   SHELTER: [
-    { label: "Dashboard", href: "/shelter", icon: "LayoutDashboard" },
+    { label: "Métricas", href: "/shelter/metrics", icon: "TrendingUp" },
     { label: "Mi Perfil", href: "/shelter/profile", icon: "User" },
-    { label: "Mis Mascotas", href: "/shelter/pets", icon: "PawPrint" },
-    { label: "Reportes", href: "/shelter/reports", icon: "BarChart" }
+    { label: "Productos", href: "/productos", icon: "ShoppingBag" },
   ],
   VENDOR: [
-    { label: "Dashboard", href: "/vendor", icon: "LayoutDashboard" },
+    { label: "Métricas", href: "/vendor/metrics", icon: "TrendingUp" },
     { label: "Mi Perfil", href: "/vendor/profile", icon: "User" },
-    { label: "Mis Productos", href: "/vendor/products", icon: "Package" },
-    { label: "Órdenes", href: "/vendor/orders", icon: "ShoppingBag" }
+    { label: "Adopciones", href: "/adopciones", icon: "PawPrint"},
+    { label: "Albergues", href: "/albergues", icon: "Home" },
   ],
   ADMIN: [
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
-    { label: "Reportes", href: "/admin/reports", icon: "FileText" },
-    { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" }
+    { label: "Moderación", href: "/admin/moderation", icon: "ShieldPlus" },
+    { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" },
+    { label: "Adopciones", href: "/adopciones", icon: "PawPrint"},
+    { label: "Productos", href: "/productos", icon: "ShoppingBag" },
+    { label: "Albergues", href: "/albergues", icon: "Home" },
   ]
 } as const;
 

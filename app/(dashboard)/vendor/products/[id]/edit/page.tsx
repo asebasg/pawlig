@@ -77,11 +77,8 @@ export default async function EditProductPage({ params }: PageProps) {
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <Link
-                        href="/vendor/products"
-                        className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
+                    <Link href="/vendor/products" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                        <ArrowLeft className="w-4 h-4" />
                         Volver a Mis Productos
                     </Link>
                     <div className="text-center">
