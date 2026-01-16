@@ -81,8 +81,8 @@ export default async function ShelterAdoptionsPage() {
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Albergue</p>
             <div className="flex items-center gap-2">
               <p className="text-sm font-bold text-gray-900">{shelter.name}</p>
-              <Badge variant={shelter.verified ? "default" : "outline"} className={shelter.verified ? "bg-green-100 text-green-700 hover:bg-green-100 border-none" : "text-yellow-700 border-yellow-200"}>
-                {shelter.verified ? 'Verificado' : 'Pendiente'}
+              <Badge variant="default" className="bg-green-100 text-green-700 pointer-events-none">
+                Verificado
               </Badge>
             </div>
           </div>
@@ -99,10 +99,7 @@ export default async function ShelterAdoptionsPage() {
             <div className="hidden sm:flex p-3 bg-blue-100 rounded-xl h-fit">
               <Info className="w-6 h-6 text-blue-600" />
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2 sm:hidden">
-                <Info className="w-5 h-5" /> Gestión de Postulaciones
-              </h3>
+            <div className="flex flex-col">
               <h3 className="hidden sm:block text-lg font-bold text-blue-900 mb-2">
                 ¿Cómo funciona el sistema de postulaciones?
               </h3>

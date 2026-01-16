@@ -222,9 +222,9 @@ export default function AdoptionApplicationsClient() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex flex-col items-center justify-center py-12">
         <Loader />
-        <span className="ml-2">Cargando postulaciones...</span>
+        <span className="ml-2 text-gray-500">Cargando postulaciones...</span>
       </div>
     );
   }
