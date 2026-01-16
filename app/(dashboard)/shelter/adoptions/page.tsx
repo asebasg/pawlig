@@ -64,7 +64,7 @@ export default async function ShelterAdoptionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex flex-col">
-          <Link href="/shelter" className="inline-flex items-center gap-2 mb-2 text-purple-600 hover:text-purple-700 text-sm font-semibold transition-colors w-fit">
+          <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
             <ArrowLeft className="w-4 h-4" />
             Volver al Dashboard
           </Link>

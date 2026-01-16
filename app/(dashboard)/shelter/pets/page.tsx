@@ -120,7 +120,7 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Header con título y botón */}
                 <div className="flex justify-between items-center mb-6">
-                    <Link href="/shelter" className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                    <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
                         <ArrowLeft className="w-4 h-4" />
                         Volver al Dashboard
                     </Link>
