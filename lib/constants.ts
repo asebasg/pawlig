@@ -51,6 +51,7 @@ export const USER_MENU_OPTIONS = {
     { label: "Métricas", href: "/shelter/metrics", icon: "TrendingUp" },
     { label: "Mi Perfil", href: "/shelter/profile", icon: "User" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
+    { label: "Albergues", href: "/albergues", icon: "Home" },
   ],
   VENDOR: [
     { label: "Métricas", href: "/vendor/metrics", icon: "TrendingUp" },
