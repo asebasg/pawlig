@@ -56,14 +56,14 @@ export const USER_MENU_OPTIONS = {
   VENDOR: [
     { label: "Métricas", href: "/vendor/metrics", icon: "TrendingUp" },
     { label: "Mi Perfil", href: "/vendor/profile", icon: "User" },
-    { label: "Adopciones", href: "/adopciones", icon: "PawPrint"},
+    { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
   ],
   ADMIN: [
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
     { label: "Moderación", href: "/admin/moderation", icon: "ShieldPlus" },
     { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" },
-    { label: "Adopciones", href: "/adopciones", icon: "PawPrint"},
+    { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
   ]
@@ -83,15 +83,16 @@ export const FOOTER_LINKS = {
     { label: "Albergues", href: "/albergues" },
     { label: "Preguntas Frecuentes", href: "/faq" },
     { label: "Nosotros", href: "/nosotros" },
+    { label: "Reportar Problema", href: "https://github.com/asebasg/pawlig/issues/new/choose" },
   ],
   // TODO: Crear una página de recursos adicionales (anidado en GitHub Pages)
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
     { label: "Manual del Usuario", href: "/guide" },
-    { label: "Reportar Problema", href: "https://github.com/asebasg/pawlig/issues/new/choose" },
-    { label: "Términos y Condiciones", href: "/terminos" },
-    { label: "Política de Privacidad", href: "/privacidad" },
+    { label: "Términos y Condiciones", href: "/terms" },
+    { label: "Política de Privacidad", href: "/privacy" },
+    { label: "Notas de Lanzamiento", href: "/changelog" },
   ],
   social: [
     { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" },

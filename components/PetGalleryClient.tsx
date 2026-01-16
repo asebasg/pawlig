@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { PetCard } from './cards/pet-card';
+import { PetCard } from "@/components/cards/pet-card";
 import { FavoriteButton } from '@/components/ui/favorite-button';
 import Loader from '@/components/ui/loader';
 import PetFilter from '@/components/filters/pet-filter';
