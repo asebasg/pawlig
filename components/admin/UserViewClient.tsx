@@ -11,11 +11,18 @@ import { isCriticalRoleChange } from "@/lib/constants";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RoleChangeModal } from "./RoleChangeModal";
 import { Shield, Save } from "lucide-react";
 import Loader from '@/components/ui/loader';
+
+/**
+ * Descripción: Muestra el historial de auditoría de acciones realizadas sobre un usuario.
+ * Requiere: Lista de registros de auditoría (AuditRecord[]).
+ * Implementa: Registro histórico de gestión administrativa.
+ */
 
 type UserData = {
   id: string;
@@ -114,34 +121,41 @@ export default function UserViewClient({ user }: UserViewClientProps) {
               name="newRole"
               control={control}
               render={({ field }) => (
-                <Select
-                  label="Rol del Usuario"
-                  id="newRole"
-                  {...field}
-                  disabled={isLoading}
-                >
-                  {Object.values(UserRole).map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </Select>
+                <div className="space-y-2">
+                  <Label htmlFor="newRole">Rol del Usuario</Label>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger id="newRole">
+                      <SelectValue placeholder="Seleccionar rol" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(UserRole).map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {role}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
             />
 
             <Controller
-                name="reason"
-                control={control}
-                render={({ field }) => (
-                    <Input
-                        label="Razón del cambio (requerido)"
-                        id="reason"
-                        placeholder="Especifique por qué se cambia el rol..."
-                        {...field}
-                        disabled={isLoading}
-                        className={errors.reason ? "border-pink-600" : ""}
-                    />
-                )}
+              name="reason"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  label="Razón del cambio (requerido)"
+                  id="reason"
+                  placeholder="Especifique por qué se cambia el rol..."
+                  {...field}
+                  disabled={isLoading}
+                  className={errors.reason ? "border-pink-600" : ""}
+                />
+              )}
             />
             {errors.reason && <p className="text-sm text-pink-600">{errors.reason.message}</p>}
 

@@ -91,29 +91,29 @@ export function UserMenu({ user }: UserMenuProps) {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        <div className="relative w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+        <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
           {user.image ? (
             <Image
               src={user.image}
               alt={user.name || ""}
               fill
               className="object-cover"
-              sizes="40px"
+              sizes="(max-width: 640px) 32px, 40px"
             />
           ) : (
-            <User size={20} className="text-purple-600" />
+            <User size={18} className="text-purple-600 sm:w-5 sm:h-5" />
           )}
         </div>
-        <span className="hidden md:block font-semibold text-gray-700 max-w-[120px] truncate">
+        <span className="hidden sm:block font-semibold text-gray-700 max-w-[100px] lg:max-w-[120px] truncate">
           {user.name}
         </span>
-        <ChevronDown size={16} className="text-gray-500" />
+        <ChevronDown size={14} className="text-gray-500 sm:w-4 sm:h-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+        <div className="absolute right-0 mt-2 w-64 md:w-72 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
           {/* User Info */}
           <div className="px-4 py-3 border-b border-gray-200">
             <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export function UserMenu({ user }: UserMenuProps) {
               </div>
             </div>
             <div className="mt-2">
-              <span className="inline-block px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded">
+              <span className="inline-block px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded pointer-events-none">
                 {roleLabels[user.role as keyof typeof roleLabels]}
               </span>
             </div>

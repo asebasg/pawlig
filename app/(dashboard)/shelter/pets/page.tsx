@@ -21,8 +21,10 @@ import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
 import { UserRole, PetStatus } from "@prisma/client";
 import Link from "next/link";
-import { Plus, SquareChartGantt, ListCheck, ClipboardClock, CircleCheck } from "lucide-react";
+import { Plus, SquareChartGantt, ListCheck, ClipboardClock, CircleCheck, ArrowLeft } from "lucide-react";
 import PetCard from "@/components/cards/shelter-pet-card";
+import { cn } from '@/lib/utils';
+import { buttonVariants } from "@/components/ui/button-variants";
 
 interface PageProps {
     searchParams: {
@@ -32,40 +34,43 @@ interface PageProps {
 }
 
 export const metadata = {
-    title: "Mis Mascotas | PawLig Shelter Management",
+    title: "Mis Mascotas",
     description: "Gestiona las mascotas de tu albergue",
 };
 
 export default async function ShelterPetsPage({ searchParams }: PageProps) {
-    //  1. Autenticación
     const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== UserRole.SHELTER) {
-        redirect("/unauthorized");
+    // Verificar autenticación, rol y verificación de rol
+    if (!session || !session.user) {
+        redirect("/login?callbackUrl=/shelter/pets");
     }
 
-    //  2. Obtener la ID del albergue (SHELTER ID)
+    if (session.user.role !== UserRole.SHELTER) {
+        redirect("/unauthorized?reason=shelter_only");
+    }
+    // Obtener id de SHELTER
+    const shelterId = session.user.shelterId as string;
     const shelter = await prisma.shelter.findUnique({
-        where: { userId: session.user.id },
-        select: { id: true, name: true, verified: true },
+        where: { id: shelterId as string },
+        select: { id: true, verified: true },
     });
 
-    if (!shelter) {
-        redirect("/shelter");
+    if (!shelter?.verified) {
+        redirect("/unauthorized?reason=shelter_not_verified");
     }
 
-    //  3. Parsear filtros
+    //  2. Parsear filtros
     const statusFilter = searchParams.status as PetStatus | undefined;
     const page = parseInt(searchParams.page || "1");
     const limit = 12;
 
-    //  4. Construir query
+    //  3. Construir query
     const where = {
         shelterId: shelter.id,
         ...(statusFilter && { status: statusFilter }),
     };
 
-    //  5. Obtener mascotas y conteo
+    //  4. Obtener mascotas y conteo
     const [pets, total] = await Promise.all([
         prisma.pet.findMany({
             where,
@@ -95,7 +100,7 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
 
     const totalPages = Math.ceil(total / limit);
 
-    //  6. Contar por estado
+    //  5. Contar por estado
     const statusCounts = await prisma.pet.groupBy({
         by: ["status"],
         where: { shelterId: shelter.id },
@@ -113,19 +118,21 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="max-w-7xl mx-auto px-4 py-8">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                {/* Header con título y botón */}
+                <div className="flex justify-between items-center mb-6">
+                    <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                        <ArrowLeft className="w-4 h-4" />
+                        Volver al Dashboard
+                    </Link>
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Mis Mascotas</h1>
-                        <p className="text-gray-600 mt-1">
-                            {total} {total === 1 ? "mascota" : "mascotas"} registradas
-                        </p>
+                        <h1 className="text-2xl font-bold">Mis Mascotas</h1>
+                        <p className="text-gray-500">Gestiona tus mascotas</p>
                     </div>
                     <Link
                         href="/shelter/pets/new"
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                        className={cn(buttonVariants({ variant: "default" }))}
                     >
-                        <Plus className="w-5 h-5" />
-                        Publicar Mascota
+                        <Plus className="mr-2 h-4 w-4" /> Agregar Mascota
                     </Link>
                 </div>
 
@@ -182,7 +189,7 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
                             className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                         >
                             <Plus className="w-5 h-5" />
-                            Publicar Primera Mascota
+                            Publicar Mascota
                         </Link>
                     </div>
                 ) : (

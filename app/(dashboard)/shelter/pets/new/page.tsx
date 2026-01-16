@@ -30,59 +30,33 @@ export const metadata = {
 };
 
 export default async function NewPetPage() {
-    //  1. Verificar autenticación
     const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== UserRole.SHELTER) {
-        redirect("/unauthorized");
+    // Verificar autenticación, rol y verificación de rol
+    if (!session || !session.user) {
+        redirect("/login?callbackUrl=/shelter/pets/new");
     }
 
-    //  2. Obtener datos del albergue
+    if (session.user.role !== UserRole.SHELTER) {
+        redirect("/unauthorized?reason=shelter_only");
+    }
+    // Obtener id de SHELTER
+    const shelterId = session.user.shelterId as string;
     const shelter = await prisma.shelter.findUnique({
-        where: { userId: session.user.id },
-        select: {
-            id: true,
-            name: true,
-            verified: true,
-        },
+        where: { id: shelterId as string },
+        select: { id: true, verified: true },
     });
 
-    //  3. Validaciones
-    if (!shelter) {
-        redirect("/shelter");
+    if (!shelter?.verified) {
+        redirect("/unauthorized?reason=shelter_not_verified");
     }
 
-    if (!shelter.verified) {
-        return (
-            <div className="min-h-screen bg-gray-50 p-4 sm:p-6 flex items-center justify-center">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 sm:p-6 text-center max-w-md w-full mx-4">
-                    <h2 className="text-xl font-semibold text-yellow-900 mb-2">
-                        Albergue Pendiente de Verificación
-                    </h2>
-                    <p className="text-yellow-800 mb-4">
-                        Tu albergue debe estar verificado por un administrador antes de poder publicar mascotas.
-                    </p>
-                    <Link
-                        href="/shelter"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Volver al Dashboard
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-    //  4. Renderizar formulario
+    // Renderizar formulario
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4 sm:p-6">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <Link
-                        href="/shelter/pets"
-                        className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
-                    >
+                    <Link href="/shelter/pets" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
                         <ArrowLeft className="w-4 h-4" />
                         Volver a Mis Mascotas
                     </Link>
@@ -95,15 +69,15 @@ export default async function NewPetPage() {
                         {/* Tips de buenas prácticas */}
                     </div>
                     <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <h3 className="font-semibold text-blue-900 mb-2">💡 Tips para una buena publicación</h3>
-                            <ul className="text-sm text-blue-800 space-y-1">
-                                <li>• Usa fotos de alta calidad con buena iluminación</li>
-                                <li>• Sé honesto en la descripción del carácter y comportamiento</li>
-                                <li>• Incluye información sobre vacunas y esterilización</li>
-                                <li>• Especifica claramente los requisitos de adopción</li>
-                                <li>• Actualiza el estado cuando la mascota sea adoptada</li>
-                            </ul>
-                        </div>
+                        <h3 className="font-semibold text-blue-900 mb-2">💡 Tips para una buena publicación</h3>
+                        <ul className="text-sm text-blue-800 space-y-1">
+                            <li>• Usa fotos de alta calidad con buena iluminación</li>
+                            <li>• Sé honesto en la descripción del carácter y comportamiento</li>
+                            <li>• Incluye información sobre vacunas y esterilización</li>
+                            <li>• Especifica claramente los requisitos de adopción</li>
+                            <li>• Actualiza el estado cuando la mascota sea adoptada</li>
+                        </ul>
+                    </div>
                 </div>
 
                 {/* Formulario */}

@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, HouseHeart, Shield, ClipboardCheck, Package, CheckCircle, Search, Flame, PawPrint } from "lucide-react";
+import { Heart, HouseHeart, Shield, ClipboardCheck, Package, CheckCircle, Search, Flame, PawPrint, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/utils/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
-import PetCard from "@/components/cards/pet-card";
+import { PetCard } from "@/components/cards/pet-card";
 import { StarButton } from "@/components/ui/star-button";
+import { FavoriteButton } from "@/components/ui/favorite-button";
+import { Button } from "@/components/ui/button";
 import { Metadata } from 'next';
 
 /**
@@ -60,9 +62,9 @@ export default async function Home() {
     <div className="min-h-screen bg-white">
       {/* Sección Hero */}
       <section className="py-12 bg-gradient-to-b from-purple-50 to-white">
-        <div className="max-w-7xl mx-auto px-8 text-center">
-          <h1 className="text-5xl font-bold text-purple-800 mb-8 leading-tight">
-            Aquí, donde tus sueños comienzan y la<br />felicidad de ellos también
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 text-center">
+          <h1 className="text-3xl md:text-5xl font-bold text-purple-800 mb-8 leading-tight">
+            Aquí, donde tus sueños comienzan y la felicidad de ellos también
           </h1>
 
           {/* Estadísticas */}
@@ -199,8 +201,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Sección Mascotas Destacadas (DATOS REALES) */}
-      <section className="py-20 bg-purple-50">
+      {/* Sección Mascotas Destacadas */}
+      <section className="pb-10 pt-5 bg-purple-50">
         <div className="max-w-7xl mx-auto px-8">
           <div className="flex items-center justify-between mb-12">
             <h2 className="text-3xl font-bold text-purple-800">
@@ -211,7 +213,7 @@ export default async function Home() {
               className="text-purple-700 hover:text-purple-800 font-semibold flex items-center gap-2 hover:translate-x-1 transition-transform"
             >
               Ver todas las mascotas
-              <span>→</span>
+              <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
 
@@ -232,38 +234,62 @@ export default async function Home() {
                 </Link>
               </div>
             ) : (
-              featuredPets.map((pet) => (
-                <div key={pet.id} className="h-full">
-                  <PetCard
-                    pet={pet}
-                    userSession={
-                      session?.user
-                        ? {
-                          id: session.user.id,
-                          name: session.user.name || "",
-                          email: session.user.email || "",
-                          role: session.user.role,
-                        }
-                        : null
-                    }
-                    isFavorited={favoritePetIds.includes(pet.id)}
-                  />
-                </div>
-              ))
+              featuredPets.map((pet) => {
+                const petData = {
+                  id: pet.id,
+                  name: pet.name,
+                  images: pet.images,
+                  species: pet.species,
+                  breed: pet.breed,
+                  age: pet.age,
+                  sex: pet.sex,
+                  shelter: pet.shelter,
+                };
+
+                return (
+                  <div key={pet.id} className="h-full">
+                    <PetCard
+                      pet={petData}
+                      accentColor="purple"
+                      imageOverlay={
+                        <FavoriteButton
+                          petId={pet.id}
+                          initialIsFavorited={favoritePetIds.includes(pet.id)}
+                          userSession={
+                            session?.user
+                              ? {
+                                id: session.user.id,
+                                name: session.user.name || "",
+                                email: session.user.email || "",
+                                role: session.user.role,
+                              }
+                              : null
+                          }
+                        />
+                      }
+                      footer={
+                        <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                          <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
+                        </Button>
+                      }
+                    />
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
       </section>
 
       {/* Sección ¿Sabías Que? */}
-      <section className="py-10 bg-gradient-to-b from-purple-50 via-purple-300 to-purple-500 text-white relative overflow-hidden">
+      <section className="pb-10 pt-5 bg-gradient-to-b from-purple-50 via-purple-300 to-purple-500 text-white relative overflow-hidden">
         <section className="py-4 mb-4"> {/* bg-purple-50 */}
           <div className="max-w-7xl mx-auto px-8">
             <h2 className="text-4xl font-bold text-center text-purple-800 mb-12">
               ¿Sabías que...?
             </h2>
 
-            <div className="relative bg-purple-900 rounded-3xl overflow-hidden p-12 text-white shadow-2xl min-h-[500px] flex items-center">
+            <div className="relative bg-purple-900 rounded-3xl overflow-hidden p-6 md:p-12 text-white shadow-2xl min-h-[450px] md:min-h-[500px] flex items-center">
               {/* Capa de Imagen de Fondo */}
               <Image
                 src="/images/medellin-map.png"
@@ -272,25 +298,24 @@ export default async function Home() {
                 className="object-cover pointer-events-none"
               />
 
-              {/* Capa de Superposición Spotlight: Usa una sombra masiva para oscurecer todo AFUERA del círculo */}
-              {/* Movido a la derecha con justify-end y padding */}
+              {/* Capa de Superposición Spotlight */}
               <div className="absolute inset-0 flex items-center justify-center md:justify-end md:pr-20 pointer-events-none">
-                <div className="w-[450px] h-[450px] rounded-full border-4 border-purple-500 shadow-[0_0_0_9999px_rgba(0,0,0,0.70)] scale-125 md:scale-100" />
+                <div className="w-[300px] h-[300px] md:w-[450px] md:h-[450px] rounded-full border-4 border-purple-500 shadow-[0_0_0_9999px_rgba(0,0,0,0.70)] scale-150 md:scale-100" />
               </div>
 
-              {/* Contenido Flotante - alineado a la izquierda */}
-              <div className="relative z-10 text-left max-w-lg md:pl-10">
-                <p className="text-xl md:text-2xl mb-4 font-medium text-purple-300 uppercase tracking-wide shadow-black drop-shadow-lg">
+              {/* Contenido Flotante */}
+              <div className="relative z-10 text-center md:text-left max-w-lg mx-auto md:ml-10 md:mr-0">
+                <p className="text-lg md:text-2xl mb-4 font-medium text-purple-300 uppercase tracking-wide drop-shadow-lg">
                   En el Valle de Aburrá
                 </p>
-                <h3 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight drop-shadow-xl text-white">
+                <h3 className="text-4xl md:text-7xl font-extrabold mb-6 tracking-tight drop-shadow-xl text-white">
                   +3500 animales
                 </h3>
-                <p className="text-xl md:text-3xl mb-10 text-purple-100 leading-relaxed font-light drop-shadow-lg">
+                <p className="text-lg md:text-3xl mb-10 text-purple-100 leading-relaxed font-light drop-shadow-lg">
                   están en situación de abandono.
                 </p>
-                <div className="inline-block bg-purple-600/90 hover:bg-purple-600 transition-colors rounded-full px-8 py-4 shadow-lg shadow-purple-900/50">
-                  <p className="text-xl md:text-2xl font-bold text-white">
+                <div className="inline-block bg-purple-600/95 hover:bg-purple-600 transition-colors rounded-full px-6 py-3 md:px-8 md:py-4 shadow-lg shadow-purple-900/50">
+                  <p className="text-lg md:text-2xl font-bold text-white text-center">
                     ¡Tú puedes hacer la diferencia!
                   </p>
                 </div>
@@ -312,13 +337,10 @@ export default async function Home() {
                   <Shield className="w-8 h-8 text-purple-600" />
                 </div>
                 <h3 className="text-xl font-bold text-purple-800 mb-3 text-center">
-                  ¡Puedes escoger desde aquí a tu<br />peludito favorito!
+                  ¡Puedes escoger desde aquí a tu peludito favorito!
                 </h3>
                 <p className="text-purple-600 text-sm text-center">
-                  En PawLig, no tienes que esperar: te un<br />
-                  especio real para descubrir cientos de<br />
-                  mascotas en busca de hogar y puedes<br />
-                  enviar tu solicitud de adopción al instante.
+                  En PawLig, no tienes que esperar: te damos un espacio real para descubrir cientos de mascotas en busca de hogar y puedes enviar tu solicitud de adopción al instante.
                 </p>
               </div>
 
@@ -330,10 +352,7 @@ export default async function Home() {
                   Procesos centralizados
                 </h3>
                 <p className="text-purple-600 text-sm text-center">
-                  En PawLig, los procesos de adopción y<br />
-                  la comunicación entre albergues son<br />
-                  eficientes y ágiles, sin trámites largos ni<br />
-                  desgaste emocional.
+                  En PawLig, los procesos de adopción y la comunicación entre albergues son eficientes y ágiles, sin trámites largos ni desgaste emocional.
                 </p>
               </div>
 
@@ -342,13 +361,10 @@ export default async function Home() {
                   <Package className="w-8 h-8 text-purple-600" />
                 </div>
                 <h3 className="text-xl font-bold text-purple-800 mb-3 text-center">
-                  Productos confiables y<br />segmentados
+                  Productos confiables y segmentados
                 </h3>
                 <p className="text-purple-600 text-sm text-center">
-                  Aquí encontrarás una amplia variedad de<br />
-                  productos para el cuidado de tus mascotas<br />
-                  (alimentos y accesorios de calidad, a precios<br />
-                  accesibles.)
+                  Aquí encontrarás una amplia variedad de productos para el cuidado de tus mascotas (alimentos y accesorios de calidad, a precios accesibles).
                 </p>
               </div>
 
@@ -360,11 +376,7 @@ export default async function Home() {
                   Veracidad de perfiles
                 </h3>
                 <p className="text-purple-600 text-sm text-center">
-                  ¿Tienes dudas sobre la autenticidad de un<br />
-                  producto o una mascota? ¡No te preocupes! En<br />
-                  PawLig, los perfiles se encuentran siempre<br />
-                  verificados y verificados antes de ser<br />
-                  publicar cualquier contenido.
+                  ¿Tienes dudas sobre la autenticidad de un producto o una mascota? ¡No te preocupes! En PawLig, los perfiles se encuentran siempre verificados antes de publicar cualquier contenido.
                 </p>
               </div>
             </div>
@@ -385,20 +397,17 @@ export default async function Home() {
           <PawPrint className="absolute top-[60%] right-[10%] text-purple-900/25 w-14 h-14 rotate-12" />
         </div>
 
-        <div className="max-w-4xl mx-auto px-8 text-center relative z-10">
-          <h2 className="text-5xl font-bold mb-8">
-            La vida de un animalito<br />está en tus manos
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <h2 className="text-3xl md:text-5xl font-bold mb-8">
+            La vida de un animalito está en tus manos
           </h2>
 
-          <p className="text-xl mb-6">
-            Hay un pequeño compañero esperando por ti, listo para<br />
-            salir de su refugio y llenar tus días de ternura y alegría.
+          <p className="text-lg md:text-xl mb-6">
+            Hay un pequeño compañero esperando por ti, listo para salir de su refugio y llenar tus días de ternura y alegría.
           </p>
 
-          <p className="text-xl mb-8">
-            Abrirle las puertas de tu hogar no solo transformará su vida,<br />
-            sino también la tuya. Cada adopción es una historia de<br />
-            esperanza y un nuevo comienzo.
+          <p className="text-lg md:text-xl mb-8">
+            Abrirle las puertas de tu hogar no solo transformará su vida, sino también la tuya. Cada adopción es una historia de esperanza y un nuevo comienzo.
           </p>
 
           <p className="text-2xl font-bold mb-8">
@@ -407,9 +416,9 @@ export default async function Home() {
 
           <StarButton
             href="/register"
-            className="inline-block bg-white text-purple-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-purple-100 transition-colors"
+            className="inline-block bg-white text-purple-600 px-8 md:px-10 py-4 rounded-xl font-bold text-base md:text-lg hover:bg-purple-100 transition-colors"
           >
-            ¡Adopta y transforma la<br />vida de un animalito!
+            ¡Adopta y transforma la vida de un animalito!
           </StarButton>
 
           <p className="mt-6 text-sm">

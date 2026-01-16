@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
+import { UserRole } from '@prisma/client';
 import { hashPassword } from '@/lib/auth/password';
 import { shelterApplicationSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
@@ -23,8 +24,8 @@ export async function POST(request: Request) {
         }
 
         //  Solo ADOPTER y VENDOR pueden solicitar cuenta de albergue
-        const allowedRoles = ['ADOPTER', 'VENDOR'];
-        if (!allowedRoles.includes(session.user.role)) {
+        const allowedRoles: UserRole[] = [UserRole.ADOPTER, UserRole.VENDOR];
+        if (!allowedRoles.includes(session.user.role as UserRole)) {
             return NextResponse.json(
                 {
                     error: 'No autorizado',
@@ -42,8 +43,8 @@ export async function POST(request: Request) {
         //  2. Validar datos con Zod
         const validatedData = shelterApplicationSchema.parse(body);
 
-        //  3. Usar el email de la sesión actual (usuario ya autenticado)
-        const userEmail = session.user.email;
+        //  3. (Paso eliminado) - userEmail verificado via session
+
 
         //  4. Verificar si el usuario actual ya tiene una solicitud de albergue pendiente
         const existingShelterRequest = await prisma.shelter.findFirst({

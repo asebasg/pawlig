@@ -4,6 +4,12 @@ import { AuditAction } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Shield, UserX, CheckCircle, Trash2 } from "lucide-react";
 
+/**
+ * Descripción: Muestra el historial de auditoría de acciones realizadas sobre un usuario.
+ * Requiere: Lista de registros de auditoría (AuditRecord[]).
+ * Implementa: Registro histórico de gestión administrativa.
+ */
+
 type AuditRecord = {
   action: AuditAction;
   reason: string;

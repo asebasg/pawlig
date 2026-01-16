@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth/auth-options";
 import { roleUpdateSchema } from "@/lib/validations/user.schema";
 import { updateUserRole } from "@/lib/services/user.service";
 import { logger } from "@/lib/utils/logger";
+import { UserRole } from "@prisma/client";
 
 export async function PUT(
   request: Request,
@@ -12,7 +13,7 @@ export async function PUT(
   const session = await getServerSession(authOptions);
 
   // 1. Verificación de sesión y rol de ADMIN
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session || session.user.role !== UserRole.ADMIN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
@@ -66,7 +67,7 @@ export async function PUT(
 
     // Devolver errores específicos al cliente
     if (errorMessage.includes("not found") || errorMessage.includes("Cannot change")) {
-        return NextResponse.json({ error: errorMessage }, { status: 400 });
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
     return NextResponse.json(

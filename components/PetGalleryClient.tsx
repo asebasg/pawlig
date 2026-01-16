@@ -1,9 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
-import PetCard from './cards/pet-card';
+import { useState, useEffect, useCallback } from 'react';
+import { PetCard } from './cards/pet-card';
+import { FavoriteButton } from '@/components/ui/favorite-button';
 import Loader from '@/components/ui/loader';
+import PetFilter from '@/components/filters/pet-filter';
+import { AlertCircle, FishOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { PetStatus } from '@prisma/client';
+import Link from 'next/link';
+
+/**
+ * GET /api/pets
+ * POST /api/user/favorites/check
+ * Descripción: Gestiona la visualización, filtrado y búsqueda de mascotas disponibles para adopción.
+ * Requiere: Sesión de usuario (opcional para visualización, obligatoria para favoritos).
+ * Implementa: HU-006 (Filtro y búsqueda), RF-010 (Búsqueda y filtrado), RF-005 (Sistema de favoritos).
+ */
 
 interface Pet {
   id: string;
@@ -12,7 +25,7 @@ interface Pet {
   breed: string | null;
   age: number | null;
   sex: string | null;
-  status: string;
+  status: PetStatus;
   description: string;
   images: string[];
   shelter: {
@@ -20,6 +33,7 @@ interface Pet {
     name: string;
     municipality: string;
   };
+  isFavorited?: boolean;
 }
 
 interface UserSession {
@@ -66,7 +80,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
   };
 
   // Cargar mascotas desde API
-  const fetchPets = async () => {
+  const fetchPets = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -104,8 +118,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
 
           if (favResponse.ok) {
             const favData = await favResponse.json();
-            // Agregar info de favoritos a cada mascota
-            petsData.forEach((pet: any) => {
+            petsData.forEach((pet: Pet) => {
               pet.isFavorited = favData.favorites?.includes(pet.id) || false;
             });
           }
@@ -122,12 +135,11 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, currentPage, searchQuery, userSession?.id]);
 
-  // Efecto para cargar mascotas al cambiar filtros o página
   useEffect(() => {
     fetchPets();
-  }, [filters, currentPage]);
+  }, [fetchPets]);
 
   // Búsqueda con debounce
   useEffect(() => {
@@ -140,198 +152,147 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
-
-
+  }, [searchQuery, fetchPets, currentPage]);
 
   return (
-    <div className="space-y-8">
-      {/* Búsqueda y Filtros */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Filtrar mascotas
-        </h2>
+    <div className="flex flex-col lg:flex-row gap-8">
+      {/* Sidebar de Filtros - Izquierda en desktop, arriba en móvil */}
+      <aside className="w-full lg:w-80 flex-shrink-0">
+        <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
 
-        {/* Búsqueda por texto */}
-        <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Buscar por nombre o raza..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="text-black w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
-          </div>
+          {/* Componente de Filtros */}
+          <PetFilter
+            filters={filters}
+            searchQuery={searchQuery}
+            onFilterChange={handleFilterChange}
+            onSearchChange={setSearchQuery}
+            onClearFilters={handleClearFilters}
+          />
         </div>
+      </aside>
 
-        {/* Filtros desplegables */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <select
-            value={filters.species}
-            onChange={(e) => handleFilterChange('species', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Todas las especies</option>
-            <option value="Perro">Perros</option>
-            <option value="Gato">Gatos</option>
-            <option value="Otro">Otros</option>
-          </select>
-
-          <select
-            value={filters.municipality}
-            onChange={(e) => handleFilterChange('municipality', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Todos los municipios</option>
-            <option value="MEDELLIN">Medellín</option>
-            <option value="BELLO">Bello</option>
-            <option value="ITAGUI">Itagüí</option>
-            <option value="ENVIGADO">Envigado</option>
-            <option value="SABANETA">Sabaneta</option>
-            <option value="LA_ESTRELLA">La Estrella</option>
-            <option value="CALDAS">Caldas</option>
-            <option value="COPACABANA">Copacabana</option>
-            <option value="GIRARDOTA">Girardota</option>
-            <option value="BARBOSA">Barbosa</option>
-          </select>
-
-          <select
-            value={filters.age}
-            onChange={(e) => handleFilterChange('age', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Cualquier edad</option>
-            <option value="1">Hasta 1 año</option>
-            <option value="3">Hasta 3 años</option>
-            <option value="5">Hasta 5 años</option>
-            <option value="10">Hasta 10 años</option>
-          </select>
-
-          <select
-            value={filters.sex}
-            onChange={(e) => handleFilterChange('sex', e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="">Cualquier sexo</option>
-            <option value="Macho">Macho</option>
-            <option value="Hembra">Hembra</option>
-          </select>
-
-          <button
-            onClick={handleClearFilters}
-            className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
-          >
-            Limpiar filtros
-          </button>
-        </div>
-
-        {/* Contador de resultados */}
+      {/* Contenido Principal - Derecha en desktop, abajo en móvil */}
+      <main className="flex-1 min-w-0">
         {!loading && (
-          <div className="mt-4 text-sm text-gray-600">
-            {totalCount === 0 ? (
-              'No se encontraron mascotas'
-            ) : (
-              `${totalCount} mascota${totalCount !== 1 ? 's' : ''} encontrada${totalCount !== 1 ? 's' : ''}`
-            )}
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-gray-500 dark:text-gray-400">
+              Mostrando {pets.length} de {totalCount} resultados
+            </p>
           </div>
         )}
-      </div>
+        {/* Galería de mascotas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {loading ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-12">
+              <Loader />
+              <p className="text-gray-500 dark:text-gray-400">Cargando mascotas...</p>
+            </div>
+          ) : error ? (
+            <div className="col-span-full bg-white rounded-lg border p-12 text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                Error al cargar mascotas
+              </h3>
+              <p className="text-gray-600 mb-6">{error}</p>
+              <Button
+                onClick={() => fetchPets()}
+                className="bg-purple-600 hover:bg-purple-700 mx-auto"
+              >
+                Reintentar
+              </Button>
+            </div>
+          ) : pets.length === 0 ? (
+            <div className="col-span-full p-12 text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FishOff className="w-8 h-8 text-purple-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-purple-800 mb-2">
+                No se encontraron mascotas
+              </h3>
+              <p className="text-purple-600 mb-6">
+                Intenta ajustar los filtros para ver más resultados
+              </p>
+              <Button
+                onClick={handleClearFilters}
+                variant="outline"
+                className="border-purple-300 text-purple-700 hover:bg-purple-50 mx-auto"
+              >
+                Limpiar filtros
+              </Button>
+            </div>
+          ) : (
+            pets.map((pet) => (
+              <PetCard
+                key={pet.id}
+                pet={pet}
+                accentColor="none"
+                imageOverlay={
+                  <FavoriteButton
+                    petId={pet.id}
+                    initialIsFavorited={pet.isFavorited || false}
+                    userSession={userSession}
+                  />
+                }
+                footer={
+                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                    <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
+                  </Button>
+                }
+              />
+            ))
+          )}
+        </div>
 
-      {/* Galería de mascotas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {loading ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-12">
-            <Loader />
-            <p className="text-gray-500">Cargando mascotas...</p>
-          </div>
-        ) : error ? (
-          <div className="col-span-full text-center py-12">
-            <p className="text-red-600 mb-4">{error}</p>
+        {/* Paginación */}
+        {totalPages > 1 && !loading && (
+          <div className="flex items-center justify-center gap-2 mt-8">
             <button
-              onClick={fetchPets}
-              className="text-purple-600 hover:underline"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
             >
-              Intentar nuevamente
+              Anterior
+            </button>
+
+            <span className="text-gray-600">
+              Página {currentPage} de {totalPages}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+            >
+              Siguiente
             </button>
           </div>
-        ) : pets.length === 0 ? (
-          <div className="col-span-full text-center py-12">
-            <p className="text-gray-500 mb-2">
-              No hay mascotas disponibles con estos filtros.
-            </p>
-            <p className="text-sm text-gray-400">
-              Intenta cambiar los criterios de búsqueda.
-            </p>
-          </div>
-        ) : (
-          pets.map((pet: any) => (
-            <PetCard
-              key={pet.id}
-              pet={pet}
-              userSession={userSession}
-              isFavorited={pet.isFavorited || false}
-            />
-          ))
         )}
-      </div>
-
-      {/* Paginación */}
-      {totalPages > 1 && !loading && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
-          >
-            Anterior
-          </button>
-
-          <span className="text-gray-600">
-            Página {currentPage} de {totalPages}
-          </span>
-
-          <button
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
-          >
-            Siguiente
-          </button>
-        </div>
-      )}
+      </main>
     </div>
   );
 }
 
-/**
- * MEJORAS IMPLEMENTADAS:
- * 
- * 1. ✅ Filtros funcionales con estado y onChange
- * 2. ✅ Integración completa con API /api/pets
- * 3. ✅ Búsqueda por texto con debounce (500ms)
- * 4. ✅ Manejo de errores con try-catch
- * 5. ✅ Paginación funcional (12 mascotas por página)
- * 6. ✅ Loading states apropiados
- * 7. ✅ Municipios desde constante (fácil de mantener)
- * 8. ✅ Componente PetCard separado y reutilizable
- * 9. ✅ Sistema de favoritos con autenticación
- * 10. ✅ Contador de resultados
- * 11. ✅ Botón de limpiar filtros
- * 12. ✅ Estados vacíos y de error con UX clara
- * 13. ✅ Iconos de Lucide React
- * 14. ✅ Responsive design mejorado
- * 15. ✅ Hover effects en cards
- * 
- * SEGURIDAD:
- * - ✅ Validación de userSession antes de acciones protegidas
- * - ✅ Redirección a login si no autenticado
- * - ✅ Manejo seguro de errores sin exponer detalles
- * - ✅ Sanitización de query params en servidor (API)
- * 
- * TRAZABILIDAD:
- * - HU-006: Filtro y búsqueda ✅
- * - RF-010: Búsqueda y filtrado ✅
- * - RF-005: Sistema de favoritos ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es el cliente principal para la galería de mascotas. Centraliza la 
+ * lógica de obtención de datos desde la API, el manejo de filtros y la paginación.
+ *
+ * Lógica Clave:
+ * - fetchPets: Realiza peticiones GET a /api/pets construyendo dinámicamente los 
+ *   query params según el estado de los filtros y la página actual.
+ * - Debounce: Implementa un retraso de 500ms en la búsqueda por texto para reducir
+ *   el número de peticiones innecesarias al servidor.
+ * - Favoritos: Si el usuario está autenticado, verifica qué mascotas están marcadas
+ *   como favoritas mediante una petición POST a /api/user/favorites/check.
+ *
+ * Dependencias Externas:
+ * - Lucide React: Utilizado para la iconografía de la interfaz (AlertCircle, FishOff, etc).
+ * - API /api/pets: Endpoint principal para obtener el listado de mascotas.
+ *
  */

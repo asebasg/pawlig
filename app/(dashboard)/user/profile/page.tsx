@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
+import { UserRole } from '@prisma/client';
 import UserProfileForm from '@/components/forms/user-profile-form';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -16,6 +17,10 @@ export default async function UserProfilePage() {
 
   if (!session?.user) {
     redirect('/login?callbackUrl=/user/profile');
+  }
+
+  if (session.user.role !== UserRole.ADOPTER) {
+    redirect('/unauthorized?reason=adopter_only');
   }
 
   return (

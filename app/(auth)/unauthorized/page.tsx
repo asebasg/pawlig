@@ -22,10 +22,10 @@ export default function UnauthorizedPage() {
             suggestion: "Revisa tu correo electrónico para más detalles sobre el motivo del bloqueo. Si crees que es un error, contacta con soporte."
         },
         // Mensaje para solicitud de albergue
-        adopters_vendors_only: {
-            title: "Acceso solo para adoptantes y vendedores",
-            description: "Solo usuarios con rol de adoptante o vendedor pueden solicitar cuentas de albergue.",
-            suggestion: "Si ya eres albergue o administrador, no necesitas solicitar una cuenta nueva. Si eres adoptante o vendedor, asegúrate de haber iniciado sesión."
+        adopter_only: {
+            title: "Acceso solo para adoptantes",
+            description: "Solo usuarios con rol de adoptante pueden solicitar cuentas de albergue o vendedor.",
+            suggestion: "Si ya eres albergue o vendedor, no necesitas solicitar una cuenta nueva. Si eres adoptante, asegúrate de haber iniciado sesión."
         },
         // Mensaje para pagina de administradores
         admin_only: {
@@ -37,13 +37,37 @@ export default function UnauthorizedPage() {
         shelter_only: {
             title: "Acceso solo para albergues",
             description: "Esta sección está restringida para albergues verificados.",
-            suggestion: "Si representas un albergue, puedes solicitar una cuenta desde tu perfil de usuario."
+            suggestion: "Si representas un albergue, puedes solicitar una cuenta desde tu perfil de usuario. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
+        },
+        // Mensaje para cuentas con rol de SHELTER pero no verificadas
+        shelter_not_verified: {
+            title: "Acceso solo para albergues verificados",
+            description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
+            suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
+        },
+        // Mascota equivocada (no pertenece al albergue)
+        wrong_pet: {
+            title: "Mascota no autorizada",
+            description: "No tienes permisos para acceder o gestionar esta mascota.",
+            suggestion: "Asegúrate de que la mascota pertenece a tu albergue y que has iniciado sesión con la cuenta correcta."
         },
         // Mensaje para pagina de vendedores
         vendor_only: {
             title: "Acceso solo para vendedores",
             description: "Esta sección está restringida para vendedores verificados.",
-            suggestion: "Si eres un proveedor de productos, puedes solicitar una cuenta de vendedor."
+            suggestion: "Si eres un vendedor de productos, puedes solicitar que tu cuenta sea verificada. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
+        },
+        // Mensaje para cuentas con rol de VENDOR pero no verificadas
+        vendor_not_verified: {
+            title: "Acceso solo para vendedores verificados",
+            description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
+            suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
+        },
+        // Producto equivocado (no pertenece al vendedor)
+        wrong_product: {
+            title: "Producto no autorizado",
+            description: "No tienes permisos para acceder o gestionar este producto.",
+            suggestion: "Asegúrate de que el producto pertenece a tu catálogo y que has iniciado sesión con la cuenta correcta."
         },
         // Acceso general denegado
         unknown: {
@@ -102,14 +126,6 @@ export default function UnauthorizedPage() {
                         </button>
                     </div>
                 </div>
-
-                {/* Footer */}
-                <p className="text-center text-sm text-gray-500 mt-6">
-                    ¿Necesitas ayuda?{" "}
-                    <Link href="/contacto" className="text-purple-600 hover:underline">
-                        Contacta con soporte
-                    </Link>
-                </p>
             </div>
         </div>
     );

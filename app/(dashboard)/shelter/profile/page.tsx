@@ -4,21 +4,33 @@ import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { UserRole } from '@prisma/client';
+import { prisma } from '@/lib/utils/db';
 
 export const metadata: Metadata = {
-  title: 'Editar Perfil del Albergue - PawLig',
+  title: 'Editar Perfil',
   description: 'Actualiza la información de tu albergue',
 };
 
 export default async function ShelterProfilePage() {
   const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    redirect('/login?callbackUrl=/shelter/profile');
+  // Verificar autenticación, rol y verificación de rol
+  if (!session || !session.user) {
+    redirect("/login?callbackUrl=/shelter/profile");
   }
 
-  if (session.user.role !== 'SHELTER') {
-    redirect('/unauthorized');
+  if (session.user.role !== UserRole.SHELTER) {
+    redirect("/unauthorized?reason=shelter_only");
+  }
+  // Obtener id de SHELTER
+  const shelterId = session.user.shelterId as string;
+  const shelter = await prisma.shelter.findUnique({
+    where: { id: shelterId as string },
+    select: { id: true, verified: true },
+  });
+
+  if (!shelter?.verified) {
+    redirect("/unauthorized?reason=shelter_not_verified");
   }
 
   return (

@@ -1,65 +1,41 @@
-import { PetStatus } from '@prisma/client';
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-/**
- * Ruta/Componente/Servicio: Componente Badge
- * Descripción: Un componente de UI para mostrar el estado de una mascota con un estilo visual distintivo.
- * Requiere: -
- * Implementa: -
- */
+import { cn } from "@/lib/utils";
 
-interface BadgeProps {
-  status: PetStatus;
-  className?: string;
-}
+const badgeVariants = cva(
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        default: "border-transparent bg-primary text-primary-foreground pointer-events-none",
+        secondary: "border-transparent bg-secondary text-secondary-foreground pointer-events-none",
+        destructive: "border-transparent bg-red-600 text-white pointer-events-none",
+        outline: "border-gray-200 text-gray-800 pointer-events-none",
+        teal: "border-transparent bg-teal-100 text-teal-800 pointer-events-none",
+        orange: "border-transparent bg-orange-100 text-orange-800 pointer-events-none",
+        yellow: "border-transparent bg-yellow-100 text-yellow-800 pointer-events-none",
+        purple: "border-transparent bg-purple-100 text-purple-800 pointer-events-none",
+        red: "border-transparent bg-red-100 text-red-800 pointer-events-none",
+        blue: "border-transparent bg-blue-100 text-blue-800 pointer-events-none",
+        green: "border-transparent bg-green-100 text-green-800 pointer-events-none",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
 
-const statusConfig = {
-  AVAILABLE: {
-    label: 'Disponible',
-    bgColor: 'bg-teal-500',
-    textColor: 'text-white',
-  },
-  IN_PROCESS: {
-    label: 'En Proceso',
-    bgColor: 'bg-amber-500',
-    textColor: 'text-white',
-  },
-  ADOPTED: {
-    label: 'Adoptada',
-    bgColor: 'bg-gray-500',
-    textColor: 'text-white',
-  },
-};
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+  VariantProps<typeof badgeVariants> { }
 
-export default function Badge({ status, className = '' }: BadgeProps) {
-  const config = statusConfig[status];
-
+function Badge({ className, variant, ...props }: BadgeProps) {
   return (
-    <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${config.bgColor} ${config.textColor} ${className}`}
-    >
-      {config.label}
-    </span>
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
   );
 }
 
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * Este es un componente de UI simple y reutilizable que traduce un estado de
- * 'PetStatus' a una representación visual consistente (una "insignia" o "badge")
- * con un texto y color específicos.
- *
- * Lógica Clave:
- * - 'statusConfig': Un objeto de mapeo que centraliza la configuración de estilo
- *   para cada estado posible. Esto permite modificar fácilmente la apariencia de
- *   todos los badges de estado en la aplicación desde un solo lugar.
- *
- * Dependencias Externas:
- * - '@prisma/client': Se utiliza para importar el tipo 'PetStatus', asegurando
- *   que los estados manejados por el componente sean consistentes con los
- *   definidos en la base de datos.
- *
- */
+export default Badge;
+export { badgeVariants };

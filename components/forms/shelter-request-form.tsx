@@ -1,120 +1,103 @@
 'use client';
 
-import { useState } from 'react';
-import { shelterApplicationSchema, type ShelterApplicationInput } from '@/lib/validations/user.schema';
+import { useRouter } from 'next/navigation';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { shelterApplicationSchema, ShelterApplicationInput } from '@/lib/validations/user.schema';
 import { $Enums } from '@prisma/client';
-import axios from 'axios';
 import Link from 'next/link';
 
-export function ShelterRequestForm() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+/**
+ * POST /api/user/request-shelter-account
+ * Descripción: Formulario para solicitar una cuenta de refugio o entidad de rescate.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-009 (Registro de animales), RF-010 (Solicitud de cuenta de refugio).
+ */
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setFieldErrors({});
+interface ShelterRequestFormProps {
+  userProfile?: {
+    name: string;
+    email: string;
+    phone: string;
+    municipality: $Enums.Municipality;
+    address: string;
+    idNumber: string;
+    birthDate: Date;
+  };
+}
 
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      email: formData.get('email'),
-      password: formData.get('password'),
-      name: formData.get('name'),
-      phone: formData.get('phone'),
-      municipality: formData.get('municipality'),
-      address: formData.get('address'),
-      idNumber: formData.get('idNumber'),
-      birthDate: formData.get('birthDate'),
-      shelterName: formData.get('shelterName'),
-      shelterNit: formData.get('shelterNit'),
-      shelterMunicipality: formData.get('shelterMunicipality'),
-      shelterAddress: formData.get('shelterAddress'),
-      shelterDescription: formData.get('shelterDescription'),
-      contactWhatsApp: formData.get('contactWhatsApp'),
-      contactInstagram: formData.get('contactInstagram'),
-    };
+export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ShelterApplicationInput>({
+    resolver: zodResolver(shelterApplicationSchema),
+    defaultValues: {
+      email: userProfile?.email || '',
+      name: userProfile?.name || '',
+      phone: userProfile?.phone || '',
+      municipality: userProfile?.municipality || $Enums.Municipality.MEDELLIN,
+      address: userProfile?.address || '',
+      idNumber: userProfile?.idNumber || '',
+      birthDate: userProfile?.birthDate ? new Date(userProfile.birthDate).toISOString().split('T')[0] : '',
+      // Campos del albergue vacíos
+      shelterName: '',
+      shelterNit: '',
+      shelterMunicipality: $Enums.Municipality.MEDELLIN,
+      shelterAddress: '',
+      shelterDescription: '',
+      contactWhatsApp: '',
+      contactInstagram: '',
+    },
+  });
+
+  const onSubmit = async (data: ShelterApplicationInput) => {
+    const toastId = toast.loading("Enviando solicitud...");
 
     try {
-      // Validar con el schema
-      const validatedData = shelterApplicationSchema.parse(data);
+      const response = await fetch('/api/user/request-shelter-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-      // Enviar al servidor
-      const response = await axios.post('/api/auth/request-shelter-account', validatedData);
+      if (!response.ok) {
+        const errorData = await response.json();
 
-      if (response.status === 201) {
-        setSuccess(true);
-        e.currentTarget.reset();
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 2000);
-      }
-    } catch (err: any) {
-      if (err.errors) {
-        // Errores de validación de Zod
-        const errors: Record<string, string> = {};
-        err.errors.forEach((e: any) => {
-          const field = e.path[0] as string;
-          errors[field] = e.message;
-        });
-        setFieldErrors(errors);
-        setError('Por favor revisa los campos marcados en rojo');
-      } else if (err.response?.status === 409) {
-        // Error 409: Conflicto
-        const errorData = err.response.data;
-        if (errorData.code === 'EMAIL_ALREADY_EXISTS') {
-          setError('Este correo electrónico ya está registrado. Por favor, intenta con uno distinto o inicia sesión en tu cuenta.');
-        } else if (errorData.code === 'PENDING_REQUEST_EXISTS') {
-          setError('Ya tienes una solicitud de albergue en proceso. Espera la respuesta del administrador.');
-        } else {
-          setError('Los datos ingresados ya están en uso. Verifica la información.');
+        if (response.status === 409) {
+          if (errorData.code === 'EMAIL_ALREADY_EXISTS') {
+            throw new Error('Este correo electrónico ya está registrado. Por favor, inicia sesión.');
+          } else if (errorData.code === 'PENDING_REQUEST_EXISTS') {
+            throw new Error('Ya tienes una solicitud de albergue en proceso.');
+          } else {
+            throw new Error('Los datos ingresados ya están en uso.');
+          }
         }
-      } else if (err.response?.status === 403) {
-        setError('No tienes permisos para realizar esta acción. Contacta al administrador.');
-      } else if (err.response?.status === 401) {
-        setError('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-      } else if (err.response?.status >= 500) {
-        setError('Hay un problema con el servidor. Inténtalo más tarde.');
-      } else {
-        setError('Ocurrió un error inesperado. Verifica tu conexión e inténtalo nuevamente.');
+
+        throw new Error(errorData.error || 'Error al enviar la solicitud');
       }
-    } finally {
-      setLoading(false);
+
+      toast.success("¡Solicitud enviada exitosamente!", {
+        id: toastId,
+        description: "Un administrador revisará tu solicitud."
+      });
+
+      // Redireccionar al inicio
+      router.push('/');
+      router.refresh();
+
+    } catch (error) {
+      console.error(error);
+      toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
     }
   };
 
-  if (success) {
-    return (
-      <div className="block">
-        <div className="w-full max-w-2xl mx-auto p-6 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="text-lg font-semibold text-green-800 mb-2">¡Solicitud enviada exitosamente!</h3>
-          <p className="text-green-700">
-            Tu solicitud ha sido recibida. Un administrador la revisará y te notificará en breve sobre el estado de tu aprobación.
-            Te recomendamos estar atento a tu correo electrónico.
-          </p>
-        </div>
-        <div className="mt-4 flex justify-center">
-          <Link
-            href="/"
-            className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-800 transition"
-          >
-            Ir al inicio
-          </Link>
-        </div>
-      </div>
-
-    );
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto space-y-8">
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800">{error}</p>
-        </div>
-      )}
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl mx-auto space-y-8">
 
       {/* Sección: Datos del Representante */}
       <fieldset className="space-y-4 border-b pb-6">
@@ -127,15 +110,15 @@ export function ShelterRequestForm() {
             Nombre Completo <span className='text-red-500 font-bold'>*</span>
           </label>
           <input
+            {...register('name')}
             type="text"
             id="name"
-            name="name"
-            required
-            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.name ? 'border-red-500' : 'border-gray-300'
-              }`}
+            readOnly={!!userProfile?.name}
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.name ? 'border-red-500' : 'border-gray-300'
+              } ${userProfile?.name ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             placeholder="Juan Pérez García"
           />
-          {fieldErrors.name && <p className="text-red-600 text-sm mt-1">{fieldErrors.name}</p>}
+          {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -144,15 +127,15 @@ export function ShelterRequestForm() {
               Número de Identificación <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
+              {...register('idNumber')}
               type="text"
               id="idNumber"
-              name="idNumber"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.idNumber ? 'border-red-500' : 'border-gray-300'
-                }`}
+              readOnly={!!userProfile?.idNumber}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.idNumber ? 'border-red-500' : 'border-gray-300'
+                } ${userProfile?.idNumber ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="1234567890"
             />
-            {fieldErrors.idNumber && <p className="text-red-600 text-sm mt-1">{fieldErrors.idNumber}</p>}
+            {errors.idNumber && <p className="text-red-600 text-sm mt-1">{errors.idNumber.message}</p>}
           </div>
 
           <div>
@@ -160,14 +143,14 @@ export function ShelterRequestForm() {
               Fecha de Nacimiento <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
+              {...register('birthDate')}
               type="date"
               id="birthDate"
-              name="birthDate"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
-                }`}
+              readOnly={!!userProfile?.birthDate}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.birthDate ? 'border-red-500' : 'border-gray-300'
+                } ${userProfile?.birthDate ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             />
-            {fieldErrors.birthDate && <p className="text-red-600 text-sm mt-1">{fieldErrors.birthDate}</p>}
+            {errors.birthDate && <p className="text-red-600 text-sm mt-1">{errors.birthDate.message}</p>}
           </div>
         </div>
 
@@ -177,15 +160,15 @@ export function ShelterRequestForm() {
               Email <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
+              {...register('email')}
               type="email"
               id="email"
-              name="email"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'
-                }`}
+              readOnly={!!userProfile?.email}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'
+                } ${userProfile?.email ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="usuario@ejemplo.com"
             />
-            {fieldErrors.email && <p className="text-red-600 text-sm mt-1">{fieldErrors.email}</p>}
+            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
@@ -193,15 +176,15 @@ export function ShelterRequestForm() {
               Teléfono <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
+              {...register('phone')}
               type="tel"
               id="phone"
-              name="phone"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
-                }`}
+              readOnly={!!userProfile?.phone}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'
+                } ${userProfile?.phone ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="+573001234567"
             />
-            {fieldErrors.phone && <p className="text-red-600 text-sm mt-1">{fieldErrors.phone}</p>}
+            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>}
           </div>
         </div>
 
@@ -211,11 +194,11 @@ export function ShelterRequestForm() {
               Municipio <span className='text-red-500 font-bold'>*</span>
             </label>
             <select
+              {...register('municipality')}
               id="municipality"
-              name="municipality"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.municipality ? 'border-red-500' : 'border-gray-300'
-                }`}
+              disabled={!!userProfile?.municipality}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.municipality ? 'border-red-500' : 'border-gray-300'
+                } ${userProfile?.municipality ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             >
               <option value="">Selecciona un municipio</option>
               {Object.values($Enums.Municipality).map((mun) => (
@@ -224,7 +207,8 @@ export function ShelterRequestForm() {
                 </option>
               ))}
             </select>
-            {fieldErrors.municipality && <p className="text-red-600 text-sm mt-1">{fieldErrors.municipality}</p>}
+
+            {errors.municipality && <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>}
           </div>
 
           <div>
@@ -232,15 +216,15 @@ export function ShelterRequestForm() {
               Dirección <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
+              {...register('address')}
               type="text"
               id="address"
-              name="address"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.address ? 'border-red-500' : 'border-gray-300'
-                }`}
+              readOnly={!!userProfile?.address}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.address ? 'border-red-500' : 'border-gray-300'
+                } ${userProfile?.address ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               placeholder="Calle 10 #20-30 Apto 405"
             />
-            {fieldErrors.address && <p className="text-red-600 text-sm mt-1">{fieldErrors.address}</p>}
+            {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>}
           </div>
         </div>
 
@@ -250,24 +234,25 @@ export function ShelterRequestForm() {
               Contraseña <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
+              {...register('password')}
               type="password"
               id="password"
-              name="password"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.password ? 'border-red-500' : 'border-gray-300'
-                }`}
-              placeholder="Ingresa tu contraseña actual"
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              placeholder="Ingresa tu contraseña"
             />
-            {fieldErrors.password && <p className="text-red-600 text-sm mt-1">{fieldErrors.password}</p>}
-            <p className="mt-2 text-sm text-purple-700">
-              ¿Olvidaste tu contraseña?{' '}
-              <Link
-                href="/forgot-password"
-                className="font-semibold underline hover:text-purple-900"
-              >
-                Recupérala aquí
-              </Link>
-            </p>
+            {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>}
+
+            {!userProfile && (
+              <p className="mt-2 text-sm text-purple-700">
+                ¿Olvidaste tu contraseña?{' '}
+                <Link
+                  href="/forgot-password"
+                  className="font-semibold underline hover:text-purple-900"
+                >
+                  Recupérala aquí
+                </Link>
+              </p>
+            )}
           </div>
         </div>
       </fieldset>
@@ -283,15 +268,13 @@ export function ShelterRequestForm() {
             Nombre del Albergue <span className='text-red-500 font-bold'>*</span>
           </label>
           <input
+            {...register('shelterName')}
             type="text"
             id="shelterName"
-            name="shelterName"
-            required
-            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.shelterName ? 'border-red-500' : 'border-gray-300'
-              }`}
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.shelterName ? 'border-red-500' : 'border-gray-300'}`}
             placeholder="Albergue de Mascotas Valle del Aburrá"
           />
-          {fieldErrors.shelterName && <p className="text-red-600 text-sm mt-1">{fieldErrors.shelterName}</p>}
+          {errors.shelterName && <p className="text-red-600 text-sm mt-1">{errors.shelterName.message}</p>}
         </div>
 
         <div>
@@ -299,15 +282,13 @@ export function ShelterRequestForm() {
             NIT del Albergue <span className='text-red-500 font-bold'>*</span>
           </label>
           <input
+            {...register('shelterNit')}
             type="text"
             id="shelterNit"
-            name="shelterNit"
-            required
-            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.shelterNit ? 'border-red-500' : 'border-gray-300'
-              }`}
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.shelterNit ? 'border-red-500' : 'border-gray-300'}`}
             placeholder="900123456-7"
           />
-          {fieldErrors.shelterNit && <p className="text-red-600 text-sm mt-1">{fieldErrors.shelterNit}</p>}
+          {errors.shelterNit && <p className="text-red-600 text-sm mt-1">{errors.shelterNit.message}</p>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -316,11 +297,9 @@ export function ShelterRequestForm() {
               Municipio del Albergue <span className='text-red-500 font-bold'>*</span>
             </label>
             <select
+              {...register('shelterMunicipality')}
               id="shelterMunicipality"
-              name="shelterMunicipality"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.shelterMunicipality ? 'border-red-500' : 'border-gray-300'
-                }`}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.shelterMunicipality ? 'border-red-500' : 'border-gray-300'}`}
             >
               <option value="">Selecciona un municipio</option>
               {Object.values($Enums.Municipality).map((mun) => (
@@ -329,8 +308,8 @@ export function ShelterRequestForm() {
                 </option>
               ))}
             </select>
-            {fieldErrors.shelterMunicipality && (
-              <p className="text-red-600 text-sm mt-1">{fieldErrors.shelterMunicipality}</p>
+            {errors.shelterMunicipality && (
+              <p className="text-red-600 text-sm mt-1">{errors.shelterMunicipality.message}</p>
             )}
           </div>
 
@@ -339,15 +318,13 @@ export function ShelterRequestForm() {
               Dirección del Albergue <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
+              {...register('shelterAddress')}
               type="text"
               id="shelterAddress"
-              name="shelterAddress"
-              required
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.shelterAddress ? 'border-red-500' : 'border-gray-300'
-                }`}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.shelterAddress ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="Calle Principal #100"
             />
-            {fieldErrors.shelterAddress && <p className="text-red-600 text-sm mt-1">{fieldErrors.shelterAddress}</p>}
+            {errors.shelterAddress && <p className="text-red-600 text-sm mt-1">{errors.shelterAddress.message}</p>}
           </div>
         </div>
 
@@ -356,15 +333,14 @@ export function ShelterRequestForm() {
             Descripción del Albergue
           </label>
           <textarea
+            {...register('shelterDescription')}
             id="shelterDescription"
-            name="shelterDescription"
             rows={4}
-            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none resize-none ${fieldErrors.shelterDescription ? 'border-red-500' : 'border-gray-300'
-              }`}
+            className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none resize-none ${errors.shelterDescription ? 'border-red-500' : 'border-gray-300'}`}
             placeholder="Cuéntanos sobre tu albergue, su misión y los tipos de animales que rescatan..."
           />
-          {fieldErrors.shelterDescription && (
-            <p className="text-red-600 text-sm mt-1">{fieldErrors.shelterDescription}</p>
+          {errors.shelterDescription && (
+            <p className="text-red-600 text-sm mt-1">{errors.shelterDescription.message}</p>
           )}
         </div>
 
@@ -374,15 +350,14 @@ export function ShelterRequestForm() {
               WhatsApp de Contacto
             </label>
             <input
+              {...register('contactWhatsApp')}
               type="tel"
               id="contactWhatsApp"
-              name="contactWhatsApp"
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.contactWhatsApp ? 'border-red-500' : 'border-gray-300'
-                }`}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.contactWhatsApp ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="+573001234567"
             />
-            {fieldErrors.contactWhatsApp && (
-              <p className="text-red-600 text-sm mt-1">{fieldErrors.contactWhatsApp}</p>
+            {errors.contactWhatsApp && (
+              <p className="text-red-600 text-sm mt-1">{errors.contactWhatsApp.message}</p>
             )}
           </div>
 
@@ -391,15 +366,14 @@ export function ShelterRequestForm() {
               Instagram del Albergue
             </label>
             <input
+              {...register('contactInstagram')}
               type="text"
               id="contactInstagram"
-              name="contactInstagram"
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${fieldErrors.contactInstagram ? 'border-red-500' : 'border-gray-300'
-                }`}
+              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.contactInstagram ? 'border-red-500' : 'border-gray-300'}`}
               placeholder="@mi_albergue"
             />
-            {fieldErrors.contactInstagram && (
-              <p className="text-red-600 text-sm mt-1">{fieldErrors.contactInstagram}</p>
+            {errors.contactInstagram && (
+              <p className="text-red-600 text-sm mt-1">{errors.contactInstagram.message}</p>
             )}
           </div>
         </div>
@@ -416,12 +390,35 @@ export function ShelterRequestForm() {
         </button>
         <button
           type="submit"
-          disabled={loading}
+          disabled={isSubmitting}
           className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
         >
-          {loading ? 'Enviando...' : 'Enviar Solicitud'}
+          {isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
         </button>
       </div>
     </form>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Formulario extenso para la solicitud de creación de cuentas de refugio, 
+ * capturando datos tanto del representante legal como de la entidad.
+ *
+ * Lógica Clave:
+ * - Pre-llenado: Utiliza el perfil del usuario autenticado para agilizar el 
+ *   proceso de solicitud.
+ * - Validación Cruzada: Asegura que el municipio del representante y el del 
+ *   albergue sean coherentes con los enums del sistema.
+ * - Manejo de Errores de API: Identifica conflictos como solicitudes pendientes 
+ *   duplicadas para informar correctamente al usuario.
+ *
+ * Dependencias Externas:
+ * - zod: Para la validación estricta de la estructura de la solicitud.
+ * - sonner: Para feedback granular sobre el estado del envío.
+ *
+ */
