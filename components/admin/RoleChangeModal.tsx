@@ -3,7 +3,20 @@
 import { UserRole } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
-import { CRITICAL_ROLE_CHANGES, isCriticalRoleChange } from "@/lib/constants";
+import { CRITICAL_ROLE_CHANGES } from "@/lib/constants";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
+/**
+ * Descripción: Modal de confirmación para cambios de rol de usuario que implican riesgos o pérdida de datos.
+ * Requiere: Propiedades de rol actual, nuevo rol y estado de apertura.
+ * Implementa: Salvaguarda de integridad de datos en gestión de usuarios.
+ */
 
 interface RoleChangeModalProps {
   isOpen: boolean;
@@ -24,37 +37,42 @@ export function RoleChangeModal({
   onConfirm,
   isLoading,
 }: RoleChangeModalProps) {
-  if (!isOpen) return null;
 
   const changeKey = `${currentRole}_TO_${newRole}` as keyof typeof CRITICAL_ROLE_CHANGES;
   const details = CRITICAL_ROLE_CHANGES[changeKey];
 
-  if (!details) {
-    // Si por alguna razón el modal se abre para un cambio no crítico, no mostrar nada.
+  if (!details && isOpen) {
+    // Si la transicion no es crítica, no debería mostrarse este modal.
+    // Podríamos retornar null, pero si isOpen es true, algo raro pasa.
+    // De todos modos, para mantener lógica anterior:
     return null;
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4">
-        <div className="flex items-center">
-          <AlertTriangle className="w-8 h-8 text-red-600 mr-4" />
-          <h2 className="text-xl font-bold text-gray-800">Confirmación de Cambio Crítico</h2>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md bg-white">
+        <DialogHeader className="flex flex-row items-center gap-4">
+          <AlertTriangle className="w-8 h-8 text-red-600 shrink-0" />
+          <DialogTitle className="text-xl font-bold text-gray-800">
+            Confirmación de cambio crítico
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="mt-4 text-gray-600 text-center">
+          <p>{details?.message.replace("este usuario", `"${userName}"`)}</p>
+          <p className="mt-2 font-semibold text-red-700 text-center">{details?.warning}</p>
         </div>
-        <div className="mt-4 text-gray-600">
-          <p>{details.message.replace("este usuario", `"${userName}"`)}</p>
-          <p className="mt-2 font-semibold text-red-700">{details.warning}</p>
-        </div>
-        <div className="mt-6 flex justify-end gap-3">
+
+        <DialogFooter className="mt-6 flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
             Cancelar
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={isLoading}>
             {isLoading ? "Confirmando..." : "Sí, confirmar cambio"}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -64,26 +82,16 @@ export function RoleChangeModal({
  * ---------------------------------------------------------------------------
  *
  * **Descripción General:**
- * Este componente define un modal de confirmación que se muestra antes de
- * realizar un cambio de rol considerado "crítico" (ej. promover a ADMIN o
- * degradar un rol con permisos importantes). Su propósito es prevenir
- * acciones accidentales con consecuencias de seguridad o funcionales altas.
+ * Este componente define un modal de confirmación usando `Dialog` de shadcn/ui.
+ * Se muestra antes de realizar un cambio de rol considerado "crítico".
  *
  * **Lógica Clave:**
- * - Renderizado Condicional: El modal solo se renderiza si la prop `isOpen`
- *   es `true`, una práctica estándar para controlar la visibilidad.
- * - Mensajes Dinámicos: Utiliza el objeto `CRITICAL_ROLE_CHANGES` importado
- *   desde `lib/constants` para obtener los mensajes (título y advertencia)
- *   específicos para la transición de rol que se está realizando. Esto hace
- *   al modal reutilizable y centraliza la lógica de los mensajes.
- * - Estado de Carga: El modal gestiona un estado `isLoading` para deshabilitar
- *   los botones durante la llamada a la API. Esto previene envíos múltiples
- *   y proporciona retroalimentación visual al usuario.
+ * - Renderizado Condicional: Usa la primitiva Dialog `open={isOpen}`.
+ * - Mensajes Dinámicos: Utiliza `CRITICAL_ROLE_CHANGES` para obtener los mensajes.
+ * - Estado de Carga: Gestiona `isLoading` para deshabilitar botones.
  *
  * **Dependencias Externas:**
+ * - `@/components/ui/dialog`: Componente base de modal.
  * - `@/components/ui/button`: Para los botones de acción.
  * - `lucide-react`: Para el icono de advertencia.
- * - `@/lib/constants`: Para obtener los mensajes de advertencia de los
- *   cambios de rol críticos.
- *
  */

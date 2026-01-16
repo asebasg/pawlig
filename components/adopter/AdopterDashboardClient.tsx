@@ -3,6 +3,14 @@
 import { useState } from 'react';
 import FavoritesSection from './FavoritesSection';
 import AdoptionsSection from './AdoptionsSection';
+import CartSection from './CartSection';
+import { HeartPlus, ClipboardClock, ShoppingCart } from 'lucide-react';
+
+/**
+ * Descripción: Dashboard principal para el usuario adoptante con sistema de pestañas para gestionar solicitudes, favoritos y carrito.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-004 (Visualización del Panel de Usuario).
+ */
 
 interface User {
   id: string;
@@ -15,24 +23,10 @@ interface AdopterDashboardClientProps {
   userSession: User;
 }
 
-/**
- * Componente Cliente: Dashboard del Adoptante
- * 
- * Funcionalidad:
- * - Integra FavoritesSection y AdoptionsSection
- * - Sistema de navegación por tabs
- * - Sincronización de datos entre secciones
- * 
- * Requerimientos:
- * - HU-004: Visualización del Panel de Usuario
- * - Ver mascotas favoritas
- * - Ver estado de solicitudes de adopción
- * - Notificaciones destacadas de cambios
- */
 export default function AdopterDashboardClient({
   userSession,
 }: AdopterDashboardClientProps) {
-  const [activeTab, setActiveTab] = useState<'adoptions' | 'favorites'>('adoptions');
+  const [activeTab, setActiveTab] = useState<'adoptions' | 'favorites' | 'cart'>('adoptions');
 
   if (!userSession?.id) {
     return (
@@ -48,46 +42,67 @@ export default function AdopterDashboardClient({
       <div className="flex gap-2 mb-8 border-b border-gray-200">
         <button
           onClick={() => setActiveTab('adoptions')}
-          className={`px-4 py-3 font-medium transition border-b-2 ${
-            activeTab === 'adoptions'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
+          className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'adoptions'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
         >
-          📋 Mis Solicitudes de Adopción
+          <ClipboardClock size={24} className="mr-2" />
+          Mis Solicitudes de Adopción
         </button>
         <button
           onClick={() => setActiveTab('favorites')}
-          className={`px-4 py-3 font-medium transition border-b-2 ${
-            activeTab === 'favorites'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
-          }`}
+          className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'favorites'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
         >
-          ❤️ Mis Mascotas Favoritas
+          <HeartPlus size={24} className='mr-2' />
+          Mis Mascotas Favoritas
+        </button>
+        <button
+          onClick={() => setActiveTab('cart')}
+          className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'cart'
+            ? 'border-purple-600 text-purple-600'
+            : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
+        >
+          <ShoppingCart size={24} className="mr-2" />
+          Mi Carrito
         </button>
       </div>
 
       {/* Tab Content */}
       <div className="animate-in fade-in duration-200">
         {activeTab === 'adoptions' && (
-          <AdoptionsSection userId={userSession.id} />
+          <AdoptionsSection />
         )}
         {activeTab === 'favorites' && (
-          <FavoritesSection userId={userSession.id} />
+          <FavoritesSection />
+        )}
+        {activeTab === 'cart' && (
+          <CartSection />
         )}
       </div>
     </div>
   );
 }
 
-/**
- * NOTAS TÉCNICAS:
- * 
- * - Componente cliente que maneja el estado de navegación
- * - Delega rendering de secciones a componentes especializados
- * - Ambas secciones cargan datos de forma independiente
- * - Sistema de tabs sin dependencias externas
- * - Diseño consistente con el resto del proyecto
- * - Animación suave al cambiar de tab
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente orquestador gestiona la navegación interna del perfil del adoptante,
+ * alternando entre diferentes secciones funcionales.
+ *
+ * Lógica Clave:
+ * - Sistema de Tabs: Uso de estado local 'activeTab' para renderizado condicional de componentes.
+ * - Sincronización: Las secciones actúan como componentes independientes que gestionan sus propios datos.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconografía para las pestañas de navegación.
+ * - Secciones: FavoritesSection, AdoptionsSection, CartSection.
+ *
  */

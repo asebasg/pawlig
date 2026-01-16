@@ -1,40 +1,98 @@
-import React from "react";
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
-  accentColor?: "teal" | "orange" | "purple";
-}
+const cardVariants = cva(
+  "bg-white shadow-md rounded-lg overflow-hidden",
+  {
+    variants: {
+      accentColor: {
+        default: "border-t-4 border-t-gray-200",
+        teal: "border-t-4 border-t-teal-500",
+        orange: "border-t-4 border-t-orange-500",
+        yellow: "border-t-4 border-t-yellow-400",
+        purple: "border-t-4 border-t-purple-600",
+        red: "border-t-4 border-t-red-600",
+        blue: "border-t-4 border-t-blue-600",
+        green: "border-t-4 border-t-green-600",
+        none: "border-t-0",
+      },
+    },
+    defaultVariants: {
+      accentColor: "default",
+    },
+  }
+)
 
-const accentStyles = {
-  teal: "border-t-teal-500",
-  orange: "border-t-orange-500",
-  purple: "border-t-purple-600",
-};
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof cardVariants>
+>(({ className, accentColor, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(cardVariants({ accentColor }), className)}
+    {...props}
+  />
+))
+Card.displayName = "Card"
 
-export function Card({ children, className, accentColor }: CardProps) {
-  const accentClass = accentColor ? accentStyles[accentColor] : "border-t-gray-200";
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("p-4 border-b border-gray-200 flex flex-col space-y-1.5", className)}
+    {...props}
+  />
+))
+CardHeader.displayName = "CardHeader"
 
-  return (
-    <div
-      className={`bg-white shadow-md rounded-lg overflow-hidden border-t-4 ${accentClass} ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
+const CardTitle = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn("text-lg font-semibold text-gray-800 leading-none tracking-tight", className)}
+    {...props}
+  />
+))
+CardTitle.displayName = "CardTitle"
 
-export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={`p-4 border-b border-gray-200 ${className}`}>{children}</div>;
-}
+const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-sm text-gray-500", className)}
+    {...props}
+  />
+))
+CardDescription.displayName = "CardDescription"
 
-export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <h3 className={`text-lg font-semibold text-gray-800 ${className}`}>{children}</h3>;
-}
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-4 pt-4", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
 
-export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={`p-4 ${className}`}>{children}</div>;
-}
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-4 pt-0", className)}
+    {...props}
+  />
+))
+CardFooter.displayName = "CardFooter"
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 
 /*
  * ---------------------------------------------------------------------------
@@ -42,25 +100,16 @@ export function CardContent({ children, className }: { children: React.ReactNode
  * ---------------------------------------------------------------------------
  *
  * **Descripción General:**
- * Este archivo define un conjunto de componentes reutilizables para crear
- * "Cards" (tarjetas) consistentes a lo largo de la aplicación. Las tarjetas
- * son un patrón de UI fundamental para agrupar y mostrar información de
- * manera modular.
+ * Componente Card estandarizado y personalizable. Extiende la funcionalidad
+ * base de shadcn/ui con soporte para "acentos de color" personalizados
+ * mediante `class-variance-authority`.
  *
  * **Lógica Clave:**
- * - Composición: El Card se construye a través de la composición de sub-
- *   componentes (`Card`, `CardHeader`, `CardTitle`, `CardContent`). Esto
- *   proporciona flexibilidad para construir diferentes tipos de tarjetas
- *   mientras se mantiene un estilo base consistente.
- * - Acento de Color: La prop `accentColor` en el componente `Card` permite
- *   añadir un borde superior de un color específico. Esto se utiliza para
- *   diferenciar visualmente las secciones temáticas (ej: Teal para info
- *   personal, Púrpura para gestión de roles), tal como lo requiere el
- *   diseño.
+ * - Soporte para `accentColor`: Permite definir un borde superior de color
+ *   (teal, orange, purple, etc.) para categorizar visualmente las tarjetas,
+ *   manteniendo compatibilidad total con la API estándar de shadcn (CardHeader, CardContent).
+ * - ForwardRefs: Todos los subcomponentes exponen refs para máxima flexibilidad.
  *
  * **Dependencias Externas:**
- * - React: Para la creación de los componentes.
- * - Tailwind CSS: Utilizado para todo el estilizado a través de clases de
- *   utilidad.
- *
+ * - React, class-variance-authority (cva).
  */

@@ -155,6 +155,93 @@ export const shelterApplicationSchema = z.object({
     }
   );
 
+//  ========== ESQUEMA DE SOLICITUD DE VENDEDOR ==========
+export const vendorApplicationSchema = z.object({
+  //  ===== DATOS DEL USUARIO VENDEDOR =====
+  email: z
+    .string()
+    .email('Email inválido')
+    .min(1, 'Email es requerido'),
+
+  password: z
+    .string()
+    .min(8, 'La contraseña debe tener mínimo 8 caracteres') // RN-001
+    .max(100, 'La contraseña es muy larga'),
+
+  name: z
+    .string()
+    .min(2, 'Nombre completo del vendedor requerido')
+    .max(100, 'Nombre muy largo'),
+
+  phone: z
+    .string()
+    .min(7, 'Teléfono inválido')
+    .max(15, 'Teléfono inválido'),
+
+  municipality: z.nativeEnum(Municipality, {
+    message: 'Municipio de residencia del vendedor inválido'
+  }),
+
+  address: z
+    .string()
+    .min(5, 'Dirección personal del vendedor requerida')
+    .max(200, 'Dirección muy larga'),
+
+  idNumber: z
+    .string()
+    .min(5, 'Número de identificación del vendedor requerido')
+    .max(20, 'Número de identificación inválido'),
+
+  birthDate: z
+    .string()
+    .refine((date) => {
+      const birthDate = new Date(date);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      return age >= 18;
+    }, 'El vendedor debe ser mayor de 18 años'),
+
+  //  ===== DATOS DEL NEGOCIO =====
+  businessName: z
+    .string()
+    .min(3, 'Nombre del negocio requerido')
+    .max(100, 'Nombre muy largo'),
+
+  businessDescription: z
+    .string()
+    .min(20, 'Descripción debe tener al menos 20 caracteres')
+    .max(500, 'Descripción muy larga')
+    .optional(),
+
+  businessMunicipality: z.nativeEnum(Municipality, {
+    message: 'Municipio donde opera el negocio es requerido'
+  }),
+
+  businessAddress: z
+    .string()
+    .min(5, 'Dirección física del negocio requerida')
+    .max(200, 'Dirección muy larga'),
+
+  businessPhone: z
+    .string()
+    .regex(/^\+?[0-9]{10,15}$/, 'Número inválido (debe incluir código de país)')
+    .optional(),
+})
+  // Validación personalizada: Al menos un método de contacto requerido (RN-013)
+  .refine(
+    (data) => data.businessPhone,
+    {
+      message: 'El teléfono de contacto del negocio es requerido',
+      path: ['businessPhone'],
+    }
+  );
+
+//  ========== TIPOS TYPESCRIPT INFERIDOS ==========
+export type RegisterUserInput = z.infer<typeof registerUserSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
+
+//  ========== ESQUEMA DE ACTUALIZACIÓN DE PERFIL DE VENDEDOR ==========
 export const vendorProfileUpdateSchema = z.object({
   businessName: z
     .string()

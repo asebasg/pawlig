@@ -1,23 +1,19 @@
-/**
- *  Componente: ShelterPetCard
- * 
- * PROPÓSITO:
- * - Tarjeta de mascota para vista del albergue
- * - Acciones: Ver, Editar, Cambiar Estado, Eliminar
- * - Muestra contador de postulaciones
- * 
- * TRAZABILIDAD:
- * - HU-005: Gestión de mascotas
- * - Criterio: "Cuando cambio estado, se retira de búsqueda"
- */
-
 "use client";
+
+/**
+ * PATCH /api/pets/[id]
+ * DELETE /api/pets/[id]
+ * Descripción: Tarjeta de gestión de mascotas para refugios. Permite ver, editar y cambiar el estado de adopción.
+ * Requiere: Sesión de usuario con rol de refugio.
+ * Implementa: HU-005 (Gestión de mascotas).
+ */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PetStatus } from "@prisma/client";
 import { Edit, Trash2, Eye, Clock, CheckCircle, XCircle, BookOpenCheck } from "lucide-react";
 import Link from "next/link";
+import Image from 'next/image';
 
 interface Pet {
     id: string;
@@ -136,10 +132,11 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                 {/* Imagen */}
                 <div className="relative h-48 bg-gray-200">
                     {pet.images.length > 0 ? (
-                        <img
+                        <Image
                             src={pet.images[0]}
                             alt={pet.name}
                             className="w-full h-full object-cover"
+                            fill
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -251,3 +248,25 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
         </>
     );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es la herramienta principal del refugio para gestionar su inventario
+ * de mascotas, permitiendo cambios rápidos de estado y acceso a edición.
+ *
+ * Lógica Clave:
+ * - handleStatusChange: Actualiza el estado de la mascota mediante PATCH, lo cual
+ *   dispara la lógica de visibilidad en la galería pública (disponibilidad).
+ * - handleDelete: Ejecuta la eliminación lógica/física del registro tras confirmación.
+ * - Contador de Postulaciones: Muestra visualmente cuántas solicitudes ha recibido
+ *   la mascota, incentivando la gestión del refugio.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconografía de gestión (Edit, Trash2, Eye, etc).
+ * - next/navigation: useRouter para refrescar la vista tras mutaciones.
+ *
+ */

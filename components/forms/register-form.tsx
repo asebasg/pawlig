@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { signIn } from 'next-auth/react';
 import { registerUserSchema, RegisterUserInput } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
@@ -9,8 +11,10 @@ import Link from 'next/link';
 import { PawPrint } from 'lucide-react';
 
 /**
- * Componente de formulario de registro para nuevos adoptantes
- * Implementa HU-001 con validación en cliente y manejo de errores mejorado
+ * POST /api/auth/register
+ * Descripción: Formulario de registro para nuevos adoptantes con inicio de sesión automático tras el éxito.
+ * Requiere: Configuración de API de autenticación y esquemas de validación de usuario.
+ * Implementa: HU-001 (Registro de usuario).
  */
 
 //  Interfaz para respuestas de error estructuradas
@@ -25,135 +29,75 @@ interface ApiErrorResponse {
 export default function RegisterForm() {
   const router = useRouter();
 
-  // Estados del formulario
-  const [formData, setFormData] = useState<RegisterUserInput>({
-    email: '',
-    password: '',
-    name: '',
-    phone: '',
-    municipality: Municipality.MEDELLIN,
-    address: '',
-    idNumber: '',
-    birthDate: '',
+  // React Hook Form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterUserInput>({
+    resolver: zodResolver(registerUserSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      name: '',
+      phone: '',
+      municipality: Municipality.MEDELLIN,
+      address: '',
+      idNumber: '',
+      birthDate: '',
+    },
   });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [serverError, setServerError] = useState('');
-
-  //  Estado para manejar sugerencia de recuperación
-  const [showRecoverySuggestion, setShowRecoverySuggestion] = useState(false);
-  const [recoveryUrl, setRecoveryUrl] = useState<string>('');
-
-  /**
-   * Maneja cambios en los inputs del formulario
-   */
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Limpiar error del campo al editar
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-
-    //  Limpiar sugerencia de recuperación al editar email
-    if (name === 'email' && showRecoverySuggestion) {
-      setShowRecoverySuggestion(false);
-      setServerError('');
-    }
-  };
 
   /**
    * Maneja el envío del formulario
    */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setServerError('');
-    setErrors({});
-    setShowRecoverySuggestion(false); // Reset sugerencia
-
+  const onSubmit = async (data: RegisterUserInput) => {
     try {
-      // 1. Validar datos en el cliente con Zod
-      const validatedData = registerUserSchema.parse(formData);
-
-      // 2. Enviar petición al API
+      // 1. Enviar petición al API
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(validatedData),
+        body: JSON.stringify(data),
       });
 
-      //  Parsear respuesta como ApiErrorResponse
-      const data: ApiErrorResponse = await response.json();
+      const responseData: ApiErrorResponse = await response.json();
 
       if (!response.ok) {
-        //  Manejo específico de email duplicado
-        if (data.code === 'EMAIL_ALREADY_EXISTS') {
-          setServerError(data.error);
-          setShowRecoverySuggestion(true);
-          setRecoveryUrl(data.recoveryUrl || '/forgot-password');
+        // Manejo específico de email duplicado
+        if (responseData.code === 'EMAIL_ALREADY_EXISTS') {
+          toast.error("Este correo ya está registrado");
           return;
         }
-
-        // Manejar errores de validación campo por campo
-        if (data.details) {
-          const fieldErrors: Record<string, string> = {};
-          data.details.forEach((detail) => {
-            fieldErrors[detail.field] = detail.message;
-          });
-          setErrors(fieldErrors);
-        } else {
-          // Error general
-          setServerError(data.error || 'Error al registrar usuario');
-        }
-        return;
+        // Error general
+        throw new Error(responseData.error || 'Error al registrar usuario');
       }
 
-      // 3. Registro exitoso: iniciar sesión automáticamente
+      // 2. Registro exitoso: iniciar sesión automáticamente
       const signInResult = await signIn('credentials', {
-        email: validatedData.email,
-        password: validatedData.password,
+        email: data.email,
+        password: data.password,
         redirect: false,
       });
 
       if (signInResult?.error) {
-        setServerError('Usuario creado, pero error al iniciar sesión');
+        toast.error('Cuenta creada, pero error al iniciar sesión automática');
+        console.error(signInResult.error);
         return;
       }
 
-      // 4. Redirigir al dashboard del usuario
+      // 3. Redirigir
+      toast.success(`¡Bienvenido a PawLig, ${data.name}!`);
       router.push('/adopciones');
       router.refresh();
+
     } catch (error) {
-      // Manejar errores de validación de Zod
-      if (error && typeof error === 'object' && 'errors' in error) {
-        const zodError = error as { errors: Array<{ path: (string | number)[]; message: string }> };
-        const fieldErrors: Record<string, string> = {};
-        zodError.errors.forEach((err) => {
-          const field = err.path[0];
-          if (typeof field === 'string') {
-            fieldErrors[field] = err.message;
-          }
-        });
-        setErrors(fieldErrors);
-      } else {
-        setServerError('Error inesperado. Intenta de nuevo.');
-      }
-    } finally {
-      setIsLoading(false);
+      console.error(error);
+      toast.error(error instanceof Error ? error.message : "Error inesperado");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-md mx-auto">
       <div className="text-center mb-8">
         <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-4 mx-auto">
           <PawPrint className="w-12 h-12 text-orange-700" />
@@ -162,74 +106,22 @@ export default function RegisterForm() {
         <p className="text-gray-600 mt-2">Regístrate en PawLig</p>
       </div>
 
-      {/*  Error con sugerencia de recuperación */}
-      {serverError && (
-        <div
-          className={`px-4 py-3 rounded-lg ${showRecoverySuggestion
-            ? 'bg-yellow-50 border border-yellow-200'
-            : 'bg-red-50 border border-red-200'
-            }`}
-          role="alert"
-          aria-live="polite"
-        >
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              {showRecoverySuggestion ? (
-                // Icono de advertencia (amarillo)
-                <svg className="h-5 w-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              ) : (
-                // Icono de error (rojo)
-                <svg className="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              )}
-            </div>
-            <div className="ml-3 flex-1">
-              <p className={`text-sm font-medium ${showRecoverySuggestion ? 'text-yellow-800' : 'text-red-700'
-                }`}>
-                {serverError}
-              </p>
-              {/*  Sugerencia con enlace a recuperación */}
-              {showRecoverySuggestion && (
-                <p className="mt-2 text-sm text-yellow-700">
-                  ¿Olvidaste tu contraseña?{' '}
-                  <Link
-                    href={recoveryUrl}
-                    className="font-semibold underline hover:text-yellow-900"
-                  >
-                    Recupérala aquí
-                  </Link>
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Email */}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
           Correo electrónico *
         </label>
         <input
+          {...register('email')}
           type="email"
           id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          aria-required="true"
           aria-invalid={errors.email ? 'true' : 'false'}
-          aria-describedby={errors.email ? 'email-error' : undefined}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.email ? 'border-red-500' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
           placeholder="tu@email.com"
         />
         {errors.email && (
-          <p className="text-red-500 text-sm mt-1" id="email-error" role="alert">
-            {errors.email}
+          <p className="text-red-500 text-sm mt-1">
+            {errors.email.message}
           </p>
         )}
       </div>
@@ -240,26 +132,19 @@ export default function RegisterForm() {
           Contraseña *
         </label>
         <input
+          {...register('password')}
           type="password"
           id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          minLength={8}
-          aria-required="true"
           aria-invalid={errors.password ? 'true' : 'false'}
-          aria-describedby={errors.password ? 'password-error' : 'password-hint'}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.password ? 'border-red-500' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
           placeholder="Mínimo 8 caracteres"
         />
         {errors.password ? (
-          <p className="text-red-500 text-sm mt-1" id="password-error" role="alert">
-            {errors.password}
+          <p className="text-red-500 text-sm mt-1">
+            {errors.password.message}
           </p>
         ) : (
-          <p className="text-gray-500 text-sm mt-1" id="password-hint">
+          <p className="text-gray-500 text-sm mt-1">
             Mínimo 8 caracteres
           </p>
         )}
@@ -271,21 +156,16 @@ export default function RegisterForm() {
           Nombre completo *
         </label>
         <input
+          {...register('name')}
           type="text"
           id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          aria-required="true"
           aria-invalid={errors.name ? 'true' : 'false'}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.name ? 'border-red-500' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
           placeholder="Juan Pérez"
         />
         {errors.name && (
-          <p className="text-red-500 text-sm mt-1" role="alert">
-            {errors.name}
+          <p className="text-red-500 text-sm mt-1">
+            {errors.name.message}
           </p>
         )}
       </div>
@@ -296,20 +176,16 @@ export default function RegisterForm() {
           Teléfono *
         </label>
         <input
+          {...register('phone')}
           type="tel"
           id="phone"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-          aria-required="true"
-          className={` text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.phone ? 'border-red-500' : 'border-gray-300'
-            }`}
+          aria-invalid={errors.phone ? 'true' : 'false'}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
           placeholder="3001234567"
         />
         {errors.phone && (
-          <p className="text-red-500 text-sm mt-1" role="alert">
-            {errors.phone}
+          <p className="text-red-500 text-sm mt-1">
+            {errors.phone.message}
           </p>
         )}
       </div>
@@ -320,12 +196,9 @@ export default function RegisterForm() {
           Municipio *
         </label>
         <select
+          {...register('municipality')}
           id="municipality"
-          name="municipality"
-          value={formData.municipality}
-          onChange={handleChange}
-          required
-          aria-required="true"
+          aria-invalid={errors.municipality ? 'true' : 'false'}
           className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
         >
           <option value={Municipality.MEDELLIN}>Medellín</option>
@@ -339,6 +212,11 @@ export default function RegisterForm() {
           <option value={Municipality.GIRARDOTA}>Girardota</option>
           <option value={Municipality.BARBOSA}>Barbosa</option>
         </select>
+        {errors.municipality && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.municipality.message}
+          </p>
+        )}
       </div>
 
       {/* Dirección */}
@@ -347,20 +225,16 @@ export default function RegisterForm() {
           Dirección *
         </label>
         <input
+          {...register('address')}
           type="text"
           id="address"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          required
-          aria-required="true"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.address ? 'border-red-500' : 'border-gray-300'
-            }`}
+          aria-invalid={errors.address ? 'true' : 'false'}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
           placeholder="Calle 123 #45-67"
         />
         {errors.address && (
-          <p className="text-red-500 text-sm mt-1" role="alert">
-            {errors.address}
+          <p className="text-red-500 text-sm mt-1">
+            {errors.address.message}
           </p>
         )}
       </div>
@@ -371,20 +245,16 @@ export default function RegisterForm() {
           Número de identificación *
         </label>
         <input
+          {...register('idNumber')}
           type="text"
           id="idNumber"
-          name="idNumber"
-          value={formData.idNumber}
-          onChange={handleChange}
-          required
-          aria-required="true"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.idNumber ? 'border-red-500' : 'border-gray-300'
-            }`}
+          aria-invalid={errors.idNumber ? 'true' : 'false'}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.idNumber ? 'border-red-500' : 'border-gray-300'}`}
           placeholder="1234567890"
         />
         {errors.idNumber && (
-          <p className="text-red-500 text-sm mt-1" role="alert">
-            {errors.idNumber}
+          <p className="text-red-500 text-sm mt-1">
+            {errors.idNumber.message}
           </p>
         )}
       </div>
@@ -395,22 +265,18 @@ export default function RegisterForm() {
           Fecha de nacimiento *
         </label>
         <input
+          {...register('birthDate')}
           type="date"
           id="birthDate"
-          name="birthDate"
-          value={formData.birthDate}
-          onChange={handleChange}
-          required
-          aria-required="true"
+          aria-invalid={errors.birthDate ? 'true' : 'false'}
           max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
             .toISOString()
             .split('T')[0]}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.birthDate ? 'border-red-500' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.birthDate ? 'border-red-500' : 'border-gray-300'}`}
         />
         {errors.birthDate && (
-          <p className="text-red-500 text-sm mt-1" role="alert">
-            {errors.birthDate}
+          <p className="text-red-500 text-sm mt-1">
+            {errors.birthDate.message}
           </p>
         )}
         <p className="text-sm text-gray-500 mt-1">Debes ser mayor de 18 años</p>
@@ -419,10 +285,15 @@ export default function RegisterForm() {
       {/* Botón de envío */}
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={isSubmitting}
         className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {isLoading ? 'Registrando...' : 'Crear cuenta'}
+        {isSubmitting ? (
+          <span className="flex items-center justify-center gap-2">
+            <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin"></div>
+            Registrando...
+          </span>
+        ) : 'Crear cuenta'}
       </button>
 
       {/* Link a login */}
@@ -439,29 +310,26 @@ export default function RegisterForm() {
   );
 }
 
-/**
- * 📚 NOTAS DE IMPLEMENTACIÓN:
- * 
- * 1. MEJORAS DE UX:
- *    - Alert diferenciado por color (rojo = error, amarillo = advertencia)
- *    - Enlace directo a recuperación de contraseña
- *    - Limpieza automática de sugerencia al editar email
- * 
- * 2. ACCESIBILIDAD:
- *    - role="alert" en mensajes de error
- *    - aria-live="polite" en alerta principal
- *    - aria-invalid en campos con error
- *    - aria-describedby vincula errores con inputs
- * 
- * 3. ESTADOS MANEJADOS:
- *    - showRecoverySuggestion: Controla visibilidad de sugerencia
- *    - recoveryUrl: URL dinámica desde el backend
- *    - serverError: Mensaje principal de error
- * 
- * 4. FLUJO DE EMAIL DUPLICADO:
- *    1. Usuario ingresa email existente
- *    2. Backend responde con code: 'EMAIL_ALREADY_EXISTS'
- *    3. Frontend detecta el código
- *    4. Muestra alerta amarilla con enlace de recuperación
- *    5. Usuario puede hacer clic directamente o editar el email
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente orquesta el registro de nuevos usuarios adoptantes, 
+ * integrando validaciones de mayoría de edad y unicidad de correo.
+ *
+ * Lógica Clave:
+ * - Auto-Login: Tras un registro exitoso, se dispara inmediatamente signIn() para
+ *   mejorar la fluidez del onboarding del usuario.
+ * - Validación Cronológica: Restringe la fecha de nacimiento para asegurar que
+ *   el usuario sea mayor de 18 años según RN-001.
+ * - Sincronización con Prisma: Utiliza el enum 'Municipality' para garantizar
+ *   la integridad de la ubicación geográfica del usuario.
+ *
+ * Dependencias Externas:
+ * - next-auth: Para la sesión inmediata post-registro.
+ * - react-hook-form: Gestión de inputs y validación reactiva.
+ * - lucide-react: Iconografía de la marca PawLig.
+ *
  */

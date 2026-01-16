@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth/auth-options';
 import { notFound } from 'next/navigation';
 import PetDetailClient from '@/components/PetDetailClient';
 import { getPetById, getSimilarPets, checkIsFavorited } from '@/lib/services/pet.service';
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link';
 
 /**
  * Página de Detalle de Mascota
@@ -89,6 +91,12 @@ export default async function PetDetailPage({ params }: PetDetailPageProps) {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mb-8">
+              <Link href="/adopciones" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                <ArrowLeft className="w-4 h-4" />
+                Volver a Adopciones
+              </Link>
+            </div>
       <PetDetailClient
         pet={pet}
         isFavorited={isFavorited}

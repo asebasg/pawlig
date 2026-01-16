@@ -31,18 +31,17 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="flex items-center gap-6">
+      <nav className="hidden lg:flex items-center gap-6">
         {displayNav.map((link) => {
           const isActive = pathname === link.href;
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`font-semibold text-base transition-colors pb-1 border-b-2 ${
-                isActive
+              className={`font-semibold text-base transition-colors pb-1 border-b-2 ${isActive
                   ? "text-purple-600 border-purple-600"
                   : "text-gray-700 border-transparent hover:text-purple-600"
-              }`}
+                }`}
             >
               {link.label}
             </Link>
@@ -51,15 +50,15 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
       </nav>
 
       {/* Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         {/* Cart & Favorites - Sólo para rol ADOPTER */}
         {user.role === "ADOPTER" && (
           <>
             <Link
               href="/user/favorites"
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <Heart size={24} className="text-gray-600" />
+              <Heart size={20} className="text-gray-600 sm:w-6 sm:h-6" />
             </Link>
             <CartButton itemCount={0} />
           </>

@@ -2,12 +2,15 @@ import { z } from 'zod';
 import { PetStatus } from '@prisma/client';
 
 /**
- * Ruta/Componente/Servicio: Esquemas de Mascota
- * Descripción: Define los esquemas de validación de Zod para las operaciones CRUD de las mascotas.
- * Requiere: -
+ * lib/validations/pet.schema.ts
+ * Descripción: Esquemas de validación para mascotas, incluyendo creación, actualización y gestión de estados.
+ * Requiere: Zod
  * Implementa: HU-005, RF-009, RN-007
  */
 
+/**
+ * Enums para tipos de mascotas y sexos
+ */
 export const PetSpecies = {
     DOG: "Perro",
     CAT: "Gato",
@@ -19,6 +22,7 @@ export const PetSex = {
     FEMALE: "Hembra"
 }
 
+// Esquema para creación de mascotas (POST /api/pets)
 export const createPetSchema = z.object({
     name: z
         .string()
@@ -78,10 +82,12 @@ export const createPetSchema = z.object({
         .regex(/^[0-9a-fA-F]{24}$/, "ID de albergue inválido"),
 });
 
+// Esquema para actualización de mascotas (PUT /api/pets/:id)
 export const updatePetSchema = createPetSchema
     .omit({ shelterId: true })
     .partial();
 
+// Esquema para cambio de estado de mascota (PATCH /api/pets/:id/status)
 export const updatePetStatusSchema = z.object({
     status: z.nativeEnum(PetStatus, {
         error: () => ({
@@ -90,12 +96,14 @@ export const updatePetStatusSchema = z.object({
     }),
 });
 
+// Esquema para filtros de búsqueda de mascotas por albergue
 export const shelterPetsFilterSchema = z.object({
     status: z.nativeEnum(PetStatus).optional(),
     page: z.number().int().positive().default(1),
     limit: z.number().int().min(1).max(50).default(20),
 })
 
+// Tipos TypeScript inferidos de los esquemas
 export type CreatePetInput = z.infer<typeof createPetSchema>;
 export type UpdatePetInput = z.infer<typeof updatePetSchema>;
 export type UpdatePetStatusInput = z.infer<typeof updatePetStatusSchema>;
@@ -107,27 +115,16 @@ export type ShelterPetsFilter = z.infer<typeof shelterPetsFilterSchema>;
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este archivo establece las reglas de validación para los datos de las
- * mascotas. Utiliza Zod para asegurar que cualquier dato de mascota, ya sea
- * para creación o actualización, cumpla con los requisitos del negocio
- * antes de llegar a la capa de servicio o a la base de datos.
+ * Este archivo centraliza las validaciones de negocio para el módulo de mascotas,
+ * asegurando la integridad de datos tanto en el frontend como en el backend.
  *
  * Lógica Clave:
- * - 'createPetSchema': Define el esquema estricto para registrar una nueva
- *   mascota. Incluye todas las validaciones de campos requeridos, como
- *   longitudes de texto, valores de enums y, crucialmente, la regla de
- *   negocio 'RN-007' que exige al menos una imagen ('images.min(1)').
- * - 'updatePetSchema': Un esquema derivado para la actualización. Utiliza
- *   '.omit({ shelterId: true })' para prohibir el cambio del albergue
- *   asociado y '.partial()' para hacer que todos los campos sean opcionales,
- *   permitiendo así actualizaciones parciales de los datos de la mascota.
- * - 'updatePetStatusSchema': Un esquema pequeño y enfocado para manejar
- *   únicamente el cambio de estado de una mascota, asegurando que el nuevo
- *   estado sea uno de los valores permitidos por el enum 'PetStatus'.
+ * - createPetSchema: Implementa RN-007 (mínimo 1 foto) y valida la relación obligatoria con shelterId.
+ * - updatePetSchema: Protege la inmutabilidad de shelterId mediante .omit().
+ * - updatePetStatusSchema: Restringe los estados vitales del ciclo de adopción.
  *
  * Dependencias Externas:
- * - 'zod': Para la creación de todos los esquemas de validación.
- * - '@prisma/client': Para el enum 'PetStatus', que mantiene la
- *   consistencia de los estados con la base de datos.
+ * - Zod: Motor de validación de esquemas y tipado estático.
+ * - @prisma/client: Sincronización con el modelo de base de datos.
  *
  */

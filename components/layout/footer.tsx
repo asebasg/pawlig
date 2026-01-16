@@ -1,14 +1,8 @@
 import Link from "next/link";
-import { Instagram, Facebook, Twitter, MessageCircle, Mail, Phone, MapPin, Link2, Album, FileUser } from "lucide-react";
+import { Instagram, Facebook, Twitter, Github, MessageCircle, Mail, Phone, MapPin, Link2, Album, FileUser } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 import { FOOTER_LINKS, CONTACT_INFO } from "@/lib/constants";
 
-/**
- * Componente: Footer
- * Descripción: Renderiza el pie de página principal de la aplicación, incluyendo enlaces de navegación, información de contacto y redes sociales.
- * Requiere: -
- * Implementa: HU-005
- */
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -100,6 +94,7 @@ export function Footer() {
                   const Icon = social.icon === "Instagram" ? Instagram 
                     : social.icon === "Facebook" ? Facebook 
                     : social.icon === "Twitter" ? Twitter
+                    : social.icon === "Github" ? Github
                     : MessageCircle;
                   
                   return (
@@ -132,23 +127,3 @@ export function Footer() {
     </footer>
   );
 }
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * El componente 'Footer' es una sección estática que se muestra al final de todas las páginas.
- * Está dividido en dos partes principales: un área de contenido con varias columnas y una barra inferior con el aviso de derechos de autor.
- * La información de contacto y los enlaces se obtienen de constantes para facilitar su mantenimiento.
- *
- * Lógica Clave:
- * - 'currentYear': Se calcula dinámicamente el año actual para mostrarlo en el aviso de derechos de autor.
- * - 'Mapeo de Datos': Los enlaces del pie de página y los iconos de redes sociales se renderizan dinámicamente a partir de los arrays 'FOOTER_LINKS' y 'CONTACT_INFO' importados de 'lib/constants'.
- *   Esto permite añadir, eliminar o modificar enlaces y redes sociales sin cambiar la lógica del componente.
- *
- * Dependencias Externas:
- * - 'lucide-react': Para los iconos utilizados en las diferentes secciones del pie de página.
- * - 'next/link': Para la navegación del lado del cliente en los enlaces rápidos y de recursos.
- *
- */

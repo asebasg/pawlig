@@ -2,9 +2,11 @@ import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth/auth-options';
+import { prisma } from '@/lib/utils/db';
 import { ShelterRequestForm } from '@/components/forms/shelter-request-form';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { UserRole } from '@prisma/client';
 
 /**
  * PAGE /user/request-shelter
@@ -22,19 +24,28 @@ export default async function RequestShelterPage() {
   const session = await getServerSession(authOptions);
 
   //  1. Validar sesión
-  if (!session?.user) {
-    redirect('/login?callbackUrl=/user/request-shelter');
+  if (!session || !session.user) {
+    redirect('/login?callbackUrl=/user');
   }
 
   //  2. Validar roles permitidos
-  // Solo los usuarios 'ADOPTER' pueden solicitar ser albergues.
-  // Los albergues y admins no necesitan acceder aquí.
-  const allowedRoles = ['ADOPTER'];
-  if (!allowedRoles.includes(session.user.role)) {
-    // Redirigir a página de no autorizado o al dashboard
-    // Usamos query param para mostrar un mensaje específico si existe la página de error
-    redirect('/unauthorized?reason=role_not_allowed');
+  if (session.user.role !== UserRole.ADOPTER) {
+    redirect('/unauthorized?reason=adopter_only');
   }
+
+  //  3. Fetch User Profile
+  const userProfile = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      name: true,
+      email: true,
+      phone: true,
+      municipality: true,
+      address: true,
+      idNumber: true,
+      birthDate: true,
+    }
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -84,14 +95,14 @@ export default async function RequestShelterPage() {
           </div>
 
           {/* Formulario de solicitud */}
-          <ShelterRequestForm />
+          <ShelterRequestForm userProfile={userProfile || undefined} />
 
           {/* Disclaimer legal */}
           <p className="text-center text-xs text-gray-500 mt-6">
             Al enviar esta solicitud, confirmas que la información proporcionada es veraz y
             aceptas los{' '}
-            <Link href="/terms" className="text-purple-600 hover:underline font-bold">
-              Términos y Condiciones
+            <Link href="/terminos" className="text-purple-600 hover:underline font-bold">
+              Términos de Servicio
             </Link>{' '}
             de PawLig.
           </p>

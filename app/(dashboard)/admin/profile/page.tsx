@@ -4,21 +4,22 @@ import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { UserRole } from "@prisma/client";
 
 export const metadata: Metadata = {
-  title: 'Editar Perfil de Administrador - PawLig',
+  title: 'Editar Perfil',
   description: 'Actualiza tu información de administrador',
 };
 
 export default async function AdminProfilePage() {
   const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    redirect('/login?callbackUrl=/admin/profile');
+  // Verificar autenticación, rol y verificación de rol
+  if (!session || !session.user) {
+    redirect("/login?callbackUrl=/admin/profile");
   }
 
-  if (session.user.role !== 'ADMIN') {
-    redirect('/unauthorized');
+  if (session.user.role !== UserRole.ADMIN) {
+    redirect("/unauthorized?reason=admin_only");
   }
 
   return (
