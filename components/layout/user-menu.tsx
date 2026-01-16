@@ -25,6 +25,12 @@ import {
 } from "lucide-react";
 import { USER_MENU_OPTIONS, COMMON_MENU_OPTIONS } from "@/lib/constants";
 
+/**
+ * Componente: UserMenu
+ * Descripción: Despliega un menú de usuario con opciones de navegación y la opción de cerrar sesión. Las opciones varían según el rol del usuario.
+ * Requiere: Un objeto de usuario autenticado.
+ * Implementa: HU-005
+ */
 interface UserMenuProps {
   user: {
     name?: string | null;
@@ -187,3 +193,25 @@ export function UserMenu({ user }: UserMenuProps) {
     </div>
   );
 }
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente es el menú desplegable que aparece cuando un usuario autenticado hace clic en su nombre o avatar en la barra de navegación.
+ * Muestra información del usuario, enlaces de navegación específicos de su rol y acciones comunes como 'Configuración' y 'Cerrar Sesión'.
+ *
+ * Lógica Clave:
+ * - 'useState', 'useRef', 'useEffect': Se utilizan para controlar la visibilidad del menú desplegable. El 'useEffect' añade y elimina un 'event listener' para detectar clics fuera del menú y cerrarlo automáticamente.
+ * - 'USER_MENU_OPTIONS': Un objeto constante que mapea roles de usuario (ej: 'ADMIN', 'SHELTER') a un array de opciones de menú específicas. El componente renderiza dinámicamente estas opciones basándose en el 'rol' del usuario actual.
+ * - 'iconMap': Un objeto que mapea nombres de iconos (strings) a los componentes de icono reales de 'lucide-react'. Esto permite definir los iconos como strings en el objeto de constantes y renderizarlos dinámicamente.
+ * - 'signOut': Se importa de 'next-auth/react' y se invoca en el botón 'Cerrar Sesión' para finalizar la sesión del usuario y redirigirlo a la página de inicio.
+ *
+ * Dependencias Externas:
+ * - 'next-auth/react': Para la función 'signOut'.
+ * - 'lucide-react': Para los iconos del menú.
+ * - 'next/link': Para la navegación del lado del cliente.
+ * - 'next/image': Para optimizar la imagen de perfil del usuario.
+ *
+ */

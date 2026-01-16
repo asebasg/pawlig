@@ -1,4 +1,10 @@
-// lib/utils/logger.ts
+/**
+ * Ruta/Componente/Servicio: Utilidad de Logger
+ * Descripción: Proporciona un logger estructurado para estandarizar la salida de logs en formato JSON en toda la aplicación.
+ * Requiere: -
+ * Implementa: -
+ */
+
 type LogLevel = 'info' | 'warn' | 'error' | 'audit';
 
 interface LogData {
@@ -67,25 +73,23 @@ export const logger = {
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * **Descripción General:**
- * Este archivo proporciona un logger estructurado y centralizado para toda la
- * aplicación. Su objetivo es estandarizar el formato de los logs en JSON,
- * facilitando su posterior análisis, filtrado y almacenamiento en sistemas
- * de monitoreo centralizado (como Datadog, Splunk, etc.).
+ * Descripción General:
+ * Este archivo proporciona un logger estructurado y centralizado. Su objetivo es
+ * estandarizar el formato de los logs en JSON, facilitando su análisis,
+ * filtrado y almacenamiento en sistemas de monitoreo (como Datadog o Splunk).
  *
- * **Lógica Clave:**
- * - Formato JSON: Todos los logs se convierten a una cadena JSON. Esto es
- *   una práctica estándar en aplicaciones modernas porque permite adjuntar
- *   metadatos estructurados a cada mensaje de log.
- * - Niveles de Log: Se definen niveles estándar (info, warn, error) para
- *   clasificar la severidad de los mensajes.
- * - Nivel de Auditoría: Se incluye un nivel 'audit' específico para registrar
- *   eventos de seguridad críticos (ej: cambios de rol, bloqueos). Estos logs
- *   contienen información vital para la trazabilidad, como el ID del
- *   administrador que realiza la acción y el ID del usuario afectado.
+ * Lógica Clave:
+ * - 'Formato JSON': Todos los logs se convierten a una cadena JSON. Esto permite
+ *   adjuntar metadatos estructurados a cada mensaje, lo cual es fundamental
+ *   para una observabilidad efectiva en producción.
+ * - 'Niveles de Log': Se definen niveles estándar ('info', 'warn', 'error') para
+ *   clasificar la severidad de los mensajes y permitir un filtrado eficiente.
+ * - 'Nivel de Auditoría': Se incluye un nivel 'audit' específico para registrar
+ *   eventos de seguridad críticos (ej: cambios de rol). Estos logs contienen
+ *   información clave para la trazabilidad, como el 'adminId' y el 'targetUserId'.
  *
- * **Dependencias Externas:**
+ * Dependencias Externas:
  * - Ninguna. Este logger es una implementación ligera que utiliza la API
- *   `console` nativa de Node.js.
+ *   'console' nativa de Node.js.
  *
  */

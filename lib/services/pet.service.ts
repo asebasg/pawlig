@@ -2,11 +2,12 @@ import { prisma } from '@/lib/utils/db';
 import { PetStatus, Municipality, Sex, Prisma } from '@prisma/client';
 
 /**
- * Servicio: Pet Service
+ * Ruta/Componente/Servicio: Pet Service
  * Descripción: Provee funciones para interactuar con la base de datos en relación a las mascotas.
  * Requiere: -
- * Implementa: Lógica de obtención de datos para listado, detalle y recomendaciones de mascotas.
+ * Implementa: HU-004, HU-005
  */
+
 export interface PetFilters {
   species?: string;
   municipality?: Municipality;

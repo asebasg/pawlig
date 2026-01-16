@@ -3,12 +3,12 @@ import { prisma } from "@/lib/utils/db";
 import { AuditAction, UserRole } from "@prisma/client";
 
 /**
- * Servicio: User Service
- * Descripción: Provee funciones para la gestión de usuarios por parte de administradores.
- * Requiere: -
- * Implementa: Lógica de obtención y actualización de datos de usuarios.
+ * Ruta/Componente/Servicio: User Service
+ * Descripción: Provee funciones para la gestión de usuarios por parte de administradores, incluyendo obtención de datos y modificación de roles.
+ * Requiere: Autenticación como ADMIN (para operaciones de escritura).
+ * Implementa: HU-014
  */
-//  ========== OBTENER USUARIO POR ID (CON CACHÉ) ==========
+
 export const getUserById = unstable_cache(
   async (id: string) => {
     if (!id) return null;
@@ -59,7 +59,6 @@ export const getUserById = unstable_cache(
   }
 );
 
-//  ========== ACTUALIZAR ROL DE USUARIO ==========
 export async function updateUserRole(
   userId: string,
   newRole: UserRole,
@@ -71,24 +70,19 @@ export async function updateUserRole(
   const currentUser = await prisma.user.findUnique({ where: { id: userId } });
   if (!currentUser) throw new Error("User not found");
 
-  //  Validación 1: No auto-cambio de rol
   if (userId === adminId) {
     throw new Error("Cannot change your own role");
   }
 
-  //  Validación 2: No modificar a otros administradores
   if (currentUser.role === UserRole.ADMIN) {
     throw new Error("Cannot change the role of another admin");
   }
 
-  //  Transacción para asegurar la atomicidad
   const transaction = await prisma.$transaction([
-    //  1. Actualizar el rol del usuario
     prisma.user.update({
       where: { id: userId },
       data: { role: newRole },
     }),
-    //  2. Registrar la acción en la auditoría
     prisma.userAudit.create({
       data: {
         action: AuditAction.CHANGE_ROLE,
@@ -103,10 +97,9 @@ export async function updateUserRole(
     }),
   ]);
 
-  //  Invalidar el caché después de la actualización
   revalidateTag("user-detail");
 
-  return transaction[0]; // Retorna el usuario actualizado
+  return transaction[0];
 }
 
 /*

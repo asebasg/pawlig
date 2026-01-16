@@ -6,6 +6,12 @@ import { NavbarPublic } from "./navbar-public";
 import { NavbarAuth } from "./navbar-auth";
 import { NavbarMobile } from "./navbar-mobile";
 
+/**
+ * Ruta/Componente/Servicio: Navbar
+ * Descripción: Componente principal de la barra de navegación que se adapta según el estado de autenticación del usuario.
+ * Requiere: -
+ * Implementa: HU-005
+ */
 export function Navbar() {
   const { data: session, status } = useSession();
 
@@ -41,3 +47,21 @@ export function Navbar() {
     </header>
   );
 }
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * 'Navbar' es el componente de cabecera principal de la aplicación. Es responsable de mostrar el logo, la navegación principal y las acciones del usuario.
+ * Su contenido se renderiza de forma condicional basándose en el estado de autenticación del usuario ('loading', 'authenticated', 'unauthenticated').
+ *
+ * Lógica Clave:
+ * - 'useSession': Se utiliza el hook 'useSession' de 'next-auth/react' para obtener el estado actual de la sesión del usuario.
+ * - 'Renderizado Condicional': El componente muestra un esqueleto de carga ('animate-pulse') mientras se verifica la sesión. Si el usuario está autenticado, renderiza 'NavbarAuth'; de lo contrario, renderiza 'NavbarPublic'.
+ * - 'Diseño Responsivo': El componente gestiona la visibilidad de elementos para dispositivos móviles y de escritorio. 'NavbarMobile' se muestra en pantallas pequeñas, mientras que 'NavbarAuth' y 'NavbarPublic' se muestran en pantallas grandes.
+ *
+ * Dependencias Externas:
+ * - 'next-auth/react': Para la gestión de la sesión y el estado de autenticación del usuario.
+ *
+ */
