@@ -6,6 +6,72 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 
 ---
 
+## 16-01-2026 - Implementación de Páginas Públicas y Legales
+
+**Commit:** `a270c42`
+**Tipo:** Feature
+**Scope:** public, docs, legal
+
+### Descripción
+Implementación de la infraestructura para páginas públicas de la plataforma. Se han creado las secciones de FAQ, Privacidad, Términos y Condiciones, y el Registro de Cambios (Changelog) para el usuario final. Estas páginas siguen un diseño limpio y legalmente apropiado, facilitando la transparencia con los usuarios.
+
+### Archivos Modificados
+- **`app/(public)/faq/page.tsx`** (A)
+- **`app/(public)/privacy/page.tsx`** (A)
+- **`app/(public)/terms/page.tsx`** (A)
+- **`app/(public)/changelog/page.tsx`** (A)
+- **`Preguntas_Frecuentes.md`** (A)
+
+---
+
+## 15-01-2026 - Módulo de Marketplace y Gestión de Productos
+
+**Commit:** `811248f`
+**Tipo:** Feature
+**Scope:** products, vendor, marketplace
+
+### Descripción
+Despliegue integral del módulo de productos que transforma a PawLig en un marketplace funcional. Se ha implementado el catálogo de productos con filtros avanzados por categoría y precio, junto con un sistema de gestión de inventario para vendedores que permite crear, editar y actualizar stock de productos en tiempo real.
+
+### Archivos Modificados
+- **`app/productos/`** (A) - Galería pública de productos y vista de detalle
+- **`app/(dashboard)/vendor/products/`** (A) - Panel de gestión para vendedores
+- **`components/ProductGalleryClient.tsx`** (A)
+- **`components/vendor/ProductsClient.tsx`** (A)
+- **`lib/services/product.service.ts`** (A)
+- **`lib/validations/product.schema.ts`** (A)
+
+---
+
+## 13-01-2026 - Optimización de Procesos de Desarrollo (GitHub)
+
+**Commit:** `ad6bd66`
+**Tipo:** Chore
+**Scope:** github, workflow
+
+### Descripción
+Actualización de las plantillas de Issues en GitHub para estandarizar el reporte de errores, solicitudes de funcionalidades y peticiones de refactorización. Esto mejora la comunicación entre desarrolladores y agiliza el proceso de triage de tareas.
+
+### Archivos Modificados
+- **`.github/ISSUE_TEMPLATE/`** (M) - Actualización de plantillas de reporte de error y sugerencia.
+
+---
+
+## 10-01-2026 - Estandarización de Interfaz y UX Cohesiva
+
+**Commit:** `N/A`
+**Tipo:** Improvement
+**Scope:** ui, ux
+
+### Descripción
+Refactorización de los componentes base de la interfaz de usuario para asegurar consistencia visual en toda la plataforma. Se han unificado estilos de botones, tarjetas y sistemas de navegación móvil para mejorar la experiencia del usuario final.
+
+### Archivos Modificados
+- **`components/ui/`** (M) - Ajustes en variantes de botones y sombras de tarjetas.
+- **`components/layout/navbar-mobile.tsx`** (M) - Mejoras en la transición de menús.
+
+---
+
 ## 05-01-2026 - Migración de Estilos y Refactorización General
 
 **Commits:** `7d51b22`
