@@ -22,6 +22,7 @@ import {
   Home,
   ShoppingCart,
   Plus,
+  ShieldPlus,
 } from "lucide-react";
 import { USER_MENU_OPTIONS, COMMON_MENU_OPTIONS } from "@/lib/constants";
 
@@ -56,6 +57,7 @@ const iconMap = {
   Home,
   ShoppingCart,
   Plus,
+  ShieldPlus,
 };
 
 const roleLabels = {

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import React from 'react';
-import { ArrowLeft, Rocket, History, Sparkles, AlertCircle, Wrench, Bug, Zap, Calendar, GitPullRequest } from 'lucide-react';
+import { ArrowLeft, Rocket, History, Sparkles, Wrench, Bug, Zap, Calendar, GitPullRequest } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -9,43 +9,51 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-    const lastUpdate = new Date().toLocaleDateString('es-ES', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    });
+    const lastUpdate = "16 de enero de 2026";
 
     const versions = [
         {
+            version: 'v1.3.0',
+            date: '16 de Enero, 2026',
+            title: 'Transparencia y Legalidad',
+            description: 'Implementación de páginas informativas esenciales para mejorar la comunicación y cumplimiento legal.',
+            updates: [
+                { type: 'added', title: 'Páginas Legales', description: 'Nuevas secciones de Términos y Condiciones y Política de Privacidad.', icon: <Sparkles size={18} className="text-amber-500" /> },
+                { type: 'added', title: 'Centro de Ayuda (FAQ)', description: 'Preguntas frecuentes para resolver dudas rápidas de los usuarios.', icon: <Zap size={18} className="text-blue-500" /> },
+                { type: 'added', title: 'Registro de Cambios Público', description: 'Esta misma página ahora permite a los usuarios seguir la evolución del proyecto.', icon: <GitPullRequest size={18} className="text-pink-500" /> }
+            ]
+        },
+        {
             version: 'v1.2.0',
             date: '15 de Enero, 2026',
-            title: 'Mejoras en la Gestión de Productos',
-            description: 'Esta actualización se enfoca en optimizar la experiencia de los vendedores y la búsqueda de productos.',
+            title: 'Marketplace PawLig',
+            description: 'Lanzamiento del módulo de productos y servicios veterinarios para vendedores.',
             updates: [
-                { type: 'added', title: 'Filtros Dinámicos', description: 'Implementación de contadores reactivos en las categorías de productos que se ajustan según la búsqueda.', icon: <Sparkles size={18} className="text-amber-500" /> },
-                { type: 'improved', title: 'Optimización de Imágenes', description: 'Migración a Next/Image para una carga más rápida y eficiente de las fotografías de mascotas y productos.', icon: <Zap size={18} className="text-blue-500" /> },
-                { type: 'fixed', title: 'Error de Hidratación', description: 'Se corrigieron errores de anidamiento HTML en las tarjetas de productos que causaban problemas de renderizado.', icon: <Bug size={18} className="text-red-500" /> }
+                { type: 'added', title: 'Gestión de Productos', description: 'Los vendedores ahora pueden publicar y gestionar su inventario desde un panel dedicado.', icon: <Rocket size={18} className="text-primary" /> },
+                { type: 'improved', title: 'Galería de Productos', description: 'Filtros avanzados por categoría y precio para encontrar lo que tu mascota necesita.', icon: <Wrench size={18} className="text-slate-500" /> },
+                { type: 'added', title: 'Métricas para Vendedores', description: 'Visualización de estadísticas de ventas y stock en tiempo real.', icon: <Sparkles size={18} className="text-amber-500" /> }
             ]
         },
         {
             version: 'v1.1.0',
             date: '10 de Enero, 2026',
-            title: 'Estandarización de Interfaz',
-            description: 'Refactorización visual y técnica de los componentes principales para una experiencia más cohesiva.',
+            title: 'Optimización de Interfaz',
+            description: 'Mejoras visuales y de rendimiento en los componentes principales del sistema.',
             updates: [
-                { type: 'added', title: 'Botón de Favoritos', description: 'Nueva funcionalidad para que adoptantes puedan guardar sus mascotas preferidas directamente desde la galería.', icon: <GitPullRequest size={18} className="text-pink-500" /> },
-                { type: 'improved', title: 'Tarjetas de Mascotas', description: 'Rediseño completo de las tarjetas para incluir slots de overlay y footer dinámicos.', icon: <Wrench size={18} className="text-slate-500" /> },
-                { type: 'fixed', title: 'Filtros de Favoritos', description: 'Se solucionó un problema donde los filtros no se aplicaban correctamente en la vista de favoritos del usuario.', icon: <AlertCircle size={18} className="text-orange-500" /> }
+                { type: 'improved', title: 'Estandarización de UI', description: 'Refactorización de botones y tarjetas para una experiencia más fluida.', icon: <Wrench size={18} className="text-slate-500" /> },
+                { type: 'improved', title: 'Navegación Móvil', description: 'Ajustes en el menú móvil para mejorar la accesibilidad en dispositivos pequeños.', icon: <Zap size={18} className="text-blue-500" /> },
+                { type: 'fixed', title: 'Plantillas de Reportes', description: 'Se optimizaron los flujos de reporte de errores para el equipo técnico.', icon: <Bug size={18} className="text-red-500" /> }
             ]
         },
         {
             version: 'v1.0.0',
-            date: '1 de Enero, 2026',
-            title: 'Lanzamiento Oficial',
-            description: 'Primera versión estable de PawLig con soporte para adopciones, gestión de albergues y catálogo veterinario.',
+            date: '05 de Enero, 2026',
+            title: 'Lanzamiento y Gran Refactorización',
+            description: 'Migración completa a Tailwind CSS y nueva arquitectura de componentes.',
             updates: [
-                { type: 'added', title: 'Sistema de Adopción', description: 'Flujo completo desde la publicación hasta la solicitud de adopción.', icon: <Rocket size={18} className="text-primary" /> },
-                { type: 'added', title: 'Panel de Control', description: 'Interfaz dedicada para albergues, vendedores y administradores.', icon: <Sparkles size={18} className="text-amber-500" /> }
+                { type: 'added', title: 'Nueva Arquitectura', description: 'Reestructuración total del proyecto para mayor escalabilidad.', icon: <Rocket size={18} className="text-primary" /> },
+                { type: 'improved', title: 'Diseño con Tailwind', description: 'Migración completa del sistema de estilos para una carga más rápida.', icon: <Sparkles size={18} className="text-amber-500" /> },
+                { type: 'added', title: 'Sistema de Adopción Base', description: 'Funcionalidad núcleo para la publicación y solicitud de mascotas.', icon: <Rocket size={18} className="text-primary" /> }
             ]
         }
     ];
