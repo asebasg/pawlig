@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createPetSchema, PetSpecies, PetSex, type CreatePetInput } from "@/lib/validations/pet.schema";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import Loader from "@/components/ui/loader";
 import Image from "next/image";
+import { Button } from '@/components/ui/button';
 
 /**
  * POST /api/pets
@@ -35,6 +35,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
     // Estados del componente
     const [images, setImages] = useState<string[]>(initialData?.images || []);
     const [uploadingImages, setUploadingImages] = useState(false);
+    const [isRefining, setIsRefining] = useState(false);
 
     // React Hook Form con Zod
     const {
@@ -42,6 +43,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
         handleSubmit,
         formState: { errors, isSubmitting },
         setValue,
+        getValues,
         watch,
     } = useForm<CreatePetInput>({
         resolver: zodResolver(createPetSchema),
@@ -130,6 +132,39 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
         const newImages = images.filter((_, i) => i !== index);
         setImages(newImages);
         setValue("images", newImages, { shouldValidate: true });
+    };
+
+    /**
+     * FUNCIÓN: handleRefine
+     * Refinar descripciones con IA
+     */
+    const handleRefine = async () => {
+        const currentDescription = getValues("description");
+
+        if (!currentDescription || currentDescription.length < 10) {
+            toast.error("Ingresa una descripción más detallada para refinar.");
+            return;
+        }
+
+        setIsRefining(true);
+        try {
+            const response = await fetch("/api/ai/refine", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ description: currentDescription })
+            });
+
+            if (!response.ok) throw new Error("Error al contactar con la IA");
+
+            const { refinedText } = await response.json();
+            setValue("description", refinedText, { shouldValidate: true });
+            toast.success("Descripción refinada con éxito");
+        } catch (error) {
+            console.error("Error refining description:", error);
+            toast.error("No se pudo refinar la descripción. Intenta nuevamente.");
+        } finally {
+            setIsRefining(false);
+        }
     };
 
     /**
@@ -271,13 +306,25 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                         Descripción detallada <span className="text-red-500">*</span>
                     </label>
-                    <textarea
-                        {...register("description")}
-                        id="description"
-                        rows={5}
-                        placeholder="Describe el carácter, personalidad y comportamiento de la mascota. Mínimo 20 caracteres."
-                        className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
-                    />
+                    <div className="relative">
+                        <textarea
+                            {...register("description")}
+                            id="description"
+                            rows={5}
+                            placeholder="Describe el carácter, personalidad y comportamiento de la mascota. Mínimo 20 caracteres."
+                            className="text-black w-full px-4 py-2 pb-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
+                        />
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={handleRefine}
+                            disabled={isRefining}
+                            className="absolute bottom-2 right-2 h-8 text-purple-700 hover:text-purple-800 transition-colors"
+                        >
+                            <Sparkles className="mr-2 h-5 w-5" />
+                            <span className="text-xs">{isRefining ? "Refinando..." : "Refinar con IA"}</span>
+                        </Button>
+                    </div>
                     <p className="mt-1 text-xs text-gray-500">
                         Caracteres: {watch("description")?.length || 0} / 1000 (mínimo 20)
                     </p>
@@ -344,7 +391,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         >
                             {uploadingImages ? (
                                 <>
-                                    <Loader />
                                     <span className="text-sm font-medium text-purple-600">Subiendo fotos...</span>
                                 </>
                             ) : (
@@ -388,7 +434,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 >
                     {isSubmitting ? (
                         <>
-                            <Loader />
                             <span>{mode === "create" ? "Publicando..." : "Guardando..."}</span>
                         </>
                     ) : (
