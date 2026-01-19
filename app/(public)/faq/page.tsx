@@ -82,7 +82,7 @@ export default function FaqPage() {
                                 <p className="text-sm">Ninguno. El servicio es 100% gratuito tanto para quienes buscan adoptar como para los albergues que publican a sus mascotas.</p>
                             </div>
                             <div className="mt-4 p-4 bg-amber-50 border-l-4 border-amber-400 text-sm text-amber-900">
-                                <strong>Territorio de operación:</strong> PawLig está limitado exclusivamente a los municipios del Valle de Aburrá (Colombia). No se aceptan publicaciones de otras regiones.
+                                <strong>Territorio de operación:</strong> PawLig está limitado exclusivamente a los municipios del Valle de Aburrá, en el departamento de Antioquia (Colombia). No se aceptan publicaciones de otras regiones.
                             </div>
                         </div>
                     </section>
