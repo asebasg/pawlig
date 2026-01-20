@@ -158,7 +158,7 @@ export default function ChangelogPage() {
                             ¿Tienes alguna sugerencia para la próxima versión o encontraste algo que no funciona como debería? Tu feedback es fundamental para hacer de PawLig la mejor plataforma para nuestras mascotas.
                         </p>
                         <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <span className="text-xs font-semibold">dev-team@pawlig.com</span>
+                            <span className="text-xs font-semibold">https://github.com/asebasg/pawlig</span>
                             <Link
                                 href="https://github.com/asebasg/pawlig/issues/new/choose"
                                 className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-yellow-400 transition-all uppercase tracking-widest"
