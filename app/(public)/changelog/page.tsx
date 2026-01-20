@@ -9,9 +9,20 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-    const lastUpdate = "16 de enero de 2026";
+    const lastUpdate = "20 de enero de 2026";
 
     const versions = [
+        {
+            version: 'v1.4.0',
+            date: '20 de Enero, 2026',
+            title: 'Inteligencia Artificial Generativa',
+            description: 'Integración de IA para potenciar las descripciones de mascotas y productos.',
+            updates: [
+                { type: 'added', title: 'Asistente de Redacción IA', description: 'Refinamiento automático de descripciones para mascotas y productos usando Google Gemini.', icon: <Sparkles size={18} className="text-amber-500" /> },
+                { type: 'improved', title: 'Optimización de Perfiles', description: 'Mejora del impacto emocional en perfiles de adopción para aumentar las tasas de éxito.', icon: <Zap size={18} className="text-blue-500" /> },
+                { type: 'added', title: 'Copywriting para Marketplace', description: 'Generación de descripciones persuasivas para productos del marketplace.', icon: <Rocket size={18} className="text-primary" /> }
+            ]
+        },
         {
             version: 'v1.3.0',
             date: '16 de Enero, 2026',

@@ -6,6 +6,23 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 
 ---
 
+## 20-01-2026 - Integración de Inteligencia Artificial Generativa
+
+**Commit:** `N/A`
+**Tipo:** Feature
+**Scope:** ai, pet-adoption, marketplace
+
+### Descripción
+Implementación de un asistente de Inteligencia Artificial Generativa basado en Google Gemini para el refinamiento automático de descripciones. Este asistente ayuda a los usuarios a crear perfiles de adopción más atractivos y descripciones de productos de marketplace más persuasivas, optimizando el tono, la gramática y el impacto emocional.
+
+### Archivos Modificados
+- **`package.json`** (M) - Adición de `@google/generative-ai`
+- **`app/api/ai/refine/route.ts`** (A) - Endpoint para procesamiento de IA
+- **`components/forms/pet-form.tsx`** (M) - Integración del asistente en formulario de mascotas
+- **`components/forms/product-form.tsx`** (M) - Integración del asistente en formulario de productos
+
+---
+
 ## 16-01-2026 - Implementación de Páginas Públicas y Legales
 
 **Commit:** `a270c42`
