@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/utils/db';
 import { petSearchSchema, petSearchQuerySchema } from '@/lib/validations/pet-search.schema';
 import { ZodError } from 'zod';
-import { PetStatus, Municipality } from '@prisma/client';
+import { Municipality, Prisma } from '@prisma/client';
 
 /**
  * Endpoint para búsqueda y filtrado de mascotas
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     const validatedData = petSearchSchema.parse(transformedParams);
 
     //  3. Construir filtros dinámicos para Prisma
-    const filters: any = {
+    const filters: Prisma.PetWhereInput = {
       status: validatedData.status, // Siempre filtra por estado (default: AVAILABLE)
     };
 

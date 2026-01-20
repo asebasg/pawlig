@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest) {
     // Manejo de errores de validación Zod
     if (error instanceof ZodError) {
       const fieldErrors: Record<string, string> = {};
-      error.issues.forEach((issue: any) => {
+      error.issues.forEach((issue) => {
         const field = issue.path[0];
         if (typeof field === 'string') {
           fieldErrors[field] = issue.message;
@@ -117,7 +117,7 @@ export async function PUT(request: NextRequest) {
  * GET /api/vendors/profile
  * Obtener información del perfil del vendor autenticado
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 

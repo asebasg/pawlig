@@ -117,7 +117,7 @@ const AlertDialogAction = React.forwardRef<
     HTMLButtonElement,
     React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, onClick, ...props }, ref) => {
-    const { onOpenChange } = React.useContext(AlertDialogContext)
+
 
     return (
         <button

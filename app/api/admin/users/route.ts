@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import { UserRole } from '@prisma/client';
+import { UserRole, Prisma, Municipality } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
     try {
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
         const skip = (validPage - 1) * validLimit;
 
         //  3. Construir filtros dinámicos
-        const where: any = {};
+        const where: Prisma.UserWhereInput = {};
 
         // Filtro por rol
         if (role && Object.values(UserRole).includes(role)) {
@@ -53,8 +53,8 @@ export async function GET(request: NextRequest) {
         }
 
         // Filtro por municipio
-        if (municipality) {
-            where.municipality = municipality;
+        if (municipality && Object.values(Municipality).includes(municipality as Municipality)) {
+            where.municipality = municipality as Municipality;
         }
 
         // Filtro por búsqueda de texto (nombre o email)

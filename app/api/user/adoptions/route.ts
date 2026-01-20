@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import { UserRole } from '@prisma/client';
+import { UserRole, Prisma, AdoptionStatus } from '@prisma/client';
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,13 +17,13 @@ export async function GET(req: NextRequest) {
 
     const userId = session.user.id;
     const statusParam = req.nextUrl.searchParams.get('status');
-    
-    const whereClause: any = {
+
+    const whereClause: Prisma.AdoptionWhereInput = {
       adopterId: userId,
     };
 
-    if (statusParam) {
-      whereClause.status = statusParam;
+    if (statusParam && Object.values(AdoptionStatus).includes(statusParam as AdoptionStatus)) {
+      whereClause.status = statusParam as AdoptionStatus;
     }
 
     const adoptions = await prisma.adoption.findMany({
