@@ -6,17 +6,16 @@ import LoginForm from '@/components/forms/login-form';
 import Link from 'next/link';
 
 /**
- * Metadata para SEO y redes sociales
+ * GET /login
+ * Descripción: Página de inicio de sesión. Redirige a los usuarios autenticados a sus respectivas páginas según su rol.
+ * Requiere: Acceso público (usuarios no autenticados).
+ * Implementa: HU-001 (Inicio de Sesión)
  */
 export const metadata: Metadata = {
     title: 'Iniciar Sesión',
     description: 'Accede a tu cuenta de PawLig para adoptar mascotas o gestionar tu albergue',
 };
 
-/**
- *  Página de login
- * Usuarios autenticados son redirigidos automáticamente
- */
 export default async function LoginPage() {
     //  Verificar si ya hay sesión activa
     const session = await getServerSession(authOptions);
@@ -43,11 +42,11 @@ export default async function LoginPage() {
                         <p className='text-center text-xs text-gray-500'>
                             Al iniciar sesión, aceptas nuestros {' '}
 
-                            <Link href='/terminos' className='text-purple-600 hover:underline font-bold'>
-                                Términos de Servicio
+                            <Link href='/terms' className='text-purple-600 hover:underline font-bold'>
+                                Términos y Condiciones
                             </Link> {' '}
                             y{' '}
-                            <Link href='/privacidad' className='text-purple-600 hover:underline font-bold'>
+                            <Link href='/privacy' className='text-purple-600 hover:underline font-bold'>
                                 Política de Privacidad
                             </Link>
                         </p>
@@ -55,31 +54,30 @@ export default async function LoginPage() {
                 </div>
             </div>
         </div>
-
-
     );
 }
 
-/**
- * 📚 CAMBIOS IMPLEMENTADOS:
- * 
- * 1. Redirección automática de usuarios autenticados
- *    - getServerSession() verifica sesión activa
- *    - Si existe sesión → redirect según rol
- *    - Si no existe sesión → muestra formulario de login
- * 
- * 2. Redirecciones por rol:
- *    - ADMIN → /admin
- *    - SHELTER → /shelter
- *    - VENDOR → /vendor
- *    - ADOPTER → /adopciones
- * 
- * 3. Seguridad:
- *    - Server Component (validación en servidor)
- *    - Sin renderizado innecesario si ya autenticado
- *    - Previene doble login accidental
- * 
- * 4. Trazabilidad:
- *    - Usuarios autenticados NO pueden acceder a /login ✅
- *    - RNF-002: Seguridad (gestión de sesiones) ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Gestiona el acceso de usuarios al sistema mediante el formulario de login.
+ * Si el usuario ya está autenticado, lo redirige automáticamente a su panel
+ * correspondiente según su rol.
+ *
+ * Lógica Clave:
+ * - Redirección Automática: Utiliza getServerSession para verificar si existe
+ *   una sesión activa. Si es así, redirige al usuario a la ruta definida en
+ *   roleRedirects para evitar que acceda nuevamente al formulario de login.
+ * - Validación de Sesión: La verificación se realiza en el servidor antes de
+ *   renderizar el componente para mejorar la seguridad y el rendimiento.
+ *
+ * Dependencias Externas:
+ * - next-auth: Para la gestión de la sesión y autenticación del usuario.
+ * - next/navigation: Para realizar la redirección (redirect) si el usuario ya
+ *   está autenticado.
+ * - LoginForm: Componente reutilizable que contiene la lógica del formulario.
+ *
  */

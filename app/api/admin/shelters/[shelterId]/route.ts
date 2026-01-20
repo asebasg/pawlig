@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
+import { UserRole } from '@prisma/client';
 
 interface ApprovalBody {
     action: 'approve' | 'reject';
@@ -27,7 +28,7 @@ export async function PATCH(
             );
         }
 
-        if (session.user.role !== 'ADMIN') {
+        if (session.user.role !== UserRole.ADMIN) {
             return NextResponse.json(
                 {
                     error: 'Acceso denegado',
@@ -122,7 +123,7 @@ export async function PATCH(
                 await tx.user.update({
                     where: { id: shelter.userId },
                     data: {
-                        role: 'SHELTER', // Ahora SÍ cambiar a SHELTER
+                        role: UserRole.SHELTER, // Ahora SÍ cambiar a SHELTER
                     },
                 });
 
@@ -135,7 +136,7 @@ export async function PATCH(
                 representativeEmail: shelter.user.email,
                 representativeName: shelter.user.name,
                 previousRole: shelter.user.role, // ✅ Log del rol anterior
-                newRole: 'SHELTER', // ✅ Log del nuevo rol
+                newRole: UserRole.SHELTER, // ✅ Log del nuevo rol
                 approvedBy: session.user.email,
                 approvedAt: new Date().toISOString(),
             });
@@ -144,7 +145,7 @@ export async function PATCH(
                 action: 'APPROVE',
                 shelterId: params.shelterId,
                 shelterName: updatedShelter.name,
-                roleChange: `${shelter.user.role} → SHELTER`, // ✅ Registro de cambio de rol
+                roleChange: `${shelter.user.role} → ${UserRole.SHELTER}`, // ✅ Registro de cambio de rol
                 adminId: session.user.id,
                 adminEmail: session.user.email,
                 timestamp: new Date().toISOString(),

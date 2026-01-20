@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User as PrismaUser, AuditAction } from "@prisma/client";
 import { AuditHistoryCard } from "@/components/admin/AuditHistoryCard";
 import UserViewClient from "@/components/admin/UserViewClient";
+import UserActionsClient from "@/components/admin/UserActionsClient";
 import Link from "next/link";
 import { User, Mail, Phone, MapPin, Calendar, CheckCircle, XCircle, ArrowLeft, CalendarCheck2 } from "lucide-react";
 
@@ -79,15 +80,18 @@ export default async function UserViewPage({ params }: { params: { id: string } 
               <InfoItem icon={CalendarCheck2} label="Fecha de Registro" value={formatDate(user.createdAt)} />
               <div className="sm:col-span-2">
                 <InfoItem icon={user.isActive ? CheckCircle : XCircle} label="Estado"
-                  value={user.isActive ? "Activo" : `Bloqueado desde ${formatDate(user.blockedAt)}`}
+                  value={user.isActive ? "Activo" : `Bloqueado desde el ${formatDate(user.blockedAt)}`}
                   valueColor={user.isActive ? "text-green-600" : "text-red-600"} />
-                {!user.isActive && user.blockReason && <p className="text-xs text-gray-500 mt-1 ml-6">Razón: {user.blockReason}</p>}
+                {!user.isActive && user.blockReason && <p className="text-xs text-gray-500 mt-1 ml-6"><strong>Razón:</strong> {user.blockReason}</p>}
               </div>
             </CardContent>
           </Card>
 
           {/* Solo mostrar gestión de roles si el usuario no es ADMIN */}
-          {user.role !== 'ADMIN' && <UserViewClient user={{ id: user.id, name: user.name, role: user.role }} />}
+          <div className="flex flex-col md:flex-row gap-6 w-full [&>*]:flex-1">
+            {user.role !== 'ADMIN' && <UserActionsClient user={{ id: user.id, name: user.name, email: user.email, isActive: user.isActive, role: user.role }} />}
+            {user.role !== 'ADMIN' && <UserViewClient user={{ id: user.id, name: user.name, role: user.role }} />}
+          </div>
         </div>
 
         {/* Columna Derecha: Auditoría */}
@@ -108,13 +112,13 @@ function InfoItem({ icon: Icon, label, value, valueColor = "text-gray-800" }: { 
         <Icon className="w-4 h-4" />
         <span className="font-semibold">{label}:</span>
       </div>
-      <p className={`ml-6 ${valueColor}`}>{value}</p>
+      <p className={'ml-6 ${valueColor}'}>{value}</p>
     </div>
   );
 }
 
 export const metadata = {
-  title: `Detalles del Usuario`,
+  title: 'Detalles del Usuario',
 };
 
 /*
@@ -122,35 +126,35 @@ export const metadata = {
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * **Descripción General:**
+ * Descripción General:
  * Este es el Server Component principal para la página de vista de detalle
  * de un usuario. Su responsabilidad es obtener los datos del servidor,
  * manejar el estado de "no encontrado" y componer la UI general de la página,
  * delegando la interactividad a componentes de cliente.
  *
- * **Lógica Clave:**
- * - Obtención de Datos del Servidor (`fetch`): La página es `async`, lo que
- *   le permite llamar directamente a `getUserById` (que usa la caché de
+ * Lógica Clave:
+ * - Obtención de Datos del Servidor ('fetch'): La página es 'async', lo que
+ *   le permite llamar directamente a 'getUserById' (que usa la caché de
  *   Next.js) para obtener los datos del usuario antes del renderizado.
- * - Manejo de 404: Si `getUserById` devuelve `null`, se llama a `notFound()`
+ * - Manejo de 404: Si 'getUserById' devuelve 'null', se llama a 'notFound()'
  *   de Next.js. Esto interrumpe el renderizado y muestra la página 404 más
  *   cercana, lo cual es la práctica recomendada.
  * - Estructura de Layout (Grid): La página utiliza un sistema de grid de
  *   Tailwind CSS para crear un layout responsive: una sola columna en móviles
- *   (`grid-cols-1`) que se convierte en un layout de 2/3 + 1/3 en pantallas
- *   grandes (`lg:grid-cols-3`).
+ *   ('grid-cols-1') que se convierte en un layout de 2/3 + 1/3 en pantallas
+ *   grandes ('lg:grid-cols-3').
  * - Composición de Componentes: Este componente actúa como un orquestador.
- *   Renderiza los diferentes `Card`, el `AuditHistoryCard` y el
- *   `UserViewClient`, pasándoles los datos necesarios como props.
+ *   Renderiza los diferentes 'Card', el 'AuditHistoryCard' y el
+ *   'UserViewClient', pasándoles los datos necesarios como props.
  * - Renderizado Condicional: La sección de "Gestión de Roles"
- *   (`UserViewClient`) solo se renderiza si el rol del usuario que se está
- *   viendo no es `ADMIN`, cumpliendo con la regla de negocio de no permitir
+ *   ('UserViewClient') solo se renderiza si el rol del usuario que se está
+ *   viendo no es   'ADMIN', cumpliendo con la regla de negocio de no permitir
  *   la modificación de otros administradores.
  *
- * **Dependencias Externas:**
- * - `next/navigation`: Para `notFound`.
- * - `@/lib/services/user.service`: Para obtener los datos del usuario.
- * - Componentes UI: `Card`, `AuditHistoryCard`, `UserViewClient`.
- * - `lucide-react`: Para los iconos.
+ * Dependencias Externas:
+ * - 'next/navigation': Para 'notFound'.
+ * - '@/lib/services/user.service': Para obtener los datos del usuario.
+ * - Componentes UI: 'Card', 'AuditHistoryCard', 'UserViewClient'.
+ * - 'lucide-react': Para los iconos.
  *
  */

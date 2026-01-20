@@ -6,18 +6,16 @@ import RegisterForm from '@/components/forms/register-form';
 import Link from 'next/link';
 
 /**
- * Metadata para SEO y redes sociales
+ * GET /register
+ * Descripción: Página de registro para nuevos usuarios. Redirige a usuarios ya autenticados.
+ * Requiere: Acceso público (usuarios no autenticados).
+ * Implementa: HU-002 (Registro de Usuario)
  */
 export const metadata: Metadata = {
   title: 'Registro',
   description: 'Crea tu cuenta en PawLig para adoptar mascotas de forma responsable en el Valle de Aburrá',
 };
 
-/**
- *  Página de registro de nuevos usuarios adoptantes
- * Ruta: /register
- * Usuarios autenticados son redirigidos automáticamente
- */
 export default async function RegisterPage() {
   //  Verificar si ya hay sesión activa
   const session = await getServerSession(authOptions);
@@ -43,11 +41,11 @@ export default async function RegisterPage() {
           <p className='text-center text-xs text-gray-500'>
             Al registrarte en PawLig, aceptas nuestros {' '}
 
-            <Link href='/terminos' className='text-purple-600 hover:underline font-bold'>
-              Términos de Servicio
+            <Link href='/terms' className='text-purple-600 hover:underline font-bold'>
+              Términos y Condiciones
             </Link> {' '}
             y{' '}
-            <Link href='/privacidad' className='text-purple-600 hover:underline font-bold'>
+            <Link href='/privacy' className='text-purple-600 hover:underline font-bold'>
               Política de Privacidad
             </Link>
           </p>
@@ -57,26 +55,25 @@ export default async function RegisterPage() {
   );
 }
 
-/**
- * 📚 CAMBIOS IMPLEMENTADOS:
- * 
- * 1. MEJORA 2: Redirección automática de usuarios autenticados
- *    - getServerSession() verifica sesión activa
- *    - Si existe sesión → redirect según rol
- *    - Si no existe sesión → muestra formulario de registro
- * 
- * 2. Redirecciones por rol:
- *    - ADMIN → /admin
- *    - SHELTER → /shelter
- *    - VENDOR → /vendor
- *    - ADOPTER → /adopciones
- * 
- * 3. Seguridad:
- *    - Server Component (validación en servidor)
- *    - Sin renderizado innecesario si ya autenticado
- *    - Previene doble registro accidental
- * 
- * 4. Trazabilidad:
- *    - Usuarios autenticados NO pueden acceder a /register ✅
- *    - RNF-002: Seguridad (gestión de sesiones) ✅
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Facilita el registro de nuevos usuarios en la plataforma. Verifica si
+ * existe una sesión activa y redirige a los usuarios autenticados para
+ * prevenir accesos redundantes al formulario de registro.
+ *
+ * Lógica Clave:
+ * - Verificación de Sesión: Utiliza getServerSession para comprobar si el
+ *   usuario ya ha iniciado sesión.
+ * - Redirección por Rol: Si el usuario está autenticado, se le redirige a la
+ *   página correspondiente a su rol (Admin, Shelter, Vendor, Adopter).
+ *
+ * Dependencias Externas:
+ * - next-auth: Para verificar el estado de la sesión del usuario.
+ * - RegisterForm: Componente que maneja la lógica y validación del
+ *   formulario de registro.
+ *
  */

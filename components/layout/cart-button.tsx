@@ -3,6 +3,13 @@
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 
+/**
+ * Ruta/Componente/Servicio: Componente CartButton
+ * Descripción: Un icono de carrito de compras que muestra el número de artículos.
+ * Requiere: -
+ * Implementa: -
+ */
+
 interface CartButtonProps {
   itemCount?: number;
 }
@@ -25,3 +32,26 @@ export function CartButton({ itemCount = 0 }: CartButtonProps) {
     </Link>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente de UI muestra un icono de carrito de compras que enlaza a la
+ * página del carrito. Opcionalmente, muestra un contador numérico si hay
+ * artículos en él.
+ *
+ * Lógica Clave:
+ * - 'Renderizado Condicional': El contador (un 'span' posicionado absolutamente)
+ *   solo se renderiza si 'itemCount' es mayor que cero, manteniendo la interfaz
+ *   limpia cuando el carrito está vacío.
+ * - 'Límite del Contador': Para evitar problemas de diseño con números grandes,
+ *   el contador muestra "9+" si el número de artículos es mayor que 9.
+ *
+ * Dependencias Externas:
+ * - 'next/link': Para el enlace de navegación.
+ * - 'lucide-react': Para el icono 'ShoppingCart'.
+ *
+ */

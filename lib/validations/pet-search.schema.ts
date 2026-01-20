@@ -2,37 +2,31 @@ import { z } from 'zod';
 import { Municipality, PetStatus } from '@prisma/client';
 
 /**
- * Schema de validación para búsqueda y filtrado de mascotas
- * 
- * VALIDACIÓN DE 3 CAPAS:
- * 1. Cliente (pet-filter.tsx): Validación inmediata en el formulario
- * 2. API (pets/search/route.ts): Validación antes de consultar BD
- * 3. Prisma: Validación de tipos en base de datos
+ * Ruta/Componente/Servicio: Esquemas de Búsqueda de Mascotas
+ * Descripción: Define los esquemas de validación de Zod para los filtros de búsqueda y paginación en el listado de mascotas.
+ * Requiere: -
+ * Implementa: HU-004
  */
 
 export const petSearchSchema = z.object({
-  //  Especie: filtro opcional
   species: z
     .string()
     .min(1, 'Especie no puede estar vacía')
     .max(50, 'Especie muy larga')
     .optional(),
 
-  //  Municipio: debe ser un municipio válido del Valle de Aburrá
   municipality: z
     .nativeEnum(Municipality, {
       message: 'Municipio inválido. Debe ser del Valle de Aburrá'
     })
     .optional(),
 
-  //  Sexo: "Macho", "Hembra" o vacío
   sex: z
     .enum(['Macho', 'Hembra'], {
       message: 'Sexo debe ser "Macho" o "Hembra"'
     })
     .optional(),
 
-  //  Edad mínima: número positivo
   minAge: z
     .number({
       invalid_type_error: 'Edad mínima debe ser un número'
@@ -42,7 +36,6 @@ export const petSearchSchema = z.object({
     .max(30, 'Edad mínima muy alta')
     .optional(),
 
-  //  Edad máxima: número positivo mayor a minAge
   maxAge: z
     .number({
       invalid_type_error: 'Edad máxima debe ser un número'
@@ -52,14 +45,12 @@ export const petSearchSchema = z.object({
     .max(30, 'Edad máxima muy alta')
     .optional(),
 
-  //  Estado: solo mascotas disponibles por defecto
   status: z
     .nativeEnum(PetStatus, {
       message: 'Estado inválido'
     })
     .default(PetStatus.AVAILABLE),
 
-  //  Paginación
   page: z
     .number({
       invalid_type_error: 'Página debe ser un número'
@@ -77,7 +68,6 @@ export const petSearchSchema = z.object({
     .max(50, 'Límite máximo es 50 mascotas por página')
     .default(20),
 })
-  //  Validación cruzada: maxAge debe ser mayor a minAge
   .refine(
     (data) => {
       if (data.minAge !== undefined && data.maxAge !== undefined) {
@@ -91,15 +81,8 @@ export const petSearchSchema = z.object({
     }
   );
 
-/**
- *  Tipo TypeScript inferido del schema
- */
 export type PetSearchInput = z.infer<typeof petSearchSchema>;
 
-/**
- *  Schema para validación en query params (strings desde URL)
- * Convierte strings a números para edad y paginación
- */
 export const petSearchQuerySchema = z.object({
   species: z.string().optional(),
   municipality: z.string().optional(),
@@ -111,24 +94,33 @@ export const petSearchQuerySchema = z.object({
   limit: z.string().optional().transform((val) => val ? parseInt(val, 10) : 20),
 });
 
-/**
- * 📚 NOTAS:
- * 
- * 1. VALIDACIÓN DE 3 CAPAS:
- *    - Cliente: Validación inmediata con petSearchSchema
- *    - API: Validación con petSearchQuerySchema (convierte strings)
- *    - BD: Prisma valida tipos finales
- * 
- * 2. REFINEMENT (VALIDACIÓN CRUZADA):
- *    - maxAge >= minAge obligatorio
- *    - Solo se valida si ambos están presentes
- * 
- * 3. DEFAULTS:
- *    - status: AVAILABLE (solo mascotas disponibles)
- *    - page: 1 (primera página)
- *    - limit: 20 (20 resultados por página)
- * 
- * 4. TRANSFORMACIONES:
- *    - petSearchQuerySchema convierte strings → numbers
- *    - Necesario porque query params son siempre strings
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo define las reglas de validación para la funcionalidad de
+ * búsqueda y filtrado de mascotas. Asegura que los parámetros de entrada
+ * sean válidos y coherentes antes de ser procesados por el servicio de mascotas.
+ *
+ * Lógica Clave:
+ * - 'petSearchSchema': El esquema principal que valida los filtros cuando ya
+ *   tienen el tipo de dato correcto. Utiliza '.refine' para una validación
+ *   cruzada importante: 'maxAge' debe ser mayor o igual a 'minAge'.
+ * - 'petSearchQuerySchema': Un esquema auxiliar diseñado específicamente para
+ *   validar los parámetros de consulta de una URL. Dado que los query params
+ *   siempre son strings, este esquema utiliza '.transform' para convertir
+ *   los valores numéricos (como 'minAge', 'page') de string a number antes
+ *   de que puedan ser validados por el esquema principal.
+ * - 'Valores por Defecto': Se establecen valores por defecto para la paginación
+ *   ('page' y 'limit') y para el estado ('status' como 'AVAILABLE'),
+ *   simplificando la lógica en el servicio ya que estos valores siempre
+ *   estarán presentes.
+ *
+ * Dependencias Externas:
+ * - 'zod': Para la creación y validación de los esquemas.
+ * - '@prisma/client': Para usar los enums 'Municipality' y 'PetStatus',
+ *   manteniendo la consistencia con la base de datos.
+ *
  */

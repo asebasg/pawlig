@@ -1,34 +1,23 @@
-/**
- *  Componente: PetForm
- * 
- * PROPÓSITO:
- * - Formulario completo para crear/editar mascotas
- * - Validación en tiempo real con Zod
- * - Upload de imágenes a Cloudinary
- * - Soporte para modo CREATE y EDIT
- * 
- * TRAZABILIDAD:
- * - HU-005: Publicación y gestión de mascota
- * - RF-009: Registro de animales para adopción
- * - RN-007: Mínimo una foto por mascota
- * 
- * FLUJO:
- * 1. Usuario ingresa datos básicos
- * 2. Upload de fotos (mín 1, máx 5)
- * 3. Validación con Zod schema
- * 4. Submit → API /api/pets
- * 5. Redirección a listado de mascotas
- */
-
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createPetSchema, PetSpecies, PetSex, type CreatePetInput } from "@/lib/validations/pet.schema";
-import { Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { Upload, X, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+import Image from "next/image";
+import { Button } from '@/components/ui/button';
+
+/**
+ * POST /api/pets
+ * PUT /api/pets/[id]
+ * Descripción: Formulario para la creación y edición de perfiles de mascotas con soporte para múltiples imágenes.
+ * Requiere: Identificador del refugio (shelterId).
+ * Implementa: HU-005 (Publicación y gestión de mascota).
+ */
 
 interface PetFormProps {
     mode?: "create" | "edit";
@@ -36,22 +25,25 @@ interface PetFormProps {
     shelterId: string;
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
+const MAX_IMAGES = 5;
+
 export default function PetForm({ mode = "create", initialData, shelterId }: PetFormProps) {
     const router = useRouter();
-    const { data: session } = useSession();
 
-    //  Estados del componente
+    // Estados del componente
     const [images, setImages] = useState<string[]>(initialData?.images || []);
     const [uploadingImages, setUploadingImages] = useState(false);
-    const [submitError, setSubmitError] = useState<string | null>(null);
-    const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [isRefining, setIsRefining] = useState(false);
 
-    //  React Hook Form con Zod
+    // React Hook Form con Zod
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
         setValue,
+        getValues,
         watch,
     } = useForm<CreatePetInput>({
         resolver: zodResolver(createPetSchema),
@@ -69,46 +61,34 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
     });
 
     /**
-     *  FUNCIÓN: handleImageUpload
-     *  Upload de imágenes a Cloudinary
-     * 
-     * FLUJO:
-     * 1. Leer archivo como base64
-     * 2. Enviar a /api/upload (endpoint dedicado)
-     * 3. Recibir URL de Cloudinary
-     * 4. Agregar a array de imágenes
-     * 
-     * VALIDACIONES:
-     * - Máximo 5 imágenes (RN-007)
-     * - Formatos: JPEG, PNG
-     * - Tamaño máximo: 5MB
+     * FUNCIÓN: handleImageUpload
+     * Upload de imágenes a Cloudinary
      */
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;
 
-        //  Validar límite de 5 imágenes
-        if (images.length + files.length > 5) {
-            setSubmitError("Máximo 5 fotos permitidas");
+        // Validar límite de imágenes
+        if (images.length + files.length > MAX_IMAGES) {
+            toast.error(`Máximo ${MAX_IMAGES} fotos permitidas`);
             return;
         }
 
         setUploadingImages(true);
-        setSubmitError(null);
 
         try {
             const uploadPromises = Array.from(files).map(async (file) => {
-                //  Validar tamaño
-                if (file.size > 5 * 1024 * 1024) {
+                // Validar tamaño
+                if (file.size > MAX_FILE_SIZE) {
                     throw new Error(`${file.name} excede 5MB`);
                 }
 
-                //  Validar formato
-                if (!["image/jpeg", "image/png"].includes(file.type)) {
+                // Validar formato
+                if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
                     throw new Error(`${file.name} debe ser JPEG o PNG`);
                 }
 
-                //  Convertir a base64
+                // Convertir a base64
                 const base64 = await new Promise<string>((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = () => resolve(reader.result as string);
@@ -116,7 +96,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                     reader.readAsDataURL(file);
                 });
 
-                //  Upload a Cloudinary via API
+                // Upload a Cloudinary via API
                 const response = await fetch("/api/upload", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -138,15 +118,15 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             setValue("images", newImages, { shouldValidate: true });
         } catch (error) {
             console.error("Error uploading images:", error);
-            setSubmitError(error instanceof Error ? error.message : "Error al subir imágenes");
+            toast.error(error instanceof Error ? error.message : "Error al subir imágenes");
         } finally {
             setUploadingImages(false);
         }
     };
 
     /**
-     *  FUNCIÓN: removeImage
-     *  Eliminar imagen del array
+     * FUNCIÓN: removeImage
+     * Eliminar imagen del array
      */
     const removeImage = (index: number) => {
         const newImages = images.filter((_, i) => i !== index);
@@ -155,22 +135,47 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
     };
 
     /**
-     *  FUNCIÓN: onSubmit
-     *  Envío del formulario a API
-     * 
-     * FLUJO:
-     * - CREATE: POST /api/pets
-     * - EDIT: PUT /api/pets/[id]
+     * FUNCIÓN: handleRefine
+     * Refinar descripciones con IA
+     */
+    const handleRefine = async () => {
+        const currentDescription = getValues("description");
+
+        if (!currentDescription || currentDescription.length < 10) {
+            toast.error("Ingresa una descripción más detallada para refinar.");
+            return;
+        }
+
+        setIsRefining(true);
+        try {
+            const response = await fetch("/api/ai/refine", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ description: currentDescription })
+            });
+
+            if (!response.ok) throw new Error("Error al contactar con la IA");
+
+            const { refinedText } = await response.json();
+            setValue("description", refinedText, { shouldValidate: true });
+            toast.success("Descripción refinada con éxito");
+        } catch (error) {
+            console.error("Error refining description:", error);
+            toast.error("No se pudo refinar la descripción. Intenta nuevamente.");
+        } finally {
+            setIsRefining(false);
+        }
+    };
+
+    /**
+     * FUNCIÓN: onSubmit
+     * Envío del formulario a API
      */
     const onSubmit = async (data: CreatePetInput) => {
-        setSubmitError(null);
-        setSubmitSuccess(false);
+        const toastId = toast.loading(mode === "create" ? "Publicando mascota..." : "Guardando cambios...");
 
         try {
-            const url = mode === "create"
-                ? "/api/pets"
-                : `/api/pets/${initialData?.id}`;
-
+            const url = mode === "create" ? "/api/pets" : `/api/pets/${initialData?.id}`;
             const method = mode === "create" ? "POST" : "PUT";
 
             const response = await fetch(url, {
@@ -185,38 +190,24 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 throw new Error(result.error || "Error al guardar mascota");
             }
 
-            setSubmitSuccess(true);
+            toast.success(
+                `¡Mascota ${mode === "create" ? "publicada" : "actualizada"} exitosamente!`,
+                { id: toastId }
+            );
 
-            //  Redireccionar después de 1.5 segundos
+            // Redireccionar después de 1.5 segundos
             setTimeout(() => {
                 router.push("/shelter/pets");
                 router.refresh();
             }, 1500);
         } catch (error) {
             console.error("Submit error:", error);
-            setSubmitError(error instanceof Error ? error.message : "Error inesperado");
+            toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* MENSAJE DE ERROR GLOBAL */}
-            {submitError && (
-                <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <p className="text-sm">{submitError}</p>
-                </div>
-            )}
-
-            {/* MENSAJE DE ÉXITO */}
-            {submitSuccess && (
-                <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                    <p className="text-sm">
-                        ¡Mascota {mode === "create" ? "publicada" : "actualizada"} exitosamente! Redirigiendo...
-                    </p>
-                </div>
-            )}
 
             {/* SECCIÓN 1: DATOS BÁSICOS */}
             <div className="space-y-4">
@@ -234,9 +225,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         placeholder="Ej: Luna"
                         className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
-                    {errors.name && (
-                        <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-                    )}
+                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
                 </div>
 
                 {/* Especie */}
@@ -253,9 +242,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         <option value={PetSpecies.CAT}>Gato</option>
                         <option value={PetSpecies.OTHER}>Otro</option>
                     </select>
-                    {errors.species && (
-                        <p className="mt-1 text-sm text-red-600">{errors.species.message}</p>
-                    )}
+                    {errors.species && <p className="mt-1 text-sm text-red-600">{errors.species.message}</p>}
                 </div>
 
                 {/* Raza */}
@@ -270,9 +257,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         placeholder="Ej: Labrador, Cruce, Desconocida"
                         className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                     />
-                    {errors.breed && (
-                        <p className="mt-1 text-sm text-red-600">{errors.breed.message}</p>
-                    )}
+                    {errors.breed && <p className="mt-1 text-sm text-red-600">{errors.breed.message}</p>}
                 </div>
 
                 {/* Grid: Edad y Sexo */}
@@ -291,9 +276,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                             placeholder="Ej: 2"
                             className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                         />
-                        {errors.age && (
-                            <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>
-                        )}
+                        {errors.age && <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>}
                     </div>
 
                     {/* Sexo */}
@@ -309,9 +292,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                             <option value={PetSex.MALE}>Macho</option>
                             <option value={PetSex.FEMALE}>Hembra</option>
                         </select>
-                        {errors.sex && (
-                            <p className="mt-1 text-sm text-red-600">{errors.sex.message}</p>
-                        )}
+                        {errors.sex && <p className="mt-1 text-sm text-red-600">{errors.sex.message}</p>}
                     </div>
                 </div>
             </div>
@@ -325,19 +306,29 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                         Descripción detallada <span className="text-red-500">*</span>
                     </label>
-                    <textarea
-                        {...register("description")}
-                        id="description"
-                        rows={5}
-                        placeholder="Describe el carácter, personalidad y comportamiento de la mascota. Mínimo 20 caracteres."
-                        className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
-                    />
+                    <div className="relative">
+                        <textarea
+                            {...register("description")}
+                            id="description"
+                            rows={5}
+                            placeholder="Describe el carácter, personalidad y comportamiento de la mascota. Mínimo 20 caracteres."
+                            className="text-black w-full px-4 py-2 pb-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
+                        />
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={handleRefine}
+                            disabled={isRefining}
+                            className="absolute bottom-2 right-2 h-8 text-purple-700 hover:text-purple-800 transition-colors"
+                        >
+                            <Sparkles className="mr-2 h-5 w-5" />
+                            <span className="text-xs">{isRefining ? "Refinando..." : "Refinar con IA"}</span>
+                        </Button>
+                    </div>
                     <p className="mt-1 text-xs text-gray-500">
                         Caracteres: {watch("description")?.length || 0} / 1000 (mínimo 20)
                     </p>
-                    {errors.description && (
-                        <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-                    )}
+                    {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
                 </div>
 
                 {/* Requisitos de adopción */}
@@ -352,12 +343,8 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         placeholder="Requisitos específicos para adopción (espacio, experiencia, otras mascotas, etc.)"
                         className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
                     />
-                    <p className="mt-1 text-xs text-gray-500">
-                        Opcional. Máximo 500 caracteres.
-                    </p>
-                    {errors.requirements && (
-                        <p className="mt-1 text-sm text-red-600">{errors.requirements.message}</p>
-                    )}
+                    <p className="mt-1 text-xs text-gray-500">Opcional. Máximo 500 caracteres.</p>
+                    {errors.requirements && <p className="mt-1 text-sm text-red-600">{errors.requirements.message}</p>}
                 </div>
             </div>
 
@@ -367,7 +354,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                     Fotos <span className="text-red-500">*</span>
                 </h3>
                 <p className="text-sm text-gray-600">
-                    Sube entre 1 y 5 fotos de la mascota. Formatos: JPEG, PNG. Máximo 5MB por foto.
+                    Sube entre 1 y {MAX_IMAGES} fotos de la mascota. Formatos: JPEG, PNG. Máximo 5MB por foto.
                 </p>
 
                 {/* Grid de imágenes subidas */}
@@ -375,9 +362,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         {images.map((url, index) => (
                             <div key={index} className="relative group">
-                                <img
+                                <Image
                                     src={url}
                                     alt={`Foto ${index + 1}`}
+                                    width={150}
+                                    height={150}
                                     className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
                                 />
                                 <button
@@ -394,7 +383,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 )}
 
                 {/* Botón de upload */}
-                {images.length < 5 && (
+                {images.length < MAX_IMAGES && (
                     <div>
                         <label
                             htmlFor="image-upload"
@@ -402,7 +391,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         >
                             {uploadingImages ? (
                                 <>
-                                    <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
                                     <span className="text-sm font-medium text-purple-600">Subiendo fotos...</span>
                                 </>
                             ) : (
@@ -417,7 +405,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         <input
                             id="image-upload"
                             type="file"
-                            accept="image/jpeg,image/png"
+                            accept={ACCEPTED_IMAGE_TYPES.join(",")}
                             multiple
                             onChange={handleImageUpload}
                             disabled={uploadingImages}
@@ -426,9 +414,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                     </div>
                 )}
 
-                {errors.images && (
-                    <p className="text-sm text-red-600">{errors.images.message}</p>
-                )}
+                {errors.images && <p className="text-sm text-red-600">{errors.images.message}</p>}
             </div>
 
             {/* BOTONES DE ACCIÓN */}
@@ -448,7 +434,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 >
                     {isSubmitting ? (
                         <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
                             <span>{mode === "create" ? "Publicando..." : "Guardando..."}</span>
                         </>
                     ) : (
@@ -466,47 +451,19 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * PetForm es un componente de cliente ("use client") diseñado para la
- * creación y edición de perfiles de mascotas. Es un formulario complejo que
- * integra validación, subida de archivos y comunicación con la API,
- * proporcionando una experiencia de usuario interactiva y robusta.
+ * Este formulario integral permite la gestión de mascotas, incluyendo la carga
+ * asíncrona de imágenes y validaciones robustas mediante esquemas de Zod.
  *
  * Lógica Clave:
- * - Manejo de Estado del Formulario:
- *   - Se utiliza react-hook-form para gestionar el estado de los campos del
- *     formulario, incluyendo sus valores, errores y estado de envío.
- *   - La integración con zodResolver permite una validación de datos en
- *     tiempo real basada en el esquema createPetSchema, mejorando la UX al
- *     proporcionar feedback inmediato.
- *
- * - Subida de Imágenes a Cloudinary:
- *   - La función handleImageUpload es asíncrona y maneja la subida de
- *     imágenes a un endpoint propio (/api/upload), que a su vez se
- *     comunica con Cloudinary.
- *   - Realiza validaciones en el cliente (tamaño, tipo de archivo, cantidad)
- *     para evitar cargas innecesarias y mejorar el rendimiento.
- *   - El estado uploadingImages se utiliza para deshabilitar el botón de
- *     envío y mostrar un indicador de carga, previniendo envíos incompletos.
- *
- * - Manejo de Estado Local:
- *   - useState se usa para gestionar el estado que no pertenece a react-hook-form,
- *     como el array de URLs de imágenes (images), los estados de carga
- *     (uploadingImages), y los mensajes de error/éxito del envío (submitError,
- *     submitSuccess).
- *
- * - Modo Dinámico (Crear/Editar):
- *   - El componente acepta una prop mode que puede ser "create" o "edit".
- *   - Esta prop determina la URL del endpoint y el método HTTP a utilizar
- *     (POST para crear, PUT para editar), haciendo el formulario reutilizable.
- *   - initialData se utiliza para pre-llenar el formulario en modo de edición.
+ * - handleImageUpload: Gestiona la subida de hasta 5 imágenes a Cloudinary mediante 
+ *   un endpoint de API intermedio, asegurando validaciones de tamaño y tipo.
+ * - Modo Dual: Soporta creación y edición mediante lógicas condicionadas por el 'mode'.
+ * - Integración con Zod: Asegura la integridad de los datos antes de persistirlos 
+ *   en la base de datos.
  *
  * Dependencias Externas:
- * - next-auth/react: El hook useSession se usa para obtener datos del
- *   usuario autenticado, aunque en este componente su uso es principalmente
- *   para futuras ampliaciones o verificaciones.
- * - react-hook-form y @hookform/resolvers/zod: Son cruciales para la
- *   gestión del formulario y la validación basada en esquemas de Zod.
- * - lucide-react: Proporciona los íconos utilizados en la interfaz para
- *   mejorar la claridad visual.
+ * - cloudinary (via API): Para almacenamiento optimizado de imágenes.
+ * - react-hook-form: Gestión eficiente del estado y validación del formulario.
+ * - sonner: Retroalimentación inmediata al usuario sobre acciones críticas.
  *
  */

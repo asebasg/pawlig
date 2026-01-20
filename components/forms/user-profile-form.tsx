@@ -1,184 +1,129 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { registerUserSchema, RegisterUserInput } from '@/lib/validations/user.schema';
+import { useEffect } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { registerUserSchema } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
-import axios from 'axios';
 
 /**
- * Componente de formulario para actualizar perfil de usuario adoptante
- * Implementa HU-003: Actualización del perfil del usuario
+ * GET /api/users/profile
+ * PUT /api/users/profile
+ * Descripción: Formulario para consultar y actualizar la información del perfil del usuario adoptante.
+ * Requiere: Sesión de usuario válida.
+ * Implementa: HU-003 (Actualización del perfil del usuario).
  */
 
-interface UserProfile {
-  id: string;
-  email: string;
+// Schema parcial para actualización (sin email ni password)
+const userProfileUpdateSchema = registerUserSchema.pick({
+  name: true,
+  phone: true,
+  municipality: true,
+  address: true,
+  idNumber: true,
+  birthDate: true,
+});
+
+type UserProfileUpdateInput = {
   name: string;
   phone: string;
   municipality: Municipality;
   address: string;
   idNumber: string;
   birthDate: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-}
+};
 
-interface ApiErrorResponse {
-  error: string;
-  details?: Record<string, string>;
+interface UserProfileResponse {
+  id: string;
+  email: string; // Se recibe pero no se edita
+  name: string;
+  phone: string;
+  municipality: Municipality;
+  address: string;
+  idNumber: string;
+  birthDate: string; // ISO String
 }
 
 export default function UserProfileForm() {
-  const [formData, setFormData] = useState<Omit<RegisterUserInput, 'email' | 'password'>>({
-    name: '',
-    phone: '',
-    municipality: Municipality.MEDELLIN,
-    address: '',
-    idNumber: '',
-    birthDate: '',
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<UserProfileUpdateInput>({
+    resolver: zodResolver(userProfileUpdateSchema),
+    defaultValues: {
+      name: '',
+      phone: '',
+      municipality: Municipality.MEDELLIN,
+      address: '',
+      idNumber: '',
+      birthDate: '',
+    }
   });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(true);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [serverError, setServerError] = useState('');
 
   // Cargar datos actuales del usuario al montar
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get<UserProfile>('/api/users/profile');
-        setFormData({
-          name: response.data.name,
-          phone: response.data.phone,
-          municipality: response.data.municipality,
-          address: response.data.address,
-          idNumber: response.data.idNumber,
-          birthDate: response.data.birthDate.split('T')[0], // Convertir a formato YYYY-MM-DD
+        const response = await fetch('/api/users/profile');
+        if (!response.ok) throw new Error("Error al cargar perfil");
+        const data: UserProfileResponse = await response.json();
+
+        reset({
+          name: data.name,
+          phone: data.phone,
+          municipality: data.municipality,
+          address: data.address,
+          idNumber: data.idNumber,
+          birthDate: data.birthDate ? data.birthDate.split('T')[0] : '',
         });
       } catch (error) {
-        console.error('Error fetching user profile:', error);
-        if (axios.isAxiosError(error) && error.response?.status === 403) {
-          setServerError('Tu cuenta está bloqueada. Contacta al administrador.');
-        } else {
-          setServerError('Error al cargar el perfil. Intenta de nuevo.');
-        }
-      } finally {
-        setIsFetching(false);
+        console.error(error);
+        toast.error("Error al cargar la información del perfil");
       }
     };
 
     fetchUserProfile();
-  }, []);
-
-  /**
-   * Maneja cambios en los inputs del formulario
-   */
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value || undefined }));
-
-    // Limpiar error del campo al editar
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-
-    // Limpiar mensaje de éxito al editar
-    if (successMessage) {
-      setSuccessMessage('');
-    }
-  };
+  }, [reset]);
 
   /**
    * Maneja el envío del formulario
    */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
-    setServerError('');
-    setSuccessMessage('');
+  const onSubmit = async (data: UserProfileUpdateInput) => {
+    const toastId = toast.loading("Guardando cambios...");
 
     try {
-      // 1. Crear schema de validación sin email y password
-      const updateSchema = registerUserSchema.pick({
-        name: true,
-        phone: true,
-        municipality: true,
-        address: true,
-        idNumber: true,
-        birthDate: true,
+      const response = await fetch('/api/users/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
 
-      // 2. Validar datos en el cliente con Zod
-      const validatedData = updateSchema.parse(formData);
-
-      // 3. Enviar petición al API
-      const response = await axios.put<{ message: string; user: UserProfile }>(
-        '/api/users/profile',
-        validatedData
-      );
-
-      // 4. Mostrar mensaje de éxito
-      setSuccessMessage('¡Perfil actualizado exitosamente! Los cambios se aplicarán inmediatamente.');
-      setFormData(validatedData);
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data) {
-        const apiError = error.response.data as ApiErrorResponse;
-        
-        // Cuenta bloqueada
-        if (error.response.status === 403) {
-          setServerError('Tu cuenta está bloqueada. No puedes actualizar tu perfil. Contacta al administrador.');
-        } else if (apiError.details) {
-          // Errores de validación del backend
-          setErrors(apiError.details);
-        } else {
-          // Error general del servidor
-          setServerError(apiError.error || 'Error al guardar los cambios. Intenta de nuevo.');
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 403) {
+          throw new Error('Tu cuenta está bloqueada.');
         }
-      } else if (error instanceof Error) {
-        // Errores de Zod (validación en cliente)
-        if ('errors' in error) {
-          const zodError = error as any;
-          const fieldErrors: Record<string, string> = {};
-          zodError.errors.forEach((err: any) => {
-            const field = err.path[0];
-            if (typeof field === 'string') {
-              fieldErrors[field] = err.message;
-            }
-          });
-          setErrors(fieldErrors);
-        } else {
-          setServerError('Error inesperado. Intenta de nuevo.');
-        }
-      } else {
-        setServerError('Error inesperado. Intenta de nuevo.');
+        throw new Error(errorData.error || 'Error al actualizar perfil');
       }
-    } finally {
-      setIsLoading(false);
+
+      toast.success("¡Perfil actualizado exitosamente!", {
+        id: toastId,
+        description: "Los cambios se aplicarán inmediatamente."
+      });
+
+    } catch (error) {
+      console.error(error);
+      toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
     }
   };
-
-  if (isFetching) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
-    );
-  }
 
   const municipalities = Object.values(Municipality);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Editar Perfil Personal</h2>
@@ -187,66 +132,20 @@ export default function UserProfileForm() {
         </p>
       </div>
 
-      {/* Mensaje de éxito */}
-      {successMessage && (
-        <div
-          className="bg-green-50 border border-green-200 rounded-lg p-4"
-          role="alert"
-          aria-live="polite"
-        >
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">Éxito</h3>
-              <p className="text-sm text-green-700 mt-1">{successMessage}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mensaje de error general */}
-      {serverError && (
-        <div
-          className="bg-red-50 border border-red-200 rounded-lg p-4"
-          role="alert"
-          aria-live="polite"
-        >
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <p className="text-sm text-red-700 mt-1">{serverError}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Nombre Completo */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Nombre Completo *
         </label>
         <input
+          {...register('name')}
           type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Ej: Juan Pérez García"
-          required
         />
         {errors.name && (
-          <p className="text-red-600 text-sm mt-1">{errors.name}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>
         )}
       </div>
 
@@ -256,18 +155,14 @@ export default function UserProfileForm() {
           Teléfono *
         </label>
         <input
+          {...register('phone')}
           type="tel"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Ej: 3001234567"
-          required
         />
         {errors.phone && (
-          <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>
         )}
       </div>
 
@@ -277,18 +172,14 @@ export default function UserProfileForm() {
           Número de Identificación *
         </label>
         <input
+          {...register('idNumber')}
           type="text"
-          name="idNumber"
-          value={formData.idNumber}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.idNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.idNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Ej: 1234567890"
-          required
         />
         {errors.idNumber && (
-          <p className="text-red-600 text-sm mt-1">{errors.idNumber}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.idNumber.message}</p>
         )}
       </div>
 
@@ -298,17 +189,13 @@ export default function UserProfileForm() {
           Fecha de Nacimiento *
         </label>
         <input
+          {...register('birthDate')}
           type="date"
-          name="birthDate"
-          value={formData.birthDate}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.birthDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-          required
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.birthDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
         />
         {errors.birthDate && (
-          <p className="text-red-600 text-sm mt-1">{errors.birthDate}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.birthDate.message}</p>
         )}
       </div>
 
@@ -318,13 +205,9 @@ export default function UserProfileForm() {
           Municipio *
         </label>
         <select
-          name="municipality"
-          value={formData.municipality}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
-          required
+          {...register('municipality')}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
         >
           <option value="">Selecciona un municipio</option>
           {municipalities.map((municipality) => (
@@ -334,7 +217,7 @@ export default function UserProfileForm() {
           ))}
         </select>
         {errors.municipality && (
-          <p className="text-red-600 text-sm mt-1">{errors.municipality}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>
         )}
       </div>
 
@@ -344,18 +227,14 @@ export default function UserProfileForm() {
           Dirección *
         </label>
         <input
+          {...register('address')}
           type="text"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
-            errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
-          }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
           placeholder="Ej: Carrera 50 #10-20, Apartamento 5"
-          required
         />
         {errors.address && (
-          <p className="text-red-600 text-sm mt-1">{errors.address}</p>
+          <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>
         )}
       </div>
 
@@ -363,10 +242,10 @@ export default function UserProfileForm() {
       <div className="flex gap-4 pt-6">
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isSubmitting}
           className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {isLoading ? 'Guardando cambios...' : 'Guardar Cambios'}
+          {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
         </button>
         <button
           type="button"
@@ -384,3 +263,26 @@ export default function UserProfileForm() {
     </form>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este componente permite al usuario gestionar su identidad digital dentro de la 
+ * plataforma, asegurando que los datos de contacto estén siempre vigentes.
+ *
+ * Lógica Clave:
+ * - Pick Schema: Reutiliza el esquema de registro mediante .pick() para asegurar 
+ *   que las reglas de validación sean consistentes en toda la app.
+ * - Sincronización Inicial: Utiliza useEffect para poblar el formulario con los 
+ *   datos actuales del usuario servidor tras el montaje.
+ * - Validación de Seguridad: Verifica el estado de bloqueo de la cuenta antes de 
+ *   permitir cualquier modificación persistente.
+ *
+ * Dependencias Externas:
+ * - react-hook-form: Para la gestión reactiva de los campos del perfil.
+ * - sonner: Para notificaciones de éxito persistentes tras la actualización.
+ *
+ */

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
+import { UserRole } from '@prisma/client';
 
 export async function GET() {
     try {
@@ -21,13 +22,13 @@ export async function GET() {
         }
 
         // Verificar que el usuario tenga rol ADMIN
-        if (session.user.role !== 'ADMIN') {
+        if (session.user.role !== UserRole.ADMIN) {
             return NextResponse.json(
                 {
                     error: 'Acceso denegado',
                     code: 'FORBIDDEN',
                     message: 'No tienes permisos para acceder a este recurso',
-                    requiredRole: 'ADMIN',
+                    requiredRole: UserRole.ADMIN,
                     userRole: session.user.role,
                 },
                 { status: 403 } // 403 Forbidden
@@ -65,7 +66,7 @@ export async function GET() {
             id: shelter.id,
             status: 'PENDING_APPROVAL', // Estado explícito
             submittedAt: shelter.createdAt,
-            
+
             // Datos del albergue
             shelter: {
                 name: shelter.name,
@@ -76,7 +77,7 @@ export async function GET() {
                 contactWhatsApp: shelter.contactWhatsApp || 'No proporcionado',
                 contactInstagram: shelter.contactInstagram || 'No proporcionado',
             },
-            
+
             // Datos del representante
             representative: {
                 id: shelter.user.id,
@@ -87,10 +88,10 @@ export async function GET() {
                 address: shelter.user.address,
                 idNumber: shelter.user.idNumber,
             },
-            
+
             // Metadatos útiles
             daysWaiting: Math.floor(
-                (new Date().getTime() - new Date(shelter.createdAt).getTime()) / 
+                (new Date().getTime() - new Date(shelter.createdAt).getTime()) /
                 (1000 * 60 * 60 * 24)
             ),
         }));
