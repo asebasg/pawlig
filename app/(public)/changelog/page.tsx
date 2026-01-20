@@ -9,9 +9,20 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-    const lastUpdate = "16 de enero de 2026";
+    const lastUpdate = "20 de enero de 2026";
 
     const versions = [
+        {
+            version: 'v1.4.0',
+            date: '20 de Enero, 2026',
+            title: 'Inteligencia Artificial Generativa',
+            description: 'Integración de IA para potenciar las descripciones de mascotas y productos.',
+            updates: [
+                { type: 'added', title: 'Asistente de Redacción IA', description: 'Refinamiento automático de descripciones para mascotas y productos usando Google Gemini.', icon: <Sparkles size={18} className="text-amber-500" /> },
+                { type: 'improved', title: 'Optimización de Perfiles', description: 'Mejora del impacto emocional en perfiles de adopción para aumentar las tasas de éxito.', icon: <Zap size={18} className="text-blue-500" /> },
+                { type: 'added', title: 'Copywriting para Marketplace', description: 'Generación de descripciones persuasivas para productos del marketplace.', icon: <Rocket size={18} className="text-primary" /> }
+            ]
+        },
         {
             version: 'v1.3.0',
             date: '16 de Enero, 2026',
@@ -147,7 +158,7 @@ export default function ChangelogPage() {
                             ¿Tienes alguna sugerencia para la próxima versión o encontraste algo que no funciona como debería? Tu feedback es fundamental para hacer de PawLig la mejor plataforma para nuestras mascotas.
                         </p>
                         <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <span className="text-xs font-semibold">dev-team@pawlig.com</span>
+                            <span className="text-xs font-semibold">https://github.com/asebasg/pawlig</span>
                             <Link
                                 href="https://github.com/asebasg/pawlig/issues/new/choose"
                                 className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-yellow-400 transition-all uppercase tracking-widest"
