@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+
+export const dynamic = "force-dynamic";
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
+import { Prisma, AdoptionStatus } from '@prisma/client';
 import { adoptionQueryStringSchema } from '@/lib/validations/adoption.schema';
 import { ZodError } from 'zod';
 
@@ -72,14 +75,14 @@ export async function GET(request: NextRequest) {
     const validatedParams = adoptionQueryStringSchema.parse(queryParams);
 
     // 5. Construir filtros
-    const where: any = {
+    const where: Prisma.AdoptionWhereInput = {
       pet: {
         shelterId: shelter.id,
       },
     };
 
-    if (validatedParams.status) {
-      where.status = validatedParams.status;
+    if (validatedParams.status && Object.values(AdoptionStatus).includes(validatedParams.status as AdoptionStatus)) {
+      where.status = validatedParams.status as AdoptionStatus;
     }
 
     if (validatedParams.petId) {

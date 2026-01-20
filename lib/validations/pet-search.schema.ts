@@ -28,18 +28,14 @@ export const petSearchSchema = z.object({
     .optional(),
 
   minAge: z
-    .number({
-      invalid_type_error: 'Edad mínima debe ser un número'
-    })
+    .number()
     .int('Edad debe ser un número entero')
     .min(0, 'Edad mínima no puede ser negativa')
     .max(30, 'Edad mínima muy alta')
     .optional(),
 
   maxAge: z
-    .number({
-      invalid_type_error: 'Edad máxima debe ser un número'
-    })
+    .number()
     .int('Edad debe ser un número entero')
     .min(0, 'Edad máxima no puede ser negativa')
     .max(30, 'Edad máxima muy alta')
@@ -52,17 +48,13 @@ export const petSearchSchema = z.object({
     .default(PetStatus.AVAILABLE),
 
   page: z
-    .number({
-      invalid_type_error: 'Página debe ser un número'
-    })
+    .number()
     .int('Página debe ser un número entero')
     .min(1, 'Página debe ser mayor a 0')
     .default(1),
 
   limit: z
-    .number({
-      invalid_type_error: 'Límite debe ser un número'
-    })
+    .number()
     .int('Límite debe ser un número entero')
     .min(1, 'Límite debe ser al menos 1')
     .max(50, 'Límite máximo es 50 mascotas por página')

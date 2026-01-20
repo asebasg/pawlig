@@ -11,11 +11,11 @@ interface LogData {
   level: LogLevel;
   timestamp: string;
   message: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export const logger = {
-  info: (message: string, meta?: Record<string, any>) => {
+  info: (message: string, meta?: Record<string, unknown>) => {
     const log: LogData = {
       level: 'info',
       timestamp: new Date().toISOString(),
@@ -25,7 +25,7 @@ export const logger = {
     console.log(JSON.stringify(log));
   },
 
-  warn: (message: string, meta?: Record<string, any>) => {
+  warn: (message: string, meta?: Record<string, unknown>) => {
     const log: LogData = {
       level: 'warn',
       timestamp: new Date().toISOString(),
@@ -35,7 +35,7 @@ export const logger = {
     console.warn(JSON.stringify(log));
   },
 
-  error: (message: string, error: Error, meta?: Record<string, any>) => {
+  error: (message: string, error: Error, meta?: Record<string, unknown>) => {
     const log: LogData = {
       level: 'error',
       timestamp: new Date().toISOString(),
@@ -53,7 +53,7 @@ export const logger = {
     action: string,
     adminId: string,
     targetUserId: string,
-    details: Record<string, any>
+    details: Record<string, unknown>
   ) => {
     const log: LogData = {
       level: 'audit',

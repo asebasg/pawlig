@@ -127,7 +127,8 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
         debouncedMaxPrice,
         selectedCategories,
         municipality,
-        availability
+        availability,
+        updateURL
     ]);
 
     const handleResetFilters = () => {

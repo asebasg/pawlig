@@ -94,6 +94,7 @@ export const updatePetStatusSchema = z.object({
             message: "Estado inválido. Usa: AVAILABLE, IN_PROCESS o ADOPTED"
         }),
     }),
+    changeReason: z.string().optional(),
 });
 
 // Esquema para filtros de búsqueda de mascotas por albergue

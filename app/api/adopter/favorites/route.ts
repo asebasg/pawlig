@@ -1,7 +1,9 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/auth-options';
-import { prisma } from '@/lib/utils/db';
-import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth-options";
+import { prisma } from "@/lib/utils/db";
+import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/adopter/favorites
@@ -15,7 +17,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * - Array de mascotas con datos del albergue
  * - Total de favoritos
  */
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // Verificar autenticación
     const session = await getServerSession(authOptions);
