@@ -112,7 +112,7 @@ function InfoItem({ icon: Icon, label, value, valueColor = "text-gray-800" }: { 
         <Icon className="w-4 h-4" />
         <span className="font-semibold">{label}:</span>
       </div>
-      <p className={'ml-6 ${valueColor}'}>{value}</p>
+      <p className={`ml-6 ${valueColor}`}>{value}</p>
     </div>
   );
 }

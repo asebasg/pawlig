@@ -17,9 +17,11 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
+export const dynamic = "force-dynamic";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
-import { UserRole, PetStatus } from "@prisma/client";
+import { UserRole, PetStatus, Municipality } from "@prisma/client";
 import { createPetSchema, shelterPetsFilterSchema } from "@/lib/validations/pet.schema";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
@@ -148,7 +150,7 @@ export async function POST(request: NextRequest) {
         );
     } catch (error) {
         console.error("[POST /api/pets] - Se ha detectado un error: ", error);
-        
+
         // Manejo específico de errores Zod
         if (error instanceof ZodError) {
             const fieldErrors: Record<string, string> = {};
@@ -257,21 +259,21 @@ export async function GET(request: NextRequest) {
         const session = await getServerSession(authOptions);
 
         // Detectar si es búsqueda pública
-        const isPublicSearch = searchParams.has('species') || 
-                              searchParams.has('municipality') || 
-                              searchParams.has('search') ||
-                              searchParams.has('age') ||
-                              searchParams.has('sex') ||
-                              searchParams.has('status');
+        const isPublicSearch = searchParams.has('species') ||
+            searchParams.has('municipality') ||
+            searchParams.has('search') ||
+            searchParams.has('age') ||
+            searchParams.has('sex') ||
+            searchParams.has('status');
 
         // Si es búsqueda pública O usuario no es SHELTER, usar servicio público
         if (isPublicSearch || !session?.user || session.user.role !== UserRole.SHELTER) {
             const { getPetsWithFilters } = await import('@/lib/services/pet.service');
-            
+
             const filters = {
                 species: searchParams.get('species') || undefined,
-                municipality: searchParams.get('municipality') as any,
-                status: (searchParams.get('status') as any) || 'AVAILABLE',
+                municipality: (searchParams.get('municipality') as Municipality) || undefined,
+                status: (searchParams.get('status') as PetStatus) || 'AVAILABLE',
                 age: searchParams.get('age') ? parseInt(searchParams.get('age')!) : undefined,
                 sex: searchParams.get('sex') || undefined,
                 search: searchParams.get('search') || undefined,
@@ -355,7 +357,7 @@ export async function GET(request: NextRequest) {
         });
     } catch (error) {
         console.error("[GET /api/pets] - Se ha detectado un error: ", error);
-        
+
         // Manejo específico de errores Zod
         if (error instanceof ZodError) {
             const fieldErrors: Record<string, string> = {};

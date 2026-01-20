@@ -3,6 +3,113 @@
 import Link from "next/link";
 import { ShieldAlert, Home, ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+/**
+ * Componente: UnauthorizedContent
+ * Descripción: Contenido de la página de no autorizado que consume parámetros de búsqueda.
+ */
+function UnauthorizedContent() {
+  const searchParams = useSearchParams();
+  const reason = searchParams.get("reason") || "unknown";
+
+  const messages: Record<string, { title: string; description: string; suggestion: string }> = {
+    account_blocked: {
+      title: "Cuenta bloqueada",
+      description: "Tu cuenta ha sido bloqueada por un administrador. No puedes acceder a la plataforma en este momento.",
+      suggestion: "Revisa tu correo electrónico para más detalles sobre el motivo del bloqueo. Si crees que es un error, contacta con soporte."
+    },
+    adopter_only: {
+      title: "Acceso solo para adoptantes",
+      description: "Solo usuarios con rol de adoptante pueden solicitar cuentas de albergue o vendedor.",
+      suggestion: "Si ya eres albergue o vendedor, no necesitas solicitar una cuenta nueva. Si eres adoptante, asegúrate de haber iniciado sesión."
+    },
+    admin_only: {
+      title: "Acceso solo para administradores",
+      description: "Esta sección está restringida exclusivamente para administradores del sistema.",
+      suggestion: "Si crees que deberías tener acceso, contacta con el equipo de administración."
+    },
+    shelter_only: {
+      title: "Acceso solo para albergues",
+      description: "Esta sección está restringida para albergues verificados.",
+      suggestion: "Si representas un albergue, puedes solicitar una cuenta desde tu perfil de usuario. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
+    },
+    shelter_not_verified: {
+      title: "Acceso solo para albergues verificados",
+      description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
+      suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
+    },
+    wrong_pet: {
+      title: "Mascota no autorizada",
+      description: "No tienes permisos para acceder o gestionar esta mascota.",
+      suggestion: "Asegúrate de que la mascota pertenece a tu albergue y que has iniciado sesión con la cuenta correcta."
+    },
+    vendor_only: {
+      title: "Acceso solo para vendedores",
+      description: "Esta sección está restringida para vendedores verificados.",
+      suggestion: "Si eres un vendedor de productos, puedes solicitar que tu cuenta sea verificada. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
+    },
+    vendor_not_verified: {
+      title: "Acceso solo para vendedores verificados",
+      description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
+      suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
+    },
+    wrong_product: {
+      title: "Producto no autorizado",
+      description: "No tienes permisos para acceder o gestionar este producto.",
+      suggestion: "Asegúrate de que el producto pertenece a tu catálogo y que has iniciado sesión con la cuenta correcta."
+    },
+    unknown: {
+      title: "Acceso denegado",
+      description: "No tienes los permisos necesarios para acceder a este recurso.",
+      suggestion: "Verifica que hayas iniciado sesión con la cuenta correcta."
+    }
+  };
+
+  const message = messages[reason] || messages.unknown;
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="flex justify-center mb-6">
+        <div className="bg-red-100 rounded-full p-4">
+          <ShieldAlert className="w-12 h-12 text-red-600" />
+        </div>
+      </div>
+
+      <h1 className="text-2xl font-bold text-gray-900 mb-3">
+        {message.title}
+      </h1>
+
+      <p className="text-gray-600 mb-4">
+        {message.description}
+      </p>
+
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <p className="text-sm text-yellow-800">
+          <strong>Sugerencia:</strong> {message.suggestion}
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <Link
+          href="/"
+          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition"
+        >
+          <Home className="w-5 h-5" />
+          Volver al inicio
+        </Link>
+
+        <button
+          onClick={() => window.history.back()}
+          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Volver atrás
+        </button>
+      </div>
+    </div>
+  );
+}
 
 /**
  * GET /unauthorized
@@ -11,124 +118,26 @@ import { useSearchParams } from "next/navigation";
  * Implementa: Manejo de errores de autorización
  */
 export default function UnauthorizedPage() {
-    const searchParams = useSearchParams();
-    const reason = searchParams.get('reason') || "unknown";
-
-    const messages: Record<string, { title: string; description: string; suggestion: string }> = {
-        // Mensaje para usuarios bloqueados
-        account_blocked: {
-            title: "Cuenta bloqueada",
-            description: "Tu cuenta ha sido bloqueada por un administrador. No puedes acceder a la plataforma en este momento.",
-            suggestion: "Revisa tu correo electrónico para más detalles sobre el motivo del bloqueo. Si crees que es un error, contacta con soporte."
-        },
-        // Mensaje para solicitud de albergue
-        adopter_only: {
-            title: "Acceso solo para adoptantes",
-            description: "Solo usuarios con rol de adoptante pueden solicitar cuentas de albergue o vendedor.",
-            suggestion: "Si ya eres albergue o vendedor, no necesitas solicitar una cuenta nueva. Si eres adoptante, asegúrate de haber iniciado sesión."
-        },
-        // Mensaje para pagina de administradores
-        admin_only: {
-            title: "Acceso solo para administradores",
-            description: "Esta sección está restringida exclusivamente para administradores del sistema.",
-            suggestion: "Si crees que deberías tener acceso, contacta con el equipo de administración."
-        },
-        // Mensaje para pagina de albergues
-        shelter_only: {
-            title: "Acceso solo para albergues",
-            description: "Esta sección está restringida para albergues verificados.",
-            suggestion: "Si representas un albergue, puedes solicitar una cuenta desde tu perfil de usuario. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
-        },
-        // Mensaje para cuentas con rol de SHELTER pero no verificadas
-        shelter_not_verified: {
-            title: "Acceso solo para albergues verificados",
-            description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
-            suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
-        },
-        // Mascota equivocada (no pertenece al albergue)
-        wrong_pet: {
-            title: "Mascota no autorizada",
-            description: "No tienes permisos para acceder o gestionar esta mascota.",
-            suggestion: "Asegúrate de que la mascota pertenece a tu albergue y que has iniciado sesión con la cuenta correcta."
-        },
-        // Mensaje para pagina de vendedores
-        vendor_only: {
-            title: "Acceso solo para vendedores",
-            description: "Esta sección está restringida para vendedores verificados.",
-            suggestion: "Si eres un vendedor de productos, puedes solicitar que tu cuenta sea verificada. Si ya estás en proceso, un administrador estará evaluando tu solicitud, generalmente tarda de 2 a 3 días hábiles."
-        },
-        // Mensaje para cuentas con rol de VENDOR pero no verificadas
-        vendor_not_verified: {
-            title: "Acceso solo para vendedores verificados",
-            description: "Esta sección está restringida aún, ya que tu cuenta no está verificada.",
-            suggestion: "Está atento a tu bandeja de entrada. Cuando tu cuenta sea verificada, recibirás una notificación via email. Generalmente las solicitudes tardan de 2 a 3 días hábiles."
-        },
-        // Producto equivocado (no pertenece al vendedor)
-        wrong_product: {
-            title: "Producto no autorizado",
-            description: "No tienes permisos para acceder o gestionar este producto.",
-            suggestion: "Asegúrate de que el producto pertenece a tu catálogo y que has iniciado sesión con la cuenta correcta."
-        },
-        // Acceso general denegado
-        unknown: {
-            title: "Acceso denegado",
-            description: "No tienes los permisos necesarios para acceder a este recurso.",
-            suggestion: "Verifica que hayas iniciado sesión con la cuenta correcta."
-        }
-    };
-
-    const message = messages[reason] || messages.unknown;
-
-    return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-            <div className="max-w-md w-full">
-                <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-                    {/* Icon */}
-                    <div className="flex justify-center mb-6">
-                        <div className="bg-red-100 rounded-full p-4">
-                            <ShieldAlert className="w-12 h-12 text-red-600" />
-                        </div>
-                    </div>
-
-                    {/* Title */}
-                    <h1 className="text-2xl font-bold text-gray-900 mb-3">
-                        {message.title}
-                    </h1>
-
-                    {/* Description */}
-                    <p className="text-gray-600 mb-4">
-                        {message.description}
-                    </p>
-
-                    {/* Suggestion */}
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                        <p className="text-sm text-yellow-800">
-                            <strong>Sugerencia:</strong> {message.suggestion}
-                        </p>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="space-y-3">
-                        <Link
-                            href="/"
-                            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition"
-                        >
-                            <Home className="w-5 h-5" />
-                            Volver al inicio
-                        </Link>
-
-                        <button
-                            onClick={() => window.history.back()}
-                            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                            Volver atrás
-                        </button>
-                    </div>
-                </div>
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        <Suspense fallback={
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center animate-pulse">
+            <div className="h-12 w-12 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-3"></div>
+            <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
+            <div className="h-16 bg-gray-100 rounded w-full mb-6"></div>
+            <div className="space-y-3">
+              <div className="h-12 bg-gray-200 rounded w-full"></div>
+              <div className="h-12 bg-gray-200 rounded w-full"></div>
             </div>
-        </div>
-    );
+          </div>
+        }>
+          <UnauthorizedContent />
+        </Suspense>
+      </div>
+    </div>
+  );
 }
 
 /*
@@ -148,6 +157,9 @@ export default function UnauthorizedPage() {
  * - UX/UI: Proporciona retroalimentación visual clara con iconos y colores
  *   de advertencia, y ofrece acciones de recuperación como volver al inicio
  *   o contactar soporte.
+ * - Suspense: Se envuelve el contenido en un 'Suspense' para cumplir con los
+ *   requisitos de Next.js al usar 'useSearchParams' en componentes de cliente
+ *   que se pre-renderizan.
  *
  * Dependencias Externas:
  * - lucide-react: Iconos SVG para mejorar la interfaz visual.

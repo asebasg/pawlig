@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+
+export const dynamic = "force-dynamic";
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
 import { registerUserSchema } from '@/lib/validations/user.schema';
@@ -84,7 +86,7 @@ export async function PUT(request: NextRequest) {
     // Manejo de errores de validación Zod
     if (error instanceof ZodError) {
       const fieldErrors: Record<string, string> = {};
-      error.issues.forEach((issue: any) => {
+      error.issues.forEach((issue) => {
         const field = issue.path[0];
         if (typeof field === 'string') {
           fieldErrors[field] = issue.message;
@@ -120,7 +122,7 @@ export async function PUT(request: NextRequest) {
  * GET /api/users/profile
  * Obtener información del perfil del usuario autenticado
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
+export const dynamic = "force-dynamic";
 import { authOptions } from "@/lib/auth/auth-options";
 import { getProducts, createProduct } from "@/lib/services/product.service";
 import { UserRole } from "@prisma/client";

@@ -7,20 +7,27 @@ import { v2 as cloudinary } from "cloudinary";
  * Implementa: RNF-004
  */
 
-if (
-  !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
-  !process.env.CLOUDINARY_API_KEY ||
-  !process.env.CLOUDINARY_API_SECRET
-) {
-  throw new Error("❌ Faltan variables de entorno críticas de Cloudinary en .env");
-}
+const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const apiKey = process.env.CLOUDINARY_API_KEY;
+const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true,
-});
+const isConfigured = Boolean(cloudName && apiKey && apiSecret);
+
+if (isConfigured) {
+  cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
+    secure: true,
+  });
+} else {
+  // Durante el build de Next.js, algunas rutas pueden importar este archivo.
+  // Evitamos lanzar un error fatal para permitir que la construcción progrese,
+  // pero advertimos en la consola.
+  console.warn(
+    "⚠️ ADVERTENCIA: Cloudinary no está configurado. Las funciones de subida de imágenes fallarán."
+  );
+}
 
 export interface CloudinarySignature {
   timestamp: number;
@@ -36,6 +43,10 @@ export interface CloudinarySignature {
 }
 
 export function generateUploadSignature(folder: string): CloudinarySignature {
+  if (!isConfigured) {
+    throw new Error("Cloudinary no está configurado. No se puede generar la firma.");
+  }
+
   const timestamp = Math.round(new Date().getTime() / 1000);
 
   const paramsToSign = {
@@ -47,21 +58,20 @@ export function generateUploadSignature(folder: string): CloudinarySignature {
 
   const signature = cloudinary.utils.api_sign_request(
     paramsToSign,
-    process.env.CLOUDINARY_API_SECRET!
+    apiSecret!
   );
 
   return {
     timestamp,
     signature,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-    cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    apiKey: apiKey,
+    cloudName: cloudName,
     params: paramsToSign,
   };
 }
 
 export function isValidCloudinaryUrl(url: string): boolean {
-  if (!url) return false;
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  if (!url || !cloudName) return false;
   return url.startsWith(`https://res.cloudinary.com/${cloudName}/`);
 }
 
@@ -79,18 +89,17 @@ export default cloudinary;
  * directas desde el cliente (client-side uploads).
  *
  * Lógica Clave:
- * - 'Validación de Entorno (Fail-Fast)': El archivo comprueba la existencia de
- *   las variables de entorno necesarias al inicio. Si alguna falta, lanza un
- *   error inmediatamente, evitando que la aplicación se ejecute en un estado
- *   mal configurado.
- * - 'generateUploadSignature': Esta es una función de seguridad crítica. Genera
- *   una firma única en el servidor que autoriza una operación de subida desde el
- *   cliente. Al firmar los parámetros ('folder', 'resource_type', etc.) en el
- *   backend, se asegura que el cliente no pueda manipular el destino de la subida
- *   u otros parámetros importantes.
- * - 'isValidCloudinaryUrl': Una función de validación para verificar que una URL
- *   pertenece al bucket de Cloudinary del proyecto. Esto previene que se puedan
- *   guardar en la base de datos URLs de imágenes externas no controladas.
+ * - Configuración Condicional: Se verifica la existencia de las variables de
+ *   entorno antes de configurar el SDK. Esto evita errores fatales durante el
+ *   build de Next.js cuando las variables no están presentes.
+ * - Validación en Tiempo de Ejecución: Las funciones que requieren configuración
+ *   (como generateUploadSignature) lanzan un error solo cuando son llamadas,
+ *   lo que permite que el resto de la aplicación compile correctamente.
+ * - generateUploadSignature: Genera una firma única en el servidor que autoriza
+ *   una operación de subida desde el cliente, asegurando que los parámetros no
+ *   sean manipulados.
+ * - isValidCloudinaryUrl: Verifica que una URL pertenece al bucket de Cloudinary
+ *   configurado para el proyecto.
  *
  * Dependencias Externas:
  * - 'cloudinary': El SDK oficial de Cloudinary para Node.js, utilizado para la

@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/utils/db';
-import { PetStatus, Municipality, Sex, Prisma } from '@prisma/client';
+import { PetStatus, Municipality, Prisma } from '@prisma/client';
 
 /**
  * Ruta/Componente/Servicio: Pet Service
@@ -36,7 +36,7 @@ export async function getPetsWithFilters(filters: PetFilters) {
   };
 
   if (species) where.species = species;
-  if (sex) where.sex = sex as Sex;
+  if (sex) where.sex = sex;
   if (age) where.age = { lte: age };
   if (search) {
     where.OR = [

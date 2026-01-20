@@ -7,6 +7,7 @@ import { Menu, X, User, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Logo } from "@/components/ui/logo";
 import { PUBLIC_LINKS, NAVIGATION_BY_ROLE } from "@/lib/constants";
+import Image from 'next/image';
 
 /**
  * Componente: NavbarMobile
@@ -95,7 +96,7 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
                   {user.image ? (
-                    <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
+                    <Image width={48} height={48} src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
                   ) : (
                     <User size={24} className="text-purple-600" />
                   )}
