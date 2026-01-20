@@ -1,8 +1,10 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/auth-options';
-import { prisma } from '@/lib/utils/db';
-import { Prisma, AdoptionStatus } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth-options";
+import { prisma } from "@/lib/utils/db";
+import { Prisma, AdoptionStatus } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/adopter/adoptions

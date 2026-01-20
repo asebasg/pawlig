@@ -1,5 +1,7 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/db';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/utils/db";
+
+export const dynamic = "force-dynamic";
 import { petSearchSchema, petSearchQuerySchema } from '@/lib/validations/pet-search.schema';
 import { ZodError } from 'zod';
 import { Municipality, Prisma } from '@prisma/client';
