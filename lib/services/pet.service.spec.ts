@@ -47,10 +47,10 @@ describe("Pet Service - getPetsWithFilters", () => {
  * de mascotas, asegurando que los filtros se apliquen correctamente en Prisma.
  *
  * Lógica Clave:
- * - Mock de Prisma: Se utiliza 'vi.mock' para simular el comportamiento de la
+ * - Mock de Prisma: Se utiliza vi.mock para simular el comportamiento de la
  *   base de datos y evitar llamadas reales durante las pruebas.
- * - Casting de Mocks: Se utiliza el tipo 'Mock' de Vitest para permitir el
- *   acceso a métodos como 'mockResolvedValue' en las funciones mockeadas.
+ * - Casting de Mocks: Se utiliza el tipo Mock de Vitest para permitir el
+ *   acceso a métodos como mockResolvedValue en las funciones mockeadas.
  *
  * Dependencias Externas:
  * - vitest: Framework de pruebas utilizado para las aserciones y el mockeo.

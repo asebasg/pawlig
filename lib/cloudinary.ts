@@ -93,15 +93,16 @@ export default cloudinary;
  *   entorno antes de configurar el SDK. Esto evita errores fatales durante el
  *   build de Next.js cuando las variables no están presentes.
  * - Validación en Tiempo de Ejecución: Las funciones que requieren configuración
- *   (como 'generateUploadSignature') lanzan un error solo cuando son llamadas,
+ *   (como generateUploadSignature) lanzan un error solo cuando son llamadas,
  *   lo que permite que el resto de la aplicación compile correctamente.
- * - 'generateUploadSignature': Genera una firma única en el servidor que autoriza
+ * - generateUploadSignature: Genera una firma única en el servidor que autoriza
  *   una operación de subida desde el cliente, asegurando que los parámetros no
  *   sean manipulados.
- * - 'isValidCloudinaryUrl': Verifica que una URL pertenece al bucket de Cloudinary
+ * - isValidCloudinaryUrl: Verifica que una URL pertenece al bucket de Cloudinary
  *   configurado para el proyecto.
  *
  * Dependencias Externas:
- * - 'cloudinary': El SDK oficial de Cloudinary para Node.js.
+ * - 'cloudinary': El SDK oficial de Cloudinary para Node.js, utilizado para la
+ *   configuración y la generación de la firma de la API.
  *
  */
