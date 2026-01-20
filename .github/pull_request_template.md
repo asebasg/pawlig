@@ -1,5 +1,4 @@
 ## 🎯 Qué hace este PR
-
 <!-- Describe qué hace exactamente este PR -->
 
 ## 🔗 Issue
