@@ -49,7 +49,7 @@ export default function FavoritesSection() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch('/api/adopter/favorites');
+        const response = await fetch('/api/user/favorites');
 
         if (!response.ok) {
           if (response.status === 401) {
