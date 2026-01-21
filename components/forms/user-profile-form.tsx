@@ -67,7 +67,7 @@ export default function UserProfileForm() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch('/api/users/profile');
+        const response = await fetch('/api/user/profile');
         if (!response.ok) throw new Error("Error al cargar perfil");
         const data: UserProfileResponse = await response.json();
 
@@ -95,7 +95,7 @@ export default function UserProfileForm() {
     const toastId = toast.loading("Guardando cambios...");
 
     try {
-      const response = await fetch('/api/users/profile', {
+      const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

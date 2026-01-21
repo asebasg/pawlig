@@ -70,7 +70,7 @@ export default function AdoptionsSection() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch('/api/adopter/adoptions');
+        const response = await fetch('/api/adoptions');
 
         if (!response.ok) {
           if (response.status === 401) {
