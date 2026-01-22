@@ -150,7 +150,7 @@ export default function PetDetailClient({
     try {
       setIsLoadingAdoption(true);
 
-      const response = await fetch('/api/user/adoptions', {
+      const response = await fetch('/api/adoptions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
