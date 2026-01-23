@@ -79,7 +79,7 @@ export default function AdoptionApplicationsClient() {
       params.append('page', currentPage.toString());
       params.append('limit', '20');
 
-      const response = await fetch(`/api/shelters/adoptions?${params.toString()}`);
+      const response = await fetch(`/api/shelter/adoptions?${params.toString()}`);
       const data = await response.json();
 
       if (!response.ok) {

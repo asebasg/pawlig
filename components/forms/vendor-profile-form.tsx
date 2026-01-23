@@ -53,7 +53,7 @@ export default function VendorProfileForm() {
   useEffect(() => {
     const fetchVendorProfile = async () => {
       try {
-        const response = await fetch('/api/vendors/profile');
+        const response = await fetch('/api/vendor/profile');
         if (!response.ok) throw new Error("Error al cargar perfil");
 
         const data: VendorProfileResponse = await response.json();
@@ -82,7 +82,7 @@ export default function VendorProfileForm() {
     const toastId = toast.loading("Guardando cambios...");
 
     try {
-      const response = await fetch('/api/vendors/profile', {
+      const response = await fetch('/api/vendor/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
