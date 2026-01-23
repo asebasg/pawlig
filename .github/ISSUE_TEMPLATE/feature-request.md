@@ -86,11 +86,15 @@ assignees: ""
 - [ ] Actualizar docs
 - [ ] Validar performance
 
+---
+
 ## 🎯 Acceptance Criteria
 
 - [ ]
 - [ ]
 - [ ]
+
+---
 
 ## 🔧 Tech Spec
 
@@ -105,6 +109,8 @@ assignees: ""
 ```
 
 **Dependencies:**
+
+---
 
 ## 📎 Referencias
 
