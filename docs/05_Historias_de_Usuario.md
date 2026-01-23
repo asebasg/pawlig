@@ -1,4 +1,4 @@
-# HISTORIAS DE USUARIO (SCRUM)
+# Historias de Usuario (SCRUM)
 
 ## Índice
 

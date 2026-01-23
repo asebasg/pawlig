@@ -1,4 +1,4 @@
-# ACTA DE CONSTITUCIÓN DEL PROYECTO
+# Acta de Constitución del Proyecto
 
 ## Índice
 

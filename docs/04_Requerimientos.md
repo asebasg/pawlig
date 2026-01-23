@@ -1,4 +1,4 @@
-# REQUERIMIENTOS
+# Requerimientos
 
 ## Índice
 

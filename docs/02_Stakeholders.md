@@ -1,4 +1,4 @@
-# IDENTIFICACIÓN Y ANÁLISIS DE STAKEHOLDERS
+# Identificación y Análisis de Stakeholders
 
 ## Índice
 

@@ -1,53 +1,48 @@
-# ARQUITECTURA DEL SOFTWARE
+# Arquitectura del Software
 
 ## Índice
 
 1. Introducción
-   1.1. Propósito del documento
-   1.2. Alcance de la arquitectura
-   1.3. Audiencia objetivo
-   1.4. Definiciones y acrónimos
-
+   &nbsp;&nbsp;&nbsp;&nbsp;1.1. Propósito del documento
+   &nbsp;&nbsp;&nbsp;&nbsp;1.2. Alcance de la arquitectura
+   &nbsp;&nbsp;&nbsp;&nbsp;1.3. Audiencia objetivo
+   &nbsp;&nbsp;&nbsp;&nbsp;1.4. Definiciones y acrónimos
 2. Representación arquitectónica general
-   2.1. Diagrama de arquitectura de alto nivel
-   2.2. Descripción general de componentes
-   A. Cliente (frontend)
-   B. Lógica de negocio (backend)
-   C. Capa de datos
-   D. Servicios externos
-   E. Comunicación entre componentes
-
+   &nbsp;&nbsp;&nbsp;&nbsp;2.1. Diagrama de arquitectura de alto nivel
+   &nbsp;&nbsp;&nbsp;&nbsp;2.2. Descripción general de componentes
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A. Cliente (frontend)
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B. Lógica de negocio (backend)
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C. Capa de datos
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D. Servicios externos
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E. Comunicación entre componentes
 3. Decisiones arquitectónicas claves
-   3.1. Patrón arquitectónico seleccionado
-   3.2. Justificación de tecnologías
-   3.3. Restricciones técnicas
-
+   &nbsp;&nbsp;&nbsp;&nbsp;3.1. Patrón arquitectónico seleccionado
+   &nbsp;&nbsp;&nbsp;&nbsp;3.2. Justificación de tecnologías
+   &nbsp;&nbsp;&nbsp;&nbsp;3.3. Restricciones técnicas
 4. Vistas arquitectónicas detalladas
-   4.1. Capa de presentación (frontend)
-   4.1.1. Tecnologías y frameworks
-   4.1.2. Estructura de componentes
-   4.1.3. Enrutamiento y gestión de estado
-   4.2. Capa de lógica de negocio (backend)
-   4.2.1. Tecnologías y frameworks
-   4.2.2. Estructura de la API y endpoints
-   4.2.3. Lógica de negocio y validaciones
-   4.3. Capa de datos
-   4.3.1. Sistema de gestión de base de datos (SGBD)
-   4.3.2. Modelo de datos principal
-   4.3.3. Estrategia de persistencia y ORM
-   4.4. Servicios externos e integraciones
-   4.4.1. Servicio de almacenamiento multimedia (Cloudinary)
-   4.4.2. Otros servicios externos
-
+   &nbsp;&nbsp;&nbsp;&nbsp;4.1. Capa de presentación (frontend)
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.1. Tecnologías y frameworks
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.2. Estructura de componentes
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.3. Enrutamiento y gestión de estado
+   &nbsp;&nbsp;&nbsp;&nbsp;4.2. Capa de lógica de negocio (backend)
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.1. Tecnologías y frameworks
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.2. Estructura de la API y endpoints
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3. Lógica de negocio y validaciones
+   &nbsp;&nbsp;&nbsp;&nbsp;4.3. Capa de datos
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.1. Sistema de gestión de base de datos (SGBD)
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.2. Modelo de datos principal
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.3.3. Estrategia de persistencia y ORM
+   &nbsp;&nbsp;&nbsp;&nbsp;4.4. Servicios externos e integraciones
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.1. Servicio de almacenamiento multimedia (Cloudinary)
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.2. Otros servicios externos
 5. Consideraciones de despliegue
-   5.1. Entornos (desarrollo y producción)
-   5.2. Estrategia de despliegue
-   5.3. Requisitos de infraestructura
-
+   &nbsp;&nbsp;&nbsp;&nbsp;5.1. Entornos (desarrollo y producción)
+   &nbsp;&nbsp;&nbsp;&nbsp;5.2. Estrategia de despliegue
+   &nbsp;&nbsp;&nbsp;&nbsp;5.3. Requisitos de infraestructura
 6. Consideraciones de seguridad
-   6.1. Estrategia de autenticación y autorización
-   6.2. Protección de datos y comunicaciones
-   6.3. Protección de datos personales
+   &nbsp;&nbsp;&nbsp;&nbsp;6.1. Estrategia de autenticación y autorización
+   &nbsp;&nbsp;&nbsp;&nbsp;6.2. Protección de datos y comunicaciones
+   &nbsp;&nbsp;&nbsp;&nbsp;6.3. Protección de datos personales
 
 ---
 

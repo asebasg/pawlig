@@ -1,4 +1,4 @@
-# MAPA DE PROCESOS
+# Mapa de Procesos
 
 ## Índice
 

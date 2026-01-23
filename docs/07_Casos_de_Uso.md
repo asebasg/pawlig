@@ -1,4 +1,4 @@
-# CASO DE USO Y ESCENARIOS
+# Casos de Uso y Escenarios
 
 ## Índice
 
