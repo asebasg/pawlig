@@ -162,7 +162,7 @@ Para acceder a PawLig, abra su navegador web e ingrese a:
 
 **Para adoptantes y usuarios generales**:
 
-**Paso 1**: En la página de inicio, haga clic en el botón **"Registrarse"** ubicado en la esquina superior derecha.  
+**Paso 1**: En la página de inicio, haga clic en el botón **"Registrarse"** ubicado en la esquina superior derecha.
 **Paso 2**: Complete el formulario de registro con la siguiente información:
 
 - Correo electrónico (debe ser válido y único)
@@ -174,22 +174,22 @@ Para acceder a PawLig, abra su navegador web e ingrese a:
 - Número de cédula
 - Fecha de nacimiento (debe ser mayor de 18 años)
 
-**Paso 3**: Revise que todos los datos sean correctos.  
-**Paso 4**: Haga clic en el botón **"Registrarse"**.  
-**Paso 5**: El sistema validará su información y creará su cuenta automáticamente.  
+**Paso 3**: Revise que todos los datos sean correctos.
+**Paso 4**: Haga clic en el botón **"Registrarse"**.
+**Paso 5**: El sistema validará su información y creará su cuenta automáticamente.
 **Paso 6**: Una vez registrado, será redirigido a la galería de mascotas disponibles para adopción.
 
-✅ **CONSEJO**: Use una contraseña segura que combine letras mayúsculas, minúsculas, números y caracteres especiales.  
+✅ **CONSEJO**: Use una contraseña segura que combine letras mayúsculas, minúsculas, números y caracteres especiales.
 ⚠ **ADVERTENCIA**: El correo electrónico solo puede usarse una vez. Si ya existe una cuenta con ese email, recibirá un mensaje de error.
 
-**Para albergues y vendedores**:  
+**Para albergues y vendedores**:
 Los albergues y vendedores deben solicitar una cuenta especializada. Ver secciones **5.1 (Albergues)** y **6.1 (Vendedores)** para instrucciones detalladas.
 
 ### 3.3. Iniciar sesión
 
-**Paso 1**: En la página de inicio, haga clic en **"Iniciar Sesión"**.  
-**Paso 2**: Ingrese su correo electrónico y contraseña.  
-**Paso 3**: Haga clic en **"Iniciar Sesión"**.  
+**Paso 1**: En la página de inicio, haga clic en **"Iniciar Sesión"**.
+**Paso 2**: Ingrese su correo electrónico y contraseña.
+**Paso 3**: Haga clic en **"Iniciar Sesión"**.
 **Paso 4**: El sistema validará sus credenciales y lo redirigirá a su panel correspondiente según su rol:
 
 - Adoptantes → Panel de Usuario
@@ -197,23 +197,23 @@ Los albergues y vendedores deben solicitar una cuenta especializada. Ver seccion
 - Vendedores → Panel del Vendedor
 - Administradores → Panel Administrativo
 
-💡 **NOTA**: Su sesión permanecerá activa durante **24 horas**. Después de ese tiempo, deberá iniciar sesión nuevamente.  
+💡 **NOTA**: Su sesión permanecerá activa durante **24 horas**. Después de ese tiempo, deberá iniciar sesión nuevamente.
 ⚠ **ADVERTENCIA**: Después de **3 intentos fallidos** de inicio de sesión, su cuenta será bloqueada temporalmente por **15 minutos** por seguridad.
 
 ### 3.4. Recuperar contraseña
 
 Si olvidó su contraseña, siga estos pasos:
 
-**Paso 1**: En la página de inicio de sesión, haga clic en **"¿Olvidaste tu contraseña?"**  
-**Paso 2**: Ingrese su correo electrónico registrado.  
-**Paso 3**: Haga clic en **"Enviar enlace de recuperación"**.  
-**Paso 4**: Revise su correo electrónico. Recibirá un mensaje con un enlace de recuperación.  
+**Paso 1**: En la página de inicio de sesión, haga clic en **"¿Olvidaste tu contraseña?"**
+**Paso 2**: Ingrese su correo electrónico registrado.
+**Paso 3**: Haga clic en **"Enviar enlace de recuperación"**.
+**Paso 4**: Revise su correo electrónico. Recibirá un mensaje con un enlace de recuperación.
 ⚠ **ADVERTENCIA**: El enlace es válido solo por **1 hora**. Después de ese tiempo, deberá solicitar uno nuevo.
 
-**Paso 5**: Haga clic en el enlace del correo electrónico.  
-**Paso 6**: Ingrese su nueva contraseña (mínimo 8 caracteres).  
-**Paso 7**: Confirme la nueva contraseña reingresándola.  
-**Paso 8**: Haga clic en **"Restablecer contraseña"**.  
+**Paso 5**: Haga clic en el enlace del correo electrónico.
+**Paso 6**: Ingrese su nueva contraseña (mínimo 8 caracteres).
+**Paso 7**: Confirme la nueva contraseña reingresándola.
+**Paso 8**: Haga clic en **"Restablecer contraseña"**.
 **Paso 9**: Inicie sesión con su nueva contraseña.
 
 ### 3.5. Cerrar sesión
@@ -245,7 +245,7 @@ Para acceder al panel en cualquier momento, haga clic en **"Mi Panel"** en el me
 
 PawLig facilita la búsqueda de mascotas con filtros avanzados:
 
-**Paso 1**: En el menú principal, haga clic en **"Adopciones"** o acceda directamente a: **<https://pawlig.vercel.app/adopciones>**  
+**Paso 1**: En el menú principal, haga clic en **"Adopciones"** o acceda directamente a: **<https://pawlig.vercel.app/adopciones>**
 **Paso 2**: Use los filtros disponibles en el panel lateral izquierdo:
 
 - Especie (Perro, Gato, Otro)
@@ -254,7 +254,7 @@ PawLig facilita la búsqueda de mascotas con filtros avanzados:
 - Sexo (Macho, Hembra)
 - Estado (Disponible, En proceso)
 
-**Paso 3**: Haga clic en **"Buscar"** o **"Aplicar filtros"**.  
+**Paso 3**: Haga clic en **"Buscar"** o **"Aplicar filtros"**.
 **Paso 4**: Los resultados se mostrarán en formato de tarjetas (cards) con:
 
 - Foto principal de la mascota
@@ -264,14 +264,14 @@ PawLig facilita la búsqueda de mascotas con filtros avanzados:
 - Nombre del albergue
 - Estado de disponibilidad
 
-💡 **NOTA**: Los resultados se actualizan automáticamente al cambiar los filtros.  
+💡 **NOTA**: Los resultados se actualizan automáticamente al cambiar los filtros.
 ✅ **CONSEJO**: Si no encuentra resultados, intente ampliar los criterios de búsqueda o elimine algunos filtros.
 
 ### 4.3. Ver detalles de una mascota
 
 Para ver información completa de una mascota:
 
-**Paso 1**: En la galería de mascotas, haga clic en cualquier tarjeta de mascota.  
+**Paso 1**: En la galería de mascotas, haga clic en cualquier tarjeta de mascota.
 **Paso 2**: Se abrirá la página de detalles con la siguiente información:
 
 - Galería de fotos (deslice para ver todas)
@@ -296,9 +296,9 @@ Para ver información completa de una mascota:
 
 Para guardar mascotas que le interesen:
 
-**Paso 1**: En la tarjeta de la mascota o en la página de detalles, haga clic en el ícono de corazón ❤.  
-**Paso 2**: El corazón se rellenará indicando que se guardó como favorita.  
-**Paso 3**: Para ver todas sus mascotas favoritas, vaya a su panel de usuario y seleccione **"Mis Favoritos"**.  
+**Paso 1**: En la tarjeta de la mascota o en la página de detalles, haga clic en el ícono de corazón ❤.
+**Paso 2**: El corazón se rellenará indicando que se guardó como favorita.
+**Paso 3**: Para ver todas sus mascotas favoritas, vaya a su panel de usuario y seleccione **"Mis Favoritos"**.
 **Paso 4**: Para eliminar de favoritos, haga clic nuevamente en el corazón.
 
 ✅ **CONSEJO**: Use favoritos para comparar diferentes mascotas antes de decidir postularse para adopción.
@@ -307,55 +307,55 @@ Para guardar mascotas que le interesen:
 
 Para solicitar formalmente la adopción de una mascota:
 
-**Paso 1**: En la página de detalles de la mascota, haga clic en el botón **"Postularme para Adoptar"**.  
+**Paso 1**: En la página de detalles de la mascota, haga clic en el botón **"Postularme para Adoptar"**.
 **Paso 2**: Se abrirá un formulario donde debe:
 
 - Escribir un mensaje al albergue explicando por qué desea adoptar
 - Confirmar que cumple con los requisitos mencionados
 - Aceptar los términos de adopción responsable
 
-**Paso 3**: Haga clic en **"Enviar Postulación"**.  
-**Paso 4**: El sistema mostrará un mensaje de confirmación.  
-**Paso 5**: El albergue recibirá su solicitud y la revisará.  
+**Paso 3**: Haga clic en **"Enviar Postulación"**.
+**Paso 4**: El sistema mostrará un mensaje de confirmación.
+**Paso 5**: El albergue recibirá su solicitud y la revisará.
 **Paso 6**: Recibirá una notificación por correo electrónico cuando el albergue responda.
 
-⚠ **ADVERTENCIA**: Solo puede postularse **UNA VEZ** por mascota. Asegúrese de que cumple con todos los requisitos antes de enviar su postulación.  
+⚠ **ADVERTENCIA**: Solo puede postularse **UNA VEZ** por mascota. Asegúrese de que cumple con todos los requisitos antes de enviar su postulación.
 💡 **NOTA**: La postulación **NO garantiza** la adopción. El albergue debe aprobar su solicitud después de revisar su perfil y coordinar una entrevista.
 
 ### 4.6. Contactar al albergue
 
 Después de postularse, puede comunicarse directamente con el albergue:
 
-**OPCIÓN 1: WHATSAPP**  
-**Paso 1**: En la página de la mascota, haga clic en **"Contactar Albergue"**.  
-**Paso 2**: Seleccione la opción **"WhatsApp"**.  
-**Paso 3**: Se abrirá WhatsApp Web (en computadora) o la app de WhatsApp (en móvil).  
-**Paso 4**: Verá un mensaje predeterminado: _"Hola, me interesa adoptar a [Nombre] que vi en PawLig"_.  
-**Paso 5**: Puede modificar el mensaje antes de enviarlo.  
+**OPCIÓN 1: WHATSAPP**
+**Paso 1**: En la página de la mascota, haga clic en **"Contactar Albergue"**.
+**Paso 2**: Seleccione la opción **"WhatsApp"**.
+**Paso 3**: Se abrirá WhatsApp Web (en computadora) o la app de WhatsApp (en móvil).
+**Paso 4**: Verá un mensaje predeterminado: _"Hola, me interesa adoptar a [Nombre] que vi en PawLig"_.
+**Paso 5**: Puede modificar el mensaje antes de enviarlo.
 **Paso 6**: Haga clic en **"Enviar"** para iniciar la conversación.
 
-**OPCIÓN 2: INSTAGRAM**  
-**Paso 1**: Haga clic en **"Contactar Albergue"** y seleccione **"Instagram"**.  
-**Paso 2**: Se abrirá el perfil del albergue en Instagram.  
-**Paso 3**: Haga clic en **"Mensaje"** para iniciar un chat directo.  
+**OPCIÓN 2: INSTAGRAM**
+**Paso 1**: Haga clic en **"Contactar Albergue"** y seleccione **"Instagram"**.
+**Paso 2**: Se abrirá el perfil del albergue en Instagram.
+**Paso 3**: Haga clic en **"Mensaje"** para iniciar un chat directo.
 **Paso 4**: Escriba su mensaje y envíelo.
 
-💡 **NOTA**: Las conversaciones ocurren completamente en WhatsApp o Instagram. PawLig **NO** almacena historial de mensajes.  
+💡 **NOTA**: Las conversaciones ocurren completamente en WhatsApp o Instagram. PawLig **NO** almacena historial de mensajes.
 ⚠ **ADVERTENCIA**: Si el albergue no tiene configurados métodos de contacto, verá un mensaje indicando que debe comunicarse con el administrador.
 
 ### 4.7. Seguimiento de postulaciones
 
 Para ver el estado de sus solicitudes de adopción:
 
-**Paso 1**: Vaya a su panel de usuario.  
-**Paso 2**: Seleccione la opción **"Mis Postulaciones"**.  
+**Paso 1**: Vaya a su panel de usuario.
+**Paso 2**: Seleccione la opción **"Mis Postulaciones"**.
 **Paso 3**: Verá una lista con todas sus postulaciones y sus estados:
 
 - 🟡 **Pendiente**: El albergue aún no ha revisado su solicitud
 - 🟢 **Aprobada**: El albergue aprobó su postulación
 - 🔴 **Rechazada**: El albergue rechazó su solicitud
 
-**Paso 4**: Haga clic en cualquier postulación para ver más detalles.  
+**Paso 4**: Haga clic en cualquier postulación para ver más detalles.
 **Paso 5**: Si la postulación fue aprobada, verá instrucciones del albergue para coordinar la entrega.
 
 💡 **NOTA**: Recibirá notificaciones por correo electrónico cada vez que cambie el estado de una postulación.
@@ -364,7 +364,7 @@ Para ver el estado de sus solicitudes de adopción:
 
 PawLig ofrece una tienda de productos para el cuidado de su mascota:
 
-**Paso 1**: En el menú principal, haga clic en **"Productos"**.  
+**Paso 1**: En el menú principal, haga clic en **"Productos"**.
 **Paso 2**: Navegue por el catálogo organizado por categorías:
 
 - Alimento para perros
@@ -389,15 +389,15 @@ PawLig ofrece una tienda de productos para el cuidado de su mascota:
 - Stock disponible
 - Información del vendedor
 
-**Paso 5**: Seleccione la cantidad deseada.  
-**Paso 6**: Haga clic en **"Agregar al Carrito"**.  
+**Paso 5**: Seleccione la cantidad deseada.
+**Paso 6**: Haga clic en **"Agregar al Carrito"**.
 **Paso 7**: El sistema confirmará que el producto se agregó exitosamente.
 
 ### 4.9. Gestionar carrito de compras
 
 Para revisar y modificar su carrito:
 
-**Paso 1**: Haga clic en el ícono del carrito 🛒 en la esquina superior derecha.  
+**Paso 1**: Haga clic en el ícono del carrito 🛒 en la esquina superior derecha.
 **Paso 2**: Se abrirá su carrito mostrando:
 
 - Productos agregados
@@ -406,8 +406,8 @@ Para revisar y modificar su carrito:
 - Subtotal por producto
 - Total general
 
-**Paso 3**: Para modificar la cantidad, use los botones **+** y **–**.  
-**Paso 4**: Para eliminar un producto, haga clic en el ícono de basura 🗑.  
+**Paso 3**: Para modificar la cantidad, use los botones **+** y **–**.
+**Paso 4**: Para eliminar un producto, haga clic en el ícono de basura 🗑.
 **Paso 5**: El total se actualizará automáticamente.
 
 ✅ **CONSEJO**: Revise bien su carrito antes de finalizar la compra. Verifique cantidades y productos.
@@ -418,7 +418,7 @@ Para revisar y modificar su carrito:
 
 Para completar su pedido:
 
-**Paso 1**: Con productos en su carrito, haga clic en **"Finalizar Compra"**.  
+**Paso 1**: Con productos en su carrito, haga clic en **"Finalizar Compra"**.
 **Paso 2**: Verifique o ingrese su dirección de envío:
 
 - Calle y número
@@ -439,7 +439,7 @@ Para completar su pedido:
 - Costo de envío (si aplica)
 - Total a pagar
 
-**Paso 5**: Haga clic en **"Confirmar Pedido"**.  
+**Paso 5**: Haga clic en **"Confirmar Pedido"**.
 **Paso 6**: El sistema:
 
 - Genera una orden con número único
@@ -461,34 +461,18 @@ Para completar su pedido:
 
 ### 5.1. Solicitar cuenta de albergue
 
-Los albergues y fundaciones deben solicitar una cuenta especializada:
+Los albergues y fundaciones deben solicitar una cuenta especializada mediante el formulario integrado:
 
-**Paso 1**: En la página de actualizar perfil de usuario, haga clic en **"¿Eres un albergue?"**  
-**Paso 2**: Haga clic en **"Solicitar Cuenta de Albergue"**. Le aparecerá un mensaje que le explicará paso a paso dónde enviar la solicitud.  
-**Paso 3**: En el correo redactado, ingresar los siguientes datos:
+**Paso 1**: Inicie sesión con una cuenta de adoptante o usuario general.
+**Paso 2**: Diríjase a su **Panel de Usuario** y seleccione la opción **"Solicitar Albergue"**.
+**Paso 3**: Complete el formulario con los datos requeridos:
+- **Datos del Representante**: Nombre, identificación, teléfono y dirección.
+- **Datos de la Entidad**: Nombre legal del albergue, NIT, municipio de operación y descripción de la misión.
+- **Métodos de Contacto**: Número de WhatsApp y usuario de Instagram (vitales para el contacto con adoptantes).
+**Paso 4**: Haga clic en **"Enviar Solicitud"**.
+**Paso 5**: Un administrador revisará su solicitud en un plazo de **2–3 días laborables**. Recibirá un correo electrónico con la notificación de aprobación o rechazo.
 
-- Datos personales (igual que registro normal)
-  - Correo electrónico
-  - Nombre completo
-  - Teléfono
-  - Número de cédula
-  - Fecha de nacimiento
-- Nombre legal del albergue o fundación
-- NIT o documento de registro
-- Municipio donde opera
-- Dirección física completa
-- Descripción de la entidad (misión, años de operación)
-- Número de WhatsApp de contacto
-- Usuario de Instagram (si tiene)
-
-**Paso 4**: Haga clic en **"Enviar Correo"**.  
-**Paso 5**: Un administrador revisará su solicitud en un plazo de **2–3 días laborables**.  
-**Paso 6**: Recibirá un correo electrónico con:
-
-- Aprobación y credenciales de acceso, **O**
-- Rechazo con motivo y sugerencias
-
-💡 **NOTA**: Solo albergues, fundaciones y entidades de rescate legalmente constituidas pueden solicitar este tipo de cuenta.  
+💡 **NOTA**: Solo albergues, fundaciones y entidades de rescate legalmente constituidas pueden solicitar este tipo de cuenta.
 ⚠ **ADVERTENCIA**: Proporcionar información falsa resultará en el rechazo permanente de la solicitud.
 
 ### 5.2. Panel del albergue
@@ -507,7 +491,7 @@ Desde el panel puede:
 
 Para registrar una mascota disponible para adopción:
 
-**Paso 1**: En su panel, haga clic en **"Publicar Mascota"** o vaya a **"Mis Mascotas" → "Nueva Mascota"**.  
+**Paso 1**: En su panel, haga clic en **"Publicar Mascota"** o vaya a **"Mis Mascotas" → "Nueva Mascota"**.
 **Paso 2**: Complete el formulario con información de la mascota:
 
 **INFORMACIÓN BÁSICA**:
@@ -541,8 +525,8 @@ Para registrar una mascota disponible para adopción:
 - Formatos aceptados: JPEG, PNG
 - Tamaño máximo por foto: **5 MB**
 
-**Paso 3**: Revise que toda la información sea correcta y las fotos se vean bien.  
-**Paso 4**: Haga clic en **"Publicar"**.  
+**Paso 3**: Revise que toda la información sea correcta y las fotos se vean bien.
+**Paso 4**: Haga clic en **"Publicar"**.
 **Paso 5**: El sistema:
 
 - Valida los datos
@@ -552,23 +536,32 @@ Para registrar una mascota disponible para adopción:
 
 **Paso 6**: La mascota aparecerá inmediatamente en la galería pública de adopciones.
 
-✅ **CONSEJO**: Use fotos de alta calidad y bien iluminadas. Las mascotas con buenas fotos reciben más postulaciones.  
+✅ **CONSEJO**: Use fotos de alta calidad y bien iluminadas. Las mascotas con buenas fotos reciben más postulaciones.
 💡 **NOTA**: Sea honesto en la descripción del carácter. Esto facilita adopciones exitosas y duraderas.
+
+### 5.3.1. Refinamiento de descripciones con IA
+
+PawLig integra Inteligencia Artificial para ayudarle a redactar mejores descripciones:
+
+**Paso 1**: En el formulario de publicación, escriba una descripción básica de la mascota.
+**Paso 2**: Haga clic en el botón **"Refinar con IA"** ubicado cerca del campo de descripción.
+**Paso 3**: El sistema procesará su texto y le presentará una propuesta mejorada (más clara y empática).
+**Paso 4**: Revise la propuesta y haga clic en **"Aceptar"** para usarla o en **"Cancelar"** para mantener su texto original.
 
 ### 5.4. Editar información de mascota
 
 Para modificar datos de una mascota ya publicada:
 
-**Paso 1**: Vaya a **"Mis Mascotas"** en su panel.  
-**Paso 2**: Localice la mascota que desea editar.  
-**Paso 3**: Haga clic en el botón **"Editar"** (ícono de lápiz ✏).  
-**Paso 4**: Modifique los campos que necesite actualizar.  
+**Paso 1**: Vaya a **"Mis Mascotas"** en su panel.
+**Paso 2**: Localice la mascota que desea editar.
+**Paso 3**: Haga clic en el botón **"Editar"** (ícono de lápiz ✏).
+**Paso 4**: Modifique los campos que necesite actualizar.
 **Paso 5**: Para cambiar o agregar fotos:
 
 - Haga clic en **"Agregar más fotos"**
 - Para eliminar una foto existente, haga clic en la **X** sobre la imagen
 
-**Paso 6**: Haga clic en **"Guardar Cambios"**.  
+**Paso 6**: Haga clic en **"Guardar Cambios"**.
 **Paso 7**: Los cambios se reflejarán inmediatamente en la publicación pública.
 
 ### 5.5. Cambiar estado de mascota
@@ -581,10 +574,10 @@ Las mascotas pueden tener tres estados:
 
 Para cambiar el estado:
 
-**Paso 1**: En **"Mis Mascotas"**, localice la mascota.  
-**Paso 2**: Haga clic en el dropdown de **"Estado"**.  
-**Paso 3**: Seleccione el nuevo estado.  
-**Paso 4**: Haga clic en **"Guardar"**.  
+**Paso 1**: En **"Mis Mascotas"**, localice la mascota.
+**Paso 2**: Haga clic en el dropdown de **"Estado"**.
+**Paso 3**: Seleccione el nuevo estado.
+**Paso 4**: Haga clic en **"Guardar"**.
 **Paso 5**: El cambio se aplica inmediatamente:
 
 - **"Disponible"**: Aparece en búsquedas públicas
@@ -596,7 +589,7 @@ Para cambiar el estado:
 
 Para revisar solicitudes de adopción:
 
-**Paso 1**: En su panel, haga clic en **"Postulaciones"**.  
+**Paso 1**: En su panel, haga clic en **"Postulaciones"**.
 **Paso 2**: Verá una lista de todas las solicitudes con:
 
 - Nombre de la mascota
@@ -604,7 +597,7 @@ Para revisar solicitudes de adopción:
 - Fecha de solicitud
 - Estado (Pendiente, Aprobada, Rechazada)
 
-**Paso 3**: Haga clic en **"Ver Detalles"** en cualquier postulación.  
+**Paso 3**: Haga clic en **"Ver Detalles"** en cualquier postulación.
 **Paso 4**: Revisará:
 
 - Información completa del adoptante (nombre, teléfono, dirección)
@@ -619,9 +612,9 @@ Para revisar solicitudes de adopción:
 
 ### 5.7. Aprobar o rechazar adopciones
 
-**PARA APROBAR UNA POSTULACIÓN**:  
-**Paso 1**: En los detalles de la postulación, haga clic en **"Aprobar"**.  
-**Paso 2**: Confirme la acción en el modal de confirmación.  
+**PARA APROBAR UNA POSTULACIÓN**:
+**Paso 1**: En los detalles de la postulación, haga clic en **"Aprobar"**.
+**Paso 2**: Confirme la acción en el modal de confirmación.
 **Paso 3**: El sistema:
 
 - Cambia el estado a **"Aprobada"**
@@ -630,21 +623,21 @@ Para revisar solicitudes de adopción:
 
 **Paso 4**: Coordine con el adoptante la entrevista y entrega usando WhatsApp o Instagram.
 
-**PARA RECHAZAR UNA POSTULACIÓN**:  
-**Paso 1**: Haga clic en **"Rechazar"**.  
+**PARA RECHAZAR UNA POSTULACIÓN**:
+**Paso 1**: Haga clic en **"Rechazar"**.
 **Paso 2**: Ingrese un motivo del rechazo (**obligatorio**).
 
 - Ejemplo: _"No cuenta con el espacio requerido"_ o _"Mascota ya fue adoptada"_
 
-**Paso 3**: Confirme el rechazo.  
+**Paso 3**: Confirme el rechazo.
 **Paso 4**: El adoptante recibirá un correo con el motivo.
 
 💡 **NOTA**: Sea respetuoso y constructivo al rechazar postulaciones. Puede sugerir otras mascotas más adecuadas.
 
 ### 5.8. Generar reportes de adopciones
 
-**Paso 1**: En su panel, haga clic en **"Reportes"**.  
-**Paso 2**: Seleccione **"Historial de Adopciones"**.  
+**Paso 1**: En su panel, haga clic en **"Reportes"**.
+**Paso 2**: Seleccione **"Historial de Adopciones"**.
 **Paso 3**: Configure los filtros:
 
 - Fecha de inicio
@@ -652,7 +645,7 @@ Para revisar solicitudes de adopción:
 - Municipio (opcional)
 - Estado (Aprobadas solamente o todas)
 
-**Paso 4**: Haga clic en **"Generar Reporte"**.  
+**Paso 4**: Haga clic en **"Generar Reporte"**.
 **Paso 5**: El sistema mostrará:
 
 - Lista de adopciones con fecha, mascota, adoptante y municipio
@@ -660,7 +653,7 @@ Para revisar solicitudes de adopción:
 - Gráfico de adopciones por municipio
 - Métricas clave
 
-**Paso 6**: Para exportar, haga clic en **"Descargar Excel"**.  
+**Paso 6**: Para exportar, haga clic en **"Descargar Excel"**.
 **Paso 7**: El archivo **.xlsx** se descargará con todas las métricas.
 
 ✅ **CONSEJO**: Use estos reportes para presentar informes a autoridades como la Alcaldía o para análisis interno de impacto.
@@ -669,8 +662,8 @@ Para revisar solicitudes de adopción:
 
 Para modificar información de su albergue:
 
-**Paso 1**: Haga clic en su nombre de albergue en la esquina superior derecha.  
-**Paso 2**: Seleccione **"Mi Perfil"** o **"Configuración"**.  
+**Paso 1**: Haga clic en su nombre de albergue en la esquina superior derecha.
+**Paso 2**: Seleccione **"Mi Perfil"** o **"Configuración"**.
 **Paso 3**: Podrá actualizar:
 
 - Descripción del albergue
@@ -679,7 +672,7 @@ Para modificar información de su albergue:
 - Usuario de Instagram
 - Logo del albergue (opcional)
 
-**Paso 4**: Haga clic en **"Guardar Cambios"**.  
+**Paso 4**: Haga clic en **"Guardar Cambios"**.
 **Paso 5**: Los cambios se reflejan inmediatamente en su perfil público.
 
 ⚠ **IMPORTANTE**: Los métodos de contacto (WhatsApp e Instagram) son esenciales para que los adoptantes puedan comunicarse con usted. Mantenga esta información actualizada.
@@ -692,8 +685,8 @@ Para modificar información de su albergue:
 
 Los proveedores de productos deben solicitar una cuenta especializada:
 
-**Paso 1**: En la página de inicio, haga clic en **"¿Eres vendedor?"**  
-**Paso 2**: Haga clic en **"Solicitar Cuenta de Vendedor"**.  
+**Paso 1**: En la página de inicio, haga clic en **"¿Eres vendedor?"**
+**Paso 2**: Haga clic en **"Solicitar Cuenta de Vendedor"**.
 **Paso 3**: Complete el formulario con información personal y del negocio:
 
 **DATOS PERSONALES**:
@@ -714,8 +707,8 @@ Los proveedores de productos deben solicitar una cuenta especializada:
 - Teléfono del negocio
 - Logo (opcional)
 
-**Paso 4**: Haga clic en **"Enviar Solicitud"**.  
-**Paso 5**: Un administrador revisará su solicitud en **2–3 días laborables**.  
+**Paso 4**: Haga clic en **"Enviar Solicitud"**.
+**Paso 5**: Un administrador revisará su solicitud en **2–3 días laborables**.
 **Paso 6**: Recibirá un correo con la decisión de aprobación o rechazo.
 
 ### 6.2. Panel del vendedor
@@ -732,7 +725,7 @@ Una vez aprobado, accederá a su panel de vendedor. Desde aquí puede:
 
 Para publicar un producto en el catálogo:
 
-**Paso 1**: En su panel, haga clic en **"Mis Productos" → "Agregar Producto"**.  
+**Paso 1**: En su panel, haga clic en **"Mis Productos" → "Agregar Producto"**.
 **Paso 2**: Complete el formulario:
 
 **INFORMACIÓN BÁSICA**:
@@ -756,7 +749,7 @@ Para publicar un producto en el catálogo:
 - Formatos: JPEG, PNG
 - Tamaño máximo: **5 MB por imagen**
 
-**Paso 3**: Haga clic en **"Publicar Producto"**.  
+**Paso 3**: Haga clic en **"Publicar Producto"**.
 **Paso 4**: El producto aparecerá inmediatamente en el catálogo público.
 
 ✅ **CONSEJO**: Use fotos claras con fondo blanco para mayor profesionalismo. Incluya información detallada para reducir consultas.
@@ -765,10 +758,10 @@ Para publicar un producto en el catálogo:
 
 Para actualizar el stock de sus productos:
 
-**Paso 1**: Vaya a **"Mis Productos"** en su panel.  
-**Paso 2**: Localice el producto que desea actualizar.  
-**Paso 3**: Haga clic en **"Editar"** (ícono de lápiz).  
-**Paso 4**: Modifique el campo **"Stock disponible"**.  
+**Paso 1**: Vaya a **"Mis Productos"** en su panel.
+**Paso 2**: Localice el producto que desea actualizar.
+**Paso 3**: Haga clic en **"Editar"** (ícono de lápiz).
+**Paso 4**: Modifique el campo **"Stock disponible"**.
 **Paso 5**: También puede actualizar:
 
 - Precio
@@ -778,14 +771,14 @@ Para actualizar el stock de sus productos:
 
 **Paso 6**: Haga clic en **"Guardar Cambios"**.
 
-💡 **NOTA**: Si el stock llega a **0**, el producto se marcará automáticamente como **"Agotado"** y no estará disponible para compra.  
+💡 **NOTA**: Si el stock llega a **0**, el producto se marcará automáticamente como **"Agotado"** y no estará disponible para compra.
 ⚠ **ADVERTENCIA**: El stock se descuenta automáticamente cuando un cliente completa una compra. Mantenga el inventario actualizado.
 
 ### 6.5. Ver órdenes de compra
 
 Para revisar los pedidos recibidos:
 
-**Paso 1**: En su panel, haga clic en **"Órdenes"**.  
+**Paso 1**: En su panel, haga clic en **"Órdenes"**.
 **Paso 2**: Verá una lista de todas las órdenes con:
 
 - Número de orden
@@ -816,14 +809,14 @@ Para revisar los pedidos recibidos:
 
 Para obtener estadísticas de sus ventas:
 
-**Paso 1**: En su panel, haga clic en **"Reportes" → "Ventas"**.  
+**Paso 1**: En su panel, haga clic en **"Reportes" → "Ventas"**.
 **Paso 2**: Configure los filtros:
 
 - Rango de fechas
 - Estado de órdenes (todas, solo entregadas, etc.)
 - Municipio de destino
 
-**Paso 3**: Haga clic en **"Generar Reporte"**.  
+**Paso 3**: Haga clic en **"Generar Reporte"**.
 **Paso 4**: El sistema mostrará:
 
 - Total de órdenes
@@ -858,7 +851,7 @@ Los administradores tienen acceso completo al sistema:
 
 Para administrar cuentas de usuario:
 
-**Paso 1**: En el panel administrativo, haga clic en **"Usuarios"**.  
+**Paso 1**: En el panel administrativo, haga clic en **"Usuarios"**.
 **Paso 2**: Verá una lista con todos los usuarios registrados:
 
 - Nombre
@@ -874,7 +867,7 @@ Para administrar cuentas de usuario:
 - Por estado
 - Por búsqueda de texto (nombre o email)
 
-**Paso 4**: Para ver detalles, haga clic en **"Ver Perfil"**.  
+**Paso 4**: Para ver detalles, haga clic en **"Ver Perfil"**.
 **Paso 5**: Desde el perfil puede:
 
 - Ver toda la información del usuario
@@ -886,9 +879,9 @@ Para administrar cuentas de usuario:
 
 Para revisar solicitudes pendientes de albergues:
 
-**Paso 1**: En el panel administrativo, haga clic en **"Albergues" → "Solicitudes Pendientes"**.  
-**Paso 2**: Verá una lista de solicitudes con estado **"Pendiente de Aprobación"**.  
-**Paso 3**: Haga clic en **"Revisar"** en cualquier solicitud.  
+**Paso 1**: En el panel administrativo, haga clic en **"Albergues" → "Solicitudes Pendientes"**.
+**Paso 2**: Verá una lista de solicitudes con estado **"Pendiente de Aprobación"**.
+**Paso 3**: Haga clic en **"Revisar"** en cualquier solicitud.
 **Paso 4**: Revisará:
 
 - Información del representante
@@ -918,16 +911,16 @@ Para revisar solicitudes pendientes de albergues:
 
 Similar al proceso de albergues:
 
-**Paso 1**: Vaya a **"Vendedores" → "Solicitudes Pendientes"**.  
-**Paso 2**: Revise la información del negocio y el representante.  
+**Paso 1**: Vaya a **"Vendedores" → "Solicitudes Pendientes"**.
+**Paso 2**: Revise la información del negocio y el representante.
 **Paso 3**: Apruebe o rechace con justificación.
 
 ### 7.5. Bloquear usuarios
 
 Para desactivar una cuenta por violación de términos:
 
-**Paso 1**: Localice el usuario en **"Usuarios"** o desde su perfil.  
-**Paso 2**: Haga clic en **"Bloquear Usuario"**.  
+**Paso 1**: Localice el usuario en **"Usuarios"** o desde su perfil.
+**Paso 2**: Haga clic en **"Bloquear Usuario"**.
 **Paso 3**: Ingrese el motivo del bloqueo (**OBLIGATORIO**):
 
 - Publicación de contenido inapropiado
@@ -935,7 +928,7 @@ Para desactivar una cuenta por violación de términos:
 - Comportamiento abusivo
 - Violación de términos de uso
 
-**Paso 4**: Confirme la acción.  
+**Paso 4**: Confirme la acción.
 **Paso 5**: El sistema:
 
 - Desactiva la cuenta
@@ -945,7 +938,7 @@ Para desactivar una cuenta por violación de términos:
 
 **Paso 6**: Si el usuario intenta iniciar sesión, verá: _"Cuenta bloqueada. Contacte a soporte"_.
 
-⚠ **ADVERTENCIA**: Use esta función solo en casos justificados. El bloqueo debe documentarse adecuadamente.  
+⚠ **ADVERTENCIA**: Use esta función solo en casos justificados. El bloqueo debe documentarse adecuadamente.
 💡 **NOTA**: Puede desbloquear usuarios desde la misma sección si se resuelve el problema.
 
 ### 7.6. Ver dashboard de métricas
@@ -979,7 +972,7 @@ Para monitorear el sistema:
 
 Para gestionar categorías de productos:
 
-**Paso 1**: Vaya a **"Configuración" → "Categorías de Productos"**.  
+**Paso 1**: Vaya a **"Configuración" → "Categorías de Productos"**.
 **Paso 2**: Verá la lista de categorías existentes.
 
 **Paso 3**: Para **AGREGAR** una categoría:
@@ -1077,43 +1070,43 @@ Para gestionar categorías de productos:
 
 ## 9. Preguntas frecuentes (FAQ)
 
-**P**: ¿PawLig es gratis para usuarios?  
+**P**: ¿PawLig es gratis para usuarios?
 **R**: Sí, crear una cuenta y usar la plataforma es completamente gratuito para adoptantes y albergues.
 
-**P**: ¿Debo pagar para adoptar una mascota?  
+**P**: ¿Debo pagar para adoptar una mascota?
 **R**: No. La adopción es gratuita. Sin embargo, cada albergue puede tener sus propias políticas (ej. solicitar donación voluntaria para vacunas).
 
-**P**: ¿Las compras en la tienda son reales?  
+**P**: ¿Las compras en la tienda son reales?
 **R**: El sistema simula el proceso de compra. El vendedor se contactará con usted para coordinar el pago y entrega real fuera de la plataforma.
 
-**P**: ¿Cómo contacto a un albergue?  
+**P**: ¿Cómo contacto a un albergue?
 **R**: Después de postularse, use los botones de WhatsApp o Instagram en la página de la mascota para comunicarse directamente con el albergue.
 
-**P**: ¿Puedo postularme a varias mascotas al mismo tiempo?  
+**P**: ¿Puedo postularme a varias mascotas al mismo tiempo?
 **R**: Sí, puede postularse a múltiples mascotas. Sin embargo, sea responsable y solo postúlese a mascotas que realmente pueda adoptar.
 
-**P**: ¿Cuánto tiempo tarda la aprobación de una postulación?  
+**P**: ¿Cuánto tiempo tarda la aprobación de una postulación?
 **R**: Depende de cada albergue. Generalmente entre 2–5 días laborables. Recibirá notificación por email.
 
-**P**: ¿Puedo cancelar una postulación?  
+**P**: ¿Puedo cancelar una postulación?
 **R**: Actualmente no hay opción de cancelar. Puede comunicarse con el albergue directamente para informarles.
 
-**P**: Mi solicitud de albergue fue rechazada. ¿Puedo volver a aplicar?  
+**P**: Mi solicitud de albergue fue rechazada. ¿Puedo volver a aplicar?
 **R**: Sí, después de corregir los motivos del rechazo mencionados en el email. Espere al menos 30 días antes de reaplicar.
 
-**P**: ¿Puedo cambiar mi rol de Adoptante a Albergue?  
+**P**: ¿Puedo cambiar mi rol de Adoptante a Albergue?
 **R**: No directamente. Debe crear una solicitud de albergue por separado. Contacte a un administrador si necesita ayuda.
 
-**P**: ¿Cómo actualizo mi perfil?  
+**P**: ¿Cómo actualizo mi perfil?
 **R**: Haga clic en su nombre en la esquina superior derecha y seleccione **"Mi Perfil"** o **"Configuración"**.
 
-**P**: ¿Es seguro usar PawLig?  
+**P**: ¿Es seguro usar PawLig?
 **R**: Sí. Usamos encriptación HTTPS, contraseñas con hash bcrypt, y sesiones JWT seguras. Sus datos están protegidos.
 
-**P**: ¿PawLig tiene aplicación móvil?  
+**P**: ¿PawLig tiene aplicación móvil?
 **R**: No por el momento. Sin embargo, el sitio web es completamente responsive y funciona perfectamente en navegadores móviles.
 
-**P**: ¿Cómo reporto contenido inapropiado?  
+**P**: ¿Cómo reporto contenido inapropiado?
 **R**: Contacte a <soporte.pawlig@gmail.com> con detalles del contenido y capturas de pantalla.
 
 ---

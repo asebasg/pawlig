@@ -103,7 +103,7 @@ La arquitectura de PawLig sigue un patrón en capas con una clara separación de
 ⇅ Prisma ORM
 [Capa de datos (MongoDB Atlas)]
 ⇅ API
-[Servicios externos (Cloudinary)]
+[Servicios externos (Cloudinary, Google Gemini AI)]
 
 ```
 
@@ -167,10 +167,57 @@ Esta arquitectura unifica frontend y backend en un solo framework, simplificando
 - **Deployment simplificado**: Una sola plataforma (Vercel) con optimizaciones automáticas.
 - **Type-safety completo**: TypeScript end-to-end desde UI hasta base de datos.
 - **Autenticación integrada**: NextAuth.js reduce complejidad de manejo de JWT manual.
+- **Generación de Contenido con AI**: Integración con Google Gemini (gemini-1.5-flash) para refinamiento de descripciones.
 - **Restricciones de presupuesto**: $0 COP, Vercel Hobby cubre frontend + backend + funciones serverless.
 
 ### 3.2. Justificación de tecnologías
 
+#### 3.2.1. Listado de dependencias principales
+
+**Producción**:
+- **@google/generative-ai**: `^0.24.1`
+- **@hookform/resolvers**: `^5.2.2`
+- **@prisma/client**: `^6.19.0`
+- **@radix-ui/react-checkbox**: `^1.3.3`
+- **@radix-ui/react-label**: `^2.1.8`
+- **@radix-ui/react-radio-group**: `^1.3.8`
+- **@radix-ui/react-select**: `^2.2.6`
+- **@radix-ui/react-slot**: `^1.2.4`
+- **@testing-library/user-event**: `^14.6.1`
+- **axios**: `^1.13.2`
+- **bcryptjs**: `^3.0.3`
+- **class-variance-authority**: `^0.7.1`
+- **cloudinary**: `^2.8.0`
+- **clsx**: `^2.1.1`
+- **lucide-react**: `^0.554.0`
+- **next**: `14.2.33`
+- **next-auth**: `^4.24.7`
+- **prisma**: `^6.19.0`
+- **react**: `^18`
+- **react-dom**: `^18`
+- **react-hook-form**: `^7.66.1`
+- **sonner**: `^2.0.7`
+- **tailwind-merge**: `^3.4.0`
+- **zod**: `^4.1.12`
+
+**Desarrollo**:
+- **@testing-library/jest-dom**: `^6.9.1`
+- **@testing-library/react**: `^16.3.1`
+- **@types/bcryptjs**: `^2.4.6`
+- **@types/node**: `^20`
+- **@types/react**: `^18`
+- **@types/react-dom**: `^18`
+- **@vitejs/plugin-react**: `^5.1.2`
+- **@vitest/coverage-v8**: `^4.0.16`
+- **dotenv**: `^17.2.3`
+- **eslint**: `^8`
+- **eslint-config-next**: `14.2.33`
+- **jsdom**: `^27.4.0`
+- **postcss**: `^8`
+- **tailwindcss**: `^3.4.1`
+- **typescript**: `^5`
+- **vite-tsconfig-paths**: `^6.0.3`
+- **vitest**: `^4.0.16`
 **Frontend – Next.js**:
 
 - SSR nativo: Cumple con RNF-001 (tiempos de carga < 3 segundos) y mejora SEO.
@@ -250,122 +297,95 @@ Esta arquitectura unifica frontend y backend en un solo framework, simplificando
 #### 4.1.2. Estructura de componentes
 
 ```mermaid
-src/
+.
 ├── app/ # App Router (Next.js 14)
 │ ├── (auth)/ # Grupo de rutas de autenticación
 │ │ ├── login/page.tsx # Página de login (RF-002)
 │ │ ├── register/page.tsx # Página de registro (RF-001, HU-001)
-│ │ └── forgot-password/page.tsx # Recuperación de contraseña (RF-004)
+│ │ └── unauthorized/page.tsx # Página de acceso no autorizado
 │ ├── (dashboard)/ # Grupo de rutas protegidas por autenticación
 │ │ ├── admin/ # Panel administrativo (RF-017)
-│ │ │ ├── page.tsx # Dashboard admin (HU-013)
-│ │ │ ├── users/page.tsx # Gestión de usuarios (HU-014)
-│ │ │ └── settings/page.tsx # Configuración del sistema (HU-015)
+│ │ │ ├── profile/page.tsx # Perfil de administrador
+│ │ │ └── users/page.tsx # Gestión de usuarios (HU-014)
 │ │ ├── shelter/ # Panel de albergues
 │ │ │ ├── page.tsx # Dashboard de albergue
-│ │ │ ├── pets/ # Gestión de mascotas
-│ │ │ │ ├── page.tsx # Lista de mascotas (RF-008)
-│ │ │ │ ├── new/page.tsx # Publicar mascota (HU-005)
-│ │ │ │ └── [id]/edit/page.tsx # Editar mascota
-│ │ │ └── reports/page.tsx # Reportes de adopciones (HU-011)
+│ │ │ ├── pets/page.tsx # Gestión de mascotas (RF-008)
+│ │ │ ├── adoptions/page.tsx # Gestión de solicitudes de adopción
+│ │ │ ├── profile/page.tsx # Perfil del albergue
+│ │ │ └── metrics/page.tsx # Métricas del albergue (HU-011)
 │ │ ├── vendor/ # Panel de vendedores
 │ │ │ ├── page.tsx # Dashboard de vendedor
 │ │ │ ├── products/page.tsx # Gestión de productos (HU-010)
-│ │ │ └── orders/page.tsx # Órdenes recibidas (HU-012)
+│ │ │ ├── orders/page.tsx # Órdenes recibidas (HU-012)
+│ │ │ ├── profile/page.tsx # Perfil del vendedor
+│ │ │ └── metrics/page.tsx # Métricas del vendedor
 │ │ └── user/ # Panel de usuarios/adoptantes
 │ │ ├── page.tsx # Dashboard de usuario (HU-004)
 │ │ ├── profile/page.tsx # Perfil de usuario (RF-003)
-│ │ ├── favorites/page.tsx # Mascotas favoritas
-│ │ └── adoptions/page.tsx # Mis postulaciones (HU-007)
-│ ├── adopciones/ # Módulo público de adopciones
-│ │ ├── page.tsx # Galería de mascotas (RF-009, HU-006)
-│ │ └── [id]/page.tsx # Detalle de mascota
-│ ├── productos/ # Módulo público de tienda
-│ │ ├── page.tsx # Catálogo de productos (RF-012)
-│ │ ├── [id]/page.tsx # Detalle de producto
-│ │ └── cart/page.tsx # Carrito de compras (RF-014)
-│ ├── albergues/ # Página informativa
-│ │ └── page.tsx # Mapa y listado de albergues
+│ │ ├── request-vendor/page.tsx # Solicitud de cuenta de vendedor
+│ │ └── request-shelter/page.tsx # Solicitud de cuenta de albergue
+│ ├── (public)/ # Rutas públicas
+│ │ ├── adopciones/ # Módulo público de adopciones
+│ │ │ ├── page.tsx # Galería de mascotas (RF-009, HU-006)
+│ │ │ └── [id]/page.tsx # Detalle de mascota
+│ │ ├── productos/ # Módulo público de tienda
+│ │ │ ├── page.tsx # Catálogo de productos (RF-012)
+│ │ │ └── [id]/page.tsx # Detalle de producto
+│ │ ├── changelog/page.tsx # Notas de lanzamiento
+│ │ ├── faq/page.tsx # Preguntas frecuentes
+│ │ ├── privacy/page.tsx # Política de privacidad
+│ │ └── terms/page.tsx # Términos y condiciones
 │ ├── api/ # API Routes (Backend)
 │ │ ├── auth/
-│ │ │ └── [...nextauth]/route.ts # NextAuth.js handler
-│ │ ├── users/
-│ │ │ ├── route.ts # CRUD usuarios (RF-001, RF-003)
-│ │ │ └── [id]/route.ts
-│ │ ├── shelters/
-│ │ │ ├── route.ts # Gestión albergues (RF-006, HU-002)
-│ │ │ └── [id]/route.ts
+│ │ │ ├── [...nextauth]/route.ts # NextAuth.js handler
+│ │ │ └── register/route.ts # Registro de usuarios
+│ │ ├── admin/
+│ │ │ ├── users/route.ts # Gestión de usuarios admin
+│ │ │ ├── shelters/route.ts # Gestión de albergues admin
+│ │ │ └── shelter-requests/route.ts # Solicitudes de albergue
 │ │ ├── pets/
-│ │ │ ├── route.ts # CRUD mascotas (RF-008, RF-009)
+│ │ │ ├── route.ts # CRUD mascotas
+│ │ │ ├── search/route.ts # Búsqueda de mascotas
 │ │ │ └── [id]/route.ts
 │ │ ├── products/
-│ │ │ ├── route.ts # CRUD productos (RF-012, RF-013)
+│ │ │ ├── route.ts # CRUD productos
 │ │ │ └── [id]/route.ts
-│ │ ├── cart/route.ts # Gestión carrito (RF-014)
-│ │ ├── orders/route.ts # Órdenes simuladas (RF-015)
-│ │ └── admin/
-│ │ ├── users/route.ts # Gestión admin (RF-005, HU-014)
-│ │ └── dashboard/route.ts # Métricas (RF-017, HU-013)
+│ │ ├── adoptions/
+│ │ │ ├── route.ts # Gestión de adopciones
+│ │ │ └── [id]/route.ts
+│ │ ├── ai/
+│ │ │ └── refine/route.ts # Refinamiento de contenido con AI
+│ │ └── user/
+│ │ ├── profile/route.ts # Perfil de usuario
+│ │ ├── favorites/route.ts # Mascotas favoritas
+│ │ ├── request-shelter-account/route.ts # Solicitud albergue
+│ │ └── request-vendor-account/route.ts # Solicitud vendedor
 │ ├── layout.tsx # Layout raíz con providers
 │ ├── page.tsx # Página de inicio pública
 │ └── not-found.tsx # Página 404
 ├── components/ # Componentes reutilizables
-│ ├── ui/ # Componentes base de interfaz
-│ │ ├── button.tsx
-│ │ ├── input.tsx
-│ │ ├── modal.tsx
-│ │ ├── card.tsx
-│ │ └── badge.tsx
-│ ├── forms/ # Formularios reutilizables
-│ │ ├── login-form.tsx # Formulario de login (RF-002)
-│ │ ├── register-form.tsx # Formulario de registro (RF-001)
-│ │ ├── pet-form.tsx # Formulario de mascota (RF-008)
-│ │ └── product-form.tsx # Formulario de producto (RF-012)
+│ ├── ui/ # Componentes base de interfaz (Shadcn UI)
+│ ├── forms/ # Formularios de negocio
 │ ├── cards/ # Tarjetas de entidades
-│ │ ├── pet-card.tsx # Tarjeta de mascota
-│ │ ├── product-card.tsx # Tarjeta de producto
-│ │ └── shelter-card.tsx # Tarjeta de albergue
-│ └── layout/ # Componentes de layout
-│ ├── header.tsx # Header con navegación
-│ ├── footer.tsx # Footer
-│ └── sidebar.tsx # Sidebar para dashboards
-│ └── navbar.tsx # Navbar público
-├── providers/ # Context providers
-│ ├── auth-provider.tsx # Wrapper de NextAuth SessionProvider
-│ └── cart-provider.tsx # Context del carrito (RF-014)
+│ ├── layout/ # Elementos de navegación y estructura
+│ ├── admin/ # Componentes específicos de administración
+│ ├── adopter/ # Componentes para adoptantes
+│ ├── shelter/ # Componentes para albergues
+│ ├── vendor/ # Componentes para vendedores
+│ ├── products/ # Componentes de tienda
+│ └── filters/ # Componentes de filtrado
 ├── lib/ # Utilidades y lógica de negocio
-│ ├── auth/
-│ │ ├── auth-options.ts # Configuración de NextAuth.js
-│ │ ├── permissions.ts # Helpers de permisos por rol (RF-005)
-│ │ └── password.ts # Utilidades bcrypt (RNF-002)
-│ ├── services/ # Lógica de negocio (capa de servicio)
-│ │ ├── user.service.ts # Operaciones de usuarios
-│ │ ├── pet.service.ts # Operaciones de mascotas
-│ │ ├── product.service.ts # Operaciones de productos
-│ │ └── adoption.service.ts # Operaciones de adopciones
-│ ├── validations/ # Esquemas Zod de validación
-│ │ ├── user.schema.ts # Validaciones de usuarios
-│ │ ├── pet.schema.ts # Validaciones de mascotas
-│ │ └── product.schema.ts # Validaciones de productos
-│ └── utils/ # Utilidades generales
-│ ├── db.ts # Cliente Prisma singleton
-│ ├── cloudinary.ts # Helper para Cloudinary
-│ ├── constants.ts # Constantes (municipios, roles)
-│ └── formatters.ts # Funciones de formateo
-├── hooks/ # Custom React hooks
-│ ├── use-auth.ts # Hook de autenticación
-│ ├── use-cart.ts # Hook del carrito
-│ └── use-filters.ts # Hook para filtros (RF-009)
-├── types/ # Definiciones TypeScript
-│ ├── next-auth.d.ts # Extensión de tipos de NextAuth
-│ ├── api.types.ts # Tipos de respuestas de API
-│ └── models.types.ts # Tipos de entidades del dominio
-├── middleware.ts # Middleware de Next.js (protección de rutas)
+│ ├── auth/ # Configuración de seguridad y roles
+│ ├── services/ # Capa de servicios (Pet, Product, User)
+│ ├── validations/ # Esquemas Zod
+│ ├── utils/ # Helpers y cliente DB
+│ ├── cloudinary.ts # Integración multimedia
+│ └── constants.ts # Constantes globales
 ├── prisma/
-│ └── schema.prisma # Schema de base de datos Prisma
+│ └── schema.prisma # Modelo de datos
+├── types/ # Definiciones TypeScript
+├── middleware.ts # Protección de rutas y roles
 └── public/ # Assets estáticos
-└── images/
-└── icons/
 ```
 
 #### 4.1.3. Enrutamiento y gestión de estado
@@ -397,43 +417,50 @@ src/
 
 **Endpoints organizados por dominio**:
 
-**AUTENTICACIÓN Y USUARIOS (`/api/auth/*`, `/api/users/*`)**
+**AUTENTICACIÓN Y USUARIOS (`/api/auth/*`, `/api/user/*`)**
 
-- `POST /api/auth/register` # HU-001: Registro adoptante
-- `POST /api/auth/login` # RF-002: Autenticación usuarios
-- `POST /api/auth/forgot-password` # RF-004: Recuperación contraseña
-- `POST /api/auth/reset-password` # RF-004: Reset contraseña
-- `POST /api/shelters/apply` # HU-002: Solicitud cuenta albergue
-- `PUT /api/shelters/:id/approve` # HU-002: Aprobación administrador
-- `GET /api/users/profile` # RF-003: Obtener perfil usuario
-- `PUT /api/users/profile` # HU-003: Actualizar perfil
-- `GET /api/users/dashboard` # HU-004: Panel de usuario
+- `POST /api/auth/register` # Registro de adoptantes (HU-001)
+- `POST /api/auth/[...nextauth]` # Manejo de sesión (NextAuth)
+- `GET /api/user/profile` # Obtener perfil (RF-003)
+- `PUT /api/user/profile` # Actualizar perfil (HU-003)
+- `POST /api/user/request-shelter-account` # Solicitud cuenta albergue (HU-002)
+- `POST /api/user/request-vendor-account` # Solicitud cuenta vendedor
+- `GET /api/user/favorites` # Obtener favoritos (HU-004)
+- `GET /api/user/favorites/check` # Verificar favorito
 
 **GESTIÓN DE MASCOTAS (`/api/pets/*`, `/api/adoptions/*`)**
 
-- `GET /api/pets` # HU-006: Buscar/filtrar mascotas
-- `POST /api/pets` # HU-005: Publicar mascota
-- `GET /api/pets/:id` # Obtener detalle mascota
-- `PUT /api/pets/:id` # HU-005: Editar mascota
-- `PUT /api/pets/:id/status` # HU-005: Cambiar estado
-- `POST /api/adoptions/apply` # HU-007: Postular adopción
-- `GET /api/adoptions/my-applications` # HU-004: Mis postulaciones
-- `PUT /api/adoptions/:id/status` # HU-007: Cambiar estado postulación
+- `GET /api/pets` # Listado de mascotas
+- `POST /api/pets` # Publicar mascota (HU-005)
+- `GET /api/pets/search` # Búsqueda avanzada (HU-006)
+- `GET /api/pets/[id]` # Detalle de mascota
+- `PUT /api/pets/[id]` # Editar mascota
+- `PUT /api/pets/[id]/status` # Cambiar estado (Disponible/Adoptado)
+- `POST /api/pets/[id]/favorite` # Alternar favorito
+- `POST /api/adoptions` # Postular adopción (HU-007)
+- `GET /api/adoptions` # Listado de postulaciones
+- `GET /api/adoptions/[id]` # Detalle de postulación
+- `GET /api/shelters/adoptions` # Postulaciones para el albergue
 
-**PRODUCTOS Y PEDIDOS (`/api/products/*`, `/api/orders/*`)**
+**PRODUCTOS Y PEDIDOS (`/api/products/*`)**
 
-- `GET /api/products` # Catálogo productos
-- `POST /api/products` # HU-010: Añadir producto
-- `PUT /api/products/:id/stock` # HU-010: Actualizar stock
-- `GET /api/cart` # HU-009: Obtener carrito
-- `POST /api/orders` # HU-009: Crear pedido simulado
+- `GET /api/products` # Catálogo de productos (RF-012)
+- `POST /api/products` # Añadir producto (HU-010)
+- `GET /api/products/[id]` # Detalle de producto
+- `PUT /api/products/[id]` # Editar producto
+- `PUT /api/products/[id]/stock` # Actualizar inventario
 
-**REPORTES Y ADMINISTRACIÓN (`/api/reports/*`, `/api/admin/*`)**
+**ADMINISTRACIÓN Y OTROS (`/api/admin/*`, `/api/ai/*`)**
 
-- `GET /api/reports/adoptions` # HU-011: Reporte adopciones
-- `GET /api/reports/orders` # HU-012: Reporte órdenes
-- `GET /api/admin/dashboard` # HU-013: Dashboard administración
-- `PUT /api/admin/users/:id/block` # HU-014: Bloquear usuario
+- `GET /api/admin/users` # Listado de usuarios para moderación (HU-014)
+- `PUT /api/admin/users/[id]/block` # Bloquear/Desbloquear usuario
+- `PUT /api/admin/users/[id]/role` # Cambiar rol de usuario
+- `GET /api/admin/shelter-requests` # Revisar solicitudes de albergue
+- `PUT /api/admin/shelters/[shelterId]` # Gestionar albergues
+- `POST /api/ai/refine` # Refinamiento de descripciones con Gemini AI
+- `POST /api/upload` # Subida de archivos (Cloudinary)
+- `GET /api/cloudinary/sign` # Firma de seguridad para Cloudinary
+- `GET /api/vendors/profile` # Perfil público del vendedor
 
 #### 4.2.3. Lógica de negocio y validaciones
 
@@ -450,7 +477,7 @@ src/
 - RN-014: Contactos externos deben ser verificados durante el proceso de aprobación de cuenta de albergue.
 - RN-021: Mensaje predeterminado de WhatsApp debe incluir referencia a PawLig y nombre de la mascota.
 
-**Validaciones de entrada**: Esquemas TypeScript en runtime con verificación de tipos.  
+**Validaciones de entrada**: Esquemas TypeScript en runtime con verificación de tipos.
 **Flujos de trabajo complejos**:
 
 - Proceso de adopción: Postulación → Revisión → Entrevista → Aprobación.

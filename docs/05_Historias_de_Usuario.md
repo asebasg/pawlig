@@ -330,3 +330,46 @@
   - Dado que creo un nuevo filtro de mascotas (ej. por municipio del Valle de Aburrá, especie o tamaño),  
     cuando guardo el filtro después de validar que no existe uno idéntico,  
     entonces el nuevo filtro aparece disponible para todos los usuarios en la galería de búsqueda.
+
+**HU-016: Refinamiento de descripciones mediante Inteligencia Artificial**
+
+- **Como** representante de albergue o vendedor.
+- **Quiero** utilizar un asistente de IA para mejorar y profesionalizar mis descripciones.
+- **Para** atraer a más adoptantes o compradores con textos claros, empáticos y bien redactados.
+- **Prioridad**: Media
+- **Estimación**: 5 puntos
+- **Criterios de aceptación**:
+  - Dado que estoy redactando la descripción de una mascota o producto,
+    cuando hago clic en el botón de "Refinar con IA",
+    entonces el sistema utiliza el modelo Google Gemini para generar una versión mejorada del texto conservando los datos clave.
+  - Dado que la IA genera una sugerencia,
+    cuando acepto el cambio,
+    entonces el campo de descripción se actualiza automáticamente con el nuevo texto.
+- **Notas**: Implementado mediante el endpoint `/api/ai/refine` utilizando el modelo `gemini-1.5-flash`.
+
+**HU-017: Solicitud de cuenta de vendedor**
+
+- **Como** usuario registrado.
+- **Quiero** solicitar una cuenta de vendedor mediante un formulario integrado.
+- **Para** ofrecer mis productos en la plataforma PawLig.
+- **Prioridad**: Alta
+- **Estimación**: 3 puntos
+- **Criterios de aceptación**:
+  - Dado que soy un usuario con rol Adoptante,
+    cuando envío el formulario de solicitud de cuenta de vendedor con datos de negocio válidos,
+    entonces mi solicitud queda en estado "Pendiente" para revisión del administrador y se notifica al usuario del éxito del envío.
+  - Dado que ya tengo una solicitud pendiente,
+    cuando intento enviar otra,
+    entonces el sistema me informa que ya existe una solicitud en proceso.
+
+**HU-018: Consulta de información pública y transparencia**
+
+- **Como** visitante o usuario.
+- **Quiero** acceder a secciones de FAQ, Changelog y Políticas.
+- **Para** conocer el funcionamiento de la plataforma, los cambios recientes y mis derechos de privacidad.
+- **Prioridad**: Baja
+- **Estimación**: 2 puntos
+- **Criterios de aceptación**:
+  - Dado que navego por el sitio,
+    cuando accedo a las rutas `/changelog`, `/faq`, `/terms` o `/privacy`,
+    entonces visualizo información clara y estructurada sobre el proyecto.
