@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Moon, Sun, Monitor, Palette } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -15,7 +14,7 @@ import {
 /**
  * Ruta/Componente/Servicio: ThemeToggle
  * Descripción: Botón global para cambiar el tema de la aplicación.
- * Requiere: next-themes, lucide-react, Button, Select
+ * Requiere: next-themes, lucide-react, Select
  * Implementa: HU-XXX (Cambio de tema)
  */
 export function ThemeToggle() {
