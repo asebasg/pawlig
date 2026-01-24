@@ -59,7 +59,7 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="lg:hidden p-2 rounded-lg hover:bg-accent transition-colors text-foreground"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -74,17 +74,17 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 left-0 h-full w-80 bg-white shadow-xl z-50 transform transition-transform duration-200 lg:hidden ${
+        className={`fixed top-0 left-0 h-full w-80 bg-background shadow-xl z-50 transform transition-transform duration-200 lg:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 border-b border-border">
             <Logo size="md" />
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-lg hover:bg-gray-100"
+              className="p-2 rounded-lg hover:bg-accent text-foreground"
             >
               <X size={24} />
             </button>
@@ -92,22 +92,22 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
 
           {/* User Info (if authenticated) */}
           {user && (
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-4 border-b border-border">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
                   {user.image ? (
                     <Image width={48} height={48} src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
                   ) : (
-                    <User size={24} className="text-purple-600" />
+                    <User size={24} className="text-primary" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 truncate">{user.name}</p>
-                  <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                  <p className="font-semibold text-foreground truncate">{user.name}</p>
+                  <p className="text-sm text-muted-foreground truncate">{user.email}</p>
                 </div>
               </div>
               <div className="mt-2">
-                <span className="inline-block px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded">
+                <span className="inline-block px-2 py-1 text-xs font-semibold bg-primary/10 text-primary rounded">
                   {roleLabels[user.role as keyof typeof roleLabels]}
                 </span>
               </div>
@@ -124,8 +124,8 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
                   href={link.href}
                   className={`block px-4 py-3 font-semibold transition-colors ${
                     isActive
-                      ? "bg-purple-50 text-purple-600 border-l-4 border-purple-600"
-                      : "text-gray-700 hover:bg-gray-100"
+                      ? "bg-primary/10 text-primary border-l-4 border-primary"
+                      : "text-foreground/70 hover:bg-accent hover:text-foreground"
                   }`}
                 >
                   {link.label}
@@ -135,11 +135,11 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
           </nav>
 
           {/* Footer Actions */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-border">
             {user ? (
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="flex items-center gap-3 w-full px-4 py-3 text-red-600 font-semibold hover:bg-red-50 rounded-lg transition-colors"
+                className="flex items-center gap-3 w-full px-4 py-3 text-destructive font-semibold hover:bg-destructive/10 rounded-lg transition-colors"
               >
                 <LogOut size={20} />
                 <span>Cerrar Sesión</span>
@@ -148,13 +148,13 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
               <div className="space-y-2">
                 <Link
                   href="/login"
-                  className="block w-full px-4 py-3 text-center font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="block w-full px-4 py-3 text-center font-semibold text-foreground/70 border border-input rounded-lg hover:bg-accent transition-colors"
                 >
                   Iniciar Sesión
                 </Link>
                 <Link
                   href="/register"
-                  className="block w-full px-4 py-3 text-center font-semibold text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors"
+                  className="block w-full px-4 py-3 text-center font-semibold text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Registrarse
                 </Link>
@@ -180,6 +180,7 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
  * - 'useEffect (pathname)': Cierra automáticamente el panel cuando el usuario navega a una nueva página, mejorando la experiencia de usuario.
  * - 'useEffect (isOpen)': Bloquea el 'scroll' del 'body' cuando el menú está abierto para evitar que el contenido de la página se desplace por debajo. Incluye una función de limpieza para restaurar el 'scroll'.
  * - 'Navegación Dinámica': Al igual que la barra de navegación de escritorio, selecciona el conjunto de enlaces a mostrar ('PUBLIC_LINKS' o 'NAVIGATION_BY_ROLE') basándose en la presencia y el rol del objeto 'user'.
+ * - Soporte de Temas: Utiliza variables semánticas (bg-background, border-border, text-primary) para adaptarse a los temas Claro, Oscuro y Solarized.
  *
  * Dependencias Externas:
  * - 'next/navigation': Para usar el hook 'usePathname' y determinar la ruta activa.

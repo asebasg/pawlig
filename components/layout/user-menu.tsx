@@ -93,9 +93,9 @@ export function UserMenu({ user }: UserMenuProps) {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg hover:bg-accent transition-colors"
       >
-        <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+        <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
           {user.image ? (
             <Image
               src={user.image}
@@ -105,21 +105,21 @@ export function UserMenu({ user }: UserMenuProps) {
               sizes="(max-width: 640px) 32px, 40px"
             />
           ) : (
-            <User size={18} className="text-purple-600 sm:w-5 sm:h-5" />
+            <User size={18} className="text-primary sm:w-5 sm:h-5" />
           )}
         </div>
-        <span className="hidden sm:block font-semibold text-gray-700 max-w-[100px] lg:max-w-[120px] truncate">
+        <span className="hidden sm:block font-semibold text-foreground max-w-[100px] lg:max-w-[120px] truncate">
           {user.name}
         </span>
-        <ChevronDown size={14} className="text-gray-500 sm:w-4 sm:h-4" />
+        <ChevronDown size={14} className="text-muted-foreground sm:w-4 sm:h-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 md:w-72 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+        <div className="absolute right-0 mt-2 w-64 md:w-72 bg-popover rounded-xl shadow-lg border border-border py-2 z-50">
           {/* User Info */}
-          <div className="px-4 py-3 border-b border-gray-200">
+          <div className="px-4 py-3 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+              <div className="relative w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
                 {user.image ? (
                   <Image
                     src={user.image}
@@ -129,16 +129,16 @@ export function UserMenu({ user }: UserMenuProps) {
                     sizes="48px"
                   />
                 ) : (
-                  <User size={24} className="text-purple-600" />
+                  <User size={24} className="text-primary" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-gray-900 truncate">{user.name}</p>
-                <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                <p className="font-semibold text-popover-foreground truncate">{user.name}</p>
+                <p className="text-sm text-muted-foreground truncate">{user.email}</p>
               </div>
             </div>
             <div className="mt-2">
-              <span className="inline-block px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded pointer-events-none">
+              <span className="inline-block px-2 py-1 text-xs font-semibold bg-primary/10 text-primary rounded pointer-events-none">
                 {roleLabels[user.role as keyof typeof roleLabels]}
               </span>
             </div>
@@ -153,17 +153,17 @@ export function UserMenu({ user }: UserMenuProps) {
                   key={option.href}
                   href={option.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-3 px-4 py-2 hover:bg-accent hover:text-accent-foreground transition-colors text-foreground"
                 >
-                  <Icon size={20} className="text-gray-600" />
-                  <span className="text-gray-700">{option.label}</span>
+                  <Icon size={20} className="text-muted-foreground" />
+                  <span>{option.label}</span>
                 </Link>
               );
             })}
           </div>
 
           {/* Common Options */}
-          <div className="py-2 border-t border-gray-200">
+          <div className="py-2 border-t border-border">
             {COMMON_MENU_OPTIONS.map((option) => {
               const Icon = iconMap[option.icon as keyof typeof iconMap];
               return (
@@ -171,20 +171,20 @@ export function UserMenu({ user }: UserMenuProps) {
                   key={option.href}
                   href={option.href}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-3 px-4 py-2 hover:bg-accent hover:text-accent-foreground transition-colors text-foreground"
                 >
-                  <Icon size={20} className="text-gray-600" />
-                  <span className="text-gray-700">{option.label}</span>
+                  <Icon size={20} className="text-muted-foreground" />
+                  <span>{option.label}</span>
                 </Link>
               );
             })}
           </div>
 
           {/* Logout */}
-          <div className="pt-2 border-t border-gray-200">
+          <div className="pt-2 border-t border-border">
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-3 px-4 py-2 w-full hover:bg-red-50 transition-colors text-red-600"
+              className="flex items-center gap-3 px-4 py-2 w-full hover:bg-destructive/10 transition-colors text-destructive"
             >
               <LogOut size={20} />
               <span className="font-semibold">Cerrar Sesión</span>
@@ -209,6 +209,7 @@ export function UserMenu({ user }: UserMenuProps) {
  * - 'USER_MENU_OPTIONS': Un objeto constante que mapea roles de usuario (ej: 'ADMIN', 'SHELTER') a un array de opciones de menú específicas. El componente renderiza dinámicamente estas opciones basándose en el 'rol' del usuario actual.
  * - 'iconMap': Un objeto que mapea nombres de iconos (strings) a los componentes de icono reales de 'lucide-react'. Esto permite definir los iconos como strings en el objeto de constantes y renderizarlos dinámicamente.
  * - 'signOut': Se importa de 'next-auth/react' y se invoca en el botón 'Cerrar Sesión' para finalizar la sesión del usuario y redirigirlo a la página de inicio.
+ * - Soporte de Temas: Utiliza variables semánticas (bg-popover, border-border, text-foreground) para adaptarse a los temas Claro, Oscuro y Solarized.
  *
  * Dependencias Externas:
  * - 'next-auth/react': Para la función 'signOut'.

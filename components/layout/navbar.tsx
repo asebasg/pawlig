@@ -5,6 +5,7 @@ import { Logo } from "@/components/ui/logo";
 import { NavbarPublic } from "./navbar-public";
 import { NavbarAuth } from "./navbar-auth";
 import { NavbarMobile } from "./navbar-mobile";
+import { ThemeToggle } from "./theme-toggle";
 
 /**
  * Ruta/Componente/Servicio: Navbar
@@ -16,7 +17,7 @@ export function Navbar() {
   const { data: session, status } = useSession();
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-40 w-full bg-background border-b border-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-18">
           {/* Mobile Menu + Logo */}
@@ -31,17 +32,25 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation & Actions */}
-          {status === "loading" ? (
-            <div className="hidden lg:flex h-10 w-96 bg-gray-100 animate-pulse rounded" />
-          ) : session?.user ? (
-            <div className="flex items-center gap-8 flex-1 justify-end">
-              <NavbarAuth user={session.user} />
-            </div>
-          ) : (
-            <div className="flex items-center gap-8 flex-1 justify-end">
-              <NavbarPublic />
-            </div>
-          )}
+          <div className="hidden lg:flex items-center gap-4 flex-1 justify-end">
+            <ThemeToggle />
+            {status === "loading" ? (
+              <div className="h-10 w-24 bg-muted animate-pulse rounded" />
+            ) : session?.user ? (
+              <div className="flex items-center gap-8">
+                <NavbarAuth user={session.user} />
+              </div>
+            ) : (
+              <div className="flex items-center gap-8">
+                <NavbarPublic />
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Theme Toggle (visible only on small screens) */}
+          <div className="lg:hidden flex items-center gap-2">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>

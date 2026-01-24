@@ -4,15 +4,118 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Ruta/Componente/Servicio: globals.css
+ * Descripción: Estilos globales y definiciones de temas CSS.
+ * Requiere: Tailwind CSS
+ * Implementa: Soporte para temas Claro, Oscuro, Solarized Light y Solarized Dark.
+ */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --primary: #7C3AED;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #111827;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f3f4f6;
+  --accent-foreground: #111827;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #7C3AED;
+  --footer: #1f2937;
+  --footer-foreground: #ffffff;
+  --footer-muted: #d1d5db;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #0a0a0a;
+  --card-foreground: #ededed;
+  --popover: #0a0a0a;
+  --popover-foreground: #ededed;
+  --primary: #a78bfa;
+  --primary-foreground: #ffffff;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #a78bfa;
+  --footer: #111827;
+  --footer-foreground: #ffffff;
+  --footer-muted: #9ca3af;
+}
+
+.solarized-light {
+  --background: #fdf6e3;
+  --foreground: #657b83;
+  --card: #eee8d5;
+  --card-foreground: #657b83;
+  --popover: #fdf6e3;
+  --popover-foreground: #657b83;
+  --primary: #7C3AED;
+  --primary-foreground: #ffffff;
+  --secondary: #eee8d5;
+  --secondary-foreground: #586e75;
+  --muted: #eee8d5;
+  --muted-foreground: #93a1a1;
+  --accent: #eee8d5;
+  --accent-foreground: #586e75;
+  --destructive: #dc322f;
+  --destructive-foreground: #ffffff;
+  --border: #d5cfbb;
+  --input: #d5cfbb;
+  --ring: #7C3AED;
+  --footer: #073642;
+  --footer-foreground: #93a1a1;
+  --footer-muted: #839496;
+}
+
+.solarized-dark {
+  --background: #002b36;
+  --foreground: #839496;
+  --card: #073642;
+  --card-foreground: #839496;
+  --popover: #002b36;
+  --popover-foreground: #839496;
+  --primary: #7C3AED;
+  --primary-foreground: #ffffff;
+  --secondary: #073642;
+  --secondary-foreground: #93a1a1;
+  --muted: #073642;
+  --muted-foreground: #586e75;
+  --accent: #073642;
+  --accent-foreground: #93a1a1;
+  --destructive: #dc322f;
+  --destructive-foreground: #ffffff;
+  --border: #08404f;
+  --input: #08404f;
+  --ring: #7C3AED;
+  --footer: #073642;
+  --footer-foreground: #93a1a1;
+  --footer-muted: #839496;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @layer utilities {
@@ -24,3 +127,27 @@ body {
     font-family: 'Poppins', sans-serif;
   }
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Este archivo centraliza la configuración visual de la aplicación mediante
+ * variables CSS semánticas. Permite que todos los componentes se adapten
+ * automáticamente al tema seleccionado.
+ *
+ * Lógica Clave:
+ * - 'Variables Semánticas': Se definen variables como --background, --primary,
+ *   etc., que cambian su valor según la clase aplicada al elemento superior (html).
+ * - 'Temas Solarized': Se implementaron siguiendo la paleta oficial de Ethan
+ *   Schoonover, adaptándola a la estructura de la aplicación.
+ * - 'Transiciones': Se añadió una transición suave al body para mejorar la
+ *   experiencia de usuario al cambiar de tema.
+ *
+ * Dependencias Externas:
+ * - 'Tailwind CSS': Para la generación de clases de utilidad basadas en estas variables.
+ * - 'Google Fonts': Importación de fuentes Inter y Poppins.
+ *
+ */

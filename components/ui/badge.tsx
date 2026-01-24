@@ -10,8 +10,8 @@ const badgeVariants = cva(
       variant: {
         default: "border-transparent bg-primary text-primary-foreground pointer-events-none",
         secondary: "border-transparent bg-secondary text-secondary-foreground pointer-events-none",
-        destructive: "border-transparent bg-red-600 text-white pointer-events-none",
-        outline: "border-gray-200 text-gray-800 pointer-events-none",
+        destructive: "border-transparent bg-destructive text-destructive-foreground pointer-events-none",
+        outline: "border-border text-foreground pointer-events-none",
         teal: "border-transparent bg-teal-100 text-teal-800 pointer-events-none",
         orange: "border-transparent bg-orange-100 text-orange-800 pointer-events-none",
         yellow: "border-transparent bg-yellow-100 text-yellow-800 pointer-events-none",

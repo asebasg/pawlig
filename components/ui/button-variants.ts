@@ -5,15 +5,15 @@ import { cva } from "class-variance-authority";
  * Este archivo NO tiene "use client" para permitir su uso en Server Components.
  */
 export const buttonVariants = cva(
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black/20 disabled:opacity-50 disabled:pointer-events-none",
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring disabled:opacity-50 disabled:pointer-events-none",
     {
         variants: {
             variant: {
-                default: "bg-purple-600 text-white hover:bg-purple-700",
-                destructive: "bg-red-600 text-white hover:bg-red-500",
-                outline: "border border-gray-300 bg-transparent hover:bg-gray-100",
-                secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300",
-                ghost: "hover:bg-gray-100",
+                default: "bg-primary text-primary-foreground hover:bg-primary/90",
+                destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+                outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+                ghost: "hover:bg-accent hover:text-accent-foreground",
                 link: "text-primary underline-offset-4 hover:underline",
                 teal: "bg-teal-500 text-white hover:bg-teal-600",
                 orange: "bg-orange-500 text-white hover:bg-orange-600",

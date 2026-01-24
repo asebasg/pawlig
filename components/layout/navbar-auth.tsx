@@ -39,8 +39,8 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
               key={link.href}
               href={link.href}
               className={`font-semibold text-base transition-colors pb-1 border-b-2 ${isActive
-                  ? "text-purple-600 border-purple-600"
-                  : "text-gray-700 border-transparent hover:text-purple-600"
+                  ? "text-primary border-primary"
+                  : "text-foreground/70 border-transparent hover:text-primary"
                 }`}
             >
               {link.label}
@@ -56,9 +56,9 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
           <>
             <Link
               href="/user/favorites"
-              className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg hover:bg-accent transition-colors"
             >
-              <Heart size={20} className="text-gray-600 sm:w-6 sm:h-6" />
+              <Heart size={20} className="text-muted-foreground sm:w-6 sm:h-6" />
             </Link>
             <CartButton itemCount={0} />
           </>
@@ -84,6 +84,7 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
  * - 'NAVIGATION_BY_ROLE': Se importa un objeto constante que mapea roles de usuario a sus respectivos enlaces de navegación. El componente selecciona dinámicamente el array de enlaces correcto basándose en el 'user.role'.
  * - 'usePathname': El hook de Next.js se utiliza para determinar cuál es el enlace activo y aplicarle un estilo visual distintivo (subrayado de color púrpura).
  * - 'Renderizado Condicional': Los iconos de 'Favoritos' y 'Carrito' solo se renderizan si el rol del usuario es 'ADOPTER', asegurando que estas funcionalidades solo sean visibles para los usuarios pertinentes.
+ * - Soporte de Temas: Utiliza variables semánticas (text-primary, bg-accent, text-foreground) para adaptarse a los temas Claro, Oscuro y Solarized.
  *
  * Dependencias Externas:
  * - 'next/navigation': Para el hook 'usePathname'.

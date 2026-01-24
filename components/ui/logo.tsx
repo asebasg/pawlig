@@ -36,11 +36,11 @@ export function Logo({ variant = "full", size = "md", href = "/" }: LogoProps) {
     >
       <PawPrint 
         size={iconSizes[size]} 
-        className="text-purple-600" 
+        className="text-primary"
         strokeWidth={2.5}
       />
       {variant === "full" && (
-        <span className={`font-poppins font-bold text-purple-600 ${sizeClasses[size]}`}>
+        <span className={`font-poppins font-bold text-primary ${sizeClasses[size]}`}>
           PawLig
         </span>
       )}
@@ -65,6 +65,8 @@ export function Logo({ variant = "full", size = "md", href = "/" }: LogoProps) {
  * - 'size': Controla el tamaño general del logo, ajustando tanto el icono
  *   como la fuente del texto a través de objetos de mapeo ('sizeClasses' y
  *   'iconSizes').
+ * - Soporte de Temas: Utiliza la clase 'text-primary' para que el color del logo
+ *   se adapte al tema actual de la aplicación.
  *
  * Dependencias Externas:
  * - 'next/link': Se utiliza para envolver el logo en un enlace de navegación

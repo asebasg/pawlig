@@ -11,12 +11,12 @@ import { cva, type VariantProps } from "class-variance-authority";
  */
 
 const inputVariants = cva(
-  "block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-purple-600 sm:text-sm",
+  "block w-full px-3 py-2 bg-background border border-input text-foreground rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring sm:text-sm placeholder:text-muted-foreground",
   {
     variants: {
       variant: {
-        default: "border-gray-300",
-        error: "border-pink-600 text-pink-600 focus:ring-pink-500",
+        default: "border-input",
+        error: "border-destructive text-destructive focus:ring-destructive",
       },
     },
     defaultVariants: {
@@ -34,9 +34,9 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, variant, label, id, ...props }, ref) => {
     return (
-      <div>
+      <div className="w-full">
         {label && (
-          <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor={id} className="block text-sm font-medium text-foreground mb-1">
             {label}
           </label>
         )}
@@ -75,6 +75,8 @@ export { Input };
  *   gestionar la variante de 'error', que cambia visualmente el borde del
  *   input para proporcionar retroalimentación clara al usuario sobre
  *   errores de validación.
+ * - Soporte de Temas: Utiliza variables semánticas (bg-background, border-input, text-foreground)
+ *   para integrarse con los temas Claro, Oscuro y Solarized.
  *
  * Dependencias Externas:
  * - 'react': Para la creación del componente.

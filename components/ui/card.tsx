@@ -3,11 +3,11 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
-  "bg-white shadow-md rounded-lg overflow-hidden",
+  "bg-card text-card-foreground shadow-md rounded-lg overflow-hidden",
   {
     variants: {
       accentColor: {
-        default: "border-t-4 border-t-gray-200",
+        default: "border-t-4 border-t-border",
         teal: "border-t-4 border-t-teal-500",
         orange: "border-t-4 border-t-orange-500",
         yellow: "border-t-4 border-t-yellow-400",
@@ -42,7 +42,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("p-4 border-b border-gray-200 flex flex-col space-y-1.5", className)}
+    className={cn("p-4 border-b border-border flex flex-col space-y-1.5", className)}
     {...props}
   />
 ))
@@ -54,7 +54,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("text-lg font-semibold text-gray-800 leading-none tracking-tight", className)}
+    className={cn("text-lg font-semibold text-foreground leading-none tracking-tight", className)}
     {...props}
   />
 ))
@@ -66,7 +66,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-gray-500", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
@@ -109,6 +109,8 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
  *   (teal, orange, purple, etc.) para categorizar visualmente las tarjetas,
  *   manteniendo compatibilidad total con la API estándar de shadcn (CardHeader, CardContent).
  * - ForwardRefs: Todos los subcomponentes exponen refs para máxima flexibilidad.
+ * - Soporte de Temas: Utiliza variables semánticas (bg-card, text-card-foreground)
+ *   para adaptarse automáticamente a los temas Light, Dark y Solarized.
  *
  * **Dependencias Externas:**
  * - React, class-variance-authority (cva).

@@ -24,8 +24,8 @@ export function NavbarPublic() {
               key={link.href}
               href={link.href}
               className={`font-semibold text-base transition-colors pb-1 border-b-2 ${isActive
-                ? "text-purple-600 border-purple-600"
-                : "text-gray-700 border-transparent hover:text-purple-600"
+                ? "text-primary border-primary"
+                : "text-foreground/70 border-transparent hover:text-primary"
                 }`}
             >
               {link.label}
@@ -38,13 +38,13 @@ export function NavbarPublic() {
       <div className="flex items-center gap-2 sm:gap-3">
         <Link
           href="/login"
-          className="px-2 sm:px-4 py-2 text-sm sm:text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors"
+          className="px-2 sm:px-4 py-2 text-sm sm:text-base font-semibold text-foreground/70 hover:text-primary transition-colors"
         >
           Iniciar Sesión
         </Link>
         <Link
           href="/register"
-          className="px-3 sm:px-6 py-2 text-sm sm:text-base bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors"
+          className="px-3 sm:px-6 py-2 text-sm sm:text-base bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
         >
           Registrarse
         </Link>
@@ -64,6 +64,7 @@ export function NavbarPublic() {
  * Lógica Clave:
  * - 'PUBLIC_LINKS': Se importa un array de constantes que contiene los objetos de enlace para la navegación pública. Se utiliza '.slice(0, 4)' para mostrar solo los primeros cuatro enlaces en la barra principal.
  * - 'usePathname': El hook de Next.js se utiliza para determinar cuál es el enlace activo y aplicarle un estilo visual distintivo (subrayado de color púrpura) para mejorar la usabilidad.
+ * - Soporte de Temas: Utiliza variables semánticas (text-primary, bg-primary, text-foreground) para adaptarse a los temas Claro, Oscuro y Solarized.
  *
  * Dependencias Externas:
  * - 'next/navigation': Para el hook 'usePathname'.
