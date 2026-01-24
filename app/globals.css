@@ -63,11 +63,11 @@
 
 .solarized-light {
   --background: #fdf6e3;
-  --foreground: #657b83;
+  --foreground: #586e75;
   --card: #eee8d5;
-  --card-foreground: #657b83;
+  --card-foreground: #586e75;
   --popover: #fdf6e3;
-  --popover-foreground: #657b83;
+  --popover-foreground: #586e75;
   --primary: #7C3AED;
   --primary-foreground: #ffffff;
   --secondary: #eee8d5;
@@ -88,11 +88,11 @@
 
 .solarized-dark {
   --background: #002b36;
-  --foreground: #839496;
+  --foreground: #93a1a1;
   --card: #073642;
-  --card-foreground: #839496;
+  --card-foreground: #93a1a1;
   --popover: #002b36;
-  --popover-foreground: #839496;
+  --popover-foreground: #93a1a1;
   --primary: #7C3AED;
   --primary-foreground: #ffffff;
   --secondary: #073642;
