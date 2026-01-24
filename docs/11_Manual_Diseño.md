@@ -110,62 +110,27 @@ El diseño de PawLig se fundamenta en tres pilares:
 
 ## 3. Paleta de colores
 
-### 3.1. Colores primarios
+### 3.1. Colores de Marca (Tailwind CSS)
 
-**Púrpura Principal**
+**Púrpura (Primario)**
+- **Clase Base**: `purple-600` (`#7C3AED`)
+- **Escala**: 50 (`#faf5ff`) a 900 (`#581c87`)
+- **Uso**: Identidad visual, botones principales, acentos de marca.
 
-- HEX: `#7C3AED`
-- RGB: 124, 58, 237
-- Uso: Botones principales, navbar, CTAs, enlaces primarios
-- Justificación: Transmite autoridad, cuidado y dignidad. Color principal de marca.
+**Fondo y Texto (Global)**
+- **Background**: `#ffffff` (Blanco)
+- **Foreground**: `#171717` (Gris casi negro)
+- **Uso**: Definido en `:root` de `globals.css` para toda la aplicación.
 
-**Gris Oscuro**
+### 3.2. Colores Semánticos (UI Components)
 
-- HEX: `#2D3748`
-- RGB: 45, 55, 72
-- Uso: Textos principales, títulos, contenido de lectura
-- Justificación: Alto contraste sobre fondo blanco (ratio 12.6:1), legibilidad óptima.
+- **Éxito**: Verde (`green-600`) - Usado en notificaciones de éxito y estados positivos.
+- **Error**: Rojo (`red-600`) - Usado en validaciones y alertas críticas.
+- **Advertencia**: Amarillo (`yellow-600`) - Usado en estados pendientes o avisos.
+- **Información**: Azul (`blue-600`) - Usado en guías y sugerencias.
+- **Acento Adoptante**: Naranja (`orange-600`) - Usado específicamente en elementos de la marca PawLig.
 
-### 3.2. Colores secundarios
-
-**Amarillo / Dorado**
-
-- HEX: `#F59E0B`
-- RGB: 245, 158, 11
-- Uso: Iconos de esperanza, badges de destacados, alertas informativas
-- Justificación: Optimismo, energía, esperanza de encontrar hogar.
-
-**Verde Azulado (Teal)**
-
-- HEX: `#14B8A6`
-- RGB: 20, 184, 166
-- Uso: Iconos de animales, badges "Disponible", confirmaciones
-- Justificación: Naturaleza, vida, bienestar animal.
-
-**Rosa / Magenta**
-
-- HEX: `#EC4899`
-- RGB: 236, 72, 153
-- Uso: Iconos de corazón, favoritos, acciones de "me gusta"
-- Justificación: Amor, compasión, conexión emocional.
-
-**Naranja**
-
-- HEX: `#F97316`
-- RGB: 249, 115, 22
-- Uso: Iconos de comunidad, actividad reciente, notificaciones
-- Justificación: Comunidad, calidez, actividad social.
-
-### 3.3. Colores neutrales
-
-| Nombre         | HEX       | RGB           | Uso                                                           |
-| -------------- | --------- | ------------- | ------------------------------------------------------------- |
-| Blanco         | `#FFFFFF` | 255, 255, 255 | Fondo principal de páginas, fondo de modales y cards elevadas |
-| Gris Muy Claro | `#F3F4F6` | 243, 244, 246 | Fondo secundario, fondo de cards, secciones alternadas        |
-| Gris Claro     | `#E5E7EB` | 229, 231, 235 | Bordes sutiles, divisores, líneas de separación               |
-| Gris Medio     | `#6B7280` | 107, 114, 128 | Textos secundarios, descripciones, metadata                   |
-
-### 3.4. Aplicación de colores por contexto
+### 3.3. Aplicación de colores por contexto
 
 - **Módulo de Adopción**:
   - Dominante: Púrpura `#7C3AED`
@@ -191,28 +156,15 @@ El diseño de PawLig se fundamenta en tres pilares:
 
 ### 4.1. Fuentes seleccionadas
 
-- **Fuente Principal**: Sans-serif moderna (estilo Poppins/Inter)
-- **Heading font**: Poppins
-- **Body font**: Inter
-- **Fallback**: `system-ui, -apple-system, sans-serif`
-
-**Justificación**:
-
-- Poppins: Geométrica, redondeada, transmite calidez y modernidad.
-- Inter: Excelente legibilidad en pantallas, diseñada específicamente para interfaces.
-- Ambas disponibles gratuitamente en Google Fonts y optimizadas para renderizado web.
+- **Fuente Sans (Principal)**: `Inter` (definida como fuente base en Tailwind y globals.css).
+- **Fuente Poppins**: `Poppins` (usada para títulos destacados y branding).
+- **Fuente Geist**: `Geist Sans` y `Geist Mono` (configuradas como variables locales para optimización).
 
 ### 4.2. Jerarquía tipográfica
 
-| Elemento                 | Fuente           | Tamaño (Desktop / Mobile) | Uso                                                      |
-| ------------------------ | ---------------- | ------------------------- | -------------------------------------------------------- |
-| H1 – Título Hero         | Poppins Bold     | 48px / 36px               | Título principal de landing page, mensajes heroicos      |
-| H2 – Títulos Sección     | Poppins Bold     | 32px / 28px               | “¿Por qué adoptar?”, “Conoce a quienes buscan un hogar”  |
-| H3 – Títulos Cards       | Poppins Semibold | 20px                      | Títulos de tarjetas de mascotas, nombres de productos    |
-| H4 – Títulos Menores     | Inter Semibold   | 18px                      | Subtítulos dentro de formularios, secciones de dashboard |
-| Body – Texto Principal   | Inter Regular    | 16px                      | Descripciones de mascotas, contenido de artículos        |
-| Small – Texto Secundario | Inter Regular    | 14px                      | Subtítulos, metadata (ubicación, fecha)                  |
-| Caption – Etiquetas      | Inter Regular    | 12px                      | Labels de formularios, disclaimers                       |
+- **Títulos (H1, H2, H3)**: Utilizan predominantemente `font-poppins` con pesos `bold` o `semibold`.
+- **Cuerpo de texto**: Utiliza `Inter` para máxima legibilidad.
+- **Código y Datos Técnicos**: Utiliza `Geist Mono`.
 
 ### 4.3. Tamaños y pesos
 
@@ -253,6 +205,23 @@ El diseño de PawLig se fundamenta en tres pilares:
 ---
 
 ## 5. Componentes de interfaz
+
+### 5.0. Componentes Implementados (UI Library)
+
+Basados en una arquitectura de componentes reutilizables y estilizados con `class-variance-authority`:
+
+- **Button**: Botones altamente configurables con variantes (default, destructive, outline, secondary, ghost, link) y tamaños (default, sm, lg, icon).
+- **Input & Label**: Campos de texto estandarizados con soporte para estados de error.
+- **Card**: Contenedores con sombra y bordes redondeados para agrupar información.
+- **Badge**: Etiquetas de estado (Disponible, En Proceso, Adoptado) con colores semánticos.
+- **Dialog & Alert-Dialog**: Ventanas modales para interacciones críticas y confirmaciones.
+- **Select & Radio-Group**: Elementos de selección para formularios.
+- **Checkbox**: Control de selección binaria.
+- **Table**: Estructura de datos tabulares para paneles administrativos.
+- **Favorite-Button**: Componente especializado con animación para marcar favoritos.
+- **Confetti-Button**: Botón con efecto visual de celebración tras éxito.
+- **Loader**: Indicadores visuales de carga (Spinners).
+- **Logo**: Componente central de identidad de marca.
 
 ### 5.1. Botones
 
@@ -370,8 +339,8 @@ El diseño de PawLig se fundamenta en tres pilares:
 
 ### 5.5. Iconografía
 
-**Librería**: Lucide React (`npm install lucide-react`)  
-**Estilo**: Line icons (outlined) y filled según contexto  
+**Librería**: Lucide React (`npm install lucide-react`)
+**Estilo**: Line icons (outlined) y filled según contexto
 **Tamaños**:
 
 - Pequeño: 16px
