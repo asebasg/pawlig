@@ -35,8 +35,8 @@ export default async function ShelterDashboardPage() {
     return (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Dashboard del Albergue</h1>
-                <p className="text-lg text-gray-600">Gestiona tus mascotas, postulaciones y ver estadísticas de adopciones</p>
+                <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard del Albergue</h1>
+                <p className="text-lg text-muted-foreground">Gestiona tus mascotas, postulaciones y ver estadísticas de adopciones</p>
             </div>
 
             <ShelterDashboardClient userSession={{

@@ -88,7 +88,7 @@ export default function ChangelogPage() {
                     <History className="text-primary" size={40} />
                 </div>
                 <div>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Notas de Lanzamiento</h1>
+                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-2">Notas de Lanzamiento</h1>
                     <p className="text-slate-500 font-medium">Sigue la evolución de PawLig: actualizaciones, mejoras y correcciones</p>
                 </div>
             </div>
@@ -97,7 +97,7 @@ export default function ChangelogPage() {
                 {/* Navegación Lateral (Versiones) */}
                 <aside className="hidden lg:block space-y-4 sticky top-24 h-fit">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Versiones</h3>
-                    <nav className="flex flex-col gap-3 text-sm font-medium text-slate-600">
+                    <nav className="flex flex-col gap-3 text-sm font-medium text-muted-foreground">
                         {versions.map((v) => (
                             <a
                                 key={v.version}
@@ -118,8 +118,8 @@ export default function ChangelogPage() {
                     {versions.map((v) => (
                         <section key={v.version} id={v.version} className="scroll-mt-24">
                             <div className="flex flex-wrap items-baseline gap-4 mb-6">
-                                <h2 className="text-3xl font-extrabold text-slate-900">{v.version}</h2>
-                                <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full uppercase tracking-wider">
+                                <h2 className="text-3xl font-extrabold text-foreground">{v.version}</h2>
+                                <span className="flex items-center gap-1.5 px-3 py-1 bg-muted text-muted-foreground text-xs font-bold rounded-full uppercase tracking-wider">
                                     <Calendar size={14} />
                                     {v.date}
                                 </span>
@@ -127,18 +127,18 @@ export default function ChangelogPage() {
 
                             <div className="mb-8">
                                 <h3 className="text-xl font-bold text-slate-800 mb-2">{v.title}</h3>
-                                <p className="text-slate-600 leading-relaxed">{v.description}</p>
+                                <p className="text-muted-foreground leading-relaxed">{v.description}</p>
                             </div>
 
                             <div className="space-y-4">
                                 {v.updates.map((update, idx) => (
-                                    <div key={idx} className="group p-5 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/20 transition-all">
+                                    <div key={idx} className="group p-5 bg-card border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/20 transition-all">
                                         <div className="flex items-start gap-4">
-                                            <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-primary/5 transition-colors">
+                                            <div className="p-2 bg-muted rounded-xl group-hover:bg-primary/5 transition-colors">
                                                 {update.icon}
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-slate-900 mb-1">{update.title}</h4>
+                                                <h4 className="font-bold text-foreground mb-1">{update.title}</h4>
                                                 <p className="text-sm text-slate-500 leading-relaxed">{update.description}</p>
                                             </div>
                                         </div>
@@ -161,7 +161,7 @@ export default function ChangelogPage() {
                             <span className="text-xs font-semibold">https://github.com/asebasg/pawlig</span>
                             <Link
                                 href="https://github.com/asebasg/pawlig/issues/new/choose"
-                                className="flex items-center px-6 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-primary hover:text-yellow-400 transition-all uppercase tracking-widest"
+                                className="flex items-center px-6 py-2 bg-card text-foreground text-xs font-bold rounded-lg hover:bg-primary hover:text-yellow-400 transition-all uppercase tracking-widest"
                             >
                                 <Sparkles className="mr-2 text-amber-500" size={18} />
                                 Enviar Sugerencia

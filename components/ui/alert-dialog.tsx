@@ -59,7 +59,7 @@ const AlertDialogContent = React.forwardRef<
             <AlertDialogOverlay onClick={() => onOpenChange?.(false)} />
             <div
                 ref={ref}
-                className={`relative z-50 grid w-full max-w-lg gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg md:w-full ${className || ""}`}
+                className={`relative z-50 grid w-full max-w-lg gap-4 border bg-card p-6 shadow-lg duration-200 sm:rounded-lg md:w-full ${className || ""}`}
                 {...props}
             />
         </div>
@@ -107,7 +107,7 @@ const AlertDialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <p
         ref={ref}
-        className={`text-sm text-gray-500 ${className || ""}`}
+        className={`text-sm text-muted-foreground ${className || ""}`}
         {...props}
     />
 ))
@@ -128,7 +128,7 @@ const AlertDialogAction = React.forwardRef<
                 // Comportamiento estándar: generalmente el desarrollador lo cierra manualmente si está controlado.
                 // ¿Pero sigamos el comportamiento estándar de los botones HTML dentro de un formulario/diálogo?
             }}
-            className={`inline-flex h-10 items-center justify-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className || ""}`}
+            className={`inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className || ""}`}
             {...props}
         />
     )
@@ -148,7 +148,7 @@ const AlertDialogCancel = React.forwardRef<
                 onClick?.(e)
                 onOpenChange?.(false)
             }}
-            className={`mt-2 inline-flex h-10 items-center justify-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:mt-0 ${className || ""}`}
+            className={`mt-2 inline-flex h-10 items-center justify-center rounded-md border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:mt-0 ${className || ""}`}
             {...props}
         />
     )

@@ -31,7 +31,7 @@ export default function AdopterDashboardClient({
   if (!userSession?.id) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Error: No se pudo cargar la información del usuario</p>
+        <p className="text-muted-foreground">Error: No se pudo cargar la información del usuario</p>
       </div>
     );
   }
@@ -39,12 +39,12 @@ export default function AdopterDashboardClient({
   return (
     <div className="w-full">
       {/* Navigation Tabs */}
-      <div className="flex gap-2 mb-8 border-b border-gray-200">
+      <div className="flex gap-2 mb-8 border-b border-border">
         <button
           onClick={() => setActiveTab('adoptions')}
           className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'adoptions'
-            ? 'border-purple-600 text-purple-600'
-            : 'border-transparent text-gray-600 hover:text-gray-900'
+            ? 'border-purple-600 text-primary'
+            : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
         >
           <ClipboardClock size={24} className="mr-2" />
@@ -53,8 +53,8 @@ export default function AdopterDashboardClient({
         <button
           onClick={() => setActiveTab('favorites')}
           className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'favorites'
-            ? 'border-purple-600 text-purple-600'
-            : 'border-transparent text-gray-600 hover:text-gray-900'
+            ? 'border-purple-600 text-primary'
+            : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
         >
           <HeartPlus size={24} className='mr-2' />
@@ -63,8 +63,8 @@ export default function AdopterDashboardClient({
         <button
           onClick={() => setActiveTab('cart')}
           className={`flex flex-inline px-4 py-3 font-medium transition border-b-2 ${activeTab === 'cart'
-            ? 'border-purple-600 text-purple-600'
-            : 'border-transparent text-gray-600 hover:text-gray-900'
+            ? 'border-purple-600 text-primary'
+            : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
         >
           <ShoppingCart size={24} className="mr-2" />

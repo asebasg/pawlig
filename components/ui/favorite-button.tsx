@@ -58,12 +58,12 @@ export function FavoriteButton({ petId, initialIsFavorited, userSession }: Favor
         <button
             onClick={handleFavoriteClick}
             disabled={isLoadingFavorite}
-            className="absolute top-0 right-0 p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition disabled:opacity-50 z-20 group/heart"
+            className="absolute top-0 right-0 p-2 bg-card rounded-full shadow-sm hover:bg-muted transition disabled:opacity-50 z-20 group/heart"
             title={isFav ? 'Remover de favoritos' : 'Agregar a favoritos'}
             type="button"
         >
             <Heart
-                className={`w-5 h-5 transition-all ${isFav ? 'fill-red-500 text-red-500' : 'text-gray-600'
+                className={`w-5 h-5 transition-all ${isFav ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
                     } group-hover/heart:scale-110`}
             />
         </button>

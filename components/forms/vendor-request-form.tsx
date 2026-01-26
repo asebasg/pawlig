@@ -102,12 +102,12 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
             {/* Sección: Datos del Representante */}
             <fieldset className="space-y-4 border-b pb-6">
-                <legend className="text-lg font-semibold text-gray-900 mb-4">
+                <legend className="text-lg font-semibold text-foreground mb-4">
                     Datos del Representante
                 </legend>
 
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-1">
                         Nombre Completo <span className='text-red-500 font-bold'>*</span>
                     </label>
                     <input
@@ -116,7 +116,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                         id="name"
                         readOnly={!!userProfile?.name}
                         className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.name ? 'border-red-500' : 'border-gray-300'
-                            } ${userProfile?.name ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                            } ${userProfile?.name ? 'bg-muted cursor-not-allowed' : ''}`}
                         placeholder="Juan Pérez García"
                     />
                     {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
@@ -124,7 +124,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="idNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="idNumber" className="block text-sm font-medium text-muted-foreground mb-1">
                             Número de Identificación <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -133,14 +133,14 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             id="idNumber"
                             readOnly={!!userProfile?.idNumber}
                             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.idNumber ? 'border-red-500' : 'border-gray-300'
-                                } ${userProfile?.idNumber ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                } ${userProfile?.idNumber ? 'bg-muted cursor-not-allowed' : ''}`}
                             placeholder="1234567890"
                         />
                         {errors.idNumber && <p className="text-red-600 text-sm mt-1">{errors.idNumber.message}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="birthDate" className="block text-sm font-medium text-muted-foreground mb-1">
                             Fecha de Nacimiento <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -149,7 +149,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             id="birthDate"
                             readOnly={!!userProfile?.birthDate}
                             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.birthDate ? 'border-red-500' : 'border-gray-300'
-                                } ${userProfile?.birthDate ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                } ${userProfile?.birthDate ? 'bg-muted cursor-not-allowed' : ''}`}
                         />
                         {errors.birthDate && <p className="text-red-600 text-sm mt-1">{errors.birthDate.message}</p>}
                     </div>
@@ -157,7 +157,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-1">
                             Email <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -166,14 +166,14 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             id="email"
                             readOnly={!!userProfile?.email}
                             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'
-                                } ${userProfile?.email ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                } ${userProfile?.email ? 'bg-muted cursor-not-allowed' : ''}`}
                             placeholder="usuario@ejemplo.com"
                         />
                         {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
                     </div>
 
                     <div>
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground mb-1">
                             Teléfono <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -182,7 +182,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             id="phone"
                             readOnly={!!userProfile?.phone}
                             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'
-                                } ${userProfile?.phone ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                } ${userProfile?.phone ? 'bg-muted cursor-not-allowed' : ''}`}
                             placeholder="+573001234567"
                         />
                         {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>}
@@ -191,7 +191,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="municipality" className="block text-sm font-medium text-muted-foreground mb-1">
                             Municipio <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <select
@@ -199,7 +199,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             id="municipality"
                             disabled={!!userProfile?.municipality}
                             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.municipality ? 'border-red-500' : 'border-gray-300'
-                                } ${userProfile?.municipality ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                } ${userProfile?.municipality ? 'bg-muted cursor-not-allowed' : ''}`}
                         >
                             <option value="">Selecciona un municipio</option>
                             {Object.values($Enums.Municipality).map((mun) => (
@@ -212,7 +212,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                     </div>
 
                     <div>
-                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="address" className="block text-sm font-medium text-muted-foreground mb-1">
                             Dirección <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -221,7 +221,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             id="address"
                             readOnly={!!userProfile?.address}
                             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.address ? 'border-red-500' : 'border-gray-300'
-                                } ${userProfile?.address ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                } ${userProfile?.address ? 'bg-muted cursor-not-allowed' : ''}`}
                             placeholder="Calle 10 #20-30 Apto 405"
                         />
                         {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>}
@@ -230,7 +230,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="password" className="block text-sm font-medium text-muted-foreground mb-1">
                             Contraseña <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -260,12 +260,12 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
             {/* Sección: Datos del Negocio */}
             <fieldset className="space-y-4 border-b pb-6">
-                <legend className="text-lg font-semibold text-gray-900 mb-4">
+                <legend className="text-lg font-semibold text-foreground mb-4">
                     Datos del Negocio o Emprendimiento
                 </legend>
 
                 <div>
-                    <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="businessName" className="block text-sm font-medium text-muted-foreground mb-1">
                         Nombre del Negocio <span className='text-red-500 font-bold'>*</span>
                     </label>
                     <input
@@ -281,7 +281,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="businessMunicipality" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="businessMunicipality" className="block text-sm font-medium text-muted-foreground mb-1">
                             Municipio del Negocio <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <select
@@ -303,7 +303,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                     </div>
 
                     <div>
-                        <label htmlFor="businessAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="businessAddress" className="block text-sm font-medium text-muted-foreground mb-1">
                             Dirección del Negocio <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -319,7 +319,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                 </div>
 
                 <div>
-                    <label htmlFor="businessDescription" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="businessDescription" className="block text-sm font-medium text-muted-foreground mb-1">
                         Descripción del Negocio
                     </label>
                     <textarea
@@ -337,7 +337,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="businessPhone" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="businessPhone" className="block text-sm font-medium text-muted-foreground mb-1">
                             Teléfono o WhatsApp de Contacto <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <input
@@ -360,14 +360,14 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                 <button
                     type="button"
                     onClick={() => window.history.back()}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition"
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-muted-foreground font-medium hover:bg-muted transition"
                 >
                     Cancelar
                 </button>
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
                 >
                     {isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
                 </button>

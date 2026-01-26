@@ -28,10 +28,10 @@ interface AuditHistoryCardProps {
 }
 
 const actionDetails = {
-  [AuditAction.CHANGE_ROLE]: { icon: Shield, text: "Cambio de Rol", color: "text-purple-600" },
+  [AuditAction.CHANGE_ROLE]: { icon: Shield, text: "Cambio de Rol", color: "text-primary" },
   [AuditAction.BLOCK]: { icon: UserX, text: "Bloqueo de Usuario", color: "text-red-600" },
   [AuditAction.UNBLOCK]: { icon: CheckCircle, text: "Desbloqueo de Usuario", color: "text-green-600" },
-  [AuditAction.DELETE]: { icon: Trash2, text: "Eliminación de Usuario", color: "text-gray-600" },
+  [AuditAction.DELETE]: { icon: Trash2, text: "Eliminación de Usuario", color: "text-muted-foreground" },
 };
 
 export function AuditHistoryCard({ auditRecords }: AuditHistoryCardProps) {
@@ -57,7 +57,7 @@ export function AuditHistoryCard({ auditRecords }: AuditHistoryCardProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         {auditRecords.length === 0 ? (
-          <p className="text-gray-500">No hay registros de auditoría para este usuario.</p>
+          <p className="text-muted-foreground">No hay registros de auditoría para este usuario.</p>
         ) : (
           <ul className="divide-y divide-gray-200">
             {auditRecords.map((record, index) => {
@@ -71,16 +71,16 @@ export function AuditHistoryCard({ auditRecords }: AuditHistoryCardProps) {
                       <div>
                         <p className={`font-semibold ${details.color}`}>{details.text}</p>
                         {record.action === AuditAction.CHANGE_ROLE && (
-                          <p className="text-sm font-mono text-gray-700">
+                          <p className="text-sm font-mono text-muted-foreground">
                             {record.oldValue} → {record.newValue}
                           </p>
                         )}
-                        <p className="text-sm text-gray-600 mt-1">Razón: {record.reason}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Razón: {record.reason}</p>
                       </div>
                     </div>
-                    <span className="text-xs text-gray-500">{formatDate(record.createdAt)}</span>
+                    <span className="text-xs text-muted-foreground">{formatDate(record.createdAt)}</span>
                   </div>
-                  <div className="mt-2 pl-8 text-xs text-gray-500">
+                  <div className="mt-2 pl-8 text-xs text-muted-foreground">
                     <p>Realizado por: {record.performedBy.name} ({record.performedBy.email})</p>
                     {record.ipAddress && <p>IP: {record.ipAddress}</p>}
                   </div>

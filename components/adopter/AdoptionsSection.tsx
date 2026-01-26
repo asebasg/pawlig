@@ -100,14 +100,14 @@ export default function AdoptionsSection() {
   );
 
   return (
-    <section className="bg-white rounded-lg shadow-sm p-6">
+    <section className="bg-card rounded-lg shadow-sm p-6">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="flex flex-inline items-center text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="flex flex-inline items-center text-2xl font-bold text-foreground mb-2">
           <ClipboardClock size={26} className="mr-2" />
           Mis Solicitudes de Adopción
         </h2>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           {adoptions.length === 0
             ? 'No tienes solicitudes de adopción'
             : `Tienes ${adoptions.length} solicitud${adoptions.length !== 1 ? 'es' : ''}`}
@@ -151,8 +151,8 @@ export default function AdoptionsSection() {
               key={filter.value}
               onClick={() => setSelectedStatus(filter.value)}
               className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${selectedStatus === filter.value
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-primary text-white'
+                : 'bg-muted text-muted-foreground hover:bg-muted'
                 }`}
             >
               {filter.label}
@@ -165,14 +165,14 @@ export default function AdoptionsSection() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-12">
           <Loader />
-          <p className="text-gray-500">Cargando solicitudes...</p>
+          <p className="text-muted-foreground">Cargando solicitudes...</p>
         </div>
       ) : error ? (
         <div className="text-center py-12">
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="text-purple-600 hover:underline"
+            className="text-primary hover:underline"
           >
             Intentar nuevamente
           </button>
@@ -180,20 +180,20 @@ export default function AdoptionsSection() {
       ) : adoptions.length === 0 ? (
         <div className="text-center py-12">
           <Clock className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 mb-2">No tienes solicitudes de adopción</p>
-          <p className="text-sm text-gray-400 mb-4">
+          <p className="text-muted-foreground mb-2">No tienes solicitudes de adopción</p>
+          <p className="text-sm text-muted-foreground/50 mb-4">
             Cuando hagas una solicitud de adopción, aparecerá aquí
           </p>
           <Link
             href="/adopciones"
-            className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+            className="inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition"
           >
             Explorar mascotas
           </Link>
         </div>
       ) : filteredAdoptions.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             No tienes solicitudes con estado: {selectedStatus}
           </p>
         </div>

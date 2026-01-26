@@ -37,12 +37,12 @@
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --card: #0a0a0a;
-  --card-foreground: #ededed;
-  --popover: #0a0a0a;
-  --popover-foreground: #ededed;
+  --background: #0C0C0E;
+  --foreground: #F5F5F7;
+  --card: #1A1A1E;
+  --card-foreground: #F5F5F7;
+  --popover: #0C0C0E;
+  --popover-foreground: #F5F5F7;
   --primary: #a78bfa;
   --primary-foreground: #ffffff;
   --secondary: #27272a;
@@ -56,24 +56,24 @@
   --border: #27272a;
   --input: #27272a;
   --ring: #a78bfa;
-  --footer: #111827;
+  --footer: #0C0C0E;
   --footer-foreground: #ffffff;
   --footer-muted: #9ca3af;
 }
 
 .solarized-light {
   --background: #fdf6e3;
-  --foreground: #586e75;
+  --foreground: #002b36;
   --card: #eee8d5;
-  --card-foreground: #586e75;
+  --card-foreground: #073642;
   --popover: #fdf6e3;
-  --popover-foreground: #586e75;
+  --popover-foreground: #002b36;
   --primary: #7C3AED;
   --primary-foreground: #ffffff;
   --secondary: #eee8d5;
   --secondary-foreground: #586e75;
   --muted: #eee8d5;
-  --muted-foreground: #93a1a1;
+  --muted-foreground: #657b83;
   --accent: #eee8d5;
   --accent-foreground: #586e75;
   --destructive: #dc322f;
@@ -82,23 +82,23 @@
   --input: #d5cfbb;
   --ring: #7C3AED;
   --footer: #073642;
-  --footer-foreground: #93a1a1;
-  --footer-muted: #839496;
+  --footer-foreground: #eee8d5;
+  --footer-muted: #93a1a1;
 }
 
 .solarized-dark {
   --background: #002b36;
-  --foreground: #93a1a1;
+  --foreground: #fdf6e3;
   --card: #073642;
-  --card-foreground: #93a1a1;
+  --card-foreground: #eee8d5;
   --popover: #002b36;
-  --popover-foreground: #93a1a1;
+  --popover-foreground: #fdf6e3;
   --primary: #7C3AED;
   --primary-foreground: #ffffff;
   --secondary: #073642;
   --secondary-foreground: #93a1a1;
   --muted: #073642;
-  --muted-foreground: #586e75;
+  --muted-foreground: #839496;
   --accent: #073642;
   --accent-foreground: #93a1a1;
   --destructive: #dc322f;
@@ -107,8 +107,8 @@
   --input: #08404f;
   --ring: #7C3AED;
   --footer: #073642;
-  --footer-foreground: #93a1a1;
-  --footer-muted: #839496;
+  --footer-foreground: #eee8d5;
+  --footer-muted: #93a1a1;
 }
 
 body {

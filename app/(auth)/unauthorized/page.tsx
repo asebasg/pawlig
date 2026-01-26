@@ -69,18 +69,18 @@ function UnauthorizedContent() {
   const message = messages[reason] || messages.unknown;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+    <div className="bg-card rounded-lg shadow-lg p-8 text-center">
       <div className="flex justify-center mb-6">
         <div className="bg-red-100 rounded-full p-4">
           <ShieldAlert className="w-12 h-12 text-red-600" />
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-3">
+      <h1 className="text-2xl font-bold text-foreground mb-3">
         {message.title}
       </h1>
 
-      <p className="text-gray-600 mb-4">
+      <p className="text-muted-foreground mb-4">
         {message.description}
       </p>
 
@@ -93,7 +93,7 @@ function UnauthorizedContent() {
       <div className="space-y-3">
         <Link
           href="/"
-          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition"
+          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition"
         >
           <Home className="w-5 h-5" />
           Volver al inicio
@@ -101,7 +101,7 @@ function UnauthorizedContent() {
 
         <button
           onClick={() => window.history.back()}
-          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-muted-foreground rounded-lg font-medium hover:bg-muted transition"
         >
           <ArrowLeft className="w-5 h-5" />
           Volver atrás
@@ -119,17 +119,17 @@ function UnauthorizedContent() {
  */
 export default function UnauthorizedPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-muted flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <Suspense fallback={
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center animate-pulse">
-            <div className="h-12 w-12 bg-gray-200 rounded-full mx-auto mb-6"></div>
-            <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-3"></div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-            <div className="h-16 bg-gray-100 rounded w-full mb-6"></div>
+          <div className="bg-card rounded-lg shadow-lg p-8 text-center animate-pulse">
+            <div className="h-12 w-12 bg-muted rounded-full mx-auto mb-6"></div>
+            <div className="h-6 bg-muted rounded w-3/4 mx-auto mb-3"></div>
+            <div className="h-4 bg-muted rounded w-full mb-4"></div>
+            <div className="h-16 bg-muted rounded w-full mb-6"></div>
             <div className="space-y-3">
-              <div className="h-12 bg-gray-200 rounded w-full"></div>
-              <div className="h-12 bg-gray-200 rounded w-full"></div>
+              <div className="h-12 bg-muted rounded w-full"></div>
+              <div className="h-12 bg-muted rounded w-full"></div>
             </div>
           </div>
         }>

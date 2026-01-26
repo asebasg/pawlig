@@ -52,11 +52,11 @@ export default function VendorDashboardClient({ userSession }: VendorDashboardCl
 
     return (
         <div className="space-y-2">
-            <div className="bg-white p-2 rounded-2xl mb-4">
-                <h2 className="text-2xl font-semibold text-gray-800">
+            <div className="bg-card p-2 rounded-2xl mb-4">
+                <h2 className="text-2xl font-semibold text-foreground">
                     ¡Hola de nuevo, <span className="text-primary">{userSession.name}</span>! 👋
                 </h2>
-                <p className="text-gray-500">¿Qué te gustaría gestionar hoy?</p>
+                <p className="text-muted-foreground">¿Qué te gustaría gestionar hoy?</p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -64,7 +64,7 @@ export default function VendorDashboardClient({ userSession }: VendorDashboardCl
                     <Link key={section.href} href={section.href} className="group">
                         <Card className="h-full transition-all duration-200 hover:shadow-lg hover:cursor-pointer border-2">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-xl font-bold text-gray-800">
+                                <CardTitle className="text-xl font-bold text-foreground">
                                     {section.title}
                                 </CardTitle>
                                 <div className={`${section.bgColor} p-3 rounded-xl transition-colors group-hover:bg-opacity-80`}>
@@ -72,7 +72,7 @@ export default function VendorDashboardClient({ userSession }: VendorDashboardCl
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <CardDescription className="text-sm text-gray-500 mb-6 min-h-[40px]">
+                                <CardDescription className="text-sm text-muted-foreground mb-6 min-h-[40px]">
                                     {section.description}
                                 </CardDescription>
                                 <div className="flex items-center text-sm font-semibold text-primary">

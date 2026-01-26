@@ -50,15 +50,15 @@ export function RoleChangeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-white">
+      <DialogContent className="sm:max-w-md bg-card">
         <DialogHeader className="flex flex-row items-center gap-4">
           <AlertTriangle className="w-8 h-8 text-red-600 shrink-0" />
-          <DialogTitle className="text-xl font-bold text-gray-800">
+          <DialogTitle className="text-xl font-bold text-foreground">
             Confirmación de cambio crítico
           </DialogTitle>
         </DialogHeader>
 
-        <div className="mt-4 text-gray-600 text-center">
+        <div className="mt-4 text-muted-foreground text-center">
           <p>{details?.message.replace("este usuario", `"${userName}"`)}</p>
           <p className="mt-2 font-semibold text-red-700 text-center">{details?.warning}</p>
         </div>

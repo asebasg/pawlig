@@ -36,12 +36,12 @@ const CartSection: React.FC = () => {
   };
 
   return (
-    <section className="max-w-4xl mx-auto p-6 bg-white shadow-sm rounded-xl">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Tu Carrito</h2>
+    <section className="max-w-4xl mx-auto p-6 bg-card shadow-sm rounded-xl">
+      <h2 className="text-2xl font-bold text-foreground mb-6">Tu Carrito</h2>
 
       {items.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-500 text-lg">Tu carrito está vacío.</p>
+          <p className="text-muted-foreground text-lg">Tu carrito está vacío.</p>
           <button className="mt-4 text-blue-600 font-medium hover:underline">
             Continuar comprando
           </button>
@@ -57,11 +57,11 @@ const CartSection: React.FC = () => {
                   alt={item.name}
                   width={80}
                   height={80}
-                  className="object-cover rounded-md bg-gray-100"
+                  className="object-cover rounded-md bg-muted"
                 />
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                  <p className="text-sm text-gray-500">Cantidad: {item.quantity}</p>
+                  <h3 className="font-semibold text-foreground">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground">Cantidad: {item.quantity}</p>
                   <button
                     onClick={() => removeItem(item.id)}
                     className="text-xs text-red-500 mt-2 hover:underline"
@@ -70,14 +70,14 @@ const CartSection: React.FC = () => {
                   </button>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-bold text-foreground">${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Resumen del Pedido */}
-          <div className="bg-gray-50 p-6 rounded-lg h-fit">
+          <div className="bg-muted p-6 rounded-lg h-fit">
             <h3 className="text-lg font-bold mb-4 border-b pb-2">Resumen</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">

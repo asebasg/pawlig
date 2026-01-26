@@ -214,11 +214,11 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
 
             {/* SECCIÓN 1: DATOS BÁSICOS */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Datos Básicos</h3>
+                <h3 className="text-lg font-semibold text-foreground">Datos Básicos</h3>
 
                 {/* Nombre */}
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-1">
                         Nombre del producto <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -236,7 +236,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Categoría */}
                     <div>
-                        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="category" className="block text-sm font-medium text-muted-foreground mb-1">
                             Categoría <span className="text-red-500">*</span>
                         </label>
                         <select
@@ -259,7 +259,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
 
                     {/* Stock */}
                     <div>
-                        <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="stock" className="block text-sm font-medium text-muted-foreground mb-1">
                             Stock disponible <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -278,7 +278,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
 
                 {/* Precio */}
                 <div>
-                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="price" className="block text-sm font-medium text-muted-foreground mb-1">
                         Precio ($) <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -298,11 +298,11 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
 
             {/* SECCIÓN 2: DESCRIPCIÓN */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Detalles</h3>
+                <h3 className="text-lg font-semibold text-foreground">Detalles</h3>
 
                 {/* Descripción */}
                 <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="description" className="block text-sm font-medium text-muted-foreground mb-1">
                         Descripción <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
@@ -324,7 +324,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                             <span className="text-xs">{isRefining ? "Refinando..." : "Refinar con IA"}</span>
                         </Button>
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-muted-foreground">
                         Caracteres: {watch("description")?.length || 0} / 1000
                     </p>
                     {errors.description && (
@@ -335,10 +335,10 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
 
             {/* SECCIÓN 3: IMÁGENES */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-foreground">
                     Imágenes del Producto <span className="text-red-500">*</span>
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                     Sube entre 1 y 5 imágenes. Formatos: JPEG, PNG, WEBP. Máximo 5MB por imagen.
                 </p>
 
@@ -352,7 +352,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                                     alt={`Imagen producto ${index + 1}`}
                                     width={300}
                                     height={300}
-                                    className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
+                                    className="w-full h-32 object-cover rounded-lg border-2 border-border"
                                 />
                                 <button
                                     type="button"
@@ -376,12 +376,12 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                         >
                             {uploadingImages ? (
                                 <>
-                                    <span className="text-sm font-medium text-purple-600">Subiendo imágenes...</span>
+                                    <span className="text-sm font-medium text-primary">Subiendo imágenes...</span>
                                 </>
                             ) : (
                                 <>
-                                    <Upload className="w-5 h-5 text-gray-600" />
-                                    <span className="text-sm font-medium text-gray-700">
+                                    <Upload className="w-5 h-5 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-muted-foreground">
                                         {images.length === 0 ? "Subir imágenes (mínimo 1)" : "Agregar más imágenes"}
                                     </span>
                                 </>
@@ -409,7 +409,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                 <button
                     type="button"
                     onClick={() => router.back()}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-muted-foreground font-medium hover:bg-muted transition-colors"
                     disabled={isSubmitting}
                 >
                     Cancelar
@@ -417,7 +417,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                 <button
                     type="submit"
                     disabled={isSubmitting || uploadingImages}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed transition-colors"
                 >
                     {isSubmitting ? (
                         <>

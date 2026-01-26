@@ -73,10 +73,10 @@ export default function NotFound() {
                     />
                 </div>
 
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                     ¡Ups! Página no encontrada
                 </h2>
-                <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
                     Parece que esta página se ha escapado como un cachorro travieso. No te preocupes, te ayudaremos a encontrar el camino de vuelta.
                 </p>
 
@@ -93,7 +93,7 @@ export default function NotFound() {
                     <Button
                         asChild
                         size="lg"
-                        className="bg-purple-600 hover:bg-purple-700"
+                        className="bg-primary hover:bg-primary/90"
                     >
                         <Link href="/">
                             <Home className="mr-2 h-5 w-5" />
@@ -104,7 +104,7 @@ export default function NotFound() {
             </div>
 
             <div className="mb-8">
-                <h3 className="text-xl font-semibold text-slate-900 text-center mb-6">
+                <h3 className="text-xl font-semibold text-foreground text-center mb-6">
                     ¿Buscabas algo de esto?
                 </h3>
 
@@ -123,7 +123,7 @@ export default function NotFound() {
                                 >
                                     <CardHeader>
                                         <div className="flex items-center gap-3 mb-2">
-                                            <div className="p-2 rounded-lg bg-slate-100 group-hover:bg-slate-200 transition-colors">
+                                            <div className="p-2 rounded-lg bg-muted group-hover:bg-slate-200 transition-colors">
                                                 <Icon className="w-5 h-5 text-slate-700" />
                                             </div>
                                         </div>
@@ -146,7 +146,7 @@ export default function NotFound() {
                     ¿Necesitas más ayuda?{" "}
                     <Link
                         href="/faq"
-                        className="text-purple-600 hover:text-purple-700 font-semibold hover:underline transition-all"
+                        className="text-primary hover:text-purple-700 font-semibold hover:underline transition-all"
                     >
                         Visita nuestro centro de ayuda
                     </Link>

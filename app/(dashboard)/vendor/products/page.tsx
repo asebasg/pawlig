@@ -180,12 +180,12 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
         <div className="container mx-auto py-8 px-4">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <Link href="/vendor" className="inline-flex items-center gap-2 mb-2 text-purple-600 hover:text-purple-700 text-sm font-semibold transition-colors">
+                    <Link href="/vendor" className="inline-flex items-center gap-2 mb-2 text-primary hover:text-purple-700 text-sm font-semibold transition-colors">
                         <ArrowLeft className="w-4 h-4" />
                         Volver al Dashboard
                     </Link>
                     <h1 className="text-3xl font-bold">Mis Productos</h1>
-                    <p className="text-gray-500">Gestiona y administra tu inventario de productos</p>
+                    <p className="text-muted-foreground">Gestiona y administra tu inventario de productos</p>
                 </div>
                 <Link
                     href="/vendor/products/new"

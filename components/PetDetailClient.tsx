@@ -193,7 +193,7 @@ export default function PetDetailClient({
         <Card className="mb-6 overflow-hidden" accentColor="none">
           <CardContent className="p-0">
             {/* Imagen Principal */}
-            <div className="relative h-96 bg-gray-200 overflow-hidden rounded-t-lg">
+            <div className="relative h-96 bg-muted overflow-hidden rounded-t-lg">
               {images.length > 0 ? (
                 <Image
                   src={images[currentImageIndex]}
@@ -204,7 +204,7 @@ export default function PetDetailClient({
                   priority
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground/50">
                   Sin foto disponible
                 </div>
               )}
@@ -214,17 +214,17 @@ export default function PetDetailClient({
                 <>
                   <button
                     onClick={goToPrevImage}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-card rounded-full p-2 shadow-md hover:bg-muted transition"
                     aria-label="Imagen anterior"
                   >
-                    <ChevronLeft className="w-6 h-6 text-gray-900" />
+                    <ChevronLeft className="w-6 h-6 text-foreground" />
                   </button>
                   <button
                     onClick={goToNextImage}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-card rounded-full p-2 shadow-md hover:bg-muted transition"
                     aria-label="Siguiente imagen"
                   >
-                    <ChevronRight className="w-6 h-6 text-gray-900" />
+                    <ChevronRight className="w-6 h-6 text-foreground" />
                   </button>
 
                   {/* Indicador de posición */}
@@ -237,12 +237,12 @@ export default function PetDetailClient({
 
             {/* Miniaturas de galería */}
             {hasMultipleImages && (
-              <div className="p-4 bg-gray-50 flex gap-2 overflow-x-auto">
+              <div className="p-4 bg-muted flex gap-2 overflow-x-auto">
                 {images.map((img, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${idx === currentImageIndex ? 'border-purple-600' : 'border-gray-200'
+                    className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${idx === currentImageIndex ? 'border-purple-600' : 'border-border'
                       }`}
                   >
                     <div className="relative w-full h-full">
@@ -272,7 +272,7 @@ export default function PetDetailClient({
                     "text-white border-0",
                     pet.status === 'AVAILABLE' && "bg-teal-500 hover:bg-teal-600",
                     pet.status === 'IN_PROCESS' && "bg-amber-500 hover:bg-amber-600",
-                    pet.status === 'ADOPTED' && "bg-gray-500 hover:bg-gray-600"
+                    pet.status === 'ADOPTED' && "bg-muted text-muted-foreground hover:bg-muted/80"
                   )}
                 >
                   {pet.status === 'AVAILABLE' ? 'Disponible' :
@@ -283,10 +283,10 @@ export default function PetDetailClient({
               <button
                 onClick={handleFavoriteClick}
                 disabled={isLoadingFavorite}
-                className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition disabled:opacity-50"
+                className="p-3 rounded-full bg-muted hover:bg-muted transition disabled:opacity-50"
               >
                 <Heart
-                  className={`w-6 h-6 ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600'
+                  className={`w-6 h-6 ${isFavorited ? 'fill-red-500 text-red-500' : 'text-muted-foreground'
                     }`}
                 />
               </button>
@@ -295,27 +295,27 @@ export default function PetDetailClient({
 
           <CardContent>
             {/* Características */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-6 border-b border-gray-200 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-6 border-b border-border mb-6">
               {/* Especie */}
               <div className="text-center">
-                <Info className="w-5 h-5 text-purple-600 mx-auto mb-2" />
-                <p className="text-sm text-gray-600">Especie</p>
-                <p className="font-semibold text-gray-900">{pet.species}</p>
+                <Info className="w-5 h-5 text-primary mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Especie</p>
+                <p className="font-semibold text-foreground">{pet.species}</p>
               </div>
 
               {/* Raza */}
               <div className="text-center">
-                <Info className="w-5 h-5 text-purple-600 mx-auto mb-2" />
-                <p className="text-sm text-gray-600">Raza</p>
-                <p className="font-semibold text-gray-900">{pet.breed || 'No especificada'}</p>
+                <Info className="w-5 h-5 text-primary mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Raza</p>
+                <p className="font-semibold text-foreground">{pet.breed || 'No especificada'}</p>
               </div>
 
               {/* Edad */}
               {pet.age && (
                 <div className="text-center">
-                  <Calendar className="w-5 h-5 text-purple-600 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">Edad</p>
-                  <p className="font-semibold text-gray-900">
+                  <Calendar className="w-5 h-5 text-primary mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">Edad</p>
+                  <p className="font-semibold text-foreground">
                     {pet.age} año{pet.age !== 1 ? 's' : ''}
                   </p>
                 </div>
@@ -324,17 +324,17 @@ export default function PetDetailClient({
               {/* Sexo */}
               {pet.sex && (
                 <div className="text-center">
-                  <Info className="w-5 h-5 text-purple-600 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">Sexo</p>
-                  <p className="font-semibold text-gray-900">{pet.sex}</p>
+                  <Info className="w-5 h-5 text-primary mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">Sexo</p>
+                  <p className="font-semibold text-foreground">{pet.sex}</p>
                 </div>
               )}
             </div>
 
             {/* Descripción */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">Sobre {pet.name}</h2>
-              <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+              <h2 className="text-xl font-semibold text-foreground mb-3">Sobre {pet.name}</h2>
+              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
                 {pet.description}
               </p>
             </div>
@@ -356,11 +356,11 @@ export default function PetDetailClient({
         <Card className="mb-6 sticky top-20" accentColor="none">
           <CardHeader>
             <div className="mb-6">
-              <CardTitle className="text-lg font-semibold text-gray-900 mb-2 text-center">Albergue</CardTitle>
-              <Link href={`#`} className="text-purple-600 hover:text-purple-700 font-semibold text-lg hover:underline block text-center">
+              <CardTitle className="text-lg font-semibold text-foreground mb-2 text-center">Albergue</CardTitle>
+              <Link href={`#`} className="text-primary hover:text-purple-700 font-semibold text-lg hover:underline block text-center">
                 {pet.shelter.name}
               </Link>
-              <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mt-1">
+              <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mt-1">
                 <MapPin className="w-4 h-4" />
                 <span>{pet.shelter.municipality}</span>
               </div>
@@ -370,23 +370,23 @@ export default function PetDetailClient({
           <CardContent>
             {/* Dirección */}
             {pet.shelter.address && (
-              <div className="mb-4 pb-4 border-b border-gray-200">
-                <p className="text-sm text-gray-600 mb-1">Ubicación</p>
-                <p className="text-sm text-gray-900">{pet.shelter.address}</p>
+              <div className="mb-4 pb-4 border-b border-border">
+                <p className="text-sm text-muted-foreground mb-1">Ubicación</p>
+                <p className="text-sm text-foreground">{pet.shelter.address}</p>
               </div>
             )}
 
             {/* Descripción del Albergue */}
             {pet.shelter.description && (
-              <div className="mb-6 pb-6 border-b border-gray-200">
-                <p className="text-sm text-gray-600 mb-2">Acerca del Albergue</p>
-                <p className="text-sm text-gray-700 line-clamp-3">{pet.shelter.description}</p>
+              <div className="mb-6 pb-6 border-b border-border">
+                <p className="text-sm text-muted-foreground mb-2">Acerca del Albergue</p>
+                <p className="text-sm text-muted-foreground line-clamp-3">{pet.shelter.description}</p>
               </div>
             )}
 
             {/* Contacto */}
-            <div className="mb-6 pb-6 border-b border-gray-200">
-              <p className="text-sm font-semibold text-gray-900 mb-3">Contactar Albergue</p>
+            <div className="mb-6 pb-6 border-b border-border">
+              <p className="text-sm font-semibold text-foreground mb-3">Contactar Albergue</p>
               <div className="flex flex-col gap-2">
                 {pet.shelter.contactWhatsApp && (
                   <a
@@ -420,7 +420,7 @@ export default function PetDetailClient({
                 disabled={isLoadingAdoption || adoptionSuccess}
                 className={cn(
                   "w-full py-6 text-base",
-                  adoptionSuccess ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-purple-600 hover:bg-purple-700'
+                  adoptionSuccess ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-primary hover:bg-primary/90'
                 )}
               >
                 {isLoadingAdoption ? (
@@ -432,15 +432,15 @@ export default function PetDetailClient({
                 )}
               </Button>
             ) : (
-              <div className="w-full py-3 px-4 rounded-lg bg-gray-100 text-gray-700 text-center font-semibold">
+              <div className="w-full py-3 px-4 rounded-lg bg-muted text-muted-foreground text-center font-semibold">
                 No disponible para adoptar
               </div>
             )}
 
             {/* Postulaciones */}
             {pet.adoptions.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-xs text-gray-600 text-center">
+              <div className="mt-6 pt-6 border-t border-border">
+                <p className="text-xs text-muted-foreground text-center">
                   {pet.adoptions.length} postulación{pet.adoptions.length !== 1 ? 'es' : ''} recibida{pet.adoptions.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -452,7 +452,7 @@ export default function PetDetailClient({
       {/* Mascotas Similares */}
       {similarPets.length > 0 && (
         <div className="lg:col-span-3 mt-12 border-t pt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Otras mascotas que podrían interesarte</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-8">Otras mascotas que podrían interesarte</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {similarPets.slice(0, 3).map((similarPet) => (
               <PetCard
@@ -460,7 +460,7 @@ export default function PetDetailClient({
                 pet={similarPet}
                 accentColor="none"
                 footer={
-                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                  <Button asChild className="w-full bg-primary hover:bg-primary/90">
                     <Link href={`/adopciones/${similarPet.id}`}>Ver detalles</Link>
                   </Button>
                 }

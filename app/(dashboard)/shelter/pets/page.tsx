@@ -115,18 +115,18 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-muted">
             {/* Header */}
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Header con título y botón */}
                 <div className="flex justify-between items-center mb-6">
-                    <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                    <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-primary hover:text-purple-700 text-base font-semibold">
                         <ArrowLeft className="w-4 h-4" />
                         Volver al Dashboard
                     </Link>
                     <div>
                         <h1 className="text-2xl font-bold">Mis Mascotas</h1>
-                        <p className="text-gray-500">Gestiona tus mascotas</p>
+                        <p className="text-muted-foreground">Gestiona tus mascotas</p>
                     </div>
                     <Link
                         href="/shelter/pets/new"
@@ -178,15 +178,15 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
             {/* Grid de Mascotas */}
             <div className="max-w-7xl mx-auto px-4 pb-8">
                 {pets.length === 0 ? (
-                    <div className="text-center py-16 bg-white rounded-lg">
-                        <p className="text-gray-600 text-lg mb-4">
+                    <div className="text-center py-16 bg-card rounded-lg">
+                        <p className="text-muted-foreground text-lg mb-4">
                             {statusFilter
                                 ? `No hay mascotas con estado "${statusFilter}"`
                                 : "Aún no has publicado mascotas"}
                         </p>
                         <Link
                             href="/shelter/pets/new"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
                         >
                             <Plus className="w-5 h-5" />
                             Publicar Mascota
@@ -208,8 +208,8 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
                                         key={p}
                                         href={`/shelter/pets?${statusFilter ? `status=${statusFilter}&` : ""}page=${p}`}
                                         className={`px-4 py-2 rounded-lg font-medium transition-colors ${p === page
-                                            ? "bg-purple-600 text-white"
-                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                            ? "bg-primary text-white"
+                                            : "bg-muted text-muted-foreground hover:bg-muted"
                                             }`}
                                     >
                                         {p}
@@ -245,10 +245,10 @@ function FilterButton(
     }
 ) {
     const colors = {
-        purple: active ? "bg-purple-600 text-white" : "bg-purple-100 text-purple-700 hover:bg-purple-200",
+        purple: active ? "bg-primary text-white" : "bg-purple-100 text-purple-700 hover:bg-purple-200",
         green: active ? "bg-green-600 text-white" : "bg-green-100 text-green-700 hover:bg-green-200",
         yellow: active ? "bg-yellow-600 text-white" : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
-        gray: active ? "bg-gray-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+        gray: active ? "bg-gray-600 text-white" : "bg-muted text-muted-foreground hover:bg-muted",
     };
 
     return (

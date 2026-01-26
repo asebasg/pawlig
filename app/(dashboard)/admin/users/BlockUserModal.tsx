@@ -81,25 +81,25 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
 
     return (
         <Dialog open={true} onOpenChange={handleOpenChange}>
-            <DialogContent className="sm:max-w-lg bg-white">
-                <DialogHeader className="flex flex-col items-center gap-4 border-b border-gray-200 pb-6">
+            <DialogContent className="sm:max-w-lg bg-card">
+                <DialogHeader className="flex flex-col items-center gap-4 border-b border-border pb-6">
                     <div className={`p-3 rounded-full ${user.isActive ? 'bg-red-100' : 'bg-green-100'}`}>
                         <AlertTriangle className={`w-10 h-10 ${user.isActive ? 'text-red-600' : 'text-green-600'}`} />
                     </div>
-                    <DialogTitle className="text-xl font-bold text-gray-900 text-center">
+                    <DialogTitle className="text-xl font-bold text-foreground text-center">
                         {user.isActive ? "Bloquear usuario" : "Desbloquear usuario"}
                     </DialogTitle>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    <div className="bg-gray-50 rounded-lg text-left">
-                        <p className="text-sm text-gray-600 font-bold">Usuario:</p>
-                        <p className="font-semibold text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
+                    <div className="bg-muted rounded-lg text-left">
+                        <p className="text-sm text-muted-foreground font-bold">Usuario:</p>
+                        <p className="font-semibold text-foreground">{user.name}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
 
                     <div className="text-left">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-muted-foreground mb-2">
                             Motivo del {user.isActive ? "bloqueo" : "desbloqueo"} <span className='text-red-500 font-bold'>*</span>
                         </label>
                         <textarea
@@ -117,7 +117,7 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
                             minLength={10}
                             maxLength={500}
                         />
-                        <p className="mt-1 text-sm text-gray-500">
+                        <p className="mt-1 text-sm text-muted-foreground">
                             Mínimo 10 caracteres ({reason.length}/500)
                         </p>
                     </div>
@@ -134,12 +134,12 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
                         </p>
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-gray-200 mt-6">
+                    <div className="flex gap-3 pt-4 border-t border-border mt-6">
                         <button
                             type="button"
                             onClick={onClose}
                             disabled={loading}
-                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg font-medium text-muted-foreground hover:bg-muted disabled:opacity-50"
                         >
                             Cancelar
                         </button>

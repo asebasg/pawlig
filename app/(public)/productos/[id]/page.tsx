@@ -87,7 +87,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     return (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="mb-8">
-                <Link href="/productos" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                <Link href="/productos" className="inline-flex items-center gap-2 text-primary hover:text-purple-700 text-base font-semibold">
                     <ArrowLeft className="w-4 h-4" />
                     Volver a Productos
                 </Link>

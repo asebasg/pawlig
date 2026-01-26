@@ -64,23 +64,23 @@ export default async function ShelterAdoptionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex flex-col">
-          <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+          <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-primary hover:text-purple-700 text-base font-semibold">
             <ArrowLeft className="w-4 h-4" />
             Volver al Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight">Postulaciones de Adopción</h1>
-          <p className="text-gray-500 mt-1">Gestiona y revisa las solicitudes de adopción para tus mascotas</p>
+          <h1 className="text-3xl font-bold text-foreground leading-tight">Postulaciones de Adopción</h1>
+          <p className="text-muted-foreground mt-1">Gestiona y revisa las solicitudes de adopción para tus mascotas</p>
         </div>
 
         {/* Info Albergue Rápida */}
-        <div className="flex items-center gap-3 bg-white p-3 rounded-xl border shadow-sm self-start md:self-center">
+        <div className="flex items-center gap-3 bg-card p-3 rounded-xl border shadow-sm self-start md:self-center">
           <div className="p-2 bg-purple-100 rounded-lg">
-            <Home className="w-5 h-5 text-purple-600" />
+            <Home className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Albergue</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Albergue</p>
             <div className="flex items-center gap-2">
-              <p className="text-sm font-bold text-gray-900">{shelter.name}</p>
+              <p className="text-sm font-bold text-foreground">{shelter.name}</p>
               <Badge variant="default" className="bg-green-100 text-green-700 pointer-events-none">
                 Verificado
               </Badge>
@@ -129,8 +129,8 @@ export default async function ShelterAdoptionsPage() {
       {/* Tabla de Postulaciones */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Lista de Postulaciones</h2>
-          <Badge variant="outline" className="text-gray-500 font-normal">
+          <h2 className="text-xl font-bold text-foreground">Lista de Postulaciones</h2>
+          <Badge variant="outline" className="text-muted-foreground font-normal">
             {petCount} Mascotas registradas
           </Badge>
         </div>

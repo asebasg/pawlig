@@ -37,12 +37,12 @@ export default function PaymentModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white">
-        <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-gray-200">
+      <DialogContent className="sm:max-w-md bg-card">
+        <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-border">
           <div className="p-3 rounded-full bg-sky-100">
             <CreditCard className="w-10 h-10 text-sky-600" />
           </div>
-          <DialogTitle className="text-xl font-bold text-gray-900">
+          <DialogTitle className="text-xl font-bold text-foreground">
             Finalizar Compra
           </DialogTitle>
         </DialogHeader>
@@ -53,11 +53,11 @@ export default function PaymentModal({
               <ShieldAlert className="w-16 h-16 text-amber-500" />
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Aviso Importante</h3>
-          <p className="text-gray-600">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Aviso Importante</h3>
+          <p className="text-muted-foreground">
             Esta es una <span className="font-bold">transacción simulada</span>. No se procesarán pagos reales y no se solicitará información bancaria.
           </p>
-          <p className="mt-4 text-gray-600">
+          <p className="mt-4 text-muted-foreground">
             Consulta nuestros <a href="/terms" className="text-purple-700 font-semibold underline">Términos y Condiciones</a> para más información.
           </p>
         </div>

@@ -115,7 +115,7 @@ export function ProductCard({
             <CardContent className="p-4 flex-1 flex flex-col gap-2 z-10 pointer-events-none">
                 {/* Categoría */}
                 {/* Nombre */}
-                <h3 className="text-lg text-center font-bold text-gray-900 leading-tight mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
+                <h3 className="text-lg text-center font-bold text-foreground leading-tight mb-1 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
                     {product.name}
                 </h3>
 
@@ -130,7 +130,7 @@ export function ProductCard({
                 </div>
 
                 {/* Vendedor y Ubicación */}
-                <div className="pt-3 space-y-1.5 text-sm text-gray-600 font-medium border-t border-gray-50 mt-2">
+                <div className="pt-3 space-y-1.5 text-sm text-muted-foreground font-medium border-t border-gray-50 mt-2">
                     <div className="flex items-center gap-1.5">
                         <Store className={cn(
                             "w-5 h-5",

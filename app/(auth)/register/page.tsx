@@ -33,19 +33,19 @@ export default async function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-muted flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         {/* Card contenedor */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-card rounded-2xl shadow-lg p-8">
           <RegisterForm />
-          <p className='text-center text-xs text-gray-500'>
+          <p className='text-center text-xs text-muted-foreground'>
             Al registrarte en PawLig, aceptas nuestros {' '}
 
-            <Link href='/terms' className='text-purple-600 hover:underline font-bold'>
+            <Link href='/terms' className='text-primary hover:underline font-bold'>
               Términos y Condiciones
             </Link> {' '}
             y{' '}
-            <Link href='/privacy' className='text-purple-600 hover:underline font-bold'>
+            <Link href='/privacy' className='text-primary hover:underline font-bold'>
               Política de Privacidad
             </Link>
           </p>

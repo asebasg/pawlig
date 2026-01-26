@@ -39,13 +39,13 @@ export default async function VendorProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Breadcrumb */}
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+            className="inline-flex items-center gap-2 text-primary hover:text-purple-700 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Volver al Inicio
@@ -53,7 +53,7 @@ export default async function VendorProfilePage() {
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-card rounded-lg shadow-md p-8">
           <VendorProfileForm />
         </div>
 

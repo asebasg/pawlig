@@ -224,7 +224,7 @@ export default function AdoptionApplicationsClient() {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <Loader />
-        <span className="ml-2 text-gray-500">Cargando postulaciones...</span>
+        <span className="ml-2 text-muted-foreground">Cargando postulaciones...</span>
       </div>
     );
   }
@@ -248,7 +248,7 @@ export default function AdoptionApplicationsClient() {
       {/* Filtros */}
       <div className="flex gap-4 items-center">
         <div>
-          <label className="text-sm font-medium text-gray-700 block mb-1">Estado</label>
+          <label className="text-sm font-medium text-muted-foreground block mb-1">Estado</label>
           <select
             value={statusFilter}
             onChange={(e) => {
@@ -266,40 +266,40 @@ export default function AdoptionApplicationsClient() {
       </div>
 
       {/* Info de resultados */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-muted-foreground">
         Mostrando {adoptions.length} de {totalCount} postulaciones
       </div>
 
       {/* Tabla */}
       {adoptions.length === 0 ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-          <p className="text-gray-600">No hay postulaciones para mostrar</p>
+        <div className="bg-muted border border-border rounded-lg p-8 text-center">
+          <p className="text-muted-foreground">No hay postulaciones para mostrar</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <tr className="border-b border-border bg-muted">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Mascota
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Adoptante
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Estado
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Fecha
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
             </thead>
             <tbody>
               {adoptions.map((adoption) => (
-                <tr key={adoption.id} className="border-b border-gray-200 hover:bg-gray-50">
+                <tr key={adoption.id} className="border-b border-border hover:bg-muted">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
                       {adoption.pet.images && adoption.pet.images.length > 0 && (
@@ -312,18 +312,18 @@ export default function AdoptionApplicationsClient() {
                         />
                       )}
                       <div>
-                        <p className="font-medium text-gray-900">{adoption.pet.name}</p>
-                        <p className="text-sm text-gray-500">{adoption.pet.species}</p>
+                        <p className="font-medium text-foreground">{adoption.pet.name}</p>
+                        <p className="text-sm text-muted-foreground">{adoption.pet.species}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <p className="font-medium text-gray-900">{adoption.adopter.name}</p>
+                    <p className="font-medium text-foreground">{adoption.adopter.name}</p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(adoption.status)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                     {new Date(adoption.createdAt).toLocaleDateString('es-CO')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
@@ -352,10 +352,10 @@ export default function AdoptionApplicationsClient() {
                       </>
                     )}
                     {adoption.status === 'APPROVED' && (
-                      <span className="text-sm text-gray-500">Completada</span>
+                      <span className="text-sm text-muted-foreground">Completada</span>
                     )}
                     {adoption.status === 'REJECTED' && (
-                      <span className="text-sm text-gray-500">-</span>
+                      <span className="text-sm text-muted-foreground">-</span>
                     )}
                   </td>
                 </tr>
@@ -380,8 +380,8 @@ export default function AdoptionApplicationsClient() {
               key={page}
               onClick={() => setCurrentPage(page)}
               className={`px-3 py-2 rounded-lg text-sm ${currentPage === page
-                ? 'bg-purple-600 text-white'
-                : 'border border-gray-300 hover:bg-gray-50'
+                ? 'bg-primary text-white'
+                : 'border border-gray-300 hover:bg-muted'
                 }`}
             >
               {page}
@@ -400,9 +400,9 @@ export default function AdoptionApplicationsClient() {
       {/* Modal de Aprobación */}
       {showApproveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Confirmar Aprobación</h3>
-            <p className="text-gray-600 mb-6">
+          <div className="bg-card rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold text-foreground mb-4">Confirmar Aprobación</h3>
+            <p className="text-muted-foreground mb-6">
               ¿Estás seguro de que deseas aprobar esta postulación? La mascota pasará al estado &quot;En Proceso&quot; de adopción.
             </p>
             <div className="flex gap-3">
@@ -411,7 +411,7 @@ export default function AdoptionApplicationsClient() {
                   setShowApproveModal(false);
                   setSelectedAdoptionForApprove(null);
                 }}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
               >
                 Cancelar
               </button>
@@ -430,9 +430,9 @@ export default function AdoptionApplicationsClient() {
       {/* Modal de Rechazo */}
       {showRejectModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Rechazar Postulación</h3>
-            <p className="text-gray-600 mb-4">
+          <div className="bg-card rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold text-foreground mb-4">Rechazar Postulación</h3>
+            <p className="text-muted-foreground mb-4">
               Por favor, proporciona una razón para rechazar esta postulación.
             </p>
             <textarea
@@ -449,7 +449,7 @@ export default function AdoptionApplicationsClient() {
                   setSelectedAdoptionId(null);
                   setRejectionReason('');
                 }}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted"
               >
                 Cancelar
               </button>

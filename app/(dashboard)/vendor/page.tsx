@@ -35,8 +35,8 @@ export default async function VendorDashboardPage() {
     return (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Dashboard del Vendedor</h1>
-                <p className="text-lg text-gray-600">Gestiona tus productos, pedidos y ver estadísticas de ventas</p>
+                <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard del Vendedor</h1>
+                <p className="text-lg text-muted-foreground">Gestiona tus productos, pedidos y ver estadísticas de ventas</p>
             </div>
 
             <VendorDashboardClient userSession={{

@@ -87,19 +87,19 @@ export default async function EditPetPage({ params }: PageProps) {
         redirect("/unauthorized?reason=wrong_pet");
     }
     return (
-        <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+        <div className="min-h-screen bg-muted p-4 sm:p-6">
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <Link href="/shelter/pets" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                    <Link href="/shelter/pets" className="inline-flex items-center gap-2 mb-6 mt-4 text-primary hover:text-purple-700 text-base font-semibold">
                         <ArrowLeft className="w-4 h-4" />
                         Volver a Mis Mascotas
                     </Link>
                     <div className="text-center">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                             Editar {pet.name}
                         </h1>
-                        <p className="mt-2 text-sm sm:text-base text-gray-600">
+                        <p className="mt-2 text-sm sm:text-base text-muted-foreground">
                             Actualiza la información de tu mascota. Los campos marcados con{" "}
                             <span className="text-red-500">*</span> son obligatorios.
                         </p>
@@ -107,7 +107,7 @@ export default async function EditPetPage({ params }: PageProps) {
                 </div>
 
                 {/* Formulario Pre-cargado */}
-                <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8">
+                <div className="bg-card rounded-xl shadow-md p-4 sm:p-6 md:p-8">
                     <PetForm
                         mode="edit"
                         initialData={{

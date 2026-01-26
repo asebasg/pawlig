@@ -102,13 +102,13 @@ export default function RegisterForm() {
         <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-4 mx-auto">
           <PawPrint className="w-12 h-12 text-orange-700" />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">Crear cuenta</h1>
-        <p className="text-gray-600 mt-2">Regístrate en PawLig</p>
+        <h1 className="text-3xl font-bold text-foreground">Crear cuenta</h1>
+        <p className="text-muted-foreground mt-2">Regístrate en PawLig</p>
       </div>
 
       {/* Email */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-2">
           Correo electrónico *
         </label>
         <input
@@ -128,7 +128,7 @@ export default function RegisterForm() {
 
       {/* Contraseña */}
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="password" className="block text-sm font-medium text-muted-foreground mb-2">
           Contraseña *
         </label>
         <input
@@ -144,7 +144,7 @@ export default function RegisterForm() {
             {errors.password.message}
           </p>
         ) : (
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Mínimo 8 caracteres
           </p>
         )}
@@ -152,7 +152,7 @@ export default function RegisterForm() {
 
       {/* Nombre completo */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-2">
           Nombre completo *
         </label>
         <input
@@ -172,7 +172,7 @@ export default function RegisterForm() {
 
       {/* Teléfono */}
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground mb-2">
           Teléfono *
         </label>
         <input
@@ -192,7 +192,7 @@ export default function RegisterForm() {
 
       {/* Municipio */}
       <div>
-        <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="municipality" className="block text-sm font-medium text-muted-foreground mb-2">
           Municipio *
         </label>
         <select
@@ -221,7 +221,7 @@ export default function RegisterForm() {
 
       {/* Dirección */}
       <div>
-        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="address" className="block text-sm font-medium text-muted-foreground mb-2">
           Dirección *
         </label>
         <input
@@ -241,7 +241,7 @@ export default function RegisterForm() {
 
       {/* Número de identificación */}
       <div>
-        <label htmlFor="idNumber" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="idNumber" className="block text-sm font-medium text-muted-foreground mb-2">
           Número de identificación *
         </label>
         <input
@@ -261,7 +261,7 @@ export default function RegisterForm() {
 
       {/* Fecha de nacimiento */}
       <div>
-        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="birthDate" className="block text-sm font-medium text-muted-foreground mb-2">
           Fecha de nacimiento *
         </label>
         <input
@@ -279,14 +279,14 @@ export default function RegisterForm() {
             {errors.birthDate.message}
           </p>
         )}
-        <p className="text-sm text-gray-500 mt-1">Debes ser mayor de 18 años</p>
+        <p className="text-sm text-muted-foreground mt-1">Debes ser mayor de 18 años</p>
       </div>
 
       {/* Botón de envío */}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 focus:ring-4 focus:ring-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {isSubmitting ? (
           <span className="flex items-center justify-center gap-2">
@@ -297,11 +297,11 @@ export default function RegisterForm() {
       </button>
 
       {/* Link a login */}
-      <p className="pb-4 mb-4 text-center text-sm text-gray-600">
+      <p className="pb-4 mb-4 text-center text-sm text-muted-foreground">
         ¿Ya tienes cuenta?{' '}
         <Link
           href="/login"
-          className="text-purple-600 hover:text-purple-700 font-semibold hover:underline"
+          className="text-primary hover:text-purple-700 font-semibold hover:underline"
         >
           Inicia sesión
         </Link>

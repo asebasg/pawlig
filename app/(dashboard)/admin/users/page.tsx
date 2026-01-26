@@ -23,15 +23,15 @@ export default async function AdminUsersPage() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen py-6">
-            <Link href="/admin" className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+            <Link href="/admin" className="inline-flex items-center gap-2 mb-4 text-primary hover:text-purple-700 text-base font-semibold">
                 <ArrowLeft className="w-4 h-4" />
                 Volver al Dashboard
             </Link>
             <div className="mb-8 text-center">
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-foreground">
                     Gestión de usuarios
                 </h1>
-                <p className="mt-2 text-gray-600">
+                <p className="mt-2 text-muted-foreground">
                     Administra usuarios, roles y bloqueos del sistema
                 </p>
             </div>

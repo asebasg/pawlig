@@ -120,12 +120,12 @@ export default function StockUpdateModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-            <DialogContent className="sm:max-w-md bg-white">
-                <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-gray-200">
+            <DialogContent className="sm:max-w-md bg-card">
+                <DialogHeader className="flex flex-row items-center justify-between pb-4 border-b border-border">
                     <div className="p-3 rounded-full bg-purple-100">
-                        <Package className="w-10 h-10 text-purple-600" />
+                        <Package className="w-10 h-10 text-primary" />
                     </div>
-                    <DialogTitle className="text-xl font-bold text-gray-900">
+                    <DialogTitle className="text-xl font-bold text-foreground">
                         Actualizar Stock
                     </DialogTitle>
 
@@ -133,12 +133,12 @@ export default function StockUpdateModal({
 
                 {/* Content */}
                 <div className="pb-2">
-                    <div className="bg-gray-50 rounded-lg p-4 text-center">
-                        <p className="text-sm text-gray-600 mb-1 font-semibold">Stock actual del producto:</p>
-                        <p className="text-2xl font-bold text-gray-900">
-                            {product.stock} <span className="text-sm font-normal text-gray-500">{product.stock === 1 ? 'unidad' : 'unidades'}</span>
+                    <div className="bg-muted rounded-lg p-4 text-center">
+                        <p className="text-sm text-muted-foreground mb-1 font-semibold">Stock actual del producto:</p>
+                        <p className="text-2xl font-bold text-foreground">
+                            {product.stock} <span className="text-sm font-normal text-muted-foreground">{product.stock === 1 ? 'unidad' : 'unidades'}</span>
                         </p>
-                        <p className="text-sm font-medium mt-1 text-purple-600">
+                        <p className="text-sm font-medium mt-1 text-primary">
                             {product.name}
                         </p>
                     </div>
@@ -226,9 +226,9 @@ export default function StockUpdateModal({
                         {/* Indicador de cambios */}
                         {hasChanges && (
                             <div className="text-center animate-in fade-in zoom-in duration-200">
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-muted-foreground">
                                     Nuevo stock:{" "}
-                                    <span className="font-bold text-gray-900">
+                                    <span className="font-bold text-foreground">
                                         {newStock}
                                     </span>
                                 </p>
@@ -254,7 +254,7 @@ export default function StockUpdateModal({
                         type="button"
                         onClick={handleSave}
                         disabled={!hasChanges || isLoading}
-                        className="flex-1 gap-2 bg-purple-600 hover:bg-purple-700 text-white"
+                        className="flex-1 gap-2 bg-primary hover:bg-primary/90 text-white"
                     >
                         {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                         {isLoading ? "Guardando..." : "Guardar Cambios"}

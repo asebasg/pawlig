@@ -132,7 +132,7 @@ export default function ProductDetailClient({
                 <Card className="mb-6 overflow-hidden" accentColor="none">
                     <CardContent className="p-0">
                         {/* Imagen Principal */}
-                        <div className="relative h-96 bg-gray-200 overflow-hidden rounded-t-lg">
+                        <div className="relative h-96 bg-muted overflow-hidden rounded-t-lg">
                             {images.length > 0 ? (
                                 <Image
                                     src={images[currentImageIndex]}
@@ -143,7 +143,7 @@ export default function ProductDetailClient({
                                     priority
                                 />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                <div className="w-full h-full flex items-center justify-center text-muted-foreground/50">
                                     Sin imagen disponible
                                 </div>
                             )}
@@ -153,17 +153,17 @@ export default function ProductDetailClient({
                                 <>
                                     <button
                                         onClick={goToPrevImage}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition"
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 bg-card rounded-full p-2 shadow-md hover:bg-muted transition"
                                         aria-label="Imagen anterior"
                                     >
-                                        <ChevronLeft className="w-6 h-6 text-gray-900" />
+                                        <ChevronLeft className="w-6 h-6 text-foreground" />
                                     </button>
                                     <button
                                         onClick={goToNextImage}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md hover:bg-gray-50 transition"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 bg-card rounded-full p-2 shadow-md hover:bg-muted transition"
                                         aria-label="Siguiente imagen"
                                     >
-                                        <ChevronRight className="w-6 h-6 text-gray-900" />
+                                        <ChevronRight className="w-6 h-6 text-foreground" />
                                     </button>
 
                                     {/* Indicador de posición */}
@@ -176,12 +176,12 @@ export default function ProductDetailClient({
 
                         {/* Miniaturas de galería */}
                         {hasMultipleImages && (
-                            <div className="p-4 bg-gray-50 flex gap-2 overflow-x-auto">
+                            <div className="p-4 bg-muted flex gap-2 overflow-x-auto">
                                 {images.map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setCurrentImageIndex(idx)}
-                                        className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${idx === currentImageIndex ? 'border-purple-600' : 'border-gray-200'
+                                        className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${idx === currentImageIndex ? 'border-purple-600' : 'border-border'
                                             }`}
                                     >
                                         <div className="relative w-full h-full">
@@ -223,12 +223,12 @@ export default function ProductDetailClient({
 
                     <CardContent>
                         {/* Características */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pb-6 border-b border-gray-200 mb-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pb-6 border-b border-border mb-6">
                             {/* Categoría */}
                             <div className="text-center">
-                                <Tag className="w-5 h-5 text-purple-600 mx-auto mb-2" />
-                                <p className="text-sm text-gray-600">Categoría</p>
-                                <p className="font-semibold text-gray-900">
+                                <Tag className="w-5 h-5 text-primary mx-auto mb-2" />
+                                <p className="text-sm text-muted-foreground">Categoría</p>
+                                <p className="font-semibold text-foreground">
                                     {product.category.charAt(0).toUpperCase() +
                                         product.category.slice(1).toLowerCase()}
                                 </p>
@@ -236,16 +236,16 @@ export default function ProductDetailClient({
 
                             {/* Precio */}
                             <div className="text-center">
-                                <DollarSign className="w-5 h-5 text-purple-600 mx-auto mb-2" />
-                                <p className="text-sm text-gray-600">Precio</p>
-                                <p className="font-semibold text-gray-900">{formatPrice(product.price)}</p>
+                                <DollarSign className="w-5 h-5 text-primary mx-auto mb-2" />
+                                <p className="text-sm text-muted-foreground">Precio</p>
+                                <p className="font-semibold text-foreground">{formatPrice(product.price)}</p>
                             </div>
 
                             {/* Stock */}
                             <div className="text-center">
-                                <Package className="w-5 h-5 text-purple-600 mx-auto mb-2" />
-                                <p className="text-sm text-gray-600">Disponibilidad</p>
-                                <p className="font-semibold text-gray-900">
+                                <Package className="w-5 h-5 text-primary mx-auto mb-2" />
+                                <p className="text-sm text-muted-foreground">Disponibilidad</p>
+                                <p className="font-semibold text-foreground">
                                     {product.stock} unidad{product.stock !== 1 ? 'es' : ''}
                                 </p>
                             </div>
@@ -253,8 +253,8 @@ export default function ProductDetailClient({
 
                         {/* Descripción */}
                         <div>
-                            <h2 className="text-xl font-semibold text-gray-900 mb-3">Sobre este producto</h2>
-                            <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">
+                            <h2 className="text-xl font-semibold text-foreground mb-3">Sobre este producto</h2>
+                            <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
                                 {product.description || 'Sin descripción disponible.'}
                             </p>
                         </div>
@@ -268,11 +268,11 @@ export default function ProductDetailClient({
                 <Card className="mb-6 sticky top-20" accentColor="none">
                     <CardHeader>
                         <div className="mb-6">
-                            <CardTitle className="text-lg font-semibold text-gray-900 mb-2 text-center">Vendido por</CardTitle>
-                            <p className="text-purple-600 font-bold text-xl block text-center">
+                            <CardTitle className="text-lg font-semibold text-foreground mb-2 text-center">Vendido por</CardTitle>
+                            <p className="text-primary font-bold text-xl block text-center">
                                 {product.vendor.businessName}
                             </p>
-                            <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mt-1">
+                            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mt-1">
                                 <MapPin className="w-4 h-4" />
                                 <span>{product.vendor.municipality}, ANTIOQUIA</span>
                             </div>
@@ -282,10 +282,10 @@ export default function ProductDetailClient({
                     <CardContent>
                         {/* Dirección */}
                         {product.vendor.address && (
-                            <div className="mb-4 pb-4 border-b border-gray-200">
-                                <p className="text-sm text-gray-900 mb-2 font-semibold">Ubicación</p>
-                                <div className="flex items-center justify-between text-sm text-gray-600">
-                                    <p className="text-sm text-gray-900">{product.vendor.address}</p>
+                            <div className="mb-4 pb-4 border-b border-border">
+                                <p className="text-sm text-foreground mb-2 font-semibold">Ubicación</p>
+                                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                    <p className="text-sm text-foreground">{product.vendor.address}</p>
                                     <Link
                                         href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(product.vendor.address)}`}
                                         target="_blank"
@@ -300,9 +300,9 @@ export default function ProductDetailClient({
 
                         {/* Descripción del Vendedor */}
                         {product.vendor.description && (
-                            <div className="mb-6 pb-6 border-b border-gray-200">
-                                <p className="text-sm text-gray-900 mb-2 font-semibold">Acerca del Vendedor</p>
-                                <p className="text-sm text-gray-700 line-clamp-3">{product.vendor.description}</p>
+                            <div className="mb-6 pb-6 border-b border-border">
+                                <p className="text-sm text-foreground mb-2 font-semibold">Acerca del Vendedor</p>
+                                <p className="text-sm text-muted-foreground line-clamp-3">{product.vendor.description}</p>
                             </div>
                         )}
 
@@ -332,7 +332,7 @@ export default function ProductDetailClient({
                                         Al Carrito
                                     </Button>
                                 ) : (
-                                    <div className="flex-1 py-2 px-4 rounded-lg bg-gray-100 text-gray-500 text-center font-medium text-sm">
+                                    <div className="flex-1 py-2 px-4 rounded-lg bg-muted text-muted-foreground text-center font-medium text-sm">
                                         Sin Stock
                                     </div>
                                 )}
@@ -365,7 +365,7 @@ export default function ProductDetailClient({
             {/* Productos Similares */}
             {similarProducts.length > 0 && (
                 <div className="lg:col-span-3 mt-12 border-t pt-12">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-8">Otros productos que podrían interesarte</h2>
+                    <h2 className="text-2xl font-bold text-foreground mb-8">Otros productos que podrían interesarte</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {similarProducts.slice(0, 3).map((similarProduct) => (
                             <ProductCard

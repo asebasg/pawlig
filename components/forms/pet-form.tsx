@@ -211,11 +211,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
             {/* SECCIÓN 1: DATOS BÁSICOS */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Datos Básicos</h3>
+                <h3 className="text-lg font-semibold text-foreground">Datos Básicos</h3>
 
                 {/* Nombre */}
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-1">
                         Nombre de la mascota <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -230,7 +230,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
                 {/* Especie */}
                 <div>
-                    <label htmlFor="species" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="species" className="block text-sm font-medium text-muted-foreground mb-1">
                         Especie <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -247,7 +247,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
                 {/* Raza */}
                 <div>
-                    <label htmlFor="breed" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="breed" className="block text-sm font-medium text-muted-foreground mb-1">
                         Raza
                     </label>
                     <input
@@ -264,7 +264,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Edad */}
                     <div>
-                        <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="age" className="block text-sm font-medium text-muted-foreground mb-1">
                             Edad aproximada (años)
                         </label>
                         <input
@@ -281,7 +281,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
                     {/* Sexo */}
                     <div>
-                        <label htmlFor="sex" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="sex" className="block text-sm font-medium text-muted-foreground mb-1">
                             Sexo
                         </label>
                         <select
@@ -299,11 +299,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
             {/* SECCIÓN 2: DESCRIPCIÓN */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Descripción</h3>
+                <h3 className="text-lg font-semibold text-foreground">Descripción</h3>
 
                 {/* Descripción detallada */}
                 <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="description" className="block text-sm font-medium text-muted-foreground mb-1">
                         Descripción detallada <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
@@ -325,7 +325,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                             <span className="text-xs">{isRefining ? "Refinando..." : "Refinar con IA"}</span>
                         </Button>
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-muted-foreground">
                         Caracteres: {watch("description")?.length || 0} / 1000 (mínimo 20)
                     </p>
                     {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
@@ -333,7 +333,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
                 {/* Requisitos de adopción */}
                 <div>
-                    <label htmlFor="requirements" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="requirements" className="block text-sm font-medium text-muted-foreground mb-1">
                         Requisitos de adopción
                     </label>
                     <textarea
@@ -343,17 +343,17 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         placeholder="Requisitos específicos para adopción (espacio, experiencia, otras mascotas, etc.)"
                         className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
                     />
-                    <p className="mt-1 text-xs text-gray-500">Opcional. Máximo 500 caracteres.</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Opcional. Máximo 500 caracteres.</p>
                     {errors.requirements && <p className="mt-1 text-sm text-red-600">{errors.requirements.message}</p>}
                 </div>
             </div>
 
             {/* SECCIÓN 3: FOTOS */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-foreground">
                     Fotos <span className="text-red-500">*</span>
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                     Sube entre 1 y {MAX_IMAGES} fotos de la mascota. Formatos: JPEG, PNG. Máximo 5MB por foto.
                 </p>
 
@@ -367,7 +367,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                                     alt={`Foto ${index + 1}`}
                                     width={150}
                                     height={150}
-                                    className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
+                                    className="w-full h-32 object-cover rounded-lg border-2 border-border"
                                 />
                                 <button
                                     type="button"
@@ -391,12 +391,12 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         >
                             {uploadingImages ? (
                                 <>
-                                    <span className="text-sm font-medium text-purple-600">Subiendo fotos...</span>
+                                    <span className="text-sm font-medium text-primary">Subiendo fotos...</span>
                                 </>
                             ) : (
                                 <>
-                                    <Upload className="w-5 h-5 text-gray-600" />
-                                    <span className="text-sm font-medium text-gray-700">
+                                    <Upload className="w-5 h-5 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-muted-foreground">
                                         {images.length === 0 ? "Subir fotos (mínimo 1)" : "Agregar más fotos"}
                                     </span>
                                 </>
@@ -422,7 +422,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 <button
                     type="button"
                     onClick={() => router.back()}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-muted-foreground font-medium hover:bg-muted transition-colors"
                     disabled={isSubmitting}
                 >
                     Cancelar
@@ -430,7 +430,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 <button
                     type="submit"
                     disabled={isSubmitting || uploadingImages}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed transition-colors"
                 >
                     {isSubmitting ? (
                         <>

@@ -152,15 +152,15 @@ export default function UsersManagementClient() {
     return (
         <div className="space-y-6">
             {/* Filtros y búsqueda */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-card rounded-lg shadow p-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Búsqueda */}
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-muted-foreground mb-2">
                             Buscar usuario
                         </label>
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground/50 w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Nombre o email..."
@@ -173,11 +173,11 @@ export default function UsersManagementClient() {
 
                     {/* Filtro por rol */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-muted-foreground mb-2">
                             Rol
                         </label>
                         <div className="relative">
-                            <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground/50 w-5 h-5" />
                             <select
                                 value={roleFilter}
                                 onChange={(e) => setRoleFilter(e.target.value as UserRole | "ALL")}
@@ -198,8 +198,8 @@ export default function UsersManagementClient() {
                     <button
                         onClick={() => setStatusFilter("ALL")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${statusFilter === "ALL"
-                            ? "bg-purple-600 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            ? "bg-primary text-white"
+                            : "bg-muted text-muted-foreground hover:bg-accent"
                             }`}
                     >
                         Todos ({totalCount})
@@ -208,7 +208,7 @@ export default function UsersManagementClient() {
                         onClick={() => setStatusFilter("ACTIVE")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${statusFilter === "ACTIVE"
                             ? "bg-green-600 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            : "bg-muted text-muted-foreground hover:bg-accent"
                             }`}
                     >
                         Activos
@@ -217,7 +217,7 @@ export default function UsersManagementClient() {
                         onClick={() => setStatusFilter("BLOCKED")}
                         className={`px-4 py-2 rounded-lg font-medium transition ${statusFilter === "BLOCKED"
                             ? "bg-red-600 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            : "bg-muted text-muted-foreground hover:bg-accent"
                             }`}
                     >
                         Bloqueados
@@ -226,9 +226,9 @@ export default function UsersManagementClient() {
             </div>
 
             {/* Tabla de usuarios */}
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-card rounded-lg shadow overflow-hidden">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-12 text-gray-600">
+                    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                         <Loader />
                         <span>Cargando a todos los usuarios</span>
                     </div>
@@ -237,60 +237,60 @@ export default function UsersManagementClient() {
                         {error}
                     </div>
                 ) : users.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
+                    <div className="text-center py-12 text-muted-foreground">
                         No se encontraron usuarios
                     </div>
                 ) : (
                     <>
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50 border-b border-gray-200">
+                                <thead className="bg-muted border-b border-border">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                             <div className="flex items-center gap-1">
-                                                <User className="w-4 h-4 text-gray-500" />
+                                                <User className="w-4 h-4 text-muted-foreground" />
                                                 Usuario
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                             <div className="flex items-center justify-center gap-1">
-                                                <Shield className="w-4 h-4 text-gray-500" />
+                                                <Shield className="w-4 h-4 text-muted-foreground" />
                                                 Rol
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                             <div className="flex items-center justify-center gap-1">
-                                                <MessageCircleQuestion className="w-4 h-4 text-gray-500" />
+                                                <MessageCircleQuestion className="w-4 h-4 text-muted-foreground" />
                                                 Estado
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                             <div className="flex items-center gap-1">
-                                                <Activity className="w-4 h-4 text-gray-500" />
+                                                <Activity className="w-4 h-4 text-muted-foreground" />
                                                 Actividad
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                             <div className="flex items-center justify-center gap-1">
-                                                <Scroll className="w-4 h-4 text-gray-500" />
+                                                <Scroll className="w-4 h-4 text-muted-foreground" />
                                                 Registro
                                             </div>
                                         </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                             <div className="flex items-center justify-center gap-1">
-                                                <ShieldAlert className="w-4 h-4 text-gray-500" />
+                                                <ShieldAlert className="w-4 h-4 text-muted-foreground" />
                                                 Acciones
                                             </div>
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="bg-card divide-y divide-gray-200">
                                     {users.map((user) => (
-                                        <tr key={user.id} className="hover:bg-gray-50">
+                                        <tr key={user.id} className="hover:bg-muted">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div>
-                                                    <div className="font-medium text-gray-900">{user.name}</div>
-                                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                                    <div className="font-medium text-foreground">{user.name}</div>
+                                                    <div className="text-sm text-muted-foreground">{user.email}</div>
                                                     {user.shelter && (
                                                         <div className="text-xs text-teal-600 mt-1">
                                                             🏠 {user.shelter.name}
@@ -310,12 +310,12 @@ export default function UsersManagementClient() {
                                                 {getStatusBadge(user.isActive)}
                                                 {/* Mostrar razón del bloqueo */}
                                                 {/* {!user.isActive && user.blockReason && (
-                                                    <div className="text-xs text-gray-500 mt-1 max-w-xs truncate">
+                                                    <div className="text-xs text-muted-foreground mt-1 max-w-xs truncate">
                                                         {user.blockReason}
                                                     </div>
                                                 )} */}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                                                 {user.shelter && (
                                                     <div>🐾 {user.shelter._count?.pets || 0} mascotas</div>
                                                 )}
@@ -329,14 +329,14 @@ export default function UsersManagementClient() {
                                                     </div>
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground text-center">
                                                 {formatDate(user.createdAt)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                                 <div className="flex items-center justify-center gap-2">
                                                     <button
                                                         onClick={() => router.push(`/admin/users/${user.id}/view`)}
-                                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition text-purple-600 hover:bg-purple-50"
+                                                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg transition text-primary hover:bg-purple-50"
                                                         aria-label={`Ver detalles de ${user.name}`}
                                                     >
                                                         <Eye className="w-4 h-4" />
@@ -357,22 +357,22 @@ export default function UsersManagementClient() {
 
                         {/* Paginación */}
                         {totalPages > 1 && (
-                            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                <div className="text-sm text-gray-500">
+                            <div className="px-6 py-4 border-t border-border flex items-center justify-between">
+                                <div className="text-sm text-muted-foreground">
                                     Mostrando página {currentPage} de {totalPages}
                                 </div>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => setCurrentPage(currentPage - 1)}
                                         disabled={currentPage === 1}
-                                        className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                                        className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted"
                                     >
                                         Anterior
                                     </button>
                                     <button
                                         onClick={() => setCurrentPage(currentPage + 1)}
                                         disabled={currentPage === totalPages}
-                                        className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                                        className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted"
                                     >
                                         Siguiente
                                     </button>

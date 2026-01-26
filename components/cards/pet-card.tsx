@@ -89,7 +89,7 @@ export function PetCard({
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm bg-gray-200">
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground/50 text-sm bg-muted">
               Sin foto disponible
             </div>
           )}
@@ -109,7 +109,7 @@ export function PetCard({
       <CardContent className="p-4 flex-1 flex flex-col gap-3 z-10 pointer-events-none">
         {/* Título y Especie */}
         <div>
-          <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1 line-clamp-1 group-hover:text-primary transition-colors">
+          <h3 className="text-lg font-bold text-foreground leading-tight mb-1 line-clamp-1 group-hover:text-primary transition-colors">
             {pet.name}
           </h3>
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -129,17 +129,17 @@ export function PetCard({
             </Badge>
           )}
           {pet.sex && (
-            <Badge variant="outline" className="font-normal border-gray-200 text-gray-600">
+            <Badge variant="outline" className="font-normal border-border text-muted-foreground">
               {pet.sex}
             </Badge>
           )}
         </div>
 
         {/* Ubicación (Bottom aligned within content) */}
-        <div className="mt-auto pt-2 flex items-center gap-1.5 text-sm text-gray-600 font-medium border-t border-gray-50">
+        <div className="mt-auto pt-2 flex items-center gap-1.5 text-sm text-muted-foreground font-medium border-t border-gray-50">
           <MapPin className={cn(
             "w-4 h-4",
-            accentColor === 'purple' ? 'text-purple-600' :
+            accentColor === 'purple' ? 'text-primary' :
               accentColor === 'orange' ? 'text-orange-600' :
                 accentColor === 'teal' ? 'text-teal-600' :
                   accentColor === 'green' ? 'text-green-600' :

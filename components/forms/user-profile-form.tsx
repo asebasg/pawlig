@@ -126,15 +126,15 @@ export default function UserProfileForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Editar Perfil Personal</h2>
-        <p className="text-gray-600 mt-2">
+        <h2 className="text-3xl font-bold text-foreground">Editar Perfil Personal</h2>
+        <p className="text-muted-foreground mt-2">
           Actualiza tu información personal. Los cambios se aplicarán inmediatamente.
         </p>
       </div>
 
       {/* Nombre Completo */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Nombre Completo *
         </label>
         <input
@@ -151,7 +151,7 @@ export default function UserProfileForm() {
 
       {/* Teléfono */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Teléfono *
         </label>
         <input
@@ -168,7 +168,7 @@ export default function UserProfileForm() {
 
       {/* Número de Identificación */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Número de Identificación *
         </label>
         <input
@@ -185,7 +185,7 @@ export default function UserProfileForm() {
 
       {/* Fecha de Nacimiento */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Fecha de Nacimiento *
         </label>
         <input
@@ -201,7 +201,7 @@ export default function UserProfileForm() {
 
       {/* Municipio */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Municipio *
         </label>
         <select
@@ -223,7 +223,7 @@ export default function UserProfileForm() {
 
       {/* Dirección */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Dirección *
         </label>
         <input
@@ -243,21 +243,21 @@ export default function UserProfileForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
         </button>
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+          className="flex-1 bg-muted text-foreground py-3 rounded-lg font-semibold hover:bg-muted transition-colors"
         >
           Cancelar
         </button>
       </div>
 
       {/* Nota de campos obligatorios */}
-      <p className="text-sm text-gray-500 mt-4">
+      <p className="text-sm text-muted-foreground mt-4">
         Los campos marcados con * son obligatorios.
       </p>
     </form>

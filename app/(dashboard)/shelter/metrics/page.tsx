@@ -44,15 +44,15 @@ export default async function ShelterMetricsPage() {
 
     return (
         <div className="container mx-auto py-8 px-4">
-            <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+            <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-primary hover:text-purple-700 text-base font-semibold">
                 <ArrowLeft className="w-4 h-4" />
                 Volver al Dashboard
             </Link>
             <h1 className="text-2xl font-bold">Métricas de Adopciones</h1>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">Panel de información de tus métricas de adopciones</p>
-            <div className="flex flex-col p-8 border rounded-lg bg-gray-50 items-center text-center justify-center">
-                <p className="text-lg text-gray-600">Esta sección está en desarrollo</p>
-                <p className="text-sm text-gray-400 mt-2 mb-10">Pronto podrás visualizar y gestionar tus métricas aquí</p>
+            <p className="text-muted-foreground dark:text-muted-foreground/50 mb-4">Panel de información de tus métricas de adopciones</p>
+            <div className="flex flex-col p-8 border rounded-lg bg-muted items-center text-center justify-center">
+                <p className="text-lg text-muted-foreground">Esta sección está en desarrollo</p>
+                <p className="text-sm text-muted-foreground/50 mt-2 mb-10">Pronto podrás visualizar y gestionar tus métricas aquí</p>
                 <Image
                     src='/images/under_construction.png'
                     alt="En construcción..."

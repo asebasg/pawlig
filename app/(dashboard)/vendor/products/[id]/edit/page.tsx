@@ -73,19 +73,19 @@ export default async function EditProductPage({ params }: PageProps) {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+        <div className="min-h-screen bg-muted p-4 sm:p-6">
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <Link href="/vendor/products" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+                    <Link href="/vendor/products" className="inline-flex items-center gap-2 mb-6 mt-4 text-primary hover:text-purple-700 text-base font-semibold">
                         <ArrowLeft className="w-4 h-4" />
                         Volver a Mis Productos
                     </Link>
                     <div className="text-center">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                             Editar {product.name}
                         </h1>
-                        <p className="mt-2 text-sm sm:text-base text-gray-600">
+                        <p className="mt-2 text-sm sm:text-base text-muted-foreground">
                             Actualiza la información de tu producto. Los campos marcados con{" "}
                             <span className="text-red-500">*</span> son obligatorios.
                         </p>
@@ -93,7 +93,7 @@ export default async function EditProductPage({ params }: PageProps) {
                 </div>
 
                 {/* Formulario Pre-cargado */}
-                <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8">
+                <div className="bg-card rounded-xl shadow-md p-4 sm:p-6 md:p-8">
                     <ProductForm
                         mode="edit"
                         initialData={{

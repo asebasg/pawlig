@@ -63,13 +63,13 @@ const DialogContent = React.forwardRef<
             <DialogOverlay onClick={() => onOpenChange?.(false)} />
             <div
                 ref={ref}
-                className={`relative z-50 flex flex-col w-full max-w-lg border bg-white p-4 sm:p-6 shadow-lg duration-200 sm:rounded-lg md:w-full ${className || ""}`}
+                className={`relative z-50 flex flex-col w-full max-w-lg border bg-card p-4 sm:p-6 shadow-lg duration-200 sm:rounded-lg md:w-full ${className || ""}`}
                 {...props}
             >
                 {children}
                 <button
                     onClick={() => onOpenChange?.(false)}
-                    className="absolute right-4 top-4 p-2 rounded-full text-gray-600 transition-all hover:opacity-100 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 disabled:pointer-events-none"
+                    className="absolute right-4 top-4 p-2 rounded-full text-muted-foreground transition-all hover:opacity-100 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 disabled:pointer-events-none"
                 >
                     <X className="h-6 w-6" />
                     <span className="sr-only">Close</span>
@@ -120,7 +120,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <p
         ref={ref}
-        className={`text-sm text-gray-500 ${className || ""}`}
+        className={`text-sm text-muted-foreground ${className || ""}`}
         {...props}
     />
 ))

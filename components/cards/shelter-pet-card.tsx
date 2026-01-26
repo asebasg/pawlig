@@ -118,7 +118,7 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
         },
         [PetStatus.ADOPTED]: {
             label: "Adoptada",
-            color: "bg-gray-100 text-gray-800 p-0.5",
+            color: "bg-muted text-foreground p-0.5",
             icon: XCircle,
         },
     };
@@ -128,9 +128,9 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
 
     return (
         <>
-            <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div className="bg-card rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                 {/* Imagen */}
-                <div className="relative h-48 bg-gray-200">
+                <div className="relative h-48 bg-muted">
                     {pet.images.length > 0 ? (
                         <Image
                             src={pet.images[0]}
@@ -139,7 +139,7 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                             fill
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground/50">
                             Sin foto
                         </div>
                     )}
@@ -153,14 +153,14 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                 {/* Contenido */}
                 <div className="p-4">
                     {/* Nombre y especie */}
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{pet.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">
+                    <h3 className="text-lg font-semibold text-foreground mb-1">{pet.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-2">
                         {pet.species && `${pet.species}`} {pet.sex && `• ${pet.sex}`} <br /> {pet.breed && `${pet.breed}`} <br /> {pet.age !== undefined && `${pet.age} ${pet.age === 1 ? "año" : "años"}`}
                     </p>
 
                     {/* Contador de postulaciones */}
                     {pet._count.adoptions > 0 && (
-                        <div className="flex items-center gap-1 text-sm text-purple-600 mb-3">
+                        <div className="flex items-center gap-1 text-sm text-primary mb-3">
                             <BookOpenCheck className="w-4 h-4" />
                             <span>{pet._count.adoptions} {pet._count.adoptions === 1 ? "postulación" : "postulaciones"}</span>
                         </div>
@@ -172,7 +172,7 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                         <Link
                             href={`/adopciones/${pet.id}`}
                             target="_blank"
-                            className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-muted text-muted-foreground rounded-lg text-sm font-medium hover:bg-muted transition-colors"
                         >
                             <Eye className="w-4 h-4" />
                             Ver
@@ -198,15 +198,15 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                     </div>
 
                     {/* Cambiar Estado */}
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <div className="mt-3 pt-3 border-t border-border">
+                        <label className="block text-xs font-medium text-muted-foreground mb-1">
                             Cambiar estado:
                         </label>
                         <select
                             value={pet.status}
                             onChange={(e) => handleStatusChange(e.target.value as PetStatus)}
                             disabled={isChangingStatus}
-                            className="text-black w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            className="text-black w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-muted disabled:cursor-not-allowed"
                         >
                             <option value={PetStatus.AVAILABLE}>Disponible</option>
                             <option value={PetStatus.IN_PROCESS}>En Proceso</option>
@@ -219,18 +219,18 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
             {/* Modal de Confirmación de Eliminación */}
             {showDeleteConfirm && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg max-w-md w-full p-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    <div className="bg-card rounded-lg max-w-md w-full p-6">
+                        <h3 className="text-xl font-bold text-foreground mb-2">
                             ¿Eliminar a {pet.name}?
                         </h3>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-muted-foreground mb-6">
                             Esta acción no se puede deshacer. Se eliminarán todas las postulaciones asociadas.
                         </p>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setShowDeleteConfirm(false)}
                                 disabled={isDeleting}
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-muted-foreground font-medium hover:bg-muted disabled:opacity-50 transition-colors"
                             >
                                 Cancelar
                             </button>

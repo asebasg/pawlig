@@ -46,17 +46,17 @@ export default async function UserViewPage({ params }: { params: { id: string } 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-muted p-4 sm:p-6">
       <Link
         href="/admin/users"
-        className="inline-flex items-center gap-2 py-4 mb-2 rounded-lg text-black hover:text-gray-700 transition-colors"
+        className="inline-flex items-center gap-2 py-4 mb-2 rounded-lg text-black hover:text-muted-foreground transition-colors"
       >
         <ArrowLeft className="w-5 h-5" />
         Regresar al Panel de Gestión
       </Link>
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
-        <p className="text-gray-600">{user.email}</p>
+        <h1 className="text-3xl font-bold text-foreground">{user.name}</h1>
+        <p className="text-muted-foreground">{user.email}</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -82,7 +82,7 @@ export default async function UserViewPage({ params }: { params: { id: string } 
                 <InfoItem icon={user.isActive ? CheckCircle : XCircle} label="Estado"
                   value={user.isActive ? "Activo" : `Bloqueado desde el ${formatDate(user.blockedAt)}`}
                   valueColor={user.isActive ? "text-green-600" : "text-red-600"} />
-                {!user.isActive && user.blockReason && <p className="text-xs text-gray-500 mt-1 ml-6"><strong>Razón:</strong> {user.blockReason}</p>}
+                {!user.isActive && user.blockReason && <p className="text-xs text-muted-foreground mt-1 ml-6"><strong>Razón:</strong> {user.blockReason}</p>}
               </div>
             </CardContent>
           </Card>
@@ -105,10 +105,10 @@ export default async function UserViewPage({ params }: { params: { id: string } 
 }
 
 // Componente de ayuda para mostrar items de información
-function InfoItem({ icon: Icon, label, value, valueColor = "text-gray-800" }: { icon: React.ElementType, label: string, value: string, valueColor?: string }) {
+function InfoItem({ icon: Icon, label, value, valueColor = "text-foreground" }: { icon: React.ElementType, label: string, value: string, valueColor?: string }) {
   return (
     <div>
-      <div className="flex items-center gap-2 text-gray-500">
+      <div className="flex items-center gap-2 text-muted-foreground">
         <Icon className="w-4 h-4" />
         <span className="font-semibold">{label}:</span>
       </div>

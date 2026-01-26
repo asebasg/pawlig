@@ -119,7 +119,7 @@ function ProductGalleryContent() {
             <main className="flex-1 min-w-0">
                 {!isLoading && (
                     <div className="mb-6 flex items-center justify-between">
-                        <p className="text-gray-500 dark:text-gray-400">
+                        <p className="text-muted-foreground dark:text-muted-foreground/50">
                             Mostrando {products.length} de {total} resultados
                         </p>
                     </div>
@@ -129,13 +129,13 @@ function ProductGalleryContent() {
                     {isLoading ? (
                         <div className="col-span-full flex flex-col items-center justify-center py-12">
                             <Loader />
-                            <p className="text-gray-500 dark:text-gray-400">Cargando productos...</p>
+                            <p className="text-muted-foreground dark:text-muted-foreground/50">Cargando productos...</p>
                         </div>
                     ) : error ? (
                         <div className="col-span-full py-20 text-center">
                             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
                             <h3 className="text-lg font-semibold">Ha ocurrido un error</h3>
-                            <p className="text-gray-500 dark:text-gray-400 mb-4">{error}</p>
+                            <p className="text-muted-foreground dark:text-muted-foreground/50 mb-4">{error}</p>
                             <Button onClick={() => window.location.reload()}>Recargar página</Button>
                         </div>
                     ) : products.length === 0 ? (

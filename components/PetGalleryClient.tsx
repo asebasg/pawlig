@@ -158,7 +158,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Sidebar de Filtros - Izquierda en desktop, arriba en móvil */}
       <aside className="w-full lg:w-80 flex-shrink-0">
-        <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
+        <div className="bg-card rounded-lg shadow-sm p-6 sticky top-4">
 
           {/* Componente de Filtros */}
           <PetFilter
@@ -175,7 +175,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
       <main className="flex-1 min-w-0">
         {!loading && (
           <div className="mb-6 flex items-center justify-between">
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-muted-foreground dark:text-muted-foreground/50">
               Mostrando {pets.length} de {totalCount} resultados
             </p>
           </div>
@@ -185,20 +185,20 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
           {loading ? (
             <div className="col-span-full flex flex-col items-center justify-center py-12">
               <Loader />
-              <p className="text-gray-500 dark:text-gray-400">Cargando mascotas...</p>
+              <p className="text-muted-foreground dark:text-muted-foreground/50">Cargando mascotas...</p>
             </div>
           ) : error ? (
-            <div className="col-span-full bg-white rounded-lg border p-12 text-center">
+            <div className="col-span-full bg-card rounded-lg border p-12 text-center">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <AlertCircle className="w-8 h-8 text-red-500" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 Error al cargar mascotas
               </h3>
-              <p className="text-gray-600 mb-6">{error}</p>
+              <p className="text-muted-foreground mb-6">{error}</p>
               <Button
                 onClick={() => fetchPets()}
-                className="bg-purple-600 hover:bg-purple-700 mx-auto"
+                className="bg-primary hover:bg-primary/90 mx-auto"
               >
                 Reintentar
               </Button>
@@ -211,7 +211,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
               <h3 className="text-xl font-semibold text-purple-800 mb-2">
                 No se encontraron mascotas
               </h3>
-              <p className="text-purple-600 mb-6">
+              <p className="text-primary mb-6">
                 Intenta ajustar los filtros para ver más resultados
               </p>
               <Button
@@ -236,7 +236,7 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
                   />
                 }
                 footer={
-                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                  <Button asChild className="w-full bg-primary hover:bg-primary/90">
                     <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
                   </Button>
                 }
@@ -251,19 +251,19 @@ export default function PetGalleryClient({ userSession }: PetGalleryClientProps)
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted transition"
             >
               Anterior
             </button>
 
-            <span className="text-gray-600">
+            <span className="text-muted-foreground">
               Página {currentPage} de {totalPages}
             </span>
 
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted transition"
             >
               Siguiente
             </button>

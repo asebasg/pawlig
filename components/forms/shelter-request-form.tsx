@@ -101,12 +101,12 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
       {/* Sección: Datos del Representante */}
       <fieldset className="space-y-4 border-b pb-6">
-        <legend className="text-lg font-semibold text-gray-900 mb-4">
+        <legend className="text-lg font-semibold text-foreground mb-4">
           Datos del Representante
         </legend>
 
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-1">
             Nombre Completo <span className='text-red-500 font-bold'>*</span>
           </label>
           <input
@@ -115,7 +115,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
             id="name"
             readOnly={!!userProfile?.name}
             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.name ? 'border-red-500' : 'border-gray-300'
-              } ${userProfile?.name ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              } ${userProfile?.name ? 'bg-muted cursor-not-allowed' : ''}`}
             placeholder="Juan Pérez García"
           />
           {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
@@ -123,7 +123,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="idNumber" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="idNumber" className="block text-sm font-medium text-muted-foreground mb-1">
               Número de Identificación <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
@@ -132,14 +132,14 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
               id="idNumber"
               readOnly={!!userProfile?.idNumber}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.idNumber ? 'border-red-500' : 'border-gray-300'
-                } ${userProfile?.idNumber ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                } ${userProfile?.idNumber ? 'bg-muted cursor-not-allowed' : ''}`}
               placeholder="1234567890"
             />
             {errors.idNumber && <p className="text-red-600 text-sm mt-1">{errors.idNumber.message}</p>}
           </div>
 
           <div>
-            <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="birthDate" className="block text-sm font-medium text-muted-foreground mb-1">
               Fecha de Nacimiento <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
@@ -148,7 +148,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
               id="birthDate"
               readOnly={!!userProfile?.birthDate}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.birthDate ? 'border-red-500' : 'border-gray-300'
-                } ${userProfile?.birthDate ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                } ${userProfile?.birthDate ? 'bg-muted cursor-not-allowed' : ''}`}
             />
             {errors.birthDate && <p className="text-red-600 text-sm mt-1">{errors.birthDate.message}</p>}
           </div>
@@ -156,7 +156,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-1">
               Email <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
@@ -165,14 +165,14 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
               id="email"
               readOnly={!!userProfile?.email}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'
-                } ${userProfile?.email ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                } ${userProfile?.email ? 'bg-muted cursor-not-allowed' : ''}`}
               placeholder="usuario@ejemplo.com"
             />
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground mb-1">
               Teléfono <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
@@ -181,7 +181,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
               id="phone"
               readOnly={!!userProfile?.phone}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'
-                } ${userProfile?.phone ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                } ${userProfile?.phone ? 'bg-muted cursor-not-allowed' : ''}`}
               placeholder="+573001234567"
             />
             {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone.message}</p>}
@@ -190,7 +190,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="municipality" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="municipality" className="block text-sm font-medium text-muted-foreground mb-1">
               Municipio <span className='text-red-500 font-bold'>*</span>
             </label>
             <select
@@ -198,7 +198,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
               id="municipality"
               disabled={!!userProfile?.municipality}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.municipality ? 'border-red-500' : 'border-gray-300'
-                } ${userProfile?.municipality ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                } ${userProfile?.municipality ? 'bg-muted cursor-not-allowed' : ''}`}
             >
               <option value="">Selecciona un municipio</option>
               {Object.values($Enums.Municipality).map((mun) => (
@@ -212,7 +212,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
           </div>
 
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="address" className="block text-sm font-medium text-muted-foreground mb-1">
               Dirección <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
@@ -221,7 +221,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
               id="address"
               readOnly={!!userProfile?.address}
               className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.address ? 'border-red-500' : 'border-gray-300'
-                } ${userProfile?.address ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                } ${userProfile?.address ? 'bg-muted cursor-not-allowed' : ''}`}
               placeholder="Calle 10 #20-30 Apto 405"
             />
             {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>}
@@ -230,7 +230,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-muted-foreground mb-1">
               Contraseña <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
@@ -259,12 +259,12 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
       {/* Sección: Datos del Albergue */}
       <fieldset className="space-y-4 border-b pb-6">
-        <legend className="text-lg font-semibold text-gray-900 mb-4">
+        <legend className="text-lg font-semibold text-foreground mb-4">
           Datos del Albergue o Entidad de Rescate
         </legend>
 
         <div>
-          <label htmlFor="shelterName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="shelterName" className="block text-sm font-medium text-muted-foreground mb-1">
             Nombre del Albergue <span className='text-red-500 font-bold'>*</span>
           </label>
           <input
@@ -278,7 +278,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
         </div>
 
         <div>
-          <label htmlFor="shelterNit" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="shelterNit" className="block text-sm font-medium text-muted-foreground mb-1">
             NIT del Albergue <span className='text-red-500 font-bold'>*</span>
           </label>
           <input
@@ -293,7 +293,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="shelterMunicipality" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="shelterMunicipality" className="block text-sm font-medium text-muted-foreground mb-1">
               Municipio del Albergue <span className='text-red-500 font-bold'>*</span>
             </label>
             <select
@@ -314,7 +314,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
           </div>
 
           <div>
-            <label htmlFor="shelterAddress" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="shelterAddress" className="block text-sm font-medium text-muted-foreground mb-1">
               Dirección del Albergue <span className='text-red-500 font-bold'>*</span>
             </label>
             <input
@@ -329,7 +329,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
         </div>
 
         <div>
-          <label htmlFor="shelterDescription" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="shelterDescription" className="block text-sm font-medium text-muted-foreground mb-1">
             Descripción del Albergue
           </label>
           <textarea
@@ -346,7 +346,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="contactWhatsApp" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="contactWhatsApp" className="block text-sm font-medium text-muted-foreground mb-1">
               WhatsApp de Contacto
             </label>
             <input
@@ -362,7 +362,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
           </div>
 
           <div>
-            <label htmlFor="contactInstagram" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="contactInstagram" className="block text-sm font-medium text-muted-foreground mb-1">
               Instagram del Albergue
             </label>
             <input
@@ -384,14 +384,14 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition"
+          className="px-6 py-2 border border-gray-300 rounded-lg text-muted-foreground font-medium hover:bg-muted transition"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
         >
           {isSubmitting ? 'Enviando...' : 'Enviar Solicitud'}
         </button>

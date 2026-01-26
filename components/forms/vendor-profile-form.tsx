@@ -113,15 +113,15 @@ export default function VendorProfileForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Editar Perfil de Negocio</h2>
-        <p className="text-gray-600 mt-2">
+        <h2 className="text-3xl font-bold text-foreground">Editar Perfil de Negocio</h2>
+        <p className="text-muted-foreground mt-2">
           Actualiza la información de tu negocio. Los cambios se aplicarán inmediatamente.
         </p>
       </div>
 
       {/* Nombre del Negocio */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Nombre del Negocio *
         </label>
         <input
@@ -138,7 +138,7 @@ export default function VendorProfileForm() {
 
       {/* Teléfono del Negocio */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Teléfono del Negocio
         </label>
         <input
@@ -155,7 +155,7 @@ export default function VendorProfileForm() {
 
       {/* Descripción */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Descripción del Negocio
         </label>
         <input
@@ -172,7 +172,7 @@ export default function VendorProfileForm() {
 
       {/* Logo URL */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           URL del Logo
         </label>
         <input
@@ -187,7 +187,7 @@ export default function VendorProfileForm() {
         )}
         {logoUrl && (
           <div className="mt-3">
-            <p className="text-sm text-gray-600 mb-2">Vista previa del logo:</p>
+            <p className="text-sm text-muted-foreground mb-2">Vista previa del logo:</p>
             <div className="relative h-16 w-16">
               <Image
                 src={logoUrl}
@@ -204,7 +204,7 @@ export default function VendorProfileForm() {
 
       {/* Municipio */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Municipio *
         </label>
         <select
@@ -226,7 +226,7 @@ export default function VendorProfileForm() {
 
       {/* Dirección */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-muted-foreground mb-2">
           Dirección Física *
         </label>
         <input
@@ -246,21 +246,21 @@ export default function VendorProfileForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
         </button>
         <button
           type="button"
           onClick={() => window.history.back()}
-          className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+          className="flex-1 bg-muted text-foreground py-3 rounded-lg font-semibold hover:bg-muted transition-colors"
         >
           Cancelar
         </button>
       </div>
 
       {/* Nota de campos obligatorios */}
-      <p className="text-sm text-gray-500 mt-4">
+      <p className="text-sm text-muted-foreground mt-4">
         Los campos marcados con * son obligatorios.
       </p>
     </form>

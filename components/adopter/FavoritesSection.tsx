@@ -102,14 +102,14 @@ export default function FavoritesSection() {
   );
 
   return (
-    <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
+    <section className="bg-card rounded-lg shadow-sm p-6 mb-8">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="flex flex-inline items-center text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="flex flex-inline items-center text-2xl font-bold text-foreground mb-2">
           <HeartPlus size={26} className="mr-2" />
           Mis Mascotas Favoritas
         </h2>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           {favorites.length === 0
             ? 'Aún no has marcado ninguna mascota como favorita'
             : `Tienes ${favorites.length} mascota${favorites.length !== 1 ? 's' : ''} favorita${favorites.length !== 1 ? 's' : ''}`}
@@ -120,13 +120,13 @@ export default function FavoritesSection() {
       {favorites.length > 0 && (
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground/50 w-5 h-5" />
             <input
               type="text"
               placeholder="Buscar en favoritos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-foreground"
             />
           </div>
         </div>
@@ -136,14 +136,14 @@ export default function FavoritesSection() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-12">
           <Loader />
-          <p className="text-gray-500">Cargando favoritos...</p>
+          <p className="text-muted-foreground">Cargando favoritos...</p>
         </div>
       ) : error ? (
         <div className="text-center py-12">
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="text-purple-600 hover:underline"
+            className="text-primary hover:underline"
           >
             Intentar nuevamente
           </button>
@@ -151,20 +151,20 @@ export default function FavoritesSection() {
       ) : favorites.length === 0 ? (
         <div className="text-center py-12">
           <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 mb-2">No tienes mascotas favoritas</p>
-          <p className="text-sm text-gray-400 mb-4">
+          <p className="text-muted-foreground mb-2">No tienes mascotas favoritas</p>
+          <p className="text-sm text-muted-foreground/50 mb-4">
             Explora nuestro catálogo y marca tus mascotas favoritas
           </p>
           <Link
             href="/adopciones"
-            className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+            className="inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition"
           >
             Explorar mascotas
           </Link>
         </div>
       ) : filteredFavorites.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">No se encontraron resultados para: {searchQuery}</p>
+          <p className="text-muted-foreground">No se encontraron resultados para: {searchQuery}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -192,14 +192,14 @@ export default function FavoritesSection() {
                       handleRemoveFavorite(pet.id);
                     }}
                     disabled={removingId === pet.id}
-                    className="absolute top-0 right-0 p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition disabled:opacity-50 z-20 group/heart"
+                    className="absolute top-0 right-0 p-2 bg-card rounded-full shadow-sm hover:bg-muted transition disabled:opacity-50 z-20 group/heart"
                     title="Remover de favoritos"
                   >
                     <Heart className="w-5 h-5 fill-red-500 text-red-500 transition-transform group-hover/heart:scale-110" />
                   </button>
                 }
                 footer={
-                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                  <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white">
                     <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
                   </Button>
                 }
