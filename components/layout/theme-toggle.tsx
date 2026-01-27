@@ -1,25 +1,21 @@
 "use client";
 
 import * as React from "react";
-import { Moon, Sun, Monitor, Palette } from "lucide-react";
+import { Moon, Sun, Palette, Zap } from "lucide-react";
 import { useTheme } from "next-themes";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 /**
  * Ruta/Componente/Servicio: ThemeToggle
- * Descripción: Botón global para cambiar el tema de la aplicación.
- * Requiere: next-themes, lucide-react, Select
- * Implementa: HU-XXX (Cambio de tema)
+ * Descripción: Botón circular que alterna entre los temas disponibles (Claro, Oscuro, Solarized Claro, Solarized Oscuro).
+ * Requiere: next-themes, lucide-react, Button
+ * Implementa: Mejora estética del cambio de tema (HU-XXX)
  */
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
+
+  const themes = ["light", "dark", "solarized-light", "solarized-dark"];
 
   // Evitar desajustes de hidratación al renderizar solo después de montar
   React.useEffect(() => {
@@ -27,49 +23,42 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="w-[140px] h-9 bg-muted animate-pulse rounded-md" />;
+    return <div className="w-10 h-10 bg-muted animate-pulse rounded-full" />;
   }
 
+  const toggleTheme = () => {
+    const currentIndex = themes.indexOf(theme || "light");
+    // Si el tema actual no está en la lista (ej. 'system'), empezamos por dark
+    const nextIndex = currentIndex === -1 ? 1 : (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex]);
+  };
+
+  const getIcon = () => {
+    switch (theme) {
+      case "light":
+        return <Sun className="h-5 w-5 text-yellow-500" />;
+      case "dark":
+        return <Moon className="h-5 w-5 text-blue-400" />;
+      case "solarized-light":
+        return <Palette className="h-5 w-5 text-orange-500" />;
+      case "solarized-dark":
+        return <Zap className="h-5 w-5 text-indigo-400" />;
+      default:
+        return <Sun className="h-5 w-5" />;
+    }
+  };
+
   return (
-    <div className="flex items-center gap-2">
-      <Select value={theme} onValueChange={setTheme}>
-        <SelectTrigger className="w-[150px] h-9 border-none bg-accent/50 hover:bg-accent transition-colors">
-          <SelectValue placeholder="Tema" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="light">
-            <div className="flex items-center gap-2">
-              <Sun size={16} />
-              <span>Claro</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="dark">
-            <div className="flex items-center gap-2">
-              <Moon size={16} />
-              <span>Oscuro</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="solarized-light">
-            <div className="flex items-center gap-2">
-              <Palette size={16} className="text-orange-500" />
-              <span>Solarized Claro</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="solarized-dark">
-            <div className="flex items-center gap-2">
-              <Palette size={16} className="text-blue-500" />
-              <span>Solarized Oscuro</span>
-            </div>
-          </SelectItem>
-          <SelectItem value="system">
-            <div className="flex items-center gap-2">
-              <Monitor size={16} />
-              <span>Sistema</span>
-            </div>
-          </SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggleTheme}
+      className="rounded-full hover:bg-accent/50 transition-all duration-300"
+      title="Cambiar tema"
+    >
+      {getIcon()}
+      <span className="sr-only">Alternar tema</span>
+    </Button>
   );
 }
 
@@ -79,19 +68,19 @@ export function ThemeToggle() {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este componente permite al usuario cambiar entre los temas disponibles:
- * Claro, Oscuro, Solarized Claro, Solarized Oscuro y Sistema.
+ * Este componente reemplaza el selector anterior por un botón único que rota
+ * entre los cuatro temas definidos en el sistema.
  *
  * Lógica Clave:
- * - 'useTheme': Hook de 'next-themes' para obtener y establecer el tema actual.
- * - 'mounted': Se utiliza un estado para asegurar que el componente solo se
- *   renderice en el cliente, evitando errores de hidratación ya que el tema
- *   se lee del almacenamiento local.
- * - 'Select': Se utiliza un componente de selección para ofrecer todas las
- *   opciones de tema de forma clara.
+ * - 'toggleTheme': Calcula el siguiente tema en el arreglo circular basándose
+ *   en el estado actual proporcionado por 'next-themes'.
+ * - 'getIcon': Devuelve un icono representativo diferente para cada estado
+ *   del tema para dar feedback visual al usuario.
+ * - 'mounted': Garantiza que no haya inconsistencias entre el servidor y el
+ *   cliente al leer el tema del almacenamiento local.
  *
  * Dependencias Externas:
- * - 'next-themes': Para la gestión del tema.
- * - 'lucide-react': Para los iconos de sol, luna, etc.
+ * - 'next-themes': Para gestionar el estado global del tema.
+ * - 'lucide-react': Iconografía para los diferentes modos.
  *
  */

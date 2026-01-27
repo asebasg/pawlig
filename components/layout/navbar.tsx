@@ -33,16 +33,17 @@ export function Navbar() {
 
           {/* Desktop Navigation & Actions */}
           <div className="hidden lg:flex items-center gap-4 flex-1 justify-end">
-            <ThemeToggle />
             {status === "loading" ? (
               <div className="h-10 w-24 bg-muted animate-pulse rounded" />
             ) : session?.user ? (
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-6">
                 <NavbarAuth user={session.user} />
+                <ThemeToggle />
               </div>
             ) : (
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-6">
                 <NavbarPublic />
+                <ThemeToggle />
               </div>
             )}
           </div>
@@ -69,6 +70,7 @@ export function Navbar() {
  * - 'useSession': Se utiliza el hook 'useSession' de 'next-auth/react' para obtener el estado actual de la sesión del usuario.
  * - 'Renderizado Condicional': El componente muestra un esqueleto de carga ('animate-pulse') mientras se verifica la sesión. Si el usuario está autenticado, renderiza 'NavbarAuth'; de lo contrario, renderiza 'NavbarPublic'.
  * - 'Diseño Responsivo': El componente gestiona la visibilidad de elementos para dispositivos móviles y de escritorio. 'NavbarMobile' se muestra en pantallas pequeñas, mientras que 'NavbarAuth' y 'NavbarPublic' se muestran en pantallas grandes.
+ * - 'ThemeToggle': Ubicado al final de las acciones de escritorio para un acceso rápido y estético.
  *
  * Dependencias Externas:
  * - 'next-auth/react': Para la gestión de la sesión y el estado de autenticación del usuario.
