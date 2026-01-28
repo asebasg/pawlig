@@ -3,10 +3,11 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
+import { CartProvider } from "@/lib/context/CartContext";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { BadgeCheck, BadgeX, BadgeAlert, BadgeInfo, LoaderCircle } from 'lucide-react'
+import { BadgeCheck, BadgeX, BadgeAlert, BadgeInfo, LoaderCircle } from "lucide-react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,14 +31,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <SessionProvider>
-          {/* Navbar */}
-          <Navbar />
-          {/* Contenido de las paginas */}
-          <main className="flex-1">
-            {children}
-          </main>
-          {/* Footer */}
-          <Footer />
+          <CartProvider>
+            {/* Navbar */}
+            <Navbar />
+            {/* Contenido de las paginas */}
+            <main className="flex-1">
+              {children}
+            </main>
+            {/* Footer */}
+            <Footer />
+          </CartProvider>
           <Toaster
             position="top-center"
             closeButton

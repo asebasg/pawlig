@@ -20,6 +20,13 @@ vi.mock('sonner', () => ({
   }
 }));
 
+// Mock para PointerEvent y otros métodos necesarios para Radix UI en JSDOM
+if (typeof window !== 'undefined') {
+  window.HTMLElement.prototype.scrollIntoView = vi.fn();
+  window.HTMLElement.prototype.hasPointerCapture = vi.fn();
+  window.HTMLElement.prototype.releasePointerCapture = vi.fn();
+}
+
 describe('UserViewClient', () => {
   const mockUser = {
     id: 'user-123',
@@ -34,7 +41,7 @@ describe('UserViewClient', () => {
   test('renders user role correctly in the selector', () => {
     render(<UserViewClient user={mockUser} />);
     const roleSelect = screen.getByLabelText('Rol del Usuario');
-    expect(roleSelect).toHaveValue(UserRole.ADOPTER);
+    expect(roleSelect).toHaveTextContent(UserRole.ADOPTER);
   });
 
   test('save button is disabled initially', () => {
@@ -51,7 +58,17 @@ describe('UserViewClient', () => {
     const reasonInput = screen.getByLabelText(/Razón del cambio/i);
     const saveButton = screen.getByRole('button', { name: /guardar cambios/i });
 
-    await user.selectOptions(roleSelect, UserRole.SHELTER);
+    // En las pruebas con Radix Select y JSDOM, a veces es difícil interactuar con el dropdown real.
+    // Una alternativa es disparar el cambio directamente si el componente lo permite,
+    // pero aquí intentaremos la interacción de usuario simulada.
+
+    await user.click(roleSelect);
+
+    // Radix Select renderiza las opciones fuera del árbol principal (Portal).
+    // En JSDOM esto puede ser problemático. Buscamos por texto si findByRole falla.
+    const option = await screen.findByText(UserRole.SHELTER, { selector: 'span' });
+    await user.click(option);
+
     await user.type(reasonInput, 'Razón de prueba válida');
 
     expect(saveButton).toBeEnabled();
