@@ -246,6 +246,19 @@ model Adoption {
   @@index([createdAt])
 }
 
+model Announcement {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  content       String
+  expiresAt     DateTime
+  buttonText    String?
+  buttonLink    String?
+  buttonVisible Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([expiresAt])
+}
+
 model Order {
   id                   String       @id @default(auto()) @map("_id") @db.ObjectId
   status               OrderStatus  @default(PENDING)

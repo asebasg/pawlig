@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { BadgeCheck, BadgeX, BadgeAlert, BadgeInfo, LoaderCircle } from 'lucide-react'
+import { AnnouncementModal } from "@/components/announcement-modal";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -60,6 +61,7 @@ export default function RootLayout({
               loading: <LoaderCircle className="animate-spin text-indigo-600" size={25} />,
             }}
           />
+          <AnnouncementModal />
         </SessionProvider>
       </body>
     </html>
