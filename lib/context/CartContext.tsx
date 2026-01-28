@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 /**
  * Descripción: Contexto para la gestión del carrito de compras.
@@ -33,6 +34,16 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const { status } = useSession();
+  const [prevStatus, setPrevStatus] = useState(status);
+
+  // Efecto de limpieza al cerrar sesión
+  useEffect(() => {
+    if (prevStatus === "authenticated" && status === "unauthenticated") {
+      setCart([]);
+    }
+    setPrevStatus(status);
+  }, [status, prevStatus]);
 
   // Efecto de inicialización: Carga desde localStorage una sola vez al montar
   useEffect(() => {

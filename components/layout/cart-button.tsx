@@ -21,7 +21,7 @@ export function CartButton({ itemCount: propItemCount }: CartButtonProps) {
 
   return (
     <Link 
-      href="/productos/cart"
+      href="/user?tab=cart"
       className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
     >
       <ShoppingCart 
@@ -44,16 +44,13 @@ export function CartButton({ itemCount: propItemCount }: CartButtonProps) {
  *
  * Descripción General:
  * Este componente de UI muestra un icono de carrito de compras que enlaza a la
- * página del carrito. Opcionalmente, muestra un contador numérico si hay
- * artículos en él.
+ * pestaña de carrito en el dashboard del usuario.
  *
  * Lógica Clave:
+ * - Redirección: Enlaza a /user?tab=cart para integrar la vista del carrito
+ *   dentro del perfil del usuario adoptante.
  * - Renderizado Condicional: El contador solo se renderiza si itemCount es
- *   mayor que cero, manteniendo la interfaz limpia cuando el carrito está vacío.
- * - Límite del Contador: Para evitar problemas de diseño con números grandes,
- *   el contador muestra "9+" si el número de artículos es mayor que 9.
- * - Integración con Contexto: Obtiene automáticamente el número total de items
- *   del CartContext si no se proporciona una prop explícita.
+ *   mayor que cero.
  *
  * Dependencias Externas:
  * - next/link: Para el enlace de navegación.

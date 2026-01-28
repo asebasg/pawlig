@@ -109,6 +109,12 @@ export default function ProductDetailClient({
   };
 
   const handleAddToCart = () => {
+    if (!userSession) {
+      toast.error("Debes iniciar sesión para añadir productos al carrito");
+      router.push("/login");
+      return;
+    }
+
     addToCart({
       id: product.id,
       name: product.name,
@@ -124,7 +130,7 @@ export default function ProductDetailClient({
   const handleOpenPaymentModal = () => {
     if (!userSession) {
       toast.error("Debes iniciar sesión para comprar");
-      router.push("/auth/login");
+      router.push("/login");
       return;
     }
     setIsPaymentModalOpen(true);

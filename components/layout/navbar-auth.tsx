@@ -54,7 +54,7 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
         {user.role === "ADOPTER" && (
           <>
             <Link
-              href="/user/favorites"
+              href="/user?tab=favorites"
               className="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <Heart size={20} className="text-gray-600 sm:w-6 sm:h-6" />

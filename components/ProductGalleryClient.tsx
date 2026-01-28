@@ -6,13 +6,15 @@ import { ProductFilter } from "@/components/filters/product-filter";
 import { ProductCard } from "@/components/cards/product-card";
 import Loader from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
-import { PackageX, AlertCircle } from "lucide-react";
+import { PackageX, AlertCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/context/CartContext";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 /**
  * Descripción: Galería de productos con filtrado, búsqueda y paginación sincronizada con la URL.
- * Requiere: API de productos (/api/products) y CartProvider.
+ * Requiere: API de productos (/api/products), CartProvider y SessionProvider.
  * Implementa: HU-006 (Filtro y búsqueda de mascotas - adaptado a productos) y HU-009 (Simulación de compra).
  */
 
@@ -43,7 +45,8 @@ interface ProductsResponse {
 function ProductGalleryContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addToCart } = useCart();
+  const { addToCart, totalItems } = useCart();
+  const { data: session } = useSession();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -99,6 +102,12 @@ function ProductGalleryContent() {
   };
 
   const handleAddToCart = (product: Product) => {
+    if (!session) {
+      toast.error("Debes iniciar sesión para añadir productos al carrito");
+      router.push("/login");
+      return;
+    }
+
     addToCart({
       id: product.id,
       name: product.name,
@@ -112,7 +121,7 @@ function ProductGalleryContent() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
+    <div className="flex flex-col lg:flex-row gap-8 relative">
       <aside className="w-full lg:w-80 flex-shrink-0">
         <div className="sticky top-20 p-6">
           <ProductFilter />
@@ -182,6 +191,37 @@ function ProductGalleryContent() {
           </div>
         )}
       </main>
+
+      {/* Botón Flotante del Carrito */}
+      {totalItems > 0 && (
+        <div className="fixed bottom-8 right-8 z-30 lg:hidden">
+          <Button asChild size="lg" className="rounded-full h-16 w-16 shadow-2xl bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all">
+            <Link href="/user?tab=cart" className="relative">
+              <ShoppingBag className="h-8 w-8" />
+              <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center border-2 border-white">
+                {totalItems > 9 ? "9+" : totalItems}
+              </span>
+            </Link>
+          </Button>
+        </div>
+      )}
+
+      {/* FAB Desktop Sticky (opcional según interpretación, el requisito dice Esquina inferior derecha sticky) */}
+      {totalItems > 0 && (
+        <div className="hidden lg:block fixed bottom-10 right-10 z-30">
+          <Button asChild size="lg" className="rounded-full h-20 w-20 shadow-2xl bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all group">
+            <Link href="/user?tab=cart" className="flex flex-col items-center justify-center">
+              <div className="relative">
+                <ShoppingBag className="h-8 w-8" />
+                <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs font-bold rounded-full h-7 w-7 flex items-center justify-center border-2 border-white">
+                  {totalItems}
+                </span>
+              </div>
+              <span className="text-[10px] mt-1 font-bold group-hover:scale-105 transition-transform">CARRITO</span>
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -200,20 +240,16 @@ export default function ProductGalleryClient() {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este componente gestiona la visualización del catálogo de productos en una
- * interfaz de galería responsiva con filtros laterales y paginación.
+ * Galería de productos con filtrado y gestión de carrito. Se ha añadido un botón
+ * flotante (FAB) y validación de autenticación.
  *
  * Lógica Clave:
- * - Fetching Dinámico: Se sincroniza con los parámetros de búsqueda de la URL
- *   para permitir el filtrado y la navegación compartible.
- * - Carrito: Utiliza el CartContext para permitir que los usuarios agreguen
- *   productos directamente desde la galería sin entrar al detalle.
- * - Suspense: Envuelto en un límite de Suspense para manejar de forma segura
- *   el uso de useSearchParams durante la renderización estática.
+ * - Validación de Login: Al intentar añadir un producto sin sesión, se muestra
+ *   un aviso y se redirige a /login.
+ * - FAB (Floating Action Button): Aparece cuando hay items en el carrito,
+ *   proporcionando un acceso directo visible y sticky a la pestaña del carrito.
  *
  * Dependencias Externas:
- * - next/navigation: Para la gestión de rutas y parámetros de búsqueda.
- * - sonner: Para notificaciones de éxito al agregar productos.
- * - lucide-react: Para iconografía de estados vacíos y errores.
+ * - next-auth/react: Para verificación de sesión en el cliente.
  *
  */
