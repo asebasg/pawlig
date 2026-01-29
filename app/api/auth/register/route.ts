@@ -47,7 +47,7 @@ export async function POST(request: Request) {
                     error: 'El correo ya está registrado',
                     code: 'EMAIL_ALREADY_EXISTS',
                     suggestion: '¿Olvidaste tu contraseña? Puedes recuperarla aquí.',
-                    recoveryUrl: '/forgot-password',
+                    recoveryUrl: 'https://github.com/asebasg/pawlig', // TODO: Cambiar por la URL de la página de recuperación de contraseña
                 },
                 { status: 409 } // 409 = conflict
             );
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
                     error: 'El correo o número de identificación ya están registrados',
                     code: 'DUPLICATE_DATA',
                     suggestion: 'Verifica tus datos o intenta recuperar tu contraseña',
-                    recoveryUrl: '/forgot-password',
+                    recoveryUrl: 'https://github.com/asebasg/pawlig', // TODO: Cambiar por la URL de la página de recuperación de contraseña
                 },
                 { status: 409 }
             );

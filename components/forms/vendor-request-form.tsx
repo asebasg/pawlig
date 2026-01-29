@@ -247,7 +247,7 @@ export function VendorRequestForm({ userProfile }: VendorRequestFormProps) {
                             <p className="mt-2 text-sm text-purple-700">
                                 ¿Olvidaste tu contraseña?{' '}
                                 <Link
-                                    href="/forgot-password"
+                                    href="https://github.com/asebasg/pawlig" // TODO: Cambiar por la URL de la página de recuperación de contraseña
                                     className="font-semibold underline hover:text-purple-900"
                                 >
                                     Recupérala aquí

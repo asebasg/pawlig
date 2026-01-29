@@ -1,3 +1,6 @@
+// ! Todas las rutas que coincidan exactamente con "https://github.com/asebasg/pawlig" corresponden a páginas no utilizadas
+// ! La ruta que no aparece aquí es /forgot-password. Para cambiarla, buscar en el code search "https://github.com/asebasg/pawlig" y reemplazar por "forgot-password"
+
 import { UserRole } from "@prisma/client";
 
 // Rutas de navegación por rol
@@ -82,7 +85,7 @@ export const FOOTER_LINKS = {
     { label: "Productos", href: "/productos" },
     { label: "Albergues", href: "https://github.com/asebasg/pawlig" },
     { label: "Preguntas Frecuentes", href: "/faq" },
-    { label: "Nosotros", href: "/nosotros" },
+    { label: "Nosotros", href: "https://github.com/asebasg/pawlig" },
     { label: "Reportar Problema", href: "https://github.com/asebasg/pawlig/issues/new/choose" },
   ],
   // TODO: Crear una página de recursos adicionales (anidado en GitHub Pages)
