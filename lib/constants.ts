@@ -64,7 +64,7 @@ export const USER_MENU_OPTIONS = {
   ],
   ADMIN: [
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
-    { label: "Moderación", href: "/admin/moderation", icon: "ShieldPlus" },
+    { label: "Moderación", href: "https://github.com/asebasg/pawlig", icon: "ShieldPlus" },
     { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" },
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
