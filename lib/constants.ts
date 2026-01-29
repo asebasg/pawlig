@@ -6,7 +6,7 @@ export const NAVIGATION_BY_ROLE = {
     { label: "Inicio", href: "/" },
     { label: "Adopciones", href: "/adopciones" },
     { label: "Productos", href: "/productos" },
-    { label: "Albergues", href: "/albergues" },
+    { label: "Albergues", href: "https://github.com/asebasg/pawlig" },
   ],
   SHELTER: [
     { label: "Inicio", href: "/" },
@@ -26,8 +26,8 @@ export const NAVIGATION_BY_ROLE = {
     { label: "Inicio", href: "/" },
     { label: "Dashboard", href: "/admin" },
     { label: "Usuarios", href: "/admin/users" },
-    { label: "Albergues", href: "/admin/shelters" },
-    { label: "Vendedores", href: "/admin/vendors" },
+    { label: "Albergues", href: "https://github.com/asebasg/pawlig" },
+    { label: "Vendedores", href: "https://github.com/asebasg/pawlig" },
   ]
 } as const;
 
@@ -36,7 +36,7 @@ export const PUBLIC_LINKS = [
   { label: "Inicio", href: "/" },
   { label: "Adopciones", href: "/adopciones" },
   { label: "Productos", href: "/productos" },
-  { label: "Albergues", href: "/albergues" },
+  { label: "Albergues", href: "https://github.com/asebasg/pawlig" },
 ];
 
 // Opciones del menú de usuario por rol
@@ -51,13 +51,13 @@ export const USER_MENU_OPTIONS = {
     { label: "Métricas", href: "/shelter/metrics", icon: "TrendingUp" },
     { label: "Mi Perfil", href: "/shelter/profile", icon: "User" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
-    { label: "Albergues", href: "/albergues", icon: "Home" },
+    { label: "Albergues", href: "https://github.com/asebasg/pawlig", icon: "Home" },
   ],
   VENDOR: [
     { label: "Métricas", href: "/vendor/metrics", icon: "TrendingUp" },
     { label: "Mi Perfil", href: "/vendor/profile", icon: "User" },
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
-    { label: "Albergues", href: "/albergues", icon: "Home" },
+    { label: "Albergues", href: "https://github.com/asebasg/pawlig", icon: "Home" },
   ],
   ADMIN: [
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
@@ -65,14 +65,14 @@ export const USER_MENU_OPTIONS = {
     { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" },
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
-    { label: "Albergues", href: "/albergues", icon: "Home" },
+    { label: "Albergues", href: "https://github.com/asebasg/pawlig", icon: "Home" },
   ]
 } as const;
 
 // Opciones comunes del menú
 export const COMMON_MENU_OPTIONS = [
-  { label: "Configuración", href: "/settings", icon: "Settings" },
-  { label: "Ayuda", href: "/ayuda", icon: "HelpCircle" }
+  { label: "Configuración", href: "https://github.com/asebasg/pawlig", icon: "Settings" },
+  { label: "Ayuda", href: "https://github.com/asebasg/pawlig", icon: "HelpCircle" }
 ];
 
 // Enlaces del footer
@@ -80,16 +80,16 @@ export const FOOTER_LINKS = {
   quickLinks: [
     { label: "Adopciones", href: "/adopciones" },
     { label: "Productos", href: "/productos" },
-    { label: "Albergues", href: "/albergues" },
+    { label: "Albergues", href: "https://github.com/asebasg/pawlig" },
     { label: "Preguntas Frecuentes", href: "/faq" },
     { label: "Nosotros", href: "/nosotros" },
     { label: "Reportar Problema", href: "https://github.com/asebasg/pawlig/issues/new/choose" },
   ],
   // TODO: Crear una página de recursos adicionales (anidado en GitHub Pages)
   resources: [
-    { label: "Guía de Adopción", href: "/guia-adopcion" },
-    { label: "Cuidado de Mascotas", href: "/cuidado" },
-    { label: "Manual del Usuario", href: "/guide" },
+    { label: "Guía de Adopción", href: "https://github.com/asebasg/pawlig" },
+    { label: "Cuidado de Mascotas", href: "https://github.com/asebasg/pawlig" },
+    { label: "Manual del Usuario", href: "https://github.com/asebasg/pawlig" },
     { label: "Términos y Condiciones", href: "/terms" },
     { label: "Política de Privacidad", href: "/privacy" },
     { label: "Notas de Lanzamiento", href: "/changelog" },
