@@ -16,10 +16,13 @@ import {
 export interface ProductFilters {
     category?: string;
     vendorId?: string;
-    inStock?: boolean;
+    availability?: string; // 'in_stock' | 'low_stock' | 'all'
     search?: string;
     page?: number;
     limit?: number;
+    municipality?: string;
+    minPrice?: number;
+    maxPrice?: number;
 }
 
 // Interfaz para resultado paginado
@@ -56,25 +59,64 @@ export async function getProducts(
     const {
         category,
         vendorId,
-        inStock,
+        availability,
         search,
         page = 1,
         limit = 12,
+        municipality,
+        minPrice,
+        maxPrice,
     } = filters;
 
     // Construir condiciones de búsqueda
     const where: Prisma.ProductWhereInput = {};
 
+    // 1. Filtro de Categoría (Flexible y Múltiple)
+    // El frontend envía categorías separadas por coma, ej: "ALIMENTO,HIGIENE"
     if (category) {
-        where.category = category;
+        const categories = category.split(",");
+        const searchCategories: string[] = [];
+
+        categories.forEach((cat: string) => {
+            const trimmedCat = cat.trim();
+            if (trimmedCat === "ALIMENTO") {
+                searchCategories.push("ALIMENTO_PERROS", "ALIMENTO_GATOS");
+            } else if (trimmedCat === "OTROS") {
+                searchCategories.push("ACCESORIOS");
+            } else {
+                searchCategories.push(trimmedCat);
+            }
+        });
+
+        if (searchCategories.length > 0) {
+            where.category = { in: searchCategories };
+        }
+    }
+
+    // 2. Filtro de Municipio
+    if (municipality && municipality !== "all") {
+        where.vendor = {
+            municipality: municipality as Prisma.EnumMunicipalityFilter // Fix: Use correct Prisma type
+        };
+    }
+
+    // 3. Filtro de Precio (Rango)
+    if (minPrice !== undefined || maxPrice !== undefined) {
+        where.price = {};
+        if (minPrice !== undefined) where.price.gte = minPrice;
+        if (maxPrice !== undefined) where.price.lte = maxPrice;
     }
 
     if (vendorId) {
         where.vendorId = vendorId;
     }
 
-    if (inStock !== undefined) {
-        where.stock = inStock ? { gt: 0 } : { equals: 0 };
+    if (availability) {
+        if (availability === 'in_stock') {
+            where.stock = { gt: 0 };
+        } else if (availability === 'low_stock') {
+            where.stock = { gt: 0, lte: 10 };
+        }
     }
 
     if (search) {

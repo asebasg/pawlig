@@ -23,8 +23,11 @@ export async function GET(request: NextRequest) {
         const filters = {
             category: searchParams.get("category") || undefined,
             vendorId: searchParams.get("vendorId") || undefined,
-            inStock: searchParams.get("inStock") === "true" ? true : undefined,
+            availability: searchParams.get("availability") || undefined,
+            municipality: searchParams.get("municipality") || undefined,
             search: searchParams.get("search") || undefined,
+            minPrice: searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : undefined,
+            maxPrice: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined,
             page: parseInt(searchParams.get("page") || "1"),
             limit: parseInt(searchParams.get("limit") || "12"),
         };

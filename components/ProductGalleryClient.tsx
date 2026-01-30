@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { ProductFilter } from "@/components/filters/product-filter";
 import { ProductCard } from "@/components/cards/product-card";
 import Loader from "@/components/ui/loader";
@@ -27,6 +27,15 @@ interface Product {
     };
 }
 
+interface ProductFilters {
+    search: string;
+    minPrice: string;
+    maxPrice: string;
+    category: string[];
+    municipality: string;
+    availability: string;
+}
+
 interface ProductsResponse {
     products: Product[];
     total: number;
@@ -35,70 +44,96 @@ interface ProductsResponse {
 }
 
 function ProductGalleryContent() {
-    const router = useRouter();
     const searchParams = useSearchParams();
+
+    // 1. Inicializar estado de filtros desde la URL (solo lectura inicial)
+    const [filters, setFilters] = useState<ProductFilters>({
+        search: searchParams.get("search") || "",
+        minPrice: searchParams.get("minPrice") || "",
+        maxPrice: searchParams.get("maxPrice") || "",
+        category: searchParams.get("category")?.split(",").filter(Boolean) || [],
+        municipality: searchParams.get("municipality") || "all",
+        availability: searchParams.get("availability") || "all",
+    });
+
+    // Estado paginación
+    const [page, setPage] = useState(1);
 
     // Estados de datos
     const [products, setProducts] = useState<Product[]>([]);
+    const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Paginación (derivada de searchParams para sincronización, pero mantenemos estado local para UI inmediata si se desea)
-    const [total, setTotal] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
-    const currentPage = Number(searchParams.get("page")) || 1;
+    // Función de fetch
+    const fetchProducts = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
 
-    // Efecto principal: Fetch datos cuando searchParams cambia
+        try {
+            const params = new URLSearchParams();
+
+            // Añadir filtros activos
+            if (filters.search) params.append("search", filters.search);
+            if (filters.minPrice) params.append("minPrice", filters.minPrice);
+            if (filters.maxPrice) params.append("maxPrice", filters.maxPrice);
+            if (filters.category.length > 0) params.append("category", filters.category.join(","));
+            if (filters.municipality && filters.municipality !== "all") params.append("municipality", filters.municipality);
+            if (filters.availability && filters.availability !== "all") params.append("availability", filters.availability);
+
+            // Paginación
+            params.append("page", page.toString());
+            params.append("limit", ITEMS_PER_PAGE.toString());
+
+            const response = await fetch(`/api/products?${params.toString()}`);
+            if (!response.ok) throw new Error("Error cargando productos");
+
+            const data: ProductsResponse = await response.json();
+
+            setProducts(data.products);
+            setTotal(data.total);
+            setTotalPages(data.totalPages);
+
+        } catch (err) {
+            console.error(err);
+            setError("No se pudieron cargar los productos.");
+            toast.error("Error de conexión");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [filters, page]);
+
+    // Efecto: Fetch cuando cambian filtros o página
     useEffect(() => {
-        const fetchProducts = async () => {
-            setIsLoading(true);
-            setError(null);
-
-            try {
-                // Construir query string directamente desde searchParams
-                // Nos aseguramos de incluir 'limit' si no está
-                const params = new URLSearchParams(searchParams.toString());
-                if (!params.has("limit")) {
-                    params.set("limit", ITEMS_PER_PAGE.toString());
-                }
-
-                // Fetch
-                const response = await fetch(`/api/products?${params.toString()}`);
-                if (!response.ok) throw new Error("Error cargando productos");
-
-                const data: ProductsResponse = await response.json();
-
-                setProducts(data.products);
-                setTotal(data.total);
-                setTotalPages(data.totalPages);
-
-            } catch (err) {
-                console.error(err);
-                setError("No se pudieron cargar los productos.");
-                toast.error("Error de conexión");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         fetchProducts();
-    }, [searchParams]);
+    }, [fetchProducts]);
+
+    // Handlers
+    const handleFilterChange = (key: keyof ProductFilters, value: string | string[]) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value
+        }));
+        setPage(1); // Reset a página 1 al filtrar
+    };
 
     const handleClearFilters = () => {
-        router.push("/productos");
-        // El componente ProductFilter escuchará el cambio de URL y se reseteará, 
-        // o podemos confiar en que ProductFilter maneje su propio reset si le pasamos una prop controlada,
-        // pero ProductFilter actualmente maneja su propio estado basado en URL.
-        // Al navegar a /productos limpiaremos los params.
+        setFilters({
+            search: "",
+            minPrice: "",
+            maxPrice: "",
+            category: [],
+            municipality: "all",
+            availability: "all",
+        });
+        setPage(1);
     };
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
-            const params = new URLSearchParams(searchParams.toString());
-            params.set("page", newPage.toString());
-            // Scroll top
+            setPage(newPage);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            router.push(`/productos?${params.toString()}`);
         }
     };
 
@@ -110,8 +145,12 @@ function ProductGalleryContent() {
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
             <aside className="w-full lg:w-80 flex-shrink-0">
-                <div className="sticky top-20 p-6">
-                    <ProductFilter />
+                <div className="sticky top-20 p-6 bg-white rounded-lg border shadow-sm">
+                    <ProductFilter
+                        filters={filters}
+                        onFilterChange={handleFilterChange}
+                        onClearFilters={handleClearFilters}
+                    />
                 </div>
             </aside>
 
@@ -119,8 +158,8 @@ function ProductGalleryContent() {
             <main className="flex-1 min-w-0">
                 {!isLoading && (
                     <div className="mb-6 flex items-center justify-between">
-                        <p className="text-gray-500 dark:text-gray-400">
-                            Mostrando {products.length} de {total} resultados
+                        <p className="text-gray-500 text-sm">
+                            Mostrando <span className="font-semibold text-gray-900">{products.length}</span> de <span className="font-semibold text-gray-900">{total}</span> resultados
                         </p>
                     </div>
                 )}
@@ -129,28 +168,32 @@ function ProductGalleryContent() {
                     {isLoading ? (
                         <div className="col-span-full flex flex-col items-center justify-center py-12">
                             <Loader />
-                            <p className="text-gray-500 dark:text-gray-400">Cargando productos...</p>
+                            <p className="text-gray-500 mt-4 animate-pulse">Cargando catálogo...</p>
                         </div>
                     ) : error ? (
-                        <div className="col-span-full py-20 text-center">
-                            <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold">Ha ocurrido un error</h3>
-                            <p className="text-gray-500 dark:text-gray-400 mb-4">{error}</p>
-                            <Button onClick={() => window.location.reload()}>Recargar página</Button>
+                        <div className="col-span-full py-20 text-center bg-red-50 rounded-xl border border-red-100">
+                            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                            <h3 className="text-lg font-semibold text-red-700">Ha ocurrido un error</h3>
+                            <p className="text-red-600 mb-6">{error}</p>
+                            <Button onClick={() => fetchProducts()} variant="outline" className="border-red-200 text-red-700 hover:bg-red-100">
+                                Reintentar
+                            </Button>
                         </div>
                     ) : products.length === 0 ? (
-                        <div className="col-span-full py-20 text-center">
-                            <PackageX className="h-12 w-12 mx-auto mb-4 text-purple-500" />
-                            <h3 className="text-lg font-semibold text-purple-800">No se encontraron productos</h3>
-                            <p className="mb-4 text-purple-800">Intenta ajustar los filtros de búsqueda</p>
-                            <Button variant="outline" onClick={handleClearFilters}>Limpiar filtros</Button>
+                        <div className="col-span-full py-20 text-center bg-gray-50 rounded-xl border border-gray-100">
+                            <PackageX className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                            <h3 className="text-lg font-semibold text-gray-700">No se encontraron productos</h3>
+                            <p className="mb-6 text-gray-500">Intenta ajustar los filtros de búsqueda</p>
+                            <Button variant="default" onClick={handleClearFilters}>
+                                Limpiar filtros
+                            </Button>
                         </div>
                     ) : (
                         products.map(product => (
                             <ProductCard
                                 key={product.id}
                                 product={product}
-                                accentColor="none"
+                                accentColor="purple"
                                 onAddToCart={handleAddToCart}
                             />
                         ))
@@ -162,18 +205,20 @@ function ProductGalleryContent() {
                     <div className="mt-8 flex justify-center gap-2">
                         <Button
                             variant="outline"
-                            disabled={currentPage === 1}
-                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={page === 1}
+                            onClick={() => handlePageChange(page - 1)}
+                            className="w-24"
                         >
                             Anterior
                         </Button>
-                        <span className="flex items-center px-4 font-medium">
-                            Página {currentPage} de {totalPages}
+                        <span className="flex items-center px-4 font-medium text-sm text-gray-600 bg-white rounded-md border">
+                            {page} / {totalPages}
                         </span>
                         <Button
                             variant="outline"
-                            disabled={currentPage === totalPages}
-                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={page === totalPages}
+                            onClick={() => handlePageChange(page + 1)}
+                            className="w-24"
                         >
                             Siguiente
                         </Button>

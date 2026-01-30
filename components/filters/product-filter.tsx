@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
     Select,
@@ -18,18 +17,17 @@ import {
 
 /**
  * Resumen:
- * Componente de filtros para el catálogo de productos.
- * Permite filtrar por categoría, rango de precio, disponibilidad, municipio y búsqueda por texto.
+ * Componente de filtros CONTROLADO para el catálogo de productos.
+ * Recibe estado y handlers del padre, eliminando manipulación directa de URL para evitar throttling.
  */
 
-const CATEGORIES = [
-    { value: "ALIMENTO_PERROS", label: "Alimento para perros" },
-    { value: "ALIMENTO_GATOS", label: "Alimento para gatos" },
-    { value: "ACCESORIOS", label: "Accesorios" },
-    { value: "MEDICAMENTOS", label: "Medicamentos" },
-    { value: "JUGUETES", label: "Juguetes" },
-    { value: "HIGIENE", label: "Higiene y cuidado" },
-];
+// const CATEGORIES = [
+//     { value: "ALIMENTO", label: "Alimento" },
+//     { value: "HIGIENE", label: "Higiene" },
+//     { value: "JUGUETES", label: "Juguetes" },
+//     { value: "MEDICAMENTOS", label: "Medicamentos" },
+//     { value: "OTROS", label: "Otros" },
+// ];
 
 const MUNICIPALITIES = [
     { value: "MEDELLIN", label: "Medellín" },
@@ -46,118 +44,77 @@ const MUNICIPALITIES = [
 
 const AVAILABILITY_OPTIONS = [
     { value: "all", label: "Todos los productos" },
-    { value: "in_stock", label: "Solo en stock" },
+    { value: "in_stock", label: "En Stock" },
     { value: "low_stock", label: "Stock bajo (≤ 10)" },
 ];
 
-interface ProductFilterProps {
-    onFiltersChange?: (filters: Record<string, string | string[]>) => void;
+interface ProductFilters {
+    search: string;
+    minPrice: string;
+    maxPrice: string;
+    category: string[];
+    municipality: string;
+    availability: string;
 }
 
-export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
-    const router = useRouter();
-    const searchParams = useSearchParams();
+interface ProductFilterProps {
+    filters: ProductFilters;
+    onFilterChange: (key: keyof ProductFilters, value: string | string[]) => void;
+    onClearFilters: () => void;
+}
 
-    // Estados locales para inputs de texto (necesitan debounce)
-    const [search, setSearch] = useState(searchParams.get("search") || "");
-    const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
-    const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
+export function ProductFilter({ filters, onFilterChange, onClearFilters }: ProductFilterProps) {
+    // Estados locales solo para inputs de texto (debounce)
+    const [localSearch, setLocalSearch] = useState(filters.search);
+    const [localMinPrice, setLocalMinPrice] = useState(filters.minPrice);
+    const [localMaxPrice, setLocalMaxPrice] = useState(filters.maxPrice);
 
-    // Estados debounced para sincronización
-    const [debouncedSearch, setDebouncedSearch] = useState(search);
-    const [debouncedMinPrice, setDebouncedMinPrice] = useState(minPrice);
-    const [debouncedMaxPrice, setDebouncedMaxPrice] = useState(maxPrice);
+    // Sincronizar estado local si las props cambian externamente (ej: botón limpiar)
+    useEffect(() => {
+        setLocalSearch(filters.search);
+        setLocalMinPrice(filters.minPrice);
+        setLocalMaxPrice(filters.maxPrice);
+    }, [filters.search, filters.minPrice, filters.maxPrice]);
 
-    // Estados para selección inmediata
-    const [selectedCategories, setSelectedCategories] = useState<string[]>(
-        searchParams.get("category")?.split(",").filter(Boolean) || []
-    );
-    const [municipality, setMunicipality] = useState(
-        searchParams.get("municipality") || "all"
-    );
-    const [availability, setAvailability] = useState(
-        searchParams.get("availability") || "all"
-    );
-
-    // Efecto de debounce para campos de texto
+    // Debounce para búsqueda
     useEffect(() => {
         const timer = setTimeout(() => {
-            setDebouncedSearch(search);
-            setDebouncedMinPrice(minPrice);
-            setDebouncedMaxPrice(maxPrice);
+            if (localSearch !== filters.search) {
+                onFilterChange("search", localSearch);
+            }
         }, 500);
-
         return () => clearTimeout(timer);
-    }, [search, minPrice, maxPrice]);
+    }, [localSearch, filters.search, onFilterChange]);
 
-    // Función centralizada para actualizar URL
-    const updateURL = useCallback((filters: Record<string, string | string[]>) => {
-        const params = new URLSearchParams();
-
-        Object.entries(filters).forEach(([key, value]) => {
-            if (value && value !== "all" && (Array.isArray(value) ? value.length > 0 : true)) {
-                params.set(key, Array.isArray(value) ? value.join(",") : String(value));
-            }
-        });
-
-        const queryString = params.toString();
-        // Solo actualizar si los parámetros cambiaron para evitar loops o navegaciones redundantes
-        if (queryString !== searchParams.toString()) {
-            router.push(`/productos?${queryString}`, { scroll: false });
-            if (onFiltersChange) {
-                onFiltersChange(filters);
-            }
-        }
-    }, [router, searchParams, onFiltersChange]);
-
-    // Efecto principal de sincronización "Live Update"
+    // Debounce para precios
     useEffect(() => {
-        const filters = {
-            search: debouncedSearch,
-            minPrice: debouncedMinPrice,
-            maxPrice: debouncedMaxPrice,
-            category: selectedCategories,
-            municipality,
-            availability,
-        };
-        updateURL(filters);
-    }, [
-        debouncedSearch,
-        debouncedMinPrice,
-        debouncedMaxPrice,
-        selectedCategories,
-        municipality,
-        availability,
-        updateURL
-    ]);
+        const timer = setTimeout(() => {
+            if (localMinPrice !== filters.minPrice) {
+                onFilterChange("minPrice", localMinPrice);
+            }
+            if (localMaxPrice !== filters.maxPrice) {
+                onFilterChange("maxPrice", localMaxPrice);
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [localMinPrice, localMaxPrice, filters.minPrice, filters.maxPrice, onFilterChange]);
 
-    const handleResetFilters = () => {
-        setSearch("");
-        setMinPrice("");
-        setMaxPrice("");
-        // También resetear debounced para evitar re-trigger inmediato con valores viejos
-        setDebouncedSearch("");
-        setDebouncedMinPrice("");
-        setDebouncedMaxPrice("");
+    // const handleCategoryChange = (category: string, checked: boolean) => {
+    //     const currentCategories = filters.category || [];
+    //     const newCategories = checked
+    //         ? [...currentCategories, category]
+    //         : currentCategories.filter((c) => c !== category);
 
-        setSelectedCategories([]);
-        setMunicipality("all");
-        setAvailability("all");
-    };
-
-    const handleCategoryChange = (category: string, checked: boolean) => {
-        setSelectedCategories((prev) =>
-            checked ? [...prev, category] : prev.filter((c) => c !== category)
-        );
-    };
+    //     onFilterChange("category", newCategories);
+    // };
 
     const hasActiveFilters =
-        search ||
-        selectedCategories.length > 0 ||
-        municipality !== "all" ||
-        availability !== "all" ||
-        minPrice ||
-        maxPrice;
+        filters.search ||
+        (filters.category && filters.category.length > 0) ||
+        (filters.municipality && filters.municipality !== "all") ||
+        (filters.availability && filters.availability !== "all") ||
+        filters.minPrice ||
+        filters.maxPrice;
 
     return (
         <div className="space-y-6">
@@ -171,7 +128,7 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
                     <Button
                         variant="ghost"
                         size="sm"
-                        onClick={handleResetFilters}
+                        onClick={onClearFilters}
                         className="text-muted-foreground"
                     >
                         <X className="h-4 w-4 mr-1" />
@@ -189,36 +146,37 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
                         id="search"
                         type="text"
                         placeholder="Buscar productos..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        value={localSearch}
+                        onChange={(e) => setLocalSearch(e.target.value)}
                         className="pl-9"
                     />
                 </div>
             </div>
 
-            {/* Categorías */}
-            <div className="space-y-3">
-                <Label>Categoría</Label>
-                <div className="space-y-2">
-                    {CATEGORIES.map((category) => (
-                        <div key={category.value} className="flex items-center gap-2">
+            {/* Categorías (Deshabilitado temporalmente) */}
+            {/* <div className="space-y-3">
+                <Label className="flex flex-inline items-center">Categoría</Label>
+                <div className="space-y-2 opacity-60 cursor-not-allowed">
+                    {CATEGORIES.map((cat) => (
+                        <div key={cat.value} className="flex items-center gap-2">
                             <Checkbox
-                                id={category.value}
-                                checked={selectedCategories.includes(category.value)}
+                                id={cat.value}
+                                checked={filters.category?.includes(cat.value)}
+                                disabled={true}
                                 onCheckedChange={(checked) =>
-                                    handleCategoryChange(category.value, checked as boolean)
+                                    handleCategoryChange(cat.value, checked as boolean)
                                 }
                             />
                             <Label
-                                htmlFor={category.value}
-                                className="text-sm font-normal cursor-pointer"
+                                htmlFor={cat.value}
+                                className="text-sm font-normal cursor-not-allowed"
                             >
-                                {category.label}
+                                {cat.label}
                             </Label>
                         </div>
                     ))}
                 </div>
-            </div>
+            </div> */}
 
             {/* Rango de precio */}
             <div className="space-y-3">
@@ -228,8 +186,8 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
                         <Input
                             type="number"
                             placeholder="Min"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(e.target.value)}
+                            value={localMinPrice}
+                            onChange={(e) => setLocalMinPrice(e.target.value)}
                             min="0"
                         />
                     </div>
@@ -237,8 +195,8 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
                         <Input
                             type="number"
                             placeholder="Max"
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(e.target.value)}
+                            value={localMaxPrice}
+                            onChange={(e) => setLocalMaxPrice(e.target.value)}
                             min="0"
                         />
                     </div>
@@ -248,7 +206,10 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
             {/* Disponibilidad */}
             <div className="space-y-3">
                 <Label>Disponibilidad</Label>
-                <RadioGroup value={availability} onValueChange={setAvailability}>
+                <RadioGroup
+                    value={filters.availability || "all"}
+                    onValueChange={(val) => onFilterChange("availability", val)}
+                >
                     {AVAILABILITY_OPTIONS.map((option) => (
                         <div key={option.value} className="flex items-center gap-2">
                             <RadioGroupItem value={option.value} id={option.value} />
@@ -266,7 +227,10 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
             {/* Municipio */}
             <div className="space-y-2">
                 <Label htmlFor="municipality">Municipio</Label>
-                <Select value={municipality} onValueChange={setMunicipality}>
+                <Select
+                    value={filters.municipality || "all"}
+                    onValueChange={(val) => onFilterChange("municipality", val)}
+                >
                     <SelectTrigger id="municipality">
                         <SelectValue placeholder="Todos los municipios" />
                     </SelectTrigger>
@@ -283,43 +247,3 @@ export function ProductFilter({ onFiltersChange }: ProductFilterProps) {
         </div>
     );
 }
-
-/*
- * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
- * ---------------------------------------------------------------------------
- *
- * Descripción General:
- * Componente de filtros para el catálogo de productos. Maneja estado local
- * de filtros y sincroniza con URL query params para persistencia.
- *
- * Lógica Clave:
- * - Sincronización con URL:
- *   Los filtros se sincronizan con query params en la URL mediante useSearchParams.
- *   Al aplicar filtros, se actualiza la URL con router.push().
- *   Esto permite compartir enlaces con filtros aplicados y persistencia al recargar.
- * 
- * - Estado Local:
- *   Cada filtro tiene su propio useState para manejar cambios antes de aplicar.
- *   Los cambios no se aplican inmediatamente, sino al hacer clic en "Aplicar Filtros".
- * 
- * - Categorías Múltiples:
- *   Usa checkboxes para permitir selección múltiple.
- *   Se almacena como array y se serializa como string separado por comas en URL.
- * 
- * - Validaciones:
- *   minPrice y maxPrice aceptan solo números.
- *   Valores vacíos o "all" no se incluyen en query params.
- * 
- * - Limpiar Filtros:
- *   Botón "Limpiar" visible solo cuando hay filtros activos.
- *   Resetea todos los estados y limpia query params de la URL.
- * 
- * - Enter en búsqueda:
- *   Presionar Enter en el input de búsqueda aplica filtros automáticamente.
- *
- * Dependencias Externas:
- * - next/navigation: useRouter, useSearchParams para manejo de URL
- * - lucide-react: Iconos Search, X, SlidersHorizontal
- * - shadcn/ui: Button, Input, Label, Checkbox, RadioGroup, Select
- */
