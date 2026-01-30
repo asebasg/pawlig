@@ -24,3 +24,20 @@ body {
     font-family: 'Poppins', sans-serif;
   }
 }
+
+@keyframes orbit {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg);
+  }
+}
+
+.animate-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: orbit var(--orbit-duration, 20s) linear infinite;
+  animation-delay: var(--orbit-delay, 0s);
+}
