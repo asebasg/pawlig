@@ -116,7 +116,7 @@ export default function LoginForm() {
                     />
                     <div className="flex justify-end mt-1">
                         <Link
-                            href="https://github.com/asebasg/pawlig" // TODO: Cambiar por la URL de la página de recuperación de contraseña
+                            href="/forgot-password"
                             className="text-sm text-purple-600 hover:text-purple-700 font-medium"
                         >
                             ¿Olvidaste tu contraseña?

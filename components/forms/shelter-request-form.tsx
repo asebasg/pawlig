@@ -246,7 +246,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
               <p className="mt-2 text-sm text-purple-700">
                 ¿Olvidaste tu contraseña?{' '}
                 <Link
-                  href="https://github.com/asebasg/pawlig" // TODO: Cambiar por la URL de la página de recuperación de contraseña
+                  href="/forgot-password"
                   className="font-semibold underline hover:text-purple-900"
                 >
                   Recupérala aquí
