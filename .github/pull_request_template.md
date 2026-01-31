@@ -29,11 +29,19 @@ Closes #
 
 **Size (Story Points):**
 
-- [ ] XS - [ ] S - [ ] M - [ ] L - [ ] XL - [ ] XXL
+- [ ] XS
+- [ ] S
+- [ ] M
+- [ ] L
+- [ ] XL
+- [ ] XXL
 
 **Priority:**
 
-- [ ] P0 - Crítico - [ ] P1 - Alto - [ ] P2 - Medio - [ ] P3 - Bajo
+- [ ] P0 - Crítico
+- [ ] P1 - Alto
+- [ ] P2 - Medio
+- [ ] P3 - Bajo
 
 ---
 
