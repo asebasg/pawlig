@@ -13,6 +13,8 @@ import Loader from '@/components/ui/loader';
 import { PetCard, PetCardData } from '@/components/cards/pet-card';
 import Badge from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button-variants';
 
 /**
  * GET /api/adopter/adoptions
@@ -102,7 +104,7 @@ export default function AdoptionsSection() {
   return (
     <section className="bg-white rounded-lg shadow-sm p-6">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-2">
         <h2 className="flex flex-inline items-center text-2xl font-bold text-gray-900 mb-2">
           <ClipboardClock size={26} className="mr-2" />
           Mis Solicitudes de Adopción
@@ -116,7 +118,7 @@ export default function AdoptionsSection() {
 
       {/* Stats */}
       {adoptions.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
           <StatCard
             label="Pendientes"
             value={stats.pending}
@@ -140,7 +142,7 @@ export default function AdoptionsSection() {
 
       {/* Filtros */}
       {adoptions.length > 0 && (
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
           {[
             { value: 'ALL', label: 'Todas' },
             { value: 'PENDING', label: 'Pendientes' },
@@ -186,7 +188,7 @@ export default function AdoptionsSection() {
           </p>
           <Link
             href="/adopciones"
-            className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+            className={cn(buttonVariants({ variant: 'default' }))}
           >
             Explorar mascotas
           </Link>

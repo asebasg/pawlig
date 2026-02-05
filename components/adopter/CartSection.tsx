@@ -1,7 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { ScanLine, ShoppingCart } from 'lucide-react';
+import Loader from '@/components/ui/loader';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button-variants';
 
 /**
  * Descripción: Sección del carrito de compras para el usuario adoptante.
@@ -19,15 +24,8 @@ interface CartItem {
 
 const CartSection: React.FC = () => {
   // Datos de ejemplo para el boilerplate
-  const [items, setItems] = React.useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'Producto de Ejemplo',
-      price: 29.99,
-      quantity: 1,
-      imageUrl: 'https://via.placeholder.com/80',
-    },
-  ]);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -35,16 +33,48 @@ const CartSection: React.FC = () => {
     setItems(items.filter(item => item.id !== id));
   };
 
-  return (
-    <section className="max-w-4xl mx-auto p-6 bg-white shadow-sm rounded-xl">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Tu Carrito</h2>
+  // Simulación de carga de datos inicial
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
 
-      {items.length === 0 ? (
-        <div className="text-center py-10">
-          <p className="text-gray-500 text-lg">Tu carrito está vacío.</p>
-          <button className="mt-4 text-blue-600 font-medium hover:underline">
-            Continuar comprando
-          </button>
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <section className="bg-white rounded-lg shadow-sm p-6">
+      {/* Header */}
+      <div className="mb-2">
+        <h2 className="flex flex-inline items-center text-2xl font-bold text-gray-900 mb-2">
+          <ShoppingCart size={26} className="mr-2" />
+          Carrito de Compras
+        </h2>
+        <p className="text-gray-600">
+          {items.length === 0
+            ? 'No tienes nada en tu carrito de compras'
+            : `Tienes ${items.length} producto${items.length !== 1 ? 's' : ''} en tu carrito de compras`}
+        </p>
+      </div>
+
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <Loader />
+          <p className="text-gray-500">Cargando carrito...</p>
+        </div>
+      ) : items.length === 0 ? (
+        <div className="text-center py-12">
+          <ScanLine className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <p className="text-gray-500 mb-2">No tienes nada en tu carrito de compras</p>
+          <p className="text-sm text-gray-400 mb-4">
+            Cuando agregues cualquier producto a tu carrito, aparecerá justo aquí
+          </p>
+          <Link
+            href="/productos"
+            className={cn(buttonVariants({ variant: 'default' }))}
+          >
+            Explorar productos
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -117,8 +147,12 @@ export default CartSection;
  * Lógica Clave:
  * - removeItem: Gestiona la eliminación de productos del carrito en el estado local.
  * - subtotal: Cálculo reactivo del precio total basado en los items presentes.
+ * - loading: Simula un tiempo de carga inicial para mejorar la experiencia de usuario
+ *   y preparar el componente para futura integración con API.
  *
  * Dependencias Externas:
  * - Ninguna significativa (UI nativa de Tailwind).
+ * - @/components/ui/loader: Componente visual de carga.
  *
  */
+

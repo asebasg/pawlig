@@ -6,6 +6,8 @@ import Link from 'next/link';
 import Loader from '@/components/ui/loader';
 import { PetCard, PetCardData } from '@/components/cards/pet-card';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button-variants';
 
 /**
  * GET /api/adopter/favorites
@@ -104,7 +106,7 @@ export default function FavoritesSection() {
   return (
     <section className="bg-white rounded-lg shadow-sm p-6 mb-8">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-2">
         <h2 className="flex flex-inline items-center text-2xl font-bold text-gray-900 mb-2">
           <HeartPlus size={26} className="mr-2" />
           Mis Mascotas Favoritas
@@ -118,7 +120,7 @@ export default function FavoritesSection() {
 
       {/* Búsqueda */}
       {favorites.length > 0 && (
-        <div className="mb-6">
+        <div className="mb-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -157,7 +159,7 @@ export default function FavoritesSection() {
           </p>
           <Link
             href="/adopciones"
-            className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+            className={cn(buttonVariants({ variant: 'default' }))}
           >
             Explorar mascotas
           </Link>
@@ -199,7 +201,7 @@ export default function FavoritesSection() {
                   </button>
                 }
                 footer={
-                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                  <Button asChild variant="default">
                     <Link href={`/adopciones/${pet.id}`}>Ver detalles</Link>
                   </Button>
                 }
