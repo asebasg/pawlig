@@ -96,14 +96,20 @@ export async function GET(request: NextRequest) {
                         select: {
                             id: true,
                             name: true,
-                            verified: true
+                            verified: true,
+                            _count: {
+                                select: { pets: true }
+                            }
                         }
                     },
                     vendor: {
                         select: {
                             id: true,
                             businessName: true,
-                            verified: true
+                            verified: true,
+                            _count: {
+                                select: { products: true }
+                            }
                         }
                     }
                 },

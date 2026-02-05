@@ -292,13 +292,23 @@ export default function UsersManagementClient() {
                                                     <div className="font-medium text-gray-900">{user.name}</div>
                                                     <div className="text-sm text-gray-500">{user.email}</div>
                                                     {user.shelter && (
-                                                        <div className="text-xs text-teal-600 mt-1">
-                                                            🏠 {user.shelter.name}
+                                                        <div className="mt-1">
+                                                            <div className="text-xs text-teal-600">
+                                                                🏠 {user.shelter.name}
+                                                            </div>
+                                                            <div className={`text-xs font-bold ${user.shelter.verified ? "text-green-600" : "text-red-600"}`}>
+                                                                {user.shelter.verified ? "Verificado" : "No Verificado"}
+                                                            </div>
                                                         </div>
                                                     )}
                                                     {user.vendor && (
-                                                        <div className="text-xs text-orange-600 mt-1">
-                                                            🛒 {user.vendor.businessName}
+                                                        <div className="mt-1">
+                                                            <div className="text-xs text-orange-600">
+                                                                🛒 {user.vendor.businessName}
+                                                            </div>
+                                                            <div className={`text-xs font-bold ${user.vendor.verified ? "text-green-600" : "text-red-600"}`}>
+                                                                {user.vendor.verified ? "Verificado" : "No Verificado"}
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
