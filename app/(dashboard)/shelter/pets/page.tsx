@@ -115,111 +115,106 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto py-8 px-4">
             {/* Header */}
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                {/* Header con título y botón */}
-                <div className="flex justify-between items-center mb-6">
-                    <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <Link href="/shelter" className="inline-flex items-center gap-2 mb-2 text-purple-600 hover:text-purple-700 text-sm font-semibold transition-colors">
                         <ArrowLeft className="w-4 h-4" />
                         Volver al Dashboard
                     </Link>
-                    <div>
-                        <h1 className="text-2xl font-bold">Mis Mascotas</h1>
-                        <p className="text-gray-500">Gestiona tus mascotas</p>
-                    </div>
-                    <Link
-                        href="/shelter/pets/new"
-                        className={cn(buttonVariants({ variant: "default" }))}
-                    >
-                        <Plus className="mr-2 h-4 w-4" /> Agregar Mascota
-                    </Link>
+                    <h1 className="text-3xl font-bold">Mis Mascotas</h1>
+                    <p className="text-gray-500">Gestiona y administra tus mascotas</p>
                 </div>
+                <Link
+                    href="/shelter/pets/new"
+                    className={cn(buttonVariants({ variant: "default" }))}
+                >
+                    <Plus className="mr-2 h-4 w-4" /> Agregar Mascota
+                </Link>
+            </div>
 
-                {/* Filtros por Estado */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                    <FilterButton
-                        href="/shelter/pets"
-                        active={!statusFilter}
-                        label="Todas"
-                        count={counts.all}
-                        icon={<SquareChartGantt className="w-4 h-4" />}
-                    />
+            {/* Filtros por Estado */}
+            <div className="flex flex-wrap gap-2 mb-6">
+                <FilterButton
+                    href="/shelter/pets"
+                    active={!statusFilter}
+                    label="Todas"
+                    count={counts.all}
+                    icon={<SquareChartGantt className="w-4 h-4" />}
+                />
 
-                    <FilterButton
-                        href="/shelter/pets?status=AVAILABLE"
-                        active={statusFilter === PetStatus.AVAILABLE}
-                        label="Disponibles"
-                        count={counts.available}
-                        color="green"
-                        icon={<ListCheck className="w-4 h-4" />}
-                    />
+                <FilterButton
+                    href="/shelter/pets?status=AVAILABLE"
+                    active={statusFilter === PetStatus.AVAILABLE}
+                    label="Disponibles"
+                    count={counts.available}
+                    color="green"
+                    icon={<ListCheck className="w-4 h-4" />}
+                />
 
-                    <FilterButton
-                        href="/shelter/pets?status=IN_PROCESS"
-                        active={statusFilter === PetStatus.IN_PROCESS}
-                        label="En Proceso"
-                        count={counts.inProcess}
-                        color="yellow"
-                        icon={<ClipboardClock className="w-4 h-4" />}
-                    />
+                <FilterButton
+                    href="/shelter/pets?status=IN_PROCESS"
+                    active={statusFilter === PetStatus.IN_PROCESS}
+                    label="En Proceso"
+                    count={counts.inProcess}
+                    color="yellow"
+                    icon={<ClipboardClock className="w-4 h-4" />}
+                />
 
-                    <FilterButton
-                        href="/shelter/pets?status=ADOPTED"
-                        active={statusFilter === PetStatus.ADOPTED}
-                        label="Adoptadas"
-                        count={counts.adopted}
-                        color="gray"
-                        icon={<CircleCheck className="w-4 h-4" />}
-                    />
-                </div>
+                <FilterButton
+                    href="/shelter/pets?status=ADOPTED"
+                    active={statusFilter === PetStatus.ADOPTED}
+                    label="Adoptadas"
+                    count={counts.adopted}
+                    color="gray"
+                    icon={<CircleCheck className="w-4 h-4" />}
+                />
             </div>
 
             {/* Grid de Mascotas */}
-            <div className="max-w-7xl mx-auto px-4 pb-8">
-                {pets.length === 0 ? (
-                    <div className="text-center py-16 bg-white rounded-lg">
-                        <p className="text-gray-600 text-lg mb-4">
-                            {statusFilter
-                                ? `No hay mascotas con estado "${statusFilter}"`
-                                : "Aún no has publicado mascotas"}
-                        </p>
-                        <Link
-                            href="/shelter/pets/new"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                        >
-                            <Plus className="w-5 h-5" />
-                            Publicar Mascota
-                        </Link>
+            {pets.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-lg border border-gray-100 shadow-sm">
+                    <p className="text-gray-600 text-lg mb-4">
+                        {statusFilter
+                            ? `No hay mascotas con estado "${statusFilter}"`
+                            : "Aún no has publicado mascotas"}
+                    </p>
+                    <Link
+                        href="/shelter/pets/new"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Publicar Mascota
+                    </Link>
+                </div>
+            ) : (
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {pets.map((pet) => (
+                            <PetCard key={pet.id} pet={pet} />
+                        ))}
                     </div>
-                ) : (
-                    <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {pets.map((pet) => (
-                                <PetCard key={pet.id} pet={pet} />
+
+                    {/* Paginación */}
+                    {totalPages > 1 && (
+                        <div className="flex justify-center gap-2 mt-8">
+                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                                <Link
+                                    key={p}
+                                    href={`/shelter/pets?${statusFilter ? `status=${statusFilter}&` : ""}page=${p}`}
+                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${p === page
+                                        ? "bg-purple-600 text-white"
+                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                        }`}
+                                >
+                                    {p}
+                                </Link>
                             ))}
                         </div>
-
-                        {/* Paginación */}
-                        {totalPages > 1 && (
-                            <div className="flex justify-center gap-2 mt-8">
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                                    <Link
-                                        key={p}
-                                        href={`/shelter/pets?${statusFilter ? `status=${statusFilter}&` : ""}page=${p}`}
-                                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${p === page
-                                            ? "bg-purple-600 text-white"
-                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                            }`}
-                                    >
-                                        {p}
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                    </>
-                )}
-            </div>
+                    )}
+                </>
+            )}
         </div>
     );
 }
