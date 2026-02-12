@@ -612,4 +612,53 @@ model Favorite {
 104 directories, 201 files
 ```
 
-> **Última actualización**: 8 de febrero de 2026.
+# Dependencias del Proyecto
+
+## Dependencias de Producción
+
+- `@google/generative-ai`: `^0.24.1`
+- `@hookform/resolvers`: `^5.2.2`
+- `@prisma/client`: `^6.19.0`
+- `@radix-ui/react-checkbox`: `^1.3.3`
+- `@radix-ui/react-label`: `^2.1.8`
+- `@radix-ui/react-radio-group`: `^1.3.8`
+- `@radix-ui/react-select`: `^2.2.6`
+- `@radix-ui/react-slot`: `^1.2.4`
+- `@testing-library/user-event`: `^14.6.1`
+- `axios`: `^1.13.2`
+- `bcryptjs`: `^3.0.3`
+- `class-variance-authority`: `^0.7.1`
+- `cloudinary`: `^2.8.0`
+- `clsx`: `^2.1.1`
+- `lucide-react`: `^0.554.0`
+- `next`: `14.2.33`
+- `next-auth`: `^4.24.7`
+- `prisma`: `^6.19.0`
+- `react`: `^18`
+- `react-dom`: `^18`
+- `react-hook-form`: `^7.66.1`
+- `sonner`: `^2.0.7`
+- `tailwind-merge`: `^3.4.0`
+- `zod`: `^4.1.12`
+
+## Dependencias de Desarrollo
+
+- `@testing-library/jest-dom`: `^6.9.1`
+- `@testing-library/react`: `^16.3.1`
+- `@types/bcryptjs`: `^2.4.6`
+- `@types/node`: `^20`
+- `@types/react`: `^18`
+- `@types/react-dom`: `^18`
+- `@vitejs/plugin-react`: `^5.1.2`
+- `@vitest/coverage-v8`: `^4.0.16`
+- `dotenv`: `^17.2.3`
+- `eslint`: `^8`
+- `eslint-config-next`: `14.2.33`
+- `jsdom`: `^27.4.0`
+- `postcss`: `^8`
+- `tailwindcss`: ^3.4.1
+- `typescript`: ^5
+- `vite-tsconfig-paths`: ^6.0.3
+- `vitest`: ^4.0.16
+
+> **Última actualización**: 11 de febrero de 2026.
