@@ -10,9 +10,21 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-    const lastUpdate = "20 de enero de 2026";
+    const lastUpdate = "20 de febrero de 2026";
 
     const versions = [
+        {
+            version: 'v1.6.0',
+            date: '20 de Febrero, 2026',
+            title: 'Centro de Ayuda y Estabilidad',
+            description: 'Lanzamiento del Centro de Ayuda integral y mejoras profundas en la estabilidad técnica del proyecto.',
+            color: 'from-violet-500 to-fuchsia-500',
+            updates: [
+                { type: 'added', title: 'Centro de Ayuda', description: 'Nueva página oficial con el manual de usuario y guías de soporte optimizadas.', icon: <Sparkles size={20} className="text-white" />, bg: "bg-amber-400" },
+                { type: 'improved', title: 'Estabilidad de Pruebas', description: 'Corrección de incompatibilidades en la suite de pruebas para asegurar un despliegue sin errores.', icon: <Wrench size={20} className="text-white" />, bg: "bg-blue-500" },
+                { type: 'improved', title: 'Ciclo de Vida 100%', description: 'Optimización del proceso de build y ejecución en producción para máxima fiabilidad.', icon: <Zap size={20} className="text-white" />, bg: "bg-purple-500" }
+            ]
+        },
         {
             version: 'v1.4.0',
             date: '20 de Enero, 2026',

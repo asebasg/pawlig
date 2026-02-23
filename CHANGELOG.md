@@ -2,6 +2,24 @@
 
 ## Registro de Cambios del Proyecto PawLig
 
+---
+
+## 20-02-2026 - Centro de Ayuda y Estabilización del Entorno (v1.6.0)
+
+**Commit:** `N/A`
+**Tipo:** Feature / Stability
+**Scope:** help, docs, testing
+
+### Descripción
+Implementación de la página oficial de ayuda al usuario en `/help` como un componente estático de alto rendimiento, alineado con el estilo visual de la plataforma y sin dependencias externas. Además, se han realizado mejoras críticas en la estabilidad del entorno de pruebas, resolviendo incompatibilidades entre Radix UI y JSDOM, asegurando que el ciclo de vida del proyecto (test, build, start) funcione al 100%.
+
+### Archivos Modificados
+- **`app/(public)/help/page.tsx`** (A) - Nueva página de Centro de Ayuda con navegación por anclas.
+- **`vitest.setup.ts`** (M) - Adición de polyfills para `PointerEvent`, `ResizeObserver` y métodos de `HTMLElement`.
+- **`app/(dashboard)/admin/users/[id]/view/__tests__/user-view.spec.tsx`** (M) - Refactorización de pruebas para soportar componentes Radix Select.
+- **`CHANGELOG.md`** (M) - Actualización del registro técnico.
+- **`app/(public)/changelog/page.tsx`** (M) - Actualización del registro visual para el usuario.
+
 Este documento detalla los cambios realizados en el proyecto PawLig, documentando las modificaciones a nivel de código, arquitectura y funcionalidades implementadas.
 
 ---
