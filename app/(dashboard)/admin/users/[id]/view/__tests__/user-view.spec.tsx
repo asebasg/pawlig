@@ -34,7 +34,7 @@ describe('UserViewClient', () => {
   test('renders user role correctly in the selector', () => {
     render(<UserViewClient user={mockUser} />);
     const roleSelect = screen.getByLabelText('Rol del Usuario');
-    expect(roleSelect).toHaveValue(UserRole.ADOPTER);
+    expect(roleSelect).toHaveTextContent(UserRole.ADOPTER);
   });
 
   test('save button is disabled initially', () => {
@@ -51,7 +51,11 @@ describe('UserViewClient', () => {
     const reasonInput = screen.getByLabelText(/Razón del cambio/i);
     const saveButton = screen.getByRole('button', { name: /guardar cambios/i });
 
-    await user.selectOptions(roleSelect, UserRole.SHELTER);
+    // Para Radix UI Select: clic en trigger -> buscar opción -> clic en opción
+    await user.click(roleSelect);
+    const option = await screen.findByRole('option', { name: UserRole.SHELTER });
+    await user.click(option);
+
     await user.type(reasonInput, 'Razón de prueba válida');
 
     expect(saveButton).toBeEnabled();
