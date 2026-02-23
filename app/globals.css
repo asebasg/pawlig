@@ -7,6 +7,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #7C3AED;
+  --primary-foreground: #ffffff;
 }
 
 body {
