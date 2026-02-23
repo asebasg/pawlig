@@ -3,8 +3,8 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const PLACEHOLDER_PET_IMAGE = "https://res.cloudinary.com/demo/image/upload/v1/samples/animals/cat.jpg";
-const PLACEHOLDER_PRODUCT_IMAGE = "https://res.cloudinary.com/demo/image/upload/v1/samples/ecommerce/accessories-bag.jpg";
+// const PLACEHOLDER_PET_IMAGE = "https://res.cloudinary.com/demo/image/upload/v1/samples/animals/cat.jpg";
+// const PLACEHOLDER_PRODUCT_IMAGE = "https://res.cloudinary.com/demo/image/upload/v1/samples/ecommerce/accessories-bag.jpg";
 const PLACEHOLDER_LOGO = "https://res.cloudinary.com/demo/image/upload/v1/samples/logo.png";
 
 async function main() {
@@ -396,7 +396,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Max es un perro joven, juguetón y lleno de energía. Le encanta correr en el parque y jugar con niños. Está vacunado y desparasitado.",
             requirements: "Hogar con espacio amplio. No apto para apartamentos pequeños. Familia activa que lo lleve a ejercitarse a diario.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872054/labrador_retriever_z8cd91.jpg"],
             shelterId: shelter1.id,
         },
     });
@@ -411,7 +411,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Luna es una gata cariñosa y tranquila. Perfecta para vivir en apartamento. Se lleva bien con otros gatos.",
             requirements: "Ambiente tranquilo. Puede vivir con otras mascotas. Esterilizada.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872054/gato_mestizo_zzoom9.jpg"],
             shelterId: shelter1.id,
         },
     });
@@ -426,7 +426,7 @@ async function main() {
             status: PetStatus.IN_PROCESS,
             description: "Rocky es un perro noble y leal que fue rescatado de la calle. Ha pasado por rehabilitación conductual y está listo para un nuevo hogar.",
             requirements: "Dueño con experiencia en perros de raza mediana. Sin niños menores de 5 años.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872054/pitbull_mestizo_htyfyv.jpg"],
             shelterId: shelter1.id,
         },
     });
@@ -441,7 +441,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Canela es una beagle juguetona con mucha energía. Le encantan los paseos largos y los juguetes interactivos.",
             requirements: "Jardín o acceso a parque. Familia con tiempo para paseos diarios.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/beagle_dp7oos.jpg"],
             shelterId: shelter1.id,
         },
     });
@@ -456,7 +456,7 @@ async function main() {
             status: PetStatus.ADOPTED,
             description: "Simba encontró un hogar amoroso. Era un gato tranquilo y muy elegante.",
             requirements: "N/A",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/gato_persa_h53yp7.jpg"],
             shelterId: shelter1.id,
         },
     });
@@ -472,7 +472,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Bella es una cachorra dorada con una personalidad increíble. Ideal para familias con niños. Ama los abrazos y los juegos.",
             requirements: "Familia con tiempo y amor para darle. Espacio mínimo de apartamento grande.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/golden_retriever_x0chbr.jpg"],
             shelterId: shelter2.id,
         },
     });
@@ -487,7 +487,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Michi es una gata siamesa muy inteligente y comunicativa. Le gusta explorar y jugar con juguetes de plumas.",
             requirements: "Ambiente enriquecido con juguetes. Puede vivir sola o con otro gato.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872054/gato_siames_fm7afj.jpg"],
             shelterId: shelter2.id,
         },
     });
@@ -502,7 +502,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Bruno es un boxer leal y protector. Ama a su familia y es excelente con niños mayores.",
             requirements: "Casa con patio. Dueño activo.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/perro_boxer_dbz7pf.png"],
             shelterId: shelter2.id,
         },
     });
@@ -517,7 +517,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Nieve es una gata angora de pelaje largo y blanco. Muy tranquila, ideal para personas mayores o que buscan compañía serena.",
             requirements: "Cepillado frecuente. Ambiente tranquilo.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/gato_angora_ivrt5v.jpg"],
             shelterId: shelter2.id,
         },
     });
@@ -533,7 +533,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Toby es un schnauzer miniatura con mucho carácter. Inteligente, obediente y muy limpio.",
             requirements: "Apto para apartamento. Se lleva bien con niños.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/Schnauzer_gxm4op.png"],
             shelterId: shelter3.id,
         },
     });
@@ -548,7 +548,7 @@ async function main() {
             status: PetStatus.IN_PROCESS,
             description: "Cleo es una gata rescatada muy curiosa y juguetona. Le encanta asomarse a las ventanas y cazar juguetes.",
             requirements: "Hogar seguro, preferiblemente interior.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/gato_mestizo_2_zh9ord.jpg"],
             shelterId: shelter3.id,
         },
     });
@@ -563,7 +563,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Zeus es un pastor alemán leal, inteligente y muy bien entrenado. Ideal para personas con experiencia en perros de trabajo.",
             requirements: "Dueño con experiencia. Espacio amplio. Entrenamiento continuo.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872053/pastor_aleman_oc2a6q.png"],
             shelterId: shelter3.id,
         },
     });
@@ -579,7 +579,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Pelusa es una coneja belier adorable y muy dócil. Come bien y le encanta que la acaricien.",
             requirements: "Jaula espaciosa. Dieta de heno y verduras frescas.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872052/conejo_belier_fanfx7.jpg"],
             shelterId: shelter4.id,
         },
     });
@@ -594,7 +594,7 @@ async function main() {
             status: PetStatus.AVAILABLE,
             description: "Manchas tiene un pelaje único y una personalidad alegre. Le encanta jugar con pelotas y correr.",
             requirements: "Familia activa. Espacio para correr.",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872052/dalmata_mestizo_snwy8r.jpg"],
             shelterId: shelter4.id,
         },
     });
@@ -609,7 +609,7 @@ async function main() {
             status: PetStatus.ADOPTED,
             description: "Perla ya fue adoptada. Era una gata tranquila y muy afectuosa.",
             requirements: "N/A",
-            images: [PLACEHOLDER_PET_IMAGE],
+            images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872052/British_Shorthair_kalc58.jpg"],
             shelterId: shelter4.id,
         },
     });
@@ -629,7 +629,7 @@ async function main() {
                 stock: 50,
                 category: "Alimentos",
                 description: "Alimento balanceado de alta calidad con proteínas reales de pollo y vegetales. Sin colorantes artificiales.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872962/producto_1_an5jjz.jpg"],
                 vendorId: vendor1.id,
             },
             {
@@ -638,7 +638,7 @@ async function main() {
                 stock: 120,
                 category: "Alimentos",
                 description: "Lata de alimento húmedo con atún y salmón. Rico en Omega 3 para pelaje brillante.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872962/producto_2_vxzctl.jpg"],
                 vendorId: vendor1.id,
             },
             {
@@ -647,7 +647,7 @@ async function main() {
                 stock: 20,
                 category: "Accesorios",
                 description: "Cama con memoria de forma y cubierta lavable. Ideal para perros con problemas articulares.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872961/producto_3_txrax1.png"],
                 vendorId: vendor1.id,
             },
             {
@@ -656,7 +656,7 @@ async function main() {
                 stock: 35,
                 category: "Accesorios",
                 description: "Arnés ergonómico con cintas reflectivas para paseos nocturnos seguros.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872959/producto_4_vyfbpk.jpg"],
                 vendorId: vendor1.id,
             },
             {
@@ -665,7 +665,7 @@ async function main() {
                 stock: 45,
                 category: "Juguetes",
                 description: "Juguete de goma natural resistente para rellenar con premios. Estimulación mental para perros.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872959/producto_5_n7fuhc.png"],
                 vendorId: vendor1.id,
             },
             {
@@ -674,7 +674,7 @@ async function main() {
                 stock: 60,
                 category: "Higiene",
                 description: "Champú de uso frecuente con extractos naturales de neem. Repele pulgas y garrapatas.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872958/producto_6_zlqary.jpg"],
                 vendorId: vendor1.id,
             },
             {
@@ -683,7 +683,7 @@ async function main() {
                 stock: 15,
                 category: "Accesorios",
                 description: "Bolso transportador suave, ventilado y aprobado para cabina de avión. Fácil de limpiar.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872955/producto_7_wk8eju.png"],
                 vendorId: vendor1.id,
             },
             {
@@ -692,7 +692,7 @@ async function main() {
                 stock: 80,
                 category: "Salud",
                 description: "Antiparasitario externo de amplio espectro. Protege contra pulgas, garrapatas y mosquitos por 30 días.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872954/producto_8_zzv6jz.png"],
                 vendorId: vendor1.id,
             },
         ],
@@ -707,7 +707,7 @@ async function main() {
                 stock: 90,
                 category: "Alimentos",
                 description: "Galletas masticables que ayudan a reducir el sarro y el mal aliento. Sabor a menta.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872954/producto_9_gmpetn.png"],
                 vendorId: vendor2.id,
             },
             {
@@ -716,7 +716,7 @@ async function main() {
                 stock: 70,
                 category: "Higiene",
                 description: "Arena de sílice con control de olor por 30 días. Sin polvo, aglomerante al instante.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872954/producto_10_orku8g.png"],
                 vendorId: vendor2.id,
             },
             {
@@ -725,7 +725,7 @@ async function main() {
                 stock: 12,
                 category: "Accesorios",
                 description: "Torre de sisal de 3 pisos con plataformas, cueva y juguetes colgantes. Ideal para gatos activos.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872868/producto_11_y3dddb.png"],
                 vendorId: vendor2.id,
             },
             {
@@ -734,7 +734,7 @@ async function main() {
                 stock: 25,
                 category: "Accesorios",
                 description: "Correa retráctil con freno de seguridad, mango ergonómico y cinta de 5m. Para perros hasta 20kg.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872847/producto_12_k00nxt.png"],
                 vendorId: vendor2.id,
             },
             {
@@ -743,7 +743,7 @@ async function main() {
                 stock: 40,
                 category: "Salud",
                 description: "Suplemento masticable con vitaminas A, D, E y complejo B para la salud general del perro.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872843/producto_13_zohabp.png"],
                 vendorId: vendor2.id,
             },
             {
@@ -752,7 +752,7 @@ async function main() {
                 stock: 18,
                 category: "Accesorios",
                 description: "Fuente eléctrica con filtro de carbón activado. Mantiene el agua fresca y limpia 24/7.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872843/producto_14_dutjy7.png"],
                 vendorId: vendor2.id,
             },
             {
@@ -761,7 +761,7 @@ async function main() {
                 stock: 30,
                 category: "Alimentos",
                 description: "Mezcla de heno, pellets y vegetales deshidratados. Dieta balanceada para conejos adultos.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872842/producto_15_et5ggb.jpg"],
                 vendorId: vendor2.id,
             },
             {
@@ -770,7 +770,7 @@ async function main() {
                 stock: 55,
                 category: "Higiene",
                 description: "Cepillo de cerdas de acero inoxidable curvo. Ideal para razas de pelo largo como golden y collie.",
-                images: [PLACEHOLDER_PRODUCT_IMAGE],
+                images: ["https://res.cloudinary.com/dg9f7eo29/image/upload/v1771872842/producto_16_mr7orn.png"],
                 vendorId: vendor2.id,
             },
         ],
