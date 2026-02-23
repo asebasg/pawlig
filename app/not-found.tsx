@@ -180,7 +180,7 @@ export default function NotFound() {
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                     ¿Necesitas más ayuda?{" "}
                     <Link
-                        href="/faq"
+                        href="/help"
                         className="text-purple-600 hover:text-purple-700 font-bold hover:underline transition-all"
                     >
                         Visita nuestro centro de ayuda
