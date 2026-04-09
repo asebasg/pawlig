@@ -1,0 +1,33 @@
+PawLig - Credenciales de Prueba (Seed)
+Este documento (incluído el seeder) DEBE ser eliminado una vez finalice el desarrollo de la app
+--------------------------------------
+
+Contraseña para TODOS los usuarios: Password123!
+
+ADMIN
+-----
+admin@pawlig.com
+
+SHELTER (Albergues)
+-------------------
+refugio.huellitas@pawlig.com
+amigos.peludos@pawlig.com
+patitas.felices@pawlig.com
+refugio.vida@pawlig.com
+nuevo.refugio@pawlig.com
+
+VENDOR (Vendedores)
+-------------------
+mascotas.felices@pawlig.com
+petshop.valle@pawlig.com
+nuevo.vendor@pawlig.com
+
+ADOPTER (Adoptantes)
+--------------------
+sofia.martinez@gmail.com
+juan.perez@gmail.com
+valentina.lopez@gmail.com
+miguel.castano@gmail.com
+ana.villa@gmail.com
+nicolas.arango@gmail.com
+bloqueado@gmail.com
