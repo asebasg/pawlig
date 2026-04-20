@@ -2,11 +2,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { redirect } from "next/navigation";
 import { UserRole } from "@prisma/client";
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { prisma } from "@/lib/utils/db";
-import Image from 'next/image';
+import UnderConstruction from "@/components/layout/under-construction";
 
 
 /**
@@ -51,21 +50,7 @@ export default async function VendorOrdersPage() {
             </Link>
             <h1 className="text-2xl font-bold">Mis Pedidos</h1>
             <p className="text-gray-500 dark:text-gray-400 mb-4">Gestiona y visualiza tus órdenes de compra de tus productos</p>
-            <div className="flex flex-col p-8 border rounded-lg bg-gray-50 items-center text-center justify-center">
-                <p className="text-lg text-gray-600">Esta sección está en desarrollo</p>
-                <p className="text-sm text-gray-400 mt-2 mb-10">Pronto podrás visualizar y gestionar tus pedidos aquí</p>
-                <Image
-                    src='/images/under_construction.png'
-                    alt="En construcción..."
-                    width={350}
-                    height={350}
-                    className="object-cover pointer-events-none"
-                />
-
-                <Button asChild className="mt-6">
-                    <Link href="/vendor">Volver al Dashboard</Link>
-                </Button>
-            </div>
+            <UnderConstruction />
         </div>
     );
 }

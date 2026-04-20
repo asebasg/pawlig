@@ -74,13 +74,13 @@ model User {
   address     String
   idNumber    String
   birthDate   DateTime
-
+  
   // Bloqueos de usuarios (HU-014)
   isActive    Boolean      @default(true)
   blockedAt   DateTime?
   blockedBy   String?      @db.ObjectId
   blockReason String?
-
+  
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -90,7 +90,7 @@ model User {
   adoptions   Adoption[]
   orders      Order[]
   favorites   Favorite[]
-
+  
   // Auditoría (HU-014)
   adminActions UserAudit[] @relation("AdminActions")
   auditRecords UserAudit[] @relation("AffectedUser")
@@ -102,26 +102,26 @@ model User {
 
 model UserAudit {
   id          String      @id @default(auto()) @map("_id") @db.ObjectId
-
+  
   // Acción realizada (HU-014)
   action      AuditAction // Enum tipado (no String)
   reason      String      // Justificación obligatoria (RN-017)
-
+  
   // Trazabilidad
   oldValue    String?
   newValue    String?
-
+  
   // Relaciones
   performedBy User     @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
   adminId     String   @db.ObjectId
-
+  
   affectedUser User    @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
   userId      String   @db.ObjectId
-
+  
   // Metadata de seguridad (RNF-002)
   ipAddress   String?
   userAgent   String?
-
+  
   createdAt   DateTime @default(now())
 
   @@index([userId])
@@ -318,6 +318,7 @@ model Favorite {
 ├── .gitignore
 ├── .rules.md
 ├── CHANGELOG.md
+├── CONTEXT.md
 ├── README.md
 ├── app
 │   ├── (auth)
@@ -386,6 +387,8 @@ model Favorite {
 │   │   ├── changelog
 │   │   │   └── page.tsx
 │   │   ├── faq
+│   │   │   └── page.tsx
+│   │   ├── help
 │   │   │   └── page.tsx
 │   │   ├── privacy
 │   │   │   └── page.tsx
@@ -500,6 +503,8 @@ model Favorite {
 │   │   ├── user-profile-form.tsx
 │   │   ├── vendor-profile-form.tsx
 │   │   └── vendor-request-form.tsx
+│   ├── help
+│   │   └── accordion-section.tsx
 │   ├── layout
 │   │   ├── cart-button.tsx
 │   │   ├── footer.tsx
@@ -587,12 +592,14 @@ model Favorite {
 │       ├── product.schema.ts
 │       └── user.schema.ts
 ├── middleware.ts
+├── next-env.d.ts
 ├── next.config.mjs
 ├── package-lock.json
 ├── package.json
 ├── postcss.config.mjs
 ├── prisma
-│   └── schema.prisma
+│   ├── schema.prisma
+│   └── seed.ts
 ├── public
 │   └── images
 │       ├── 404-page.png
@@ -609,7 +616,7 @@ model Favorite {
 ├── vitest.config.ts
 └── vitest.setup.ts
 
-104 directories, 201 files
+106 directories, 206 files
 ```
 
 # Dependencias del Proyecto
@@ -656,9 +663,10 @@ model Favorite {
 - `eslint-config-next`: `14.2.33`
 - `jsdom`: `^27.4.0`
 - `postcss`: `^8`
-- `tailwindcss`: ^3.4.1
-- `typescript`: ^5
-- `vite-tsconfig-paths`: ^6.0.3
-- `vitest`: ^4.0.16
+- `tailwindcss`: `^3.4.1`
+- `ts-node`: `^10.9.2`
+- `typescript`: `^5`
+- `vite-tsconfig-paths`: `^6.0.3`
+- `vitest`: `^4.0.16`
 
-> **Última actualización**: 11 de febrero de 2026.
+> **Última actualización**: 26 de marzo de 2026.

@@ -8,12 +8,13 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=flat-square&logo=mongodb)
-![NextAuth](https://img.shields.io/badge/NextAuth-4.24.7-yellow?style=flat-square)
+![Prisma](https://img.shields.io/badge/Prisma-6.19-2D3748?style=flat-square&logo=prisma)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-orange?style=flat-square&logo=google-gemini)
 
 **Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Última actualización: 31-12-2025_
+_Última actualización: 26-03-2026_
 
 </div>
 
@@ -38,77 +39,67 @@ _Última actualización: 31-12-2025_
 
 ## 📜 Descripción General
 
-**PawLig** es una plataforma web full-stack integral que facilita la adopción responsable de mascotas y el comercio de productos para animales en el Valle de Aburrá. Permite a albergues publicar mascotas en adopción, a usuarios adoptar responsablemente, a proveedores vender productos especializados, y a administradores supervisar todo el ecosistema de manera segura y eficiente.
+**PawLig** es una plataforma web full-stack integral diseñada para facilitar la adopción responsable de mascotas y dinamizar el comercio de productos especializados en el Valle de Aburrá. Nuestra misión es conectar a albergues, proveedores y adoptantes en un ecosistema seguro, eficiente y empático.
 
-El proyecto está diseñado con arquitectura moderna, seguridad empresarial y experiencia de usuario optimizada para dispositivos móviles y desktop.
+La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Artificial Generativa**, para mejorar la calidad de las publicaciones y asegurar que cada mascota encuentre el hogar que merece.
 
 ---
 
 ## ✨ Características Principales
 
-### 🔐 Autenticación y Seguridad
+### 🔐 Autenticación y Seguridad de Nivel Empresarial
 
-- **Sistema multi-rol** con 4 tipos de usuarios: Admin, Albergue, Proveedor, Adoptante.
-- **Autenticación JWT** stateless mediante NextAuth.js.
-- **Contraseñas encriptadas** con bcryptjs.
-- **Validación de datos** con esquemas Zod.
-- **Middleware de protección** de rutas por rol.
+- **Sistema multi-rol estricto:** Admin, Albergue (Shelter), Proveedor (Vendor) y Adoptante (Adopter).
+- **Protección de rutas:** Middleware avanzado que valida sesiones y permisos en tiempo real.
+- **Auditoría completa:** Registro detallado de acciones administrativas (bloqueos, cambios de rol) con justificaciones obligatorias, IP y User-Agent.
 
-### 🐕 Módulo de Adopciones
+### 🐕 Ecosistema de Adopciones con IA
 
-- **Publicación de mascotas** por albergues con múltiples imágenes.
-- **Búsqueda avanzada** con filtros por especie, raza, edad, etc.
-- **Sistema de favoritos** y postulaciones de adopción.
-- **Gestión de estado** de adopción (Pendiente, Aprobada, Rechazada).
+- **Asistente de IA (Google Gemini):** Refinamiento automático de descripciones de mascotas para maximizar el impacto emocional y la claridad.
+- **Gestión integral:** Ciclo de vida completo de la adopción, desde la publicación hasta la aprobación final.
+- **Búsqueda inteligente:** Filtros avanzados por especie, raza, edad, sexo y ubicación.
 
-### 🛍️ Tienda Virtual (E-commerce)
+### 🛍️ Marketplace Especializado
 
-- **Catálogo de productos** y gestión de inventario.
-- **Sistema de órdenes** con múltiples estados.
-- **Carrito de compras** persistente.
+- **Catálogo dinámico:** Gestión de inventario en tiempo real para proveedores.
+- **IA para Ventas:** Optimizador de descripciones de productos mediante IA para mejorar la conversión.
+- **Carrito persistente:** Experiencia de compra fluida con persistencia local y sincronización de estado.
 
-### 👥 Paneles de Control Personalizados
+### 📑 Centro de Ayuda y Documentación
 
-- **Dashboards** para Admin, Albergue, Proveedor y Adoptante, cada uno con funcionalidades específicas a su rol.
+- **Help Center Integrado:** Manual de usuario y guías rápidas accesibles directamente en la plataforma.
+- **Transparencia:** Acceso público a términos, privacidad y registro de cambios (Changelog).
 
-### 📊 Auditoría y Moderación
+### 📊 Paneles de Control (Dashboards)
 
-- **Historial de acciones** administrativas.
-- **Verificación de albergues** y proveedores.
-- **Registro de IP y User-Agent** para seguridad.
-
-### 📱 Diseño Responsivo
-
-- **Mobile-first** y adaptable a todos los dispositivos.
-- **Componentes accesibles** con Tailwind CSS.
-
-### 🌐 Integraciones
-
-- **WhatsApp e Instagram** para contacto.
-- **Cloudinary** para almacenamiento de imágenes.
+- **Métricas e Indicadores:** Visualización de datos clave adaptada a cada rol de usuario.
+- **Gestión de Usuarios:** Herramientas administrativas para la moderación y seguridad de la comunidad.
 
 ---
 
 ## 🛠️ Tecnologías Utilizadas
 
-### Frontend
+### Frontend & UI
 
-- **Next.js 14.2.33**: Framework React con SSR.
-- **React 18**: Librería para UI.
-- **TypeScript 5.0**: Tipado estático.
-- **Tailwind CSS 3.4**: Framework de estilos.
-- **React Hook Form 7.66.1**: Gestión de formularios.
+- **Next.js 14 (App Router):** Framework principal para una experiencia web moderna y rápida.
+- **React 18:** Biblioteca base para la construcción de interfaces.
+- **Tailwind CSS:** Estilizado basado en utilidades con un sistema de diseño cohesivo.
+- **Lucide React:** Set de iconos consistente y ligero.
+- **Radix UI:** Primitivas de componentes accesibles.
 
-### Backend & Autenticación
+### Backend & Lógica
 
-- **NextAuth.js 4.24.7**: Autenticación y sesiones.
-- **Prisma 6.19**: ORM para base de datos.
-- **Zod 4.1.12**: Validación de esquemas.
+- **TypeScript 5:** Tipado estático para un código robusto y mantenible.
+- **NextAuth.js:** Gestión de autenticación y sesiones seguras.
+- **Prisma ORM:** Modelado de datos y consultas tipadas a la base de datos.
+- **Zod:** Validación rigurosa de esquemas en cliente y servidor.
+- **Google Generative AI:** Integración con el modelo `gemini-2.5-flash`.
 
-### Base de Datos & Almacenamiento
+### Infraestructura
 
-- **MongoDB Atlas**: Base de datos NoSQL.
-- **Cloudinary**: Almacenamiento de imágenes.
+- **MongoDB Atlas:** Base de datos NoSQL escalable.
+- **Cloudinary:** Gestión y optimización de activos multimedia (imágenes).
+- **Vitest:** Framework de pruebas unitarias y de integración de alto rendimiento.
 
 ---
 
@@ -116,13 +107,12 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
 
 ### Prerrequisitos
 
-- Node.js 18.17+
-- npm 9+ o yarn 1.22+
-- Git
-- Cuenta en MongoDB Atlas
-- Cuenta en Cloudinary
+- Node.js 18.17 o superior.
+- npm 9 o superior.
+- Una instancia de MongoDB (Local o Atlas).
+- Credenciales de Cloudinary y Google Gemini API.
 
-### Pasos
+### Pasos de Configuración
 
 1. **Clonar el Repositorio:**
 
@@ -137,113 +127,98 @@ El proyecto está diseñado con arquitectura moderna, seguridad empresarial y ex
    npm install
    ```
 
-3. **Configurar Variables de Entorno:**
+3. **Configurar el Entorno:**
+   Crea un archivo `.env` basado en `.env.local.example` y completa las variables:
 
-   - Copia `.env.local.example` a `.env.local`.
-   - Rellena las variables con tus credenciales de MongoDB, NextAuth y Cloudinary.
+   ```env
+   DATABASE_URL="mongodb+srv://..."
+   NEXTAUTH_SECRET="tu-secreto"
+   NEXTAUTH_URL="http://localhost:3000"
+   CLOUDINARY_API_KEY="..."
+   GEMINI_API_KEY="..."
+   ```
 
-4. **Inicializar Base de Datos:**
+4. **Preparar la Base de Datos:**
 
    ```bash
    npx prisma generate
    npx prisma db push
    ```
 
-5. **Iniciar Servidor de Desarrollo:**
+5. **Lanzar el Entorno de Desarrollo:**
+
    ```bash
    npm run dev
    ```
-   La aplicación estará disponible en `http://localhost:3000`.
 
 ---
 
 ## 🗂️ Estructura del Proyecto
 
-```
+```text
 pawlig/
-├── app/             # Rutas, páginas y layouts (App Router)
-├── components/      # Componentes React reutilizables
-├── lib/             # Lógica compartida, utilidades y servicios
-├── prisma/          # Esquema de la base de datos
-├── types/           # Definiciones de TypeScript
-├── middleware.ts    # Middleware de autenticación
-└── ...              # Otros archivos de configuración
+├── app/                  # App Router: Rutas, layouts y componentes de página
+│   ├── (auth)/           # Rutas de autenticación (Login, Registro)
+│   ├── (dashboard)/      # Paneles privados protegidos por rol
+│   ├── (public)/         # Páginas de acceso libre (Adopciones, Productos, Ayuda)
+│   └── api/              # Endpoints de la API interna
+├── components/           # Componentes React organizados por dominio
+│   ├── ui/               # Componentes atómicos (Botones, Inputs, etc.)
+│   ├── forms/            # Lógica de formularios y validaciones
+│   └── layout/           # Elementos estructurales (Navbar, Footer)
+├── lib/                  # Núcleo: Servicios, utilidades y configuraciones
+├── prisma/               # Esquema de datos y migraciones
+├── public/               # Assets estáticos (Imágenes, Iconos)
+├── types/                # Definiciones de tipos TypeScript globales
+└── middleware.ts         # Control de acceso y seguridad de rutas
 ```
 
 ---
 
-## 🔑 Roles y Permisos de Usuario
+## 🔑 Roles y Permisos
 
-- **ADMIN:** Control total del sistema.
-- **SHELTER:** Gestiona mascotas y adopciones.
-- **VENDOR:** Gestiona productos y pedidos.
-- **ADOPTER:** Busca mascotas, postula y compra productos.
-
----
-
-## 🗄️ Modelo de Datos
-
-El `schema.prisma` define las siguientes entidades principales:
-
-- `User`
-- `Shelter`
-- `Pet`
-- `Adoption`
-- `Vendor`
-- `Product`
-- `Order`
-- `Favorite`
-- `UserAudit`
+- **👑 ADMIN:** Supervisión global, auditoría de seguridad y gestión de roles/bloqueos.
+- **🏠 SHELTER (Albergue):** Publicación de mascotas, gestión de solicitudes de adopción y métricas de impacto.
+- **🏬 VENDOR (Proveedor):** Gestión de catálogo de productos, inventario y procesamiento de pedidos.
+- **🐾 ADOPTER (Adoptante):** Proceso de adopción, compras en el marketplace y gestión de favoritos.
 
 ---
 
 ## 🧪 Scripts Disponibles
 
-- `npm run dev`: Inicia el servidor de desarrollo.
-- `npm run build`: Compila la aplicación para producción.
-- `npm run start`: Inicia el servidor de producción.
-- `npm run test`: Ejecuta las pruebas unitarias con Vitest.
-- `npx prisma generate`: Genera el cliente de Prisma.
-- `npx prisma db push`: Sincroniza el esquema con la base de datos.
-- `npx prisma studio`: Abre la interfaz visual de la base de datos.
-- `npm run lint`: Ejecuta el linter.
+| Comando | Descripción |
+| :--- | :--- |
+| `npm run dev` | Inicia el servidor de desarrollo con Hot Reload. |
+| `npm run build` | Genera la versión optimizada para producción. |
+| `npm run start` | Inicia el servidor de producción. |
+| `npm run test` | Ejecuta la suite de pruebas con Vitest. |
+| `npm run lint` | Analiza el código en busca de problemas de estilo o errores. |
+| `npx prisma studio` | Abre una interfaz web para explorar la base de datos. |
 
 ---
 
-## 🔐 Características de Seguridad
+## 🔐 Seguridad y Calidad
 
-- **Autenticación JWT** stateless.
-- **Contraseñas encriptadas** con bcryptjs.
-- **Protección de rutas** por rol.
-- **Validación de datos** en cliente y servidor con Zod.
-- **Auditoría completa** de acciones administrativas.
+- **Validación Zod:** Ningún dato entra a la base de datos sin ser validado estrictamente.
+- **Manejo de Errores:** Sistema centralizado para respuestas de API y retroalimentación al usuario.
+- **Testing:** Suite de pruebas que asegura la integridad de los servicios críticos de mascotas y usuarios.
+- **Escalabilidad:** Arquitectura basada en servicios que separa la lógica de negocio de los controladores de API.
 
 ---
 
 ## 🤝 Cómo Contribuir
 
-¡Las contribuciones son bienvenidas! Si deseas mejorar PawLig, sigue estos pasos:
-
-1. **Haz un Fork** del repositorio.
-2. **Crea una nueva Rama:**
-   ```bash
-   git checkout -b feature/nombre-descriptivo
-   ```
-3. **Realiza tus cambios** y haz commits siguiendo la [convención de commits](https://www.conventionalcommits.org/en/v1.0.0/).
-   ```bash
-   git commit -m "feat(adopciones): agrega filtro por tamaño"
-   ```
-4. **Haz Push** a tu rama:
-   ```bash
-   git push origin feature/nombre-descriptivo
-   ```
-5. **Crea un Pull Request** en GitHub.
+1. Realiza un **Fork** del proyecto.
+2. Crea una **Rama** para tu funcionalidad (`git checkout -b feat/nueva-funcionalidad`).
+3. Realiza tus cambios siguiendo los estándares de **Conventional Commits**.
+4. Asegúrate de que las pruebas pasen (`npm run test`).
+5. Envía un **Pull Request** detallando tus cambios.
 
 ---
 
 ## 📝 Licencia
 
-Este proyecto es para fines académicos como parte del programa de Ingeniería de Software de la Universidad de San Buenaventura. Todos los derechos reservados.
+Este proyecto ha sido desarrollado con fines académicos en la **Universidad de San Buenaventura, Medellín**. Todos los derechos reservados © 2026.
 
 ---
 
@@ -251,18 +226,16 @@ Este proyecto es para fines académicos como parte del programa de Ingeniería d
 
 **Equipo de Desarrollo:**
 
-- **Andrés Sebastián Ospina Guzmán:** asebasg07@gmail.com
-- **Mateo Úsuga Vasco:** mateo.usuga.v21@gmail.com
-- **Santiago Lezcano Escobar:** santiag1725g@gmail.com
-
-Para dudas o sugerencias, no dudes en contactarnos.
+- **Andrés Sebastián Ospina Guzmán** - [asebasg07@gmail.com](mailto:asebasg07@gmail.com)
+- **Mateo Úsuga Vasco** - [mateo.usuga.v21@gmail.com](mailto:mateo.usuga.v21@gmail.com)
+- **Santiago Lezcano Escobar** - [santiag1725g@gmail.com](mailto:santiag1725g@gmail.com)
 
 ---
 
 <div align="center">
 
-**Hecho con ❤️ por el equipo de PawLig**
+**Desarrollado con ❤️ para transformar la vida de las mascotas.**
 
-[⬆ Volver al inicio](#)
+[⬆ Volver al inicio](#-pawlig---plataforma-integral-de-adopción-de-mascotas)
 
 </div>

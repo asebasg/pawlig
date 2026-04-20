@@ -145,7 +145,7 @@ function ProductGalleryContent() {
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
             <aside className="w-full lg:w-80 flex-shrink-0">
-                <div className="sticky top-20 p-6 bg-white rounded-lg border shadow-sm">
+                <div className="sticky top-20 p-6">
                     <ProductFilter
                         filters={filters}
                         onFilterChange={handleFilterChange}
@@ -193,7 +193,7 @@ function ProductGalleryContent() {
                             <ProductCard
                                 key={product.id}
                                 product={product}
-                                accentColor="purple"
+                                accentColor="none"
                                 onAddToCart={handleAddToCart}
                             />
                         ))
