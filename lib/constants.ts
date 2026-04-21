@@ -98,11 +98,11 @@ export const FOOTER_LINKS = {
     { label: "Notas de Lanzamiento", href: "/changelog" },
   ],
   social: [
-    { label: "WhatsApp", href: "https://wa.me/573001234567", icon: "MessageCircle" },
-    { label: "Instagram", href: "https://instagram.com/pawlig", icon: "Instagram" },
-    { label: "Facebook", href: "https://facebook.com/pawlig", icon: "Facebook" },
-    { label: "Twitter", href: "https://twitter.com/pawlig", icon: "Twitter" },
-    { label: "GitHub", href: "", icon: "Github" },
+    { label: "WhatsApp", href: "https://wa.me/573225316150", icon: "MessageCircle" },
+    { label: "Instagram", href: "https://instagram.com/tianpgz", icon: "Instagram" },
+    { label: "Facebook", href: "https://www.facebook.com/profile.php?id=100095403841310", icon: "Facebook" },
+    { label: "Twitter", href: "https://twitter.com/tianpgz", icon: "Twitter" },
+    { label: "GitHub", href: "https://github.com/asebasg", icon: "Github" },
   ]
 };
 
