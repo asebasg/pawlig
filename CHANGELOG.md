@@ -4,6 +4,21 @@
 
 ---
 
+## 20-04-2026 - Auditoría Administrativa y Enlaces Sociales
+
+**Commit:** `N/A`
+**Tipo:** Feature / Refactor
+**Scope:** admin, ui
+
+### Descripción
+Implementación del componente `AuditHistoryCard` para fortalecer el módulo de administración, permitiendo visualizar el historial de acciones sobre usuarios. Paralelamente, se realizó una actualización de los enlaces de redes sociales globales en la configuración de constantes del proyecto.
+
+### Archivos Modificados
+- **`components/admin/AuditHistoryCard.tsx`** (A) - Nuevo componente de historial de auditoría.
+- **`lib/constants.ts`** (M) - Actualización de enlaces sociales.
+
+---
+
 ## 20-02-2026 - Centro de Ayuda y Estabilización del Entorno (v1.6.0)
 
 **Commit:** `N/A`
