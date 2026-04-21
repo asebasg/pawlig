@@ -51,9 +51,9 @@ export function AuditHistoryCard({ auditRecords }: AuditHistoryCardProps) {
         <CardTitle>
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5" />
-            <span>Historial de Auditoría</span>
+            <span>Registro de Auditoría</span>
           </div>
-        </CardTitle>
+        </CardTitle>feat: add AuditHistoryCard component to display user administrative action logs
       </CardHeader>
       <CardContent className="space-y-4">
         {auditRecords.length === 0 ? (
