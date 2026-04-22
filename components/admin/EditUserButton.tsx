@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Edit } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button-variants";
 // import EditUserModal from "@/app/(dashboard)/admin/users/EditUserModal";
@@ -72,12 +71,12 @@ export default function EditUserButton({
             </p>
             <div className="flex justify-center gap-3">
               {/* <Link href={`/admin/users/edit/${user.id`}> */}
-              <Link 
-                href={`/changelog`}
+              <button
+                onClick={handleSuccess}
                 className={cn(buttonVariants({ variant: "default", size: "sm" }))}
               >
-                Notas de Lanzamiento
-              </Link>
+                Guardar Cambios
+              </button>
               <button
                 onClick={() => setShowModal(false)}
                 className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
