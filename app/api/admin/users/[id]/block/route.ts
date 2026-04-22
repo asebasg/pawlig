@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
 import { UserRole } from "@prisma/client";
 import z from "zod";
+import { revalidatePath } from "next/cache";
 
 //  Validación de entrada
 const BlockUserSchema = z.object({
@@ -153,6 +154,10 @@ export async function PUT(
 
             return updatedUser;
         });
+
+        // Invalidar caché para reflejar los cambios en la UI (Issue 101)
+        revalidatePath(`/admin/users/${userId}/view`);
+        revalidatePath("/admin/users");
 
         // TODO: Enviar notificación por email (RN-018)
         // await sendBlockNotificationEmail({ ... });
