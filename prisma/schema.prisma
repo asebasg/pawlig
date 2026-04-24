@@ -87,6 +87,7 @@ model User {
   adoptions   Adoption[]
   orders      Order[]
   favorites   Favorite[]
+  passwordResetTokens PasswordResetToken[]
   
   // Auditoría (HU-014)
   adminActions UserAudit[] @relation("AdminActions")
@@ -294,4 +295,18 @@ model Favorite {
   @@index([userId])
   @@index([petId])
   @@index([createdAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String   @unique
+  userId    String   @db.ObjectId
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([expiresAt])
 }
