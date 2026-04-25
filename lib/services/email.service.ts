@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import { Resend, type CreateEmailOptions } from "resend";
 import { PasswordResetEmail } from "../email/templates/password-reset";
 import { AdoptionStatusEmail } from "../email/templates/adoption-status";
 import { NewAdoptionEmail } from "../email/templates/new-adoption";
@@ -37,7 +37,7 @@ if (!fromEmail) {
 /**
  * Función genérica de manejo de errores
  */
-const sendEmail = async (payload: any) => {
+const sendEmail = async (payload: CreateEmailOptions) => {
   try {
     const { data, error } = await resend.emails.send(payload);
     if (error) {

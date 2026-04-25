@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { Resend } from "resend";
 import * as emailService from "./email.service";
 
@@ -19,7 +19,7 @@ vi.mock("resend", () => {
 describe("Email Service", () => {
   // Obtenemos la referencia al mock de 'send' instanciado en el servicio
   const mockedResend = new Resend("fake_key");
-  const sendMock = mockedResend.emails.send as any;
+  const sendMock = mockedResend.emails.send as Mock;
 
   beforeEach(() => {
     vi.clearAllMocks();

@@ -4,9 +4,7 @@ import {
   Body,
   Container,
   Tailwind,
-  Img,
   Text,
-  Link,
   Hr,
 } from "@react-email/components";
 import React from "react";
