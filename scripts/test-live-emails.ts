@@ -44,7 +44,7 @@ async function runTests() {
       sendPasswordResetEmail({
         to: targetEmail,
         userName: "Usuario de Prueba",
-        resetUrl: "https://pawlig.com/reset-password?token=test-123",
+        resetUrl: "https://pawlig.vercel.app/reset-password?token=test-123",
       }),
     adoption: () =>
       sendAdoptionStatusEmail({
@@ -75,7 +75,7 @@ async function runTests() {
         to: targetEmail,
         representativeName: "Admin Refugio",
         shelterName: "Vida Animal",
-        loginUrl: "https://pawlig.com/login",
+        loginUrl: "https://pawlig.vercel.app/login",
       }),
     "shelter-no": () =>
       sendShelterRejectionEmail({
@@ -90,7 +90,7 @@ async function runTests() {
         to: targetEmail,
         userName: "Carlos Vendedor",
         businessName: "PetShop Central",
-        loginUrl: "https://pawlig.com/login",
+        loginUrl: "https://pawlig.vercel.app/login",
       }),
     "vendor-no": () =>
       sendVendorRejectionEmail({

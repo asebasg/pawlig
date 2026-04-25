@@ -26,7 +26,13 @@ import {
 } from "@/types/email.types";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.EMAIL_FROM || "noreply@pawlig.vercel.app";
+const fromEmail = process.env.EMAIL_FROM;
+
+if (!fromEmail) {
+  throw new Error(
+    "EMAIL_FROM no está definido. Por favor, defínelo en tu archivo .env.",
+  );
+}
 
 /**
  * Función genérica de manejo de errores
