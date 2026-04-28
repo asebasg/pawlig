@@ -4,6 +4,62 @@
 
 ---
 
+## 28-04-2026 - Mejoras de Seguridad y UX en Formularios (v1.8.0)
+
+**Commit:** `dc28ed2`
+**Tipo:** Feature / Fix
+**Scope:** auth, ui
+
+### Descripción
+
+Implementación del componente `PasswordInput` con funcionalidad de alternancia de visibilidad de contraseña, integrado en todos los formularios de autenticación y solicitud de la plataforma. Se incluyó una corrección CSS para ocultar los botones nativos de revelación de contraseña en navegadores basados en Chromium (Edge/IE), evitando la duplicación de iconos.
+
+### Archivos Creados
+
+- **`components/ui/password-input.tsx`** (A) - Componente reutilizable de input con toggle de visibilidad (ojo abierto/cerrado).
+
+### Archivos Modificados
+
+- **`components/forms/login-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de inicio de sesión.
+- **`components/forms/register-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de registro.
+- **`components/forms/shelter-request-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de solicitud de albergue.
+- **`components/forms/vendor-request-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de solicitud de vendedor.
+- **`app/globals.css`** (M) - Reglas CSS para ocultar el botón nativo de revelar contraseña en Edge/IE y evitar iconos duplicados.
+
+### Decisiones Técnicas
+
+- Se creó un componente dedicado en lugar de añadir la lógica inline para garantizar consistencia y reutilización.
+- La corrección de CSS usa selectores `::-ms-reveal` y `::-ms-clear` para compatibilidad con navegadores Microsoft.
+
+---
+
+## 24-04-2026 - Bloqueo de Usuarios y Sincronización de Auditoría
+
+**Commit:** `29323ee`
+**Tipo:** Fix / Feature
+**Scope:** admin, users
+
+### Descripción
+
+Resolución del problema de sincronización en el historial de auditoría del panel de administración. Tras bloquear o desbloquear un usuario, los registros de auditoría ahora se actualizan automáticamente sin requerir una recarga manual de la página. Se implementó la revalidación de rutas y se creó el componente `EditUserButton` para estandarizar las acciones de gestión de usuarios.
+
+### Archivos Creados
+
+- **`components/admin/EditUserButton.tsx`** (A) - Botón de edición de usuario con modal integrado, siguiendo la arquitectura de `BlockUserButton`.
+
+### Archivos Modificados
+
+- **`app/api/admin/users/[id]/block/route.ts`** (M) - Implementación de revalidación de ruta tras bloqueo/desbloqueo para sincronizar la UI.
+- **`components/admin/AuditHistoryCard.tsx`** (M) - Refactorización con paginación y controles de layout consistentes.
+- **`components/admin/UserActionsClient.tsx`** (M) - Integración del nuevo `EditUserButton` y mejora del flujo de acciones.
+
+### Decisiones Técnicas
+
+- Se utiliza `revalidatePath` de Next.js para invalidar la caché de la página tras cada acción de bloqueo/desbloqueo.
+- El componente `EditUserButton` sigue el mismo patrón arquitectónico que `BlockUserButton` para mantener consistencia.
+
+---
+
 ## 24-04-2026 - Sistema de Notificaciones por Email (v1.7.0)
 
 **Commit:** `feat(email): Implementa el sistema de notificaciones por email con Resend y React Email`

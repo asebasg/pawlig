@@ -12,6 +12,8 @@ import {
   GitPullRequest,
   Star,
   Heart,
+  Shield,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,9 +25,51 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "24 de abril de 2026";
+  const lastUpdate = "28 de abril de 2026";
 
   const versions = [
+    {
+      version: "v1.8.0",
+      date: "28 de Abril, 2026",
+      title: "Seguridad y UX en Formularios",
+      description:
+        "Toggle de visibilidad de contraseña en todos los formularios y corrección de compatibilidad con navegadores.",
+      color: "from-emerald-500 to-teal-600",
+      updates: [
+        {
+          type: "added",
+          title: "Botón Ver Contraseña",
+          description:
+            "Nuevo componente PasswordInput con alternancia de visibilidad en login, registro y solicitudes.",
+          icon: <Eye size={20} className="text-white" />,
+          bg: "bg-emerald-500",
+        },
+        {
+          type: "fixed",
+          title: "Iconos Duplicados en Edge",
+          description:
+            "Corrección CSS para ocultar botones nativos de revelación de contraseña en navegadores Microsoft.",
+          icon: <Bug size={20} className="text-white" />,
+          bg: "bg-red-500",
+        },
+        {
+          type: "added",
+          title: "Bloqueo de Usuarios",
+          description:
+            "Sincronización automática del historial de auditoría tras bloquear o desbloquear un usuario.",
+          icon: <Shield size={20} className="text-white" />,
+          bg: "bg-blue-500",
+        },
+        {
+          type: "added",
+          title: "Botón Editar Usuario",
+          description:
+            "Nuevo componente EditUserButton con modal integrado para estandarizar la gestión de usuarios.",
+          icon: <Wrench size={20} className="text-white" />,
+          bg: "bg-slate-500",
+        },
+      ],
+    },
     {
       version: "v1.7.0",
       date: "24 de Abril, 2026",
