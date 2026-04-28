@@ -25,25 +25,19 @@ import {
   VendorRejectionEmailPayload,
 } from "@/types/email.types";
 
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
+const resend = new Resend(process.env.RESEND_API_KEY);
 const fromEmail = process.env.EMAIL_FROM;
+
+if (!fromEmail) {
+  throw new Error(
+    "EMAIL_FROM no está definido. Por favor, defínelo en tu archivo .env.",
+  );
+}
 
 /**
  * Función genérica de manejo de errores
  */
 const sendEmail = async (payload: CreateEmailOptions) => {
-  if (!resend) {
-    console.error("Resend API Key is missing. Cannot send email.");
-    return { success: false, error: "Missing API Key" };
-  }
-
-  if (!fromEmail) {
-    console.error("EMAIL_FROM is missing. Cannot send email.");
-    return { success: false, error: "Missing sender email" };
-  }
-
   try {
     const { data, error } = await resend.emails.send(payload);
     if (error) {

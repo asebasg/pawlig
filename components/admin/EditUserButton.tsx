@@ -52,7 +52,7 @@ export default function EditUserButton({
         {showLabel && <span className="font-medium">Editar usuario</span>}
       </button>
 
-      {/*
+      {/* 
         TODO: Reemplazar con el componente real EditUserModal
         {showModal && (
           <EditUserModal

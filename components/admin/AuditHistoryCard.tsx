@@ -152,7 +152,7 @@ export function AuditHistoryCard({ auditRecords }: AuditHistoryCardProps) {
  * los muestra de una manera estructurada y fácil de leer.
  *
  * **Lógica Clave:**
- * - Paginación: Implementa paginación local usando `useState` para limitar la
+ * - Paginación: Implementa paginación local usando `useState` para limitar la 
  *   cantidad de registros mostrados y mantener la altura de la tarjeta en
  *   concordancia con el resto del layout.
  * - Mapeo de Acciones a Iconos y Colores: El objeto `actionDetails` mapea
@@ -172,3 +172,4 @@ export function AuditHistoryCard({ auditRecords }: AuditHistoryCardProps) {
  * - `lucide-react`: Para los iconos visuales y las flechas de navegación.
  *
  */
+
