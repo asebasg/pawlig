@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/auth-options';
-import { prisma } from '@/lib/utils/db';
-import { adoptionStatusChangeSchema } from '@/lib/validations/adoption.schema';
-import { ZodError } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth-options";
+import { prisma } from "@/lib/utils/db";
+import { adoptionStatusChangeSchema } from "@/lib/validations/adoption.schema";
+import { ZodError } from "zod";
+import { sendAdoptionStatusEmail } from "@/lib/services/email.service";
 
 /**
  * PATCH /api/adoptions/{id}
@@ -15,7 +16,7 @@ import { ZodError } from 'zod';
 /**
  * Endpoint para cambiar estado de postulación
  * Implementa TAREA-024
- * 
+ *
  * PATCH /api/adoptions/[id]
  * - Aprobar o rechazar postulación
  * - Actualizar estado de mascota automáticamente
@@ -24,17 +25,17 @@ import { ZodError } from 'zod';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     // 1. Validar ID
     if (!params.id) {
       return NextResponse.json(
         {
-          error: 'ID de postulación requerido',
-          code: 'INVALID_ID',
+          error: "ID de postulación requerido",
+          code: "INVALID_ID",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,39 +44,40 @@ export async function PATCH(
     if (!session?.user) {
       return NextResponse.json(
         {
-          error: 'No autenticado',
-          code: 'UNAUTHORIZED',
-          message: 'Debes iniciar sesión para cambiar el estado de una postulación',
+          error: "No autenticado",
+          code: "UNAUTHORIZED",
+          message:
+            "Debes iniciar sesión para cambiar el estado de una postulación",
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // 3. Verificar rol (solo SHELTER)
-    if (session.user.role !== 'SHELTER') {
+    if (session.user.role !== "SHELTER") {
       return NextResponse.json(
         {
-          error: 'Acceso denegado',
-          code: 'FORBIDDEN',
-          message: 'Solo SHELTER puede cambiar el estado de postulaciones',
+          error: "Acceso denegado",
+          code: "FORBIDDEN",
+          message: "Solo SHELTER puede cambiar el estado de postulaciones",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     // 4. Obtener albergue del usuario
     const shelter = await prisma.shelter.findFirst({
       where: { userId: session.user.id },
-      select: { id: true },
+      select: { id: true, name: true },
     });
 
     if (!shelter) {
       return NextResponse.json(
         {
-          error: 'Sin albergue',
-          code: 'SHELTER_NOT_FOUND',
+          error: "Sin albergue",
+          code: "SHELTER_NOT_FOUND",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -104,11 +106,11 @@ export async function PATCH(
     if (!adoption) {
       return NextResponse.json(
         {
-          error: 'Postulación no encontrada',
-          code: 'ADOPTION_NOT_FOUND',
+          error: "Postulación no encontrada",
+          code: "ADOPTION_NOT_FOUND",
           adoptionId: params.id,
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -116,11 +118,11 @@ export async function PATCH(
     if (adoption.pet.shelterId !== shelter.id) {
       return NextResponse.json(
         {
-          error: 'No tienes permiso',
-          code: 'UNAUTHORIZED_EDIT',
-          message: 'No eres propietario de esta mascota',
+          error: "No tienes permiso",
+          code: "UNAUTHORIZED_EDIT",
+          message: "No eres propietario de esta mascota",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -152,12 +154,12 @@ export async function PATCH(
       // Actualizar estado de mascota automáticamente
       let petStatusUpdate: string | null = null;
 
-      if (validatedData.status === 'APPROVED') {
+      if (validatedData.status === "APPROVED") {
         // Si se aprueba: cambiar a IN_PROCESS
-        petStatusUpdate = 'IN_PROCESS';
+        petStatusUpdate = "IN_PROCESS";
         await tx.pet.update({
           where: { id: adoption.pet.id },
-          data: { status: 'IN_PROCESS' },
+          data: { status: "IN_PROCESS" },
         });
 
         // Verificar si hay otras postulaciones APPROVED para esta mascota
@@ -165,7 +167,7 @@ export async function PATCH(
         const approvedCount = await tx.adoption.count({
           where: {
             petId: adoption.pet.id,
-            status: 'APPROVED',
+            status: "APPROVED",
           },
         });
 
@@ -173,28 +175,28 @@ export async function PATCH(
         if (approvedCount === 1) {
           await tx.pet.update({
             where: { id: adoption.pet.id },
-            data: { status: 'ADOPTED' },
+            data: { status: "ADOPTED" },
           });
-          petStatusUpdate = 'ADOPTED';
+          petStatusUpdate = "ADOPTED";
         }
-      } else if (validatedData.status === 'REJECTED') {
+      } else if (validatedData.status === "REJECTED") {
         // Si se rechaza: verificar si hay otras postulaciones APPROVED
         const hasApprovedAdoption = await tx.adoption.findFirst({
           where: {
             petId: adoption.pet.id,
-            status: 'APPROVED',
+            status: "APPROVED",
             id: { not: params.id }, // Excluir la actual
           },
         });
 
         // Si no hay APPROVED, mantener en AVAILABLE
         if (!hasApprovedAdoption) {
-          petStatusUpdate = 'AVAILABLE';
+          petStatusUpdate = "AVAILABLE";
           // Solo cambiar si la mascota está en IN_PROCESS y no hay otra aprobada
-          if (adoption.pet.status === 'IN_PROCESS') {
+          if (adoption.pet.status === "IN_PROCESS") {
             await tx.pet.update({
               where: { id: adoption.pet.id },
-              data: { status: 'AVAILABLE' },
+              data: { status: "AVAILABLE" },
             });
           }
         }
@@ -206,11 +208,23 @@ export async function PATCH(
       };
     });
 
+    // Enviar correo al adoptante
+    sendAdoptionStatusEmail({
+      to: result.adoption.adopter.email,
+      adopterName: result.adoption.adopter.name,
+      petName: result.adoption.pet.name,
+      status: result.adoption.status as "APPROVED" | "REJECTED",
+      shelterName: shelter.name,
+      rejectionReason: result.adoption.message || undefined,
+    }).catch((err) =>
+      console.error("Error enviando email estado adopción:", err),
+    );
+
     // 10. Retornar respuesta exitosa
     return NextResponse.json(
       {
-        message: 'Postulación actualizada exitosamente',
-        code: 'ADOPTION_UPDATED',
+        message: "Postulación actualizada exitosamente",
+        code: "ADOPTION_UPDATED",
         data: {
           adoptionId: result.adoption.id,
           status: result.adoption.status,
@@ -224,44 +238,44 @@ export async function PATCH(
           updatedAt: result.adoption.updatedAt,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     // Manejo de errores de validación Zod
     if (error instanceof ZodError) {
       return NextResponse.json(
         {
-          error: 'Datos inválidos',
-          code: 'VALIDATION_ERROR',
+          error: "Datos inválidos",
+          code: "VALIDATION_ERROR",
           details: error.issues.map((issue) => ({
-            field: issue.path.join('.'),
+            field: issue.path.join("."),
             message: issue.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Error de Prisma
-    if (error instanceof Error && error.message.includes('Prisma')) {
-      console.error('Error de Prisma al cambiar estado de postulación:', error);
+    if (error instanceof Error && error.message.includes("Prisma")) {
+      console.error("Error de Prisma al cambiar estado de postulación:", error);
       return NextResponse.json(
         {
-          error: 'Error al cambiar estado de postulación',
-          code: 'DATABASE_ERROR',
+          error: "Error al cambiar estado de postulación",
+          code: "DATABASE_ERROR",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Error genérico del servidor
-    console.error('Error al cambiar estado de postulación:', error);
+    console.error("Error al cambiar estado de postulación:", error);
     return NextResponse.json(
       {
-        error: 'Error interno del servidor',
-        code: 'INTERNAL_ERROR',
+        error: "Error interno del servidor",
+        code: "INTERNAL_ERROR",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
