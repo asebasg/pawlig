@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from 'next/link';
 import { loginSchema, LoginInput } from "@/lib/validations/user.schema";
 import { PawPrint } from 'lucide-react';
+import { PasswordInput } from "@/components/ui/password-input";
 
 /**
  * Descripción: Formulario de inicio de sesión con validación Zod e integración con NextAuth.
@@ -103,15 +104,12 @@ export default function LoginForm() {
             {/* Campo: Contraseña */}
             <div>
                 <div className="block justify-between items-center mb-2">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                        Contraseña
-                    </label>
-                    <input
+                    <PasswordInput
                         {...register('password')}
-                        type="password"
                         id="password"
+                        label="Contraseña"
                         autoComplete="current-password"
-                        className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+                        variant={errors.password ? 'error' : 'default'}
                         placeholder="Tu contraseña"
                     />
                     <div className="flex justify-end mt-1">
