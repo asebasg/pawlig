@@ -8,6 +8,7 @@ import Loader from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { PackageX, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useCart } from "@/lib/hooks/use-cart";
 
 // Constantes
 const ITEMS_PER_PAGE = 12;
@@ -137,8 +138,13 @@ function ProductGalleryContent() {
         }
     };
 
-    const handleAddToCart = () => {
-        toast.success("Producto agregado al carrito");
+    const { addToCart } = useCart();
+
+    const handleAddToCart = async (productId: string) => {
+        const success = await addToCart(productId);
+        if (success) {
+            // El hook useCart ya dispara el toast de éxito
+        }
     };
 
     return (

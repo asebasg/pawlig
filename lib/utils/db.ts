@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 /**
  * Ruta/Componente/Servicio: Utilidad de Prisma Client
@@ -7,17 +7,53 @@ import { PrismaClient } from '@prisma/client';
  * Implementa: -
  */
 
-const globalForPrisma = globalThis as unknown as {
-    prisma: PrismaClient | undefined;
+const createPrismaClient = () => {
+  const client = new PrismaClient({
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+  });
+
+  return client.$extends({
+    query: {
+      product: {
+        async delete({ args, query }) {
+          // Primero ejecutamos la eliminación del producto
+          const result = await query(args);
+          // Luego limpiamos los carritos (borrado en cascada manual)
+          if (args.where?.id) {
+            await client.cartItem.deleteMany({
+              where: { productId: args.where.id as string },
+            });
+          }
+          return result;
+        },
+        async update({ args, query }) {
+          // Ejecutamos la actualización del producto
+          const result = await query(args);
+          // Si el stock llegó a 0, limpiamos los carritos
+          if (args.data?.stock === 0 && args.where?.id) {
+            await client.cartItem.deleteMany({
+              where: { productId: args.where.id as string },
+            });
+          }
+          return result;
+        },
+      },
+    },
+  });
 };
 
-export const prisma =
-    globalForPrisma.prisma ??
-    new PrismaClient({
-        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-    });
+type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+const globalForPrisma = globalThis as unknown as {
+  prisma: ExtendedPrismaClient | undefined;
+};
+
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 /*
  * ---------------------------------------------------------------------------

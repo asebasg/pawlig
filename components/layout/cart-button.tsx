@@ -17,7 +17,7 @@ interface CartButtonProps {
 export function CartButton({ itemCount = 0 }: CartButtonProps) {
   return (
     <Link 
-      href="/productos/cart"
+      href="/user?tab=cart"
       className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
     >
       <ShoppingCart 
