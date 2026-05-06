@@ -6,7 +6,7 @@
 
 ![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.1-38B2AC?style=flat-square&logo=tailwind-css)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=flat-square&logo=mongodb)
 ![Prisma](https://img.shields.io/badge/Prisma-6.19-2D3748?style=flat-square&logo=prisma)
 ![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-orange?style=flat-square&logo=google-gemini)
@@ -14,7 +14,7 @@
 **Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Última actualización: 26-03-2026_
+_Versión v1.8.0 | Última actualización: 28-04-2026_
 
 </div>
 
@@ -52,6 +52,7 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 - **Sistema multi-rol estricto:** Admin, Albergue (Shelter), Proveedor (Vendor) y Adoptante (Adopter).
 - **Protección de rutas:** Middleware avanzado que valida sesiones y permisos en tiempo real.
 - **Auditoría completa:** Registro detallado de acciones administrativas (bloqueos, cambios de rol) con justificaciones obligatorias, IP y User-Agent.
+- **Seguridad en UI:** Inputs de contraseña con toggle de visibilidad y protección contra duplicidad de iconos nativos del navegador.
 
 ### 🐕 Ecosistema de Adopciones con IA
 
@@ -64,6 +65,12 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 - **Catálogo dinámico:** Gestión de inventario en tiempo real para proveedores.
 - **IA para Ventas:** Optimizador de descripciones de productos mediante IA para mejorar la conversión.
 - **Carrito persistente:** Experiencia de compra fluida con persistencia local y sincronización de estado.
+
+### 📧 Sistema de Notificaciones por Email
+
+- **Comunicación omnicanal:** 11 plantillas personalizadas para flujos críticos (adopciones, pedidos, seguridad).
+- **Branding Cohesivo:** Correos electrónicos diseñados con React Email para una experiencia de marca consistente.
+- **Automatización:** Envío inteligente de estados de pedido y confirmaciones de adopción vía Resend.
 
 ### 📑 Centro de Ayuda y Documentación
 
@@ -94,6 +101,7 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 - **Prisma ORM:** Modelado de datos y consultas tipadas a la base de datos.
 - **Zod:** Validación rigurosa de esquemas en cliente y servidor.
 - **Google Generative AI:** Integración con el modelo `gemini-2.5-flash`.
+- **Resend & React Email:** Infraestructura y diseño para comunicaciones transaccionales.
 
 ### Infraestructura
 
@@ -136,6 +144,8 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
    NEXTAUTH_URL="http://localhost:3000"
    CLOUDINARY_API_KEY="..."
    GEMINI_API_KEY="..."
+   RESEND_API_KEY="..."
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
    ```
 
 4. **Preparar la Base de Datos:**
@@ -167,6 +177,8 @@ pawlig/
 │   ├── forms/            # Lógica de formularios y validaciones
 │   └── layout/           # Elementos estructurales (Navbar, Footer)
 ├── lib/                  # Núcleo: Servicios, utilidades y configuraciones
+│   ├── email/            # Plantillas y componentes de correo electrónico
+│   └── services/         # Lógica de negocio y servicios externos
 ├── prisma/               # Esquema de datos y migraciones
 ├── public/               # Assets estáticos (Imágenes, Iconos)
 ├── types/                # Definiciones de tipos TypeScript globales
@@ -186,14 +198,14 @@ pawlig/
 
 ## 🧪 Scripts Disponibles
 
-| Comando | Descripción |
-| :--- | :--- |
-| `npm run dev` | Inicia el servidor de desarrollo con Hot Reload. |
-| `npm run build` | Genera la versión optimizada para producción. |
-| `npm run start` | Inicia el servidor de producción. |
-| `npm run test` | Ejecuta la suite de pruebas con Vitest. |
-| `npm run lint` | Analiza el código en busca de problemas de estilo o errores. |
-| `npx prisma studio` | Abre una interfaz web para explorar la base de datos. |
+| Comando             | Descripción                                                  |
+| :------------------ | :----------------------------------------------------------- |
+| `npm run dev`       | Inicia el servidor de desarrollo con Hot Reload.             |
+| `npm run build`     | Genera la versión optimizada para producción.                |
+| `npm run start`     | Inicia el servidor de producción.                            |
+| `npm run test`      | Ejecuta la suite de pruebas con Vitest.                      |
+| `npm run lint`      | Analiza el código en busca de problemas de estilo o errores. |
+| `npx prisma studio` | Abre una interfaz web para explorar la base de datos.        |
 
 ---
 
