@@ -4,6 +4,118 @@
 
 ---
 
+## 28-04-2026 - Mejoras de Seguridad y UX en Formularios (v1.8.0)
+
+**Commit:** `dc28ed2`
+**Tipo:** Feature / Fix
+**Scope:** auth, ui
+
+### Descripción
+
+Implementación del componente `PasswordInput` con funcionalidad de alternancia de visibilidad de contraseña, integrado en todos los formularios de autenticación y solicitud de la plataforma. Se incluyó una corrección CSS para ocultar los botones nativos de revelación de contraseña en navegadores basados en Chromium (Edge/IE), evitando la duplicación de iconos.
+
+### Archivos Creados
+
+- **`components/ui/password-input.tsx`** (A) - Componente reutilizable de input con toggle de visibilidad (ojo abierto/cerrado).
+
+### Archivos Modificados
+
+- **`components/forms/login-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de inicio de sesión.
+- **`components/forms/register-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de registro.
+- **`components/forms/shelter-request-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de solicitud de albergue.
+- **`components/forms/vendor-request-form.tsx`** (M) - Integración del nuevo `PasswordInput` en el formulario de solicitud de vendedor.
+- **`app/globals.css`** (M) - Reglas CSS para ocultar el botón nativo de revelar contraseña en Edge/IE y evitar iconos duplicados.
+
+### Decisiones Técnicas
+
+- Se creó un componente dedicado en lugar de añadir la lógica inline para garantizar consistencia y reutilización.
+- La corrección de CSS usa selectores `::-ms-reveal` y `::-ms-clear` para compatibilidad con navegadores Microsoft.
+
+---
+
+## 24-04-2026 - Bloqueo de Usuarios y Sincronización de Auditoría
+
+**Commit:** `29323ee`
+**Tipo:** Fix / Feature
+**Scope:** admin, users
+
+### Descripción
+
+Resolución del problema de sincronización en el historial de auditoría del panel de administración. Tras bloquear o desbloquear un usuario, los registros de auditoría ahora se actualizan automáticamente sin requerir una recarga manual de la página. Se implementó la revalidación de rutas y se creó el componente `EditUserButton` para estandarizar las acciones de gestión de usuarios.
+
+### Archivos Creados
+
+- **`components/admin/EditUserButton.tsx`** (A) - Botón de edición de usuario con modal integrado, siguiendo la arquitectura de `BlockUserButton`.
+
+### Archivos Modificados
+
+- **`app/api/admin/users/[id]/block/route.ts`** (M) - Implementación de revalidación de ruta tras bloqueo/desbloqueo para sincronizar la UI.
+- **`components/admin/AuditHistoryCard.tsx`** (M) - Refactorización con paginación y controles de layout consistentes.
+- **`components/admin/UserActionsClient.tsx`** (M) - Integración del nuevo `EditUserButton` y mejora del flujo de acciones.
+
+### Decisiones Técnicas
+
+- Se utiliza `revalidatePath` de Next.js para invalidar la caché de la página tras cada acción de bloqueo/desbloqueo.
+- El componente `EditUserButton` sigue el mismo patrón arquitectónico que `BlockUserButton` para mantener consistencia.
+
+---
+
+## 24-04-2026 - Sistema de Notificaciones por Email (v1.7.0)
+
+**Commit:** `feat(email): Implementa el sistema de notificaciones por email con Resend y React Email`
+**Tipo:** Feature
+**Scope:** email, auth, adoptions, admin
+
+### Descripción
+
+Implementación del sistema completo de notificaciones por email usando Resend y React Email. Se crearon 11 plantillas HTML responsive con el branding de PawLig, integradas en los flujos críticos de la plataforma: recuperación de contraseñas, cambios de estado en adopciones, aprobaciones/rechazos de albergues y vendedores, gestión de cuentas y procesamiento de órdenes.
+
+### Nuevas Funcionalidades
+
+- **Recuperación de contraseña**: Email con enlace seguro de un solo uso (1 hora de vigencia) para restablecer la contraseña.
+- **Notificaciones de adopción**: Correo al albergue cuando llega una nueva postulación y al adoptante cuando su solicitud cambia de estado.
+- **Aprobación/Rechazo de Albergues**: El representante recibe confirmación con acceso directo a la plataforma o el motivo del rechazo.
+- **Aprobación/Rechazo de Vendedores**: El solicitante recibe confirmación o explicación detallada del rechazo.
+- **Bloqueo/Desbloqueo de Cuenta**: Aviso al usuario cuando su cuenta es suspendida o reactivada por un administrador.
+- **Órdenes de Compra**: Confirmación al cliente y notificación de nueva venta al vendedor.
+- **Actualización de Estado de Pedido**: Correo con número de guía cuando el pedido es despachado.
+
+### Archivos Creados
+
+- **`lib/services/email.service.ts`** (A) - Servicio central de envío de correos vía Resend API.
+- **`lib/email/components/EmailLayout.tsx`** (A) - Layout base reutilizable con branding de PawLig.
+- **`lib/email/templates/password-reset.tsx`** (A)
+- **`lib/email/templates/adoption-status.tsx`** (A)
+- **`lib/email/templates/new-adoption.tsx`** (A)
+- **`lib/email/templates/order-confirmation.tsx`** (A)
+- **`lib/email/templates/new-order-vendor.tsx`** (A)
+- **`lib/email/templates/order-status.tsx`** (A)
+- **`lib/email/templates/account-blocked.tsx`** (A)
+- **`lib/email/templates/shelter-approved.tsx`** (A)
+- **`lib/email/templates/shelter-rejected.tsx`** (A)
+- **`lib/email/templates/vendor-approved.tsx`** (A)
+- **`lib/email/templates/vendor-rejected.tsx`** (A)
+- **`types/email.types.ts`** (A) - Interfaces TypeScript para los payloads de cada plantilla.
+- **`app/api/auth/forgot-password/route.ts`** (A) - Endpoint de solicitud de recuperación de contraseña.
+- **`lib/services/email.service.test.ts`** (A) - Tests unitarios con Vitest (8 tests, 100% passing).
+- **`scripts/test-live-emails.ts`** (A) - Script para pruebas de envío en entorno real.
+
+### Archivos Modificados
+
+- **`prisma/schema.prisma`** (M) - Modelo `PasswordResetToken` para gestión de tokens con expiración.
+- **`app/api/adoptions/route.ts`** (M) - Envío de notificación al albergue al crear nueva postulación.
+- **`app/api/adoptions/[id]/route.ts`** (M) - Notificación al adoptante al aprobar/rechazar su solicitud.
+- **`app/api/admin/users/[id]/block/route.ts`** (M) - Email de bloqueo/desbloqueo al usuario afectado.
+- **`app/api/admin/shelters/[shelterId]/route.ts`** (M) - Emails de aprobación y rechazo de albergues.
+
+### Decisiones Técnicas
+
+- Los envíos son **no bloqueantes** (`.catch()` en lugar de `await`) para que un fallo en Resend no afecte la respuesta de la API.
+- Los tokens de recuperación expiran en **1 hora** e invalidan tokens previos al emitir uno nuevo.
+- El endpoint `/forgot-password` siempre retorna `200 OK` para prevenir enumeración de emails.
+
+---
+
 ## 20-04-2026 - Auditoría Administrativa y Enlaces Sociales
 
 **Commit:** `N/A`
@@ -11,9 +123,11 @@
 **Scope:** admin, ui
 
 ### Descripción
+
 Implementación del componente `AuditHistoryCard` para fortalecer el módulo de administración, permitiendo visualizar el historial de acciones sobre usuarios. Paralelamente, se realizó una actualización de los enlaces de redes sociales globales en la configuración de constantes del proyecto.
 
 ### Archivos Modificados
+
 - **`components/admin/AuditHistoryCard.tsx`** (A) - Nuevo componente de historial de auditoría.
 - **`lib/constants.ts`** (M) - Actualización de enlaces sociales.
 
@@ -26,9 +140,11 @@ Implementación del componente `AuditHistoryCard` para fortalecer el módulo de 
 **Scope:** help, docs, testing
 
 ### Descripción
+
 Implementación de la página oficial de ayuda al usuario en `/help` como un componente estático de alto rendimiento, alineado con el estilo visual de la plataforma y sin dependencias externas. Además, se han realizado mejoras críticas en la estabilidad del entorno de pruebas, resolviendo incompatibilidades entre Radix UI y JSDOM, asegurando que el ciclo de vida del proyecto (test, build, start) funcione al 100%.
 
 ### Archivos Modificados
+
 - **`app/(public)/help/page.tsx`** (A) - Nueva página de Centro de Ayuda con navegación por anclas.
 - **`vitest.setup.ts`** (M) - Adición de polyfills para `PointerEvent`, `ResizeObserver` y métodos de `HTMLElement`.
 - **`app/(dashboard)/admin/users/[id]/view/__tests__/user-view.spec.tsx`** (M) - Refactorización de pruebas para soportar componentes Radix Select.
@@ -46,9 +162,11 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 **Scope:** ai, pet-adoption, marketplace
 
 ### Descripción
+
 Implementación de un asistente de Inteligencia Artificial Generativa basado en Google Gemini para el refinamiento automático de descripciones. Este asistente ayuda a los usuarios a crear perfiles de adopción más atractivos y descripciones de productos de marketplace más persuasivas, optimizando el tono, la gramática y el impacto emocional.
 
 ### Archivos Modificados
+
 - **`package.json`** (M) - Adición de `@google/generative-ai`
 - **`app/api/ai/refine/route.ts`** (A) - Endpoint para procesamiento de IA
 - **`components/forms/pet-form.tsx`** (M) - Integración del asistente en formulario de mascotas
@@ -63,9 +181,11 @@ Implementación de un asistente de Inteligencia Artificial Generativa basado en 
 **Scope:** public, docs, legal
 
 ### Descripción
+
 Implementación de la infraestructura para páginas públicas de la plataforma. Se han creado las secciones de FAQ, Privacidad, Términos y Condiciones, y el Registro de Cambios (Changelog) para el usuario final. Estas páginas siguen un diseño limpio y legalmente apropiado, facilitando la transparencia con los usuarios.
 
 ### Archivos Modificados
+
 - **`app/(public)/faq/page.tsx`** (A)
 - **`app/(public)/privacy/page.tsx`** (A)
 - **`app/(public)/terms/page.tsx`** (A)
@@ -81,9 +201,11 @@ Implementación de la infraestructura para páginas públicas de la plataforma. 
 **Scope:** products, vendor, marketplace
 
 ### Descripción
+
 Despliegue integral del módulo de productos que transforma a PawLig en un marketplace funcional. Se ha implementado el catálogo de productos con filtros avanzados por categoría y precio, junto con un sistema de gestión de inventario para vendedores que permite crear, editar y actualizar stock de productos en tiempo real.
 
 ### Archivos Modificados
+
 - **`app/productos/`** (A) - Galería pública de productos y vista de detalle
 - **`app/(dashboard)/vendor/products/`** (A) - Panel de gestión para vendedores
 - **`components/ProductGalleryClient.tsx`** (A)
@@ -100,9 +222,11 @@ Despliegue integral del módulo de productos que transforma a PawLig en un marke
 **Scope:** github, workflow
 
 ### Descripción
+
 Actualización de las plantillas de Issues en GitHub para estandarizar el reporte de errores, solicitudes de funcionalidades y peticiones de refactorización. Esto mejora la comunicación entre desarrolladores y agiliza el proceso de triage de tareas.
 
 ### Archivos Modificados
+
 - **`.github/ISSUE_TEMPLATE/`** (M) - Actualización de plantillas de reporte de error y sugerencia.
 
 ---
@@ -114,9 +238,11 @@ Actualización de las plantillas de Issues en GitHub para estandarizar el report
 **Scope:** ui, ux
 
 ### Descripción
+
 Refactorización de los componentes base de la interfaz de usuario para asegurar consistencia visual en toda la plataforma. Se han unificado estilos de botones, tarjetas y sistemas de navegación móvil para mejorar la experiencia del usuario final.
 
 ### Archivos Modificados
+
 - **`components/ui/`** (M) - Ajustes en variantes de botones y sombras de tarjetas.
 - **`components/layout/navbar-mobile.tsx`** (M) - Mejoras en la transición de menús.
 
@@ -133,10 +259,11 @@ Refactorización de los componentes base de la interfaz de usuario para asegurar
 Este commit representa una refactorización masiva del frontend y la migración completa de la base de código a una nueva arquitectura de estilos. El objetivo era modernizar la base del código, mejorar la mantenibilidad y establecer una configuración de proyecto robusta.
 
 La implementación consistió en:
-1.  **Revisión de Estilos:** Se eliminaron todos los estilos CSS anteriores y se reemplazaron con una implementación basada en Tailwind CSS.
-2.  **Reorganización de Componentes:** Los componentes de React se reestructuraron siguiendo una convención de nomenclatura y organización basada en features.
-3.  **Configuración de Herramientas:** Se configuraron desde cero herramientas de desarrollo como ESLint para el linting de código, TypeScript para el tipado estático y Next.js como framework principal.
-4.  **Actualización del Esquema de BD:** Se modificó el esquema de Prisma para alinear los modelos de datos con las nuevas necesidades de la aplicación.
+
+1. **Revisión de Estilos:** Se eliminaron todos los estilos CSS anteriores y se reemplazaron con una implementación basada en Tailwind CSS.
+2. **Reorganización de Componentes:** Los componentes de React se reestructuraron siguiendo una convención de nomenclatura y organización basada en features.
+3. **Configuración de Herramientas:** Se configuraron desde cero herramientas de desarrollo como ESLint para el linting de código, TypeScript para el tipado estático y Next.js como framework principal.
+4. **Actualización del Esquema de BD:** Se modificó el esquema de Prisma para alinear los modelos de datos con las nuevas necesidades de la aplicación.
 
 ### Archivos Modificados
 
@@ -168,9 +295,10 @@ La implementación consistió en:
 Para mejorar la calidad y mantenibilidad del código, se llevó a cabo una iniciativa de documentación masiva. El objetivo era asegurar que cualquier desarrollador, nuevo o existente, pudiera entender rápidamente la funcionalidad, el propósito y las dependencias de los archivos más importantes del proyecto.
 
 La implementación se basó en las directrices del archivo `.rules.md`, que estandariza el formato de la documentación. Se añadieron:
-1.  **Cabeceras de Resumen:** Un resumen de alto nivel al principio de cada archivo, describiendo su propósito.
-2.  **Notas de Implementación:** Comentarios detallados en el código, explicando la lógica de negocio y las decisiones de arquitectura.
-3.  **Descripciones de Dependencias:** Aclaraciones sobre las dependencias externas utilizadas en cada archivo.
+
+1. **Cabeceras de Resumen:** Un resumen de alto nivel al principio de cada archivo, describiendo su propósito.
+2. **Notas de Implementación:** Comentarios detallados en el código, explicando la lógica de negocio y las decisiones de arquitectura.
+3. **Descripciones de Dependencias:** Aclaraciones sobre las dependencias externas utilizadas en cada archivo.
 
 ### Archivos Modificados
 

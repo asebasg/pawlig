@@ -9,6 +9,7 @@ import { registerUserSchema, RegisterUserInput } from '@/lib/validations/user.sc
 import { Municipality } from '@prisma/client';
 import Link from 'next/link';
 import { PawPrint } from 'lucide-react';
+import { PasswordInput } from '@/components/ui/password-input';
 
 /**
  * POST /api/auth/register
@@ -128,15 +129,12 @@ export default function RegisterForm() {
 
       {/* Contraseña */}
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-          Contraseña *
-        </label>
-        <input
+        <PasswordInput
           {...register('password')}
-          type="password"
           id="password"
+          label={<>Contraseña <span className="text-red-500 font-bold">*</span></>}
           aria-invalid={errors.password ? 'true' : 'false'}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+          variant={errors.password ? 'error' : 'default'}
           placeholder="Mínimo 8 caracteres"
         />
         {errors.password ? (

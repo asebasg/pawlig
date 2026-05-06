@@ -43,3 +43,9 @@ body {
   animation: orbit var(--orbit-duration, 20s) linear infinite;
   animation-delay: var(--orbit-delay, 0s);
 }
+
+/* Ocultar botón nativo de ver contraseña en navegadores como Edge */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
