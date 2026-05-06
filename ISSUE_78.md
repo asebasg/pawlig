@@ -1,21 +1,19 @@
-title: [FEATURE] - Carrito de Compras
-state: OPEN
-author: asebasg (Sebastián Ospina)
-labels: enhancement
-comments: 0
-assignees: asebasg (Sebastián Ospina)
-projects: 
-milestone: 
-number: 78
+title:	[FEATURE] - Carrito de Compras
+state:	OPEN
+author:	asebasg (Sebastián Ospina)
+labels:	enhancement
+comments:	0
+assignees:	asebasg (Sebastián Ospina)
+projects:	
+milestone:	
+number:	78
 --
-
 ## ✨ Feature
 
 **¿Qué?**
 Sistema completo de carrito de compras persistente en base de datos con validaciones en tiempo real, sincronización automática de cambios de productos, y UI integrada en el panel de usuario con tabs dinámicos.
 
 **¿Por qué?**
-
 - Cumplir con RF-015 (Carrito de Compras) y HU-009 (Simulación de compra de productos)
 - Permitir a usuarios autenticados gestionar productos antes de finalizar compra
 - Mantener persistencia del carrito entre sesiones
@@ -25,7 +23,6 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 **¿Cómo funciona?**
 
 **Flujo principal:**
-
 1. Usuario autenticado navega en `/productos`
 2. Usuario agrega producto al carrito desde `ProductCard` o `ProductDetailClient`
 3. Sistema valida autenticación y disponibilidad del producto
@@ -36,20 +33,17 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 8. Sistema sincroniza cambios en tiempo real
 
 **Validaciones automáticas:**
-
 - Si producto es eliminado por vendedor → Se elimina de TODOS los carritos
 - Si stock llega a 0 → Producto se oculta del catálogo (ya implementado) y se eliminan los items de TODOS los carritos (+ mensaje de alerta "¿No encuentras algunos productos? Tal vez ya no estén disponibles")
 - Si precio cambia → Se actualiza automáticamente en `ProductCard` y carrito
 - Si nombre/imagen cambian → Se reflejan en tiempo real
 
 **Flujo de usuarios anónimos:**
-
 1. Usuario anónimo intenta agregar producto al carrito
 2. Sistema detecta ausencia de autenticación
 3. Sistema redirige a `/login` con redirección a `/productos`
 
 **Integración con checkout existente:**
-
 - El checkout simulado ya existe (mencionado en punto 4).
 - Este issue solo implementa la gestión del carrito
 - Checkout consultará items del carrito en BD y procesará orden. Reutilizar el `PaymentModal.tsx` para procesar la compra simulada
@@ -95,31 +89,27 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 ## ✅ TODO
 
 ### Diseño
-
-- [ ] Definir arquitectura del carrito persistente
-- [ ] Diseñar wireframe del tab "Mi Carrito" en `/user`
-- [ ] Diseñar botón flotante de carrito para `/productos`
-- [ ] Definir estrategia de sincronización en tiempo real
+- [x] Definir arquitectura del carrito persistente
+- [x] Diseñar wireframe del tab "Mi Carrito" en `/user`
+- [x] Diseñar botón flotante de carrito para `/productos`
+- [x] Definir estrategia de sincronización en tiempo real
 
 ### Implementación - Database (Prisma)
-
-- [ ] Crear modelo `CartItem` en `prisma/schema.prisma`
-- [ ] Agregar relaciones: `CartItem` ↔ `User`, `CartItem` ↔ `Product`
-- [ ] Crear migración: `npx prisma migrate dev --name add-cart-items`
-- [ ] Agregar índices para optimizar queries
+- [x] Crear modelo `CartItem` en `prisma/schema.prisma`
+- [x] Agregar relaciones: `CartItem` ↔ `User`, `CartItem` ↔ `Product`
+- [x] Crear migración: `npx prisma migrate dev --name add-cart-items`
+- [x] Agregar índices para optimizar queries
 
 ### Implementación - Backend (API)
-
-- [ ] Crear servicio `lib/services/cart.service.ts`
-- [ ] Endpoint POST `/api/cart` - Agregar producto al carrito
-- [ ] Endpoint GET `/api/cart` - Obtener items del carrito del usuario
-- [ ] Endpoint PUT `/api/cart/:id` - Actualizar cantidad de item
-- [ ] Endpoint DELETE `/api/cart/:id` - Eliminar item del carrito
-- [ ] Endpoint DELETE `/api/cart` - Vaciar carrito completo
-- [ ] Middleware: Validar autenticación en todos los endpoints
+- [x] Crear servicio `lib/services/cart.service.ts`
+- [x] Endpoint POST `/api/cart` - Agregar producto al carrito
+- [x] Endpoint GET `/api/cart` - Obtener items del carrito del usuario
+- [x] Endpoint PUT `/api/cart/:id` - Actualizar cantidad de item
+- [x] Endpoint DELETE `/api/cart/:id` - Eliminar item del carrito
+- [x] Endpoint DELETE `/api/cart` - Vaciar carrito completo
+- [x] Middleware: Validar autenticación en todos los endpoints
 
 ### Implementación - Frontend (UI)
-
 - [x] Actualizar `components/cards/product-card.tsx` con botón "Agregar al Carrito"
 - [x] Actualizar `components/ProductDetailClient.tsx` con botón "Agregar al Carrito"
 - [ ] Crear componente `components/layout/FloatingCartButton.tsx` (botón flotante con contador)
@@ -129,14 +119,12 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 - [x] Integrar tab "Mi Carrito" en `app/(dashboard)/user/page.tsx`
 
 ### Implementación - Sincronización en Tiempo Real
-
 - [ ] Implementar polling cada 30 segundos para actualizar carrito
 - [ ] Detectar cambios en productos (precio, disponibilidad, eliminación)
 - [ ] Actualizar UI automáticamente sin recargar página
 - [ ] Mostrar notificaciones (toasts) cuando productos cambien o sean eliminados
 
 ### Implementación - Validaciones
-
 - [ ] Validar autenticación antes de agregar al carrito (redirect a `/login` si no está autenticado)
 - [ ] Validar que producto exista antes de agregarlo
 - [ ] Validar que producto NO esté agotado (stock > 0)
@@ -145,7 +133,6 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 - [ ] Eliminar automáticamente items si stock llega a 0
 
 ### Testing
-
 - [ ] Unit tests para `cart.service.ts`
 - [ ] Integration tests para endpoints de carrito
 - [ ] Validar sincronización de cambios de productos
@@ -153,7 +140,6 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 - [ ] Testing de concurrencia (múltiples usuarios, mismo producto)
 
 ### Finalización
-
 - [ ] Code review
 - [ ] Actualizar documentación en `.rules.md`
 - [ ] Actualizar `CHANGELOG.md`
@@ -166,13 +152,11 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 ## 🎯 Acceptance Criteria
 
 **Autenticación:**
-
 - [ ] Solo usuarios autenticados (rol ADOPTER, SHELTER, VENDOR o ADMIN) pueden agregar al carrito
 - [ ] Usuarios anónimos son redirigidos a `/login`
 - [ ] Redirección de usuarios autenticados a `/productos`
 
 **Gestión de Carrito (RF-015, HU-009):**
-
 - [ ] Usuario puede agregar producto desde `ProductCard` en `/productos` o desde `ProductDetailClient`
 - [ ] Usuario puede modificar cantidad de items en el carrito (+/-)
 - [ ] Usuario puede eliminar items individuales del carrito
@@ -180,14 +164,12 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 - [ ] Sistema persiste carrito en base de datos (no se pierde al cerrar sesión)
 
 **Botón Flotante:**
-
 - [ ] Botón flotante aparece SOLO en `/productos` (esquina inferior derecha)
 - [ ] Contador muestra número total de items en el carrito
 - [ ] Contador se actualiza inmediatamente al agregar/eliminar productos
 - [ ] Al hacer clic, redirige a `/user` (tab "Mi Carrito")
 
 **Visualización en Dashboard:**
-
 - [ ] Tab "Mi Carrito" se muestra en `app/(dashboard)/user/page.tsx`
 - [ ] Tab usa sistema de tabs dinámicos (sin crear nueva página)
 - [ ] Muestra lista de productos con: imagen, nombre, precio, cantidad, subtotal
@@ -195,7 +177,6 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 - [ ] Botón "Ir a Checkout" redirige a página de checkout existente
 
 **Validaciones en Tiempo Real:**
-
 - [ ] Si vendedor elimina producto → Se elimina automáticamente de TODOS los carritos
 - [ ] Si stock llega a 0 → Producto se elimina automáticamente de carritos
 - [ ] Si precio cambia → Se actualiza automáticamente en carrito y `ProductCard`
@@ -203,7 +184,6 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 - [ ] Usuario ve notificación cuando productos son removidos automáticamente
 
 **Integridad de Datos:**
-
 - [ ] No se puede agregar producto con stock 0
 - [ ] No se puede agregar producto que no existe
 - [ ] Cantidad no puede ser menor a 1
@@ -211,7 +191,6 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 - [ ] Items duplicados se consolidan (suma cantidades)
 
 **Performance:**
-
 - [ ] Agregar al carrito < 1 segundo (RNF-001)
 - [ ] Cargar carrito completo < 2 segundos
 - [ ] Sincronización de cambios cada 30 segundos (polling)
@@ -222,14 +201,12 @@ Sistema completo de carrito de compras persistente en base de datos con validaci
 ## 🔧 Tech Spec
 
 **Stack sugerido:**
-
 - **State Management:** SWR para fetching y revalidación automática
 - **Polling:** SWR `refreshInterval: 30000` (30 segundos)
 - **Notificaciones:** Toast component (ya existente en el proyecto)
 - **Optimistic Updates:** SWR `optimisticData` para UX instantánea
 
 **Estructura de archivos:**
-
 ```
 prisma/
 └── schema.prisma                          # Modelo CartItem (nuevo)
@@ -265,7 +242,6 @@ lib/
 ```
 
 **Migrations/Schema changes:**
-
 ```prisma
 // En prisma/schema.prisma
 
@@ -304,7 +280,6 @@ model Product {
 ```
 
 **Endpoints nuevos:**
-
 ```typescript
 // POST /api/cart
 // Body: { productId: string, quantity: number }
@@ -373,7 +348,6 @@ model Product {
 ```
 
 **Ejemplo de uso del hook:**
-
 ```typescript
 // En cualquier componente
 import { useCart } from "@/lib/hooks/use-cart";
@@ -395,7 +369,6 @@ export default function ProductCard({ product }) {
 ```
 
 **Sincronización automática:**
-
 ```typescript
 // En CartTabContent.tsx
 import useSWR from "swr";
@@ -415,7 +388,6 @@ export default function CartTabContent() {
 ```
 
 **Dependencies:**
-
 ```json
 {
   "swr": "^2.2.4"
@@ -423,7 +395,6 @@ export default function CartTabContent() {
 ```
 
 **Queries optimizadas (Prisma):**
-
 ```typescript
 // En cart.service.ts
 export async function getCartItems(userId: string) {
@@ -488,7 +459,6 @@ export async function addToCart(userId: string, productId: string, quantity: num
 ```
 
 **Triggers automáticos (Prisma Middleware):**
-
 ```typescript
 // En lib/prisma.ts (agregar middleware)
 prisma.$use(async (params, next) => {
@@ -522,7 +492,7 @@ prisma.$use(async (params, next) => {
 - **Manual de Usuario:** `19_Manual_del_Usuario.pdf` (sección 4.9 - Gestionar carrito de compras)
 - **Diseño UI:** `12_Manual_de_Diseño_UI.pdf` (componentes de carrito)
 - **Similar a:** Amazon, MercadoLibre (carrito persistente)
-- **Docs SWR:** <https://swr.vercel.app/>
+- **Docs SWR:** https://swr.vercel.app/
 
 ---
 
