@@ -8,7 +8,6 @@
 
 import { useCart } from "@/lib/hooks/use-cart";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function FloatingCartButton() {

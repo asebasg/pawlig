@@ -80,7 +80,7 @@ const CartSection: React.FC = () => {
 
           {/* Resumen del Pedido */}
           <div className="h-fit sticky top-24">
-            <CartSummary items={items} mutate={mutate} />
+            <CartSummary items={items} />
           </div>
         </div>
       )}

@@ -12,10 +12,9 @@ import { useState } from "react";
 
 interface CartSummaryProps {
   items: CartItemType[];
-  mutate: () => void;
 }
 
-export default function CartSummary({ items, mutate }: CartSummaryProps) {
+export default function CartSummary({ items }: CartSummaryProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { clearCart } = useCart();

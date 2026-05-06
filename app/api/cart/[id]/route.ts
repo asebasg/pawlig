@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     );
 
     return NextResponse.json({ success: true, cartItem: updatedItem });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[PUT_CART_ITEM_ERROR]", error);
 
     if (error instanceof ZodError) {
@@ -50,8 +50,9 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
       );
     }
 
+    const message = error instanceof Error ? error.message : "Error al actualizar la cantidad";
     return NextResponse.json(
-      { error: error.message || "Error al actualizar la cantidad" },
+      { error: message },
       { status: 400 },
     );
   }
@@ -74,10 +75,11 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       success: true,
       message: "Producto eliminado del carrito",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[DELETE_CART_ITEM_ERROR]", error);
+    const message = error instanceof Error ? error.message : "Error al eliminar el producto";
     return NextResponse.json(
-      { error: error.message || "Error al eliminar el producto" },
+      { error: message },
       { status: 500 },
     );
   }

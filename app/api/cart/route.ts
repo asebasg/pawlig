@@ -43,7 +43,7 @@ export async function GET() {
         itemsCount,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[GET_CART_ERROR]", error);
     return NextResponse.json(
       { error: "Error al cargar el carrito" },
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     const cartItem = await addToCart(session.user.id, productId, quantity);
 
     return NextResponse.json({ success: true, cartItem }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[POST_CART_ERROR]", error);
 
     if (error instanceof ZodError) {
@@ -79,8 +79,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const message = error instanceof Error ? error.message : "Error al agregar al carrito";
     return NextResponse.json(
-      { error: error.message || "Error al agregar al carrito" },
+      { error: message },
       { status: 400 },
     );
   }
@@ -101,7 +102,7 @@ export async function DELETE() {
       success: true,
       message: "Carrito vaciado exitosamente",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[DELETE_CART_ERROR]", error);
     return NextResponse.json(
       { error: "Error al vaciar el carrito" },

@@ -71,8 +71,9 @@ export function useCart() {
       // Revalidar los datos en background
       mutate();
       return true;
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error al agregar al carrito";
+      toast.error(message);
       return false;
     }
   };
@@ -112,8 +113,9 @@ export function useCart() {
 
       // Forzar revalidación real
       mutate();
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error al actualizar cantidad";
+      toast.error(message);
       mutate(); // Revertir actualización optimista si falló
     }
   };
@@ -146,8 +148,9 @@ export function useCart() {
 
       toast.success("Producto eliminado del carrito");
       mutate();
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error al eliminar producto";
+      toast.error(message);
       mutate(); // Revertir si falló
     }
   };
@@ -170,8 +173,9 @@ export function useCart() {
         false,
       );
       toast.success("Carrito vaciado");
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error al vaciar el carrito";
+      toast.error(message);
     }
   };
 
