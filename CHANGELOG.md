@@ -1,4 +1,4 @@
-# CHANGES.md
+# CHANGELOG.md
 
 ## Registro de Cambios del Proyecto PawLig
 
@@ -33,7 +33,7 @@ Implementación del componente `PasswordInput` con funcionalidad de alternancia 
 
 ---
 
-## 24-04-2026 - Bloqueo de Usuarios y Sincronización de Auditoría
+## 24-04-2026 - Bloqueo de Usuarios y Sincronización de Auditoría (v1.7.1)
 
 **Commit:** `29323ee`
 **Tipo:** Fix / Feature
@@ -116,7 +116,7 @@ Implementación del sistema completo de notificaciones por email usando Resend y
 
 ---
 
-## 20-04-2026 - Auditoría Administrativa y Enlaces Sociales
+## 20-04-2026 - Auditoría Administrativa y Enlaces Sociales (v1.6.0)
 
 **Commit:** `N/A`
 **Tipo:** Feature / Refactor
@@ -133,7 +133,7 @@ Implementación del componente `AuditHistoryCard` para fortalecer el módulo de 
 
 ---
 
-## 20-02-2026 - Centro de Ayuda y Estabilización del Entorno (v1.6.0)
+## 20-02-2026 - Centro de Ayuda y Estabilización del Entorno (v1.5.0)
 
 **Commit:** `N/A`
 **Tipo:** Feature / Stability
@@ -155,7 +155,7 @@ Este documento detalla los cambios realizados en el proyecto PawLig, documentand
 
 ---
 
-## 20-01-2026 - Integración de Inteligencia Artificial Generativa
+## 20-01-2026 - Integración de Inteligencia Artificial Generativa (v1.4.0)
 
 **Commit:** `N/A`
 **Tipo:** Feature
@@ -174,7 +174,7 @@ Implementación de un asistente de Inteligencia Artificial Generativa basado en 
 
 ---
 
-## 16-01-2026 - Implementación de Páginas Públicas y Legales
+## 16-01-2026 - Implementación de Páginas Públicas y Legales (v1.3.0)
 
 **Commit:** `a270c42`
 **Tipo:** Feature
@@ -194,7 +194,7 @@ Implementación de la infraestructura para páginas públicas de la plataforma. 
 
 ---
 
-## 15-01-2026 - Módulo de Marketplace y Gestión de Productos
+## 15-01-2026 - Módulo de Marketplace y Gestión de Productos (v1.2.0)
 
 **Commit:** `811248f`
 **Tipo:** Feature
@@ -215,7 +215,7 @@ Despliegue integral del módulo de productos que transforma a PawLig en un marke
 
 ---
 
-## 13-01-2026 - Optimización de Procesos de Desarrollo (GitHub)
+## 13-01-2026 - Optimización de Procesos de Desarrollo (GitHub) (v1.1.1)
 
 **Commit:** `ad6bd66`
 **Tipo:** Chore
@@ -231,7 +231,7 @@ Actualización de las plantillas de Issues en GitHub para estandarizar el report
 
 ---
 
-## 10-01-2026 - Estandarización de Interfaz y UX Cohesiva
+## 10-01-2026 - Estandarización de Interfaz y UX Cohesiva (v1.1.0)
 
 **Commit:** `N/A`
 **Tipo:** Improvement
@@ -248,7 +248,7 @@ Refactorización de los componentes base de la interfaz de usuario para asegurar
 
 ---
 
-## 05-01-2026 - Migración de Estilos y Refactorización General
+## 05-01-2026 - Migración de Estilos y Refactorización General (v1.0.0)
 
 **Commits:** `7d51b22`
 **Tipo:** Refactor (Core)
