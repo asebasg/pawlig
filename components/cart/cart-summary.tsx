@@ -6,18 +6,19 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { CartItemType } from "@/lib/hooks/use-cart";
+import { CartItemType, useCart } from "@/lib/hooks/use-cart";
 import PaymentModal from "../products/PaymentModal";
+import { useState } from "react";
 
 interface CartSummaryProps {
   items: CartItemType[];
   mutate: () => void;
-  isPaymentModalOpen?: boolean;
-  handleOpenPaymentModal?: () => void;
-  handleClosePaymentModal?: () => void;
 }
 
 export default function CartSummary({ items, mutate }: CartSummaryProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { clearCart } = useCart();
   const router = useRouter();
 
   const subtotal = items.reduce(
@@ -27,13 +28,28 @@ export default function CartSummary({ items, mutate }: CartSummaryProps) {
   // Por ahora, no hay costos adicionales ni descuentos, total = subtotal
   const total = subtotal;
 
+  // Abre el modal de pago
   const handleCheckout = () => {
     // Aquí podríamos validar el carrito antes de redirigir
     if (items.length === 0) {
       toast.warning("El carrito está vacío.");
       return;
     }
-    router.push("/checkout");
+    setIsModalOpen(true);
+  };
+
+  // Cerrar el modal y limpiar el carrito
+  const handleConfirmPayment = async () => {
+    setIsProcessing(true);
+    // Simular transacción
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await clearCart();
+    setIsProcessing(false);
+    setIsModalOpen(false);
+    toast.success("¡Compra realizada con éxito!", {
+      description: "Gracias por apoyar a las mascotas de PawLig.",
+    });
+    router.push("/");
   };
 
   return (
@@ -52,8 +68,14 @@ export default function CartSummary({ items, mutate }: CartSummaryProps) {
         onClick={handleCheckout}
         className="w-full rounded-full bg-primary text-white py-2 hover:bg-primary‑dark transition-colors"
       >
-        Ir a Checkout
+        Confirmar compra
       </button>
+      <PaymentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmPayment}
+        isLoading={isProcessing}
+      />
     </div>
   );
 }
