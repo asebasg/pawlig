@@ -29,7 +29,6 @@ Implementación del componente `PasswordInput` con funcionalidad de alternancia 
 ### Decisiones Técnicas
 
 - Se creó un componente dedicado en lugar de añadir la lógica inline para garantizar consistencia y reutilización.
-- La corrección de CSS usa selectores `::-ms-reveal` y `::-ms-clear` para compatibilidad con navegadores Microsoft.
 
 ---
 
@@ -41,7 +40,7 @@ Implementación del componente `PasswordInput` con funcionalidad de alternancia 
 
 ### Descripción
 
-Resolución del problema de sincronización en el historial de auditoría del panel de administración. Tras bloquear o desbloquear un usuario, los registros de auditoría ahora se actualizan automáticamente sin requerir una recarga manual de la página. Se implementó la revalidación de rutas y se creó el componente `EditUserButton` para estandarizar las acciones de gestión de usuarios.
+Resolución del problema de sincronización en el historial de auditoría del panel de administración. Tras bloquear o desbloquear un usuario, los registros de auditoría ahora se actualizan automáticamente sin requerir una recarga manual de la página.
 
 ### Archivos Creados
 
@@ -49,13 +48,12 @@ Resolución del problema de sincronización en el historial de auditoría del pa
 
 ### Archivos Modificados
 
-- **`app/api/admin/users/[id]/block/route.ts`** (M) - Implementación de revalidación de ruta tras bloqueo/desbloqueo para sincronizar la UI.
+- **`app/api/admin/users/[id]/block/route.ts`** (M) - Sincronización de la UI tras bloqueo/desbloqueo.
 - **`components/admin/AuditHistoryCard.tsx`** (M) - Refactorización con paginación y controles de layout consistentes.
 - **`components/admin/UserActionsClient.tsx`** (M) - Integración del nuevo `EditUserButton` y mejora del flujo de acciones.
 
 ### Decisiones Técnicas
 
-- Se utiliza `revalidatePath` de Next.js para invalidar la caché de la página tras cada acción de bloqueo/desbloqueo.
 - El componente `EditUserButton` sigue el mismo patrón arquitectónico que `BlockUserButton` para mantener consistencia.
 
 ---
@@ -97,8 +95,6 @@ Implementación del sistema completo de notificaciones por email usando Resend y
 - **`lib/email/templates/vendor-rejected.tsx`** (A)
 - **`types/email.types.ts`** (A) - Interfaces TypeScript para los payloads de cada plantilla.
 - **`app/api/auth/forgot-password/route.ts`** (A) - Endpoint de solicitud de recuperación de contraseña.
-- **`lib/services/email.service.test.ts`** (A) - Tests unitarios con Vitest (8 tests, 100% passing).
-- **`scripts/test-live-emails.ts`** (A) - Script para pruebas de envío en entorno real.
 
 ### Archivos Modificados
 
@@ -108,11 +104,6 @@ Implementación del sistema completo de notificaciones por email usando Resend y
 - **`app/api/admin/users/[id]/block/route.ts`** (M) - Email de bloqueo/desbloqueo al usuario afectado.
 - **`app/api/admin/shelters/[shelterId]/route.ts`** (M) - Emails de aprobación y rechazo de albergues.
 
-### Decisiones Técnicas
-
-- Los envíos son **no bloqueantes** (`.catch()` en lugar de `await`) para que un fallo en Resend no afecte la respuesta de la API.
-- Los tokens de recuperación expiran en **1 hora** e invalidan tokens previos al emitir uno nuevo.
-- El endpoint `/forgot-password` siempre retorna `200 OK` para prevenir enumeración de emails.
 
 ---
 
@@ -141,13 +132,11 @@ Implementación del componente `AuditHistoryCard` para fortalecer el módulo de 
 
 ### Descripción
 
-Implementación de la página oficial de ayuda al usuario en `/help` como un componente estático de alto rendimiento, alineado con el estilo visual de la plataforma y sin dependencias externas. Además, se han realizado mejoras críticas en la estabilidad del entorno de pruebas, resolviendo incompatibilidades entre Radix UI y JSDOM, asegurando que el ciclo de vida del proyecto (test, build, start) funcione al 100%.
+Implementación de la página oficial de ayuda al usuario en `/help` como un componente estático de alto rendimiento, alineado con el estilo visual de la plataforma y sin dependencias externas.
 
 ### Archivos Modificados
 
 - **`app/(public)/help/page.tsx`** (A) - Nueva página de Centro de Ayuda con navegación por anclas.
-- **`vitest.setup.ts`** (M) - Adición de polyfills para `PointerEvent`, `ResizeObserver` y métodos de `HTMLElement`.
-- **`app/(dashboard)/admin/users/[id]/view/__tests__/user-view.spec.tsx`** (M) - Refactorización de pruebas para soportar componentes Radix Select.
 - **`CHANGELOG.md`** (M) - Actualización del registro técnico.
 - **`app/(public)/changelog/page.tsx`** (M) - Actualización del registro visual para el usuario.
 
@@ -215,19 +204,6 @@ Despliegue integral del módulo de productos que transforma a PawLig en un marke
 
 ---
 
-## 13-01-2026 - Optimización de Procesos de Desarrollo (GitHub) (v1.1.1)
-
-**Commit:** `ad6bd66`
-**Tipo:** Chore
-**Scope:** github, workflow
-
-### Descripción
-
-Actualización de las plantillas de Issues en GitHub para estandarizar el reporte de errores, solicitudes de funcionalidades y peticiones de refactorización. Esto mejora la comunicación entre desarrolladores y agiliza el proceso de triage de tareas.
-
-### Archivos Modificados
-
-- **`.github/ISSUE_TEMPLATE/`** (M) - Actualización de plantillas de reporte de error y sugerencia.
 
 ---
 
@@ -420,50 +396,6 @@ Se corrigió un bug crítico en el filtro de búsqueda por sexo en la galería d
 
 ---
 
-## 30-12-2025 - Implementación de Pruebas Unitarias y Configuración de Vitest
-
-**Commit:** `c84f4ef0b429e072fbd36208522ac2ae05884f0b`  
-**Tipo:** Feature  
-**Scope:** adoptions, testing
-
-### Descripción
-
-Solución completa del bug de filtrado por sexo con la adición de pruebas unitarias y configuración del entorno de testing con Vitest.
-
-### Archivos Modificados
-
-- **`lib/services/pet.service.ts`** (M)
-
-  - Importación del enum `Sex` y `Prisma` desde `@prisma/client`
-  - Casteo del parámetro `sex` al tipo `Sex` en la consulta de Prisma
-  - Adición del tipo `Prisma.PetWhereInput` al objeto `where` para mejorar el tipado
-
-- **`lib/services/pet.service.spec.ts`** (A)
-
-  - Creación de archivo de pruebas unitarias
-  - Implementación de test para verificar el filtrado correcto por sexo
-
-- **`package.json`** (M)
-
-  - Adición del script `test` para ejecutar Vitest
-  - Instalación de dependencias: `vitest`, `@vitest/coverage-v8`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`, `@vitejs/plugin-react`, `vite-tsconfig-paths`
-
-- **`package-lock.json`** (M)
-
-  - Actualización de dependencias
-
-- **`vitest.config.ts`** (A)
-
-  - Configuración del entorno de pruebas Vitest
-
-- **`vitest.setup.ts`** (A)
-  - Setup inicial para Vitest
-
-### Trazabilidad
-
-- **CU-005:** Búsqueda y filtrado de mascotas
-- **RF-010:** Búsqueda y filtrado
-- **HU-006:** Búsqueda y filtrado de mascotas
 
 ---
 
@@ -570,24 +502,6 @@ Implementación de páginas de login y registro con redirección basada en roles
 
 ---
 
-## 29-12-2025 - Corrección de Reglas de Código y Configuración de Git
-
-**Commit:** `fa78918c9ccd6dd083292a430be7ea854392f447`  
-**Tipo:** Documentation  
-**Scope:** docs
-
-### Descripción
-
-Corrección de la indentación en las reglas de código y adición de `.agent/` al `.gitignore`.
-
-### Archivos Modificados
-
-- **`.gitignore`** (M)
-
-  - Adición de `.agent/` para excluir archivos de agentes de IA
-
-- **`.rules.md`** (M)
-  - Corrección de indentación en las reglas de código
 
 ---
 
@@ -718,34 +632,6 @@ Actualización de la descripción y ubicación del proyecto en el README.
 
 ---
 
-## 28-11-2025 - Limpieza de Documentación de Pull Requests
-
-**Commit:** `33ac4d5d0b7b88eee1de1466217c7b84b842f83d`  
-**Tipo:** Chore  
-**Scope:** docs
-
-### Descripción
-
-Eliminación de la documentación de pull requests del directorio principal para mantener el repositorio limpio.
-
-### Archivos Eliminados
-
-- `documentation/pull-request/HU-014/HU-004-README.md`
-- `documentation/pull-request/Navbar-Footer/CHANGELOG.md`
-- `documentation/pull-request/Navbar-Footer/IMPLEMENTATION-SUMMARY.md`
-- `documentation/pull-request/Navbar-Footer/Navbar-Footer-README.md`
-- `documentation/pull-request/Navbar-Footer/PR-DESCRIPTION.md`
-- `documentation/pull-request/Navbar-Footer/QUICK-START.md`
-- `documentation/pull-request/Navbar-Footer/TESTING-CHECKLIST.md`
-- `documentation/pull-request/Navbar-Footer/USAGE-GUIDE.md`
-- `documentation/pull-request/README.md`
-- `documentation/pull-request/TAREA-016/TAREA-016-CORRECTIONS.md`
-- `documentation/pull-request/TAREA-016/TAREA-016-README.md`
-- `documentation/pull-request/TAREA-017/TAREA-017-CORRECTIONS.md`
-- `documentation/pull-request/TAREA-017/TAREA-017-README.md`
-- `documentation/pull-request/TAREA-24/TAREA-024-CORRECTIONS.md`
-- `documentation/pull-request/TAREA-24/TAREA-024-README.md`
-- `documentation/pull-request/refactor-dashboard/CAMBIOS_ESTRUCTURA.md`
 
 ---
 
