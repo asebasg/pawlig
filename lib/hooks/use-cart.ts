@@ -181,6 +181,7 @@ export function useCart() {
     cartCount: data?.summary?.itemsCount || 0,
     isLoading,
     isError: error,
+    mutate,
     addToCart,
     updateQuantity,
     removeItem,
