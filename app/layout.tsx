@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import FloatingCartButton from "@/components/layout/floating-cart-button";
 import { BadgeCheck, BadgeX, BadgeAlert, BadgeInfo, LoaderCircle } from 'lucide-react'
 
 const geistSans = localFont({
@@ -35,6 +36,7 @@ export default function RootLayout({
           {/* Contenido de las paginas */}
           <main className="flex-1">
             {children}
+          <FloatingCartButton />
           </main>
           {/* Footer */}
           <Footer />

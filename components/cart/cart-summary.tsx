@@ -7,16 +7,23 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { CartItemType } from "@/lib/hooks/use-cart";
+import PaymentModal from "../products/PaymentModal";
 
 interface CartSummaryProps {
   items: CartItemType[];
   mutate: () => void;
+  isPaymentModalOpen?: boolean;
+  handleOpenPaymentModal?: () => void;
+  handleClosePaymentModal?: () => void;
 }
 
 export default function CartSummary({ items, mutate }: CartSummaryProps) {
   const router = useRouter();
 
-  const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const subtotal = items.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0,
+  );
   // Por ahora, no hay costos adicionales ni descuentos, total = subtotal
   const total = subtotal;
 
@@ -33,7 +40,9 @@ export default function CartSummary({ items, mutate }: CartSummaryProps) {
     <div className="rounded-lg bg-background p-4 shadow-md">
       <div className="flex justify-between border-b pb-2 mb-4">
         <span className="text-gray-700">Subtotal</span>
-        <span className="font-medium text-gray-900">${subtotal.toLocaleString()}</span>
+        <span className="font-medium text-gray-900">
+          ${subtotal.toLocaleString()}
+        </span>
       </div>
       <div className="flex justify-between font-semibold text-lg mb-4">
         <span>Total</span>
