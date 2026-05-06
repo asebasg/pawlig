@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { shelterApplicationSchema, ShelterApplicationInput } from '@/lib/validations/user.schema';
 import { $Enums } from '@prisma/client';
 import Link from 'next/link';
+import { PasswordInput } from '@/components/ui/password-input';
 
 /**
  * POST /api/user/request-shelter-account
@@ -230,14 +231,11 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Contraseña <span className='text-red-500 font-bold'>*</span>
-            </label>
-            <input
+            <PasswordInput
               {...register('password')}
-              type="password"
               id="password"
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              label={<>Contraseña <span className='text-red-500 font-bold'>*</span></>}
+              variant={errors.password ? 'error' : 'default'}
               placeholder="Ingresa tu contraseña"
             />
             {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>}
