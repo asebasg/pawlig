@@ -52,6 +52,16 @@ export default function ChangelogPage() {
           icon: <Bug size={20} className="text-white" />,
           bg: "bg-red-500",
         },
+      ],
+    },
+    {
+      version: "v1.7.1",
+      date: "24 de Abril, 2026",
+      title: "Bloqueo de Usuarios y Sincronización",
+      description:
+        "Mejoras en el panel administrativo para la gestión de usuarios y sincronización de auditoría.",
+      color: "from-blue-600 to-indigo-700",
+      updates: [
         {
           type: "added",
           title: "Bloqueo de Usuarios",
@@ -114,6 +124,32 @@ export default function ChangelogPage() {
     },
     {
       version: "v1.6.0",
+      date: "20 de Abril, 2026",
+      title: "Auditoría Administrativa",
+      description:
+        "Implementación de historial de acciones para administradores y actualización de enlaces globales.",
+      color: "from-slate-600 to-slate-800",
+      updates: [
+        {
+          type: "added",
+          title: "Historial de Auditoría",
+          description:
+            "Nuevo componente AuditHistoryCard para visualizar el rastro de acciones administrativas.",
+          icon: <History size={20} className="text-white" />,
+          bg: "bg-slate-700",
+        },
+        {
+          type: "improved",
+          title: "Enlaces Sociales",
+          description:
+            "Actualización de las constantes de redes sociales globales en toda la plataforma.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-blue-500",
+        },
+      ],
+    },
+    {
+      version: "v1.5.0",
       date: "20 de Febrero, 2026",
       title: "Centro de Ayuda y Estabilidad",
       description:
@@ -245,6 +281,24 @@ export default function ChangelogPage() {
             "Visualización de estadísticas de ventas y stock en tiempo real.",
           icon: <Sparkles size={20} className="text-white" />,
           bg: "bg-amber-400",
+        },
+      ],
+    },
+    {
+      version: "v1.1.1",
+      date: "13 de Enero, 2026",
+      title: "Optimización de Desarrollo",
+      description:
+        "Mejoras en el flujo de trabajo técnico y estandarización de reportes en GitHub.",
+      color: "from-slate-400 to-slate-500",
+      updates: [
+        {
+          type: "improved",
+          title: "Plantillas de GitHub",
+          description:
+            "Nuevas plantillas de Issues para estandarizar reportes de error y solicitudes.",
+          icon: <GitPullRequest size={20} className="text-white" />,
+          bg: "bg-slate-600",
         },
       ],
     },

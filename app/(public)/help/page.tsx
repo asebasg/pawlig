@@ -440,7 +440,7 @@ export default function HelpPage() {
                 </a>
               </div>
             </div>
-            <p className="text-[10px] text-slate-400 text-right mt-4 font-bold tracking-widest uppercase">© {currentYear} PawLig v1.6.0 Stable</p>
+            <p className="text-[10px] text-slate-400 text-right mt-4 font-bold tracking-widest uppercase">© {currentYear} PawLig v1.5.0 Stable</p>
           </AccordionSection>
 
           {/* ── 12. GLOSARIO ── */}

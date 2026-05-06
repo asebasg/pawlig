@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import PaymentModal from './products/PaymentModal';
+import { useCart } from '@/lib/hooks/use-cart';
 
 /**
  * GET /api/products/[id]
@@ -100,9 +101,13 @@ export default function ProductDetailClient({
     };
 
     // Manejar contacto/compra
-    const handleAddToCart = () => {
-        // Implementación futura del carrito
-        toast.success(`"${product.name}" agregado al carrito`);
+    const { addToCart } = useCart();
+
+    const handleAddToCart = async () => {
+        const success = await addToCart(product.id);
+        if (success) {
+            // El toast se maneja en el hook
+        }
     };
 
     const handleOpenPaymentModal = () => setIsPaymentModalOpen(true);
@@ -372,6 +377,7 @@ export default function ProductDetailClient({
                                 key={similarProduct.id}
                                 product={similarProduct}
                                 accentColor="none"
+                                onAddToCart={(id) => addToCart(id)}
                             />
                         ))}
                     </div>
