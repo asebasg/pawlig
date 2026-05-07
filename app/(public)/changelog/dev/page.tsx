@@ -30,9 +30,37 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "06 de mayo de 2026";
+  const lastDevUpdate = "07 de mayo de 2026";
 
   const devLogs = [
+    {
+      version: "v1.8.3-dev",
+      date: "07 de Mayo, 2026",
+      title: "Gestión Precisa de Edad (Años y Meses)",
+      description:
+        "Implementación de campos duales para la edad de las mascotas, permitiendo mayor precisión en cachorros y una visualización amigable.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Esquema Prisma: Pet.months",
+          description: "Nuevo campo opcional para almacenar meses de vida de la mascota.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Utilidad de Formateo de Edad",
+          description: "Implementación de age-formatter.ts para normalizar strings como '1 año y 2 meses'.",
+          icon: <Wrench size={18} className="text-slate-500" />,
+        },
+        {
+          category: "feat",
+          title: "UI: Formulario de Mascota",
+          description: "Inclusión de input numérico para meses con validación en el rango 0-11.",
+          icon: <Zap size={18} className="text-amber-500" />,
+        },
+      ],
+    },
     {
       version: "v1.8.2-dev",
       date: "06 de Mayo, 2026",

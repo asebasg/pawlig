@@ -1,5 +1,21 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Selección y visualización de edad (Años y Meses) (v1.8.3 — 07-05-2026)
+
+Se implementó la capacidad de especificar la edad de las mascotas de forma más precisa, permitiendo ingresar tanto años como meses. Esto mejora la gestión de cachorros y la información disponible para los adoptantes.
+
+**Archivos modificados:**
+
+- `prisma/schema.prisma` — Adición del campo `months` (Int?) al modelo `Pet`.
+- `lib/validations/pet.schema.ts` — Actualización de esquemas Zod para validar el rango de meses (0-11).
+- `lib/utils/age-formatter.ts` — Nueva utilidad para formatear la edad en español (ej: "1 año y 2 meses", "6 meses").
+- `components/forms/pet-form.tsx` — Integración de campos de años y meses en el formulario de gestión.
+- `components/cards/pet-card.tsx`, `components/cards/shelter-pet-card.tsx`, `components/PetDetailClient.tsx` — Actualización de la visualización de edad usando la nueva utilidad.
+- `app/api/pets/route.ts`, `app/api/pets/[id]/route.ts` — Actualización de los endpoints CRUD para soportar el campo `months`.
+- `lib/services/pet.service.ts` — Inclusión de `months` en las consultas de Prisma.
+
+---
+
 ## Configuración de Entorno de Pruebas (v1.5.0 — 20-02-2026)
 
 ### Correcciones en Vitest + Radix UI
