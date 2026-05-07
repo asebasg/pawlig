@@ -80,6 +80,7 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
                 species: true,
                 breed: true,
                 age: true,
+                months: true,
                 sex: true,
                 status: true,
                 images: true,
