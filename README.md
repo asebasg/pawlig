@@ -14,7 +14,7 @@
 **Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.8.0 | Última actualización: 28-04-2026_
+_Versión v1.8.0 | Última actualización: 06-05-2026_
 
 </div>
 
