@@ -64,34 +64,35 @@ enum OrderStatus {
 // ===== MODELS =====
 
 model User {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  email       String       @unique
-  password    String
-  name        String
-  role        UserRole     @default(ADOPTER)
-  phone       String
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  email        String       @unique
+  password     String
+  name         String
+  role         UserRole     @default(ADOPTER)
+  phone        String
   municipality Municipality
-  address     String
-  idNumber    String
-  birthDate   DateTime
-  
+  address      String
+  idNumber     String
+  birthDate    DateTime
+
   // Bloqueos de usuarios (HU-014)
-  isActive    Boolean      @default(true)
+  isActive    Boolean   @default(true)
   blockedAt   DateTime?
-  blockedBy   String?      @db.ObjectId
+  blockedBy   String?   @db.ObjectId
   blockReason String?
-  
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relaciones
-  shelter     Shelter?
-  vendor      Vendor?
-  adoptions   Adoption[]
-  orders      Order[]
-  favorites   Favorite[]
+  shelter             Shelter?
+  vendor              Vendor?
+  adoptions           Adoption[]
+  orders              Order[]
+  favorites           Favorite[]
   passwordResetTokens PasswordResetToken[]
-  
+  cartItems           CartItem[]
+
   // Auditoría (HU-014)
   adminActions UserAudit[] @relation("AdminActions")
   auditRecords UserAudit[] @relation("AffectedUser")
@@ -102,28 +103,28 @@ model User {
 }
 
 model UserAudit {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   // Acción realizada (HU-014)
-  action      AuditAction // Enum tipado (no String)
-  reason      String      // Justificación obligatoria (RN-017)
-  
+  action AuditAction // Enum tipado (no String)
+  reason String // Justificación obligatoria (RN-017)
+
   // Trazabilidad
-  oldValue    String?
-  newValue    String?
-  
+  oldValue String?
+  newValue String?
+
   // Relaciones
-  performedBy User     @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
-  adminId     String   @db.ObjectId
-  
-  affectedUser User    @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
-  userId      String   @db.ObjectId
-  
+  performedBy User   @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
+  adminId     String @db.ObjectId
+
+  affectedUser User   @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId       String @db.ObjectId
+
   // Metadata de seguridad (RNF-002)
-  ipAddress   String?
-  userAgent   String?
-  
-  createdAt   DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([adminId])
@@ -132,18 +133,18 @@ model UserAudit {
 }
 
 model Shelter {
-  id                String       @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
-  nit               String       @unique
-  municipality      Municipality
-  address           String
-  description       String?
-  verified          Boolean      @default(false)
-  contactWhatsApp   String?
-  contactInstagram  String?
-  rejectionReason   String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  nit              String       @unique
+  municipality     Municipality
+  address          String
+  description      String?
+  verified         Boolean      @default(false)
+  contactWhatsApp  String?
+  contactInstagram String?
+  rejectionReason  String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @db.ObjectId
@@ -218,10 +219,11 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  vendor      Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  vendorId    String @db.ObjectId
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  vendorId String @db.ObjectId
 
   orderItems OrderItem[]
+  cartItems  CartItem[]
 
   @@index([category])
   @@index([vendorId])
@@ -231,11 +233,11 @@ model Product {
 }
 
 model Adoption {
-  id        String          @id @default(auto()) @map("_id") @db.ObjectId
-  status    AdoptionStatus  @default(PENDING)
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  status    AdoptionStatus @default(PENDING)
   message   String?
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
   adopter   User   @relation(fields: [adopterId], references: [id], onDelete: Cascade)
   adopterId String @db.ObjectId
@@ -287,12 +289,12 @@ model OrderItem {
 }
 
 model Favorite {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String   @db.ObjectId
-  pet        Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
-  petId      String   @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  petId     String   @db.ObjectId
 
   @@unique([userId, petId])
   @@index([userId])
@@ -307,11 +309,32 @@ model PasswordResetToken {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([expiresAt])
+}
+
+model CartItem {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  quantity Int    @default(1)
+
+  // Relaciones
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String  @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Índices para performance
+  @@unique([userId, productId]) // Un usuario no puede tener el mismo producto duplicado
+  @@index([userId])
+  @@index([productId])
+  @@index([createdAt])
 }
 ```
 
@@ -400,6 +423,8 @@ model PasswordResetToken {
 │   │   │   │   └── page.tsx
 │   │   │   └── page.tsx
 │   │   ├── changelog
+│   │   │   ├── dev
+│   │   │   │   └── page.tsx
 │   │   │   └── page.tsx
 │   │   ├── faq
 │   │   │   └── page.tsx
@@ -441,6 +466,10 @@ model PasswordResetToken {
 │   │   │   │   └── route.ts
 │   │   │   └── register
 │   │   │       └── route.ts
+│   │   ├── cart
+│   │   │   ├── [id]
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
 │   │   ├── cloudinary
 │   │   │   └── sign
 │   │   │       └── route.ts
@@ -501,14 +530,17 @@ model PasswordResetToken {
 │   │   ├── UserActionsClient.tsx
 │   │   └── UserViewClient.tsx
 │   ├── adopter
-│   │   ├── AdopterDashboardClient.tsx
-│   │   ├── AdoptionsSection.tsx
-│   │   ├── CartSection.tsx
-│   │   └── FavoritesSection.tsx
+│   │   ├── adopter-dashboard-client.tsx
+│   │   ├── adoptions-section.tsx
+│   │   ├── cart-section.tsx
+│   │   └── favorites-section.tsx
 │   ├── cards
 │   │   ├── pet-card.tsx
 │   │   ├── product-card.tsx
 │   │   └── shelter-pet-card.tsx
+│   ├── cart
+│   │   ├── cart-item.tsx
+│   │   └── cart-summary.tsx
 │   ├── filters
 │   │   ├── pet-filter.tsx
 │   │   └── product-filter.tsx
@@ -525,6 +557,7 @@ model PasswordResetToken {
 │   │   └── accordion-section.tsx
 │   ├── layout
 │   │   ├── cart-button.tsx
+│   │   ├── floating-cart-button.tsx
 │   │   ├── footer.tsx
 │   │   ├── index.ts
 │   │   ├── navbar-auth.tsx
@@ -610,7 +643,11 @@ model PasswordResetToken {
 │   │       ├── shelter-rejected.tsx
 │   │       ├── vendor-approved.tsx
 │   │       └── vendor-rejected.tsx
+│   ├── hooks
+│   │   ├── use-cart-sync.ts
+│   │   └── use-cart.ts
 │   ├── services
+│   │   ├── cart.service.ts
 │   │   ├── email.service.test.ts
 │   │   ├── email.service.ts
 │   │   ├── pet.service.spec.ts
@@ -623,6 +660,7 @@ model PasswordResetToken {
 │   ├── utils.ts
 │   └── validations
 │       ├── adoption.schema.ts
+│       ├── cart.schema.ts
 │       ├── cloudinary.schema.ts
 │       ├── pet-search.schema.ts
 │       ├── pet.schema.ts
@@ -656,7 +694,7 @@ model PasswordResetToken {
 ├── vitest.config.ts
 └── vitest.setup.ts
 
-113 directories, 218 files
+118 directories, 228 files
 ```
 
 # Dependencias del Proyecto
@@ -688,6 +726,7 @@ model PasswordResetToken {
 - `react-hook-form`: `^7.66.1`
 - `resend`: `^6.12.2`
 - `sonner`: `^2.0.7`
+- `swr`: `^2.4.1`
 - `tailwind-merge`: `^3.4.0`
 - `zod`: `^4.1.12`
 
@@ -712,4 +751,4 @@ model PasswordResetToken {
 - `vite-tsconfig-paths`: `^6.0.3`
 - `vitest`: `^4.0.16`
 
-> **Última actualización**: 27 de abril de 2026.
+> **Última actualización**: 7 de mayo de 2026.
