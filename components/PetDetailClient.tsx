@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { formatAge } from '@/lib/utils/age-formatter';
 
 /**
  * GET /api/pets/[id]
@@ -40,6 +41,7 @@ interface Pet {
   species: string;
   breed: string | null;
   age: number | null;
+  months: number | null;
   sex: string | null;
   status: 'AVAILABLE' | 'IN_PROCESS' | 'ADOPTED';
   description: string;
@@ -66,6 +68,7 @@ interface SimilarPet {
   species: string;
   breed: string | null;
   age: number | null;
+  months: number | null;
   sex: string | null;
   status: 'AVAILABLE' | 'IN_PROCESS' | 'ADOPTED';
   images: string[];
@@ -311,12 +314,12 @@ export default function PetDetailClient({
               </div>
 
               {/* Edad */}
-              {pet.age && (
+              {(pet.age !== null || pet.months !== null) && (
                 <div className="text-center">
                   <Calendar className="w-5 h-5 text-purple-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-600">Edad</p>
                   <p className="font-semibold text-gray-900">
-                    {pet.age} año{pet.age !== 1 ? 's' : ''}
+                    {formatAge(pet.age, pet.months)}
                   </p>
                 </div>
               )}

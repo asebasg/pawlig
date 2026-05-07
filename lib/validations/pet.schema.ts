@@ -52,6 +52,14 @@ export const createPetSchema = z.object({
         .optional()
         .nullable(),
 
+    months: z
+        .number()
+        .int()
+        .min(0, "Los meses no pueden ser negativos")
+        .max(11, "Los meses deben estar entre 0 y 11")
+        .optional()
+        .nullable(),
+
     sex: z.enum(
         [PetSex.MALE, PetSex.FEMALE],
         {
