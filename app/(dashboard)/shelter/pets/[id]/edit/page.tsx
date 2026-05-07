@@ -68,6 +68,7 @@ export default async function EditPetPage({ params }: PageProps) {
             species: true,
             breed: true,
             age: true,
+            months: true,
             sex: true,
             description: true,
             requirements: true,
@@ -97,7 +98,7 @@ export default async function EditPetPage({ params }: PageProps) {
                     </Link>
                     <div className="text-center">
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                            Editar {pet.name}
+                            Editar a {pet.name}
                         </h1>
                         <p className="mt-2 text-sm sm:text-base text-gray-600">
                             Actualiza la información de tu mascota. Los campos marcados con{" "}
@@ -116,6 +117,7 @@ export default async function EditPetPage({ params }: PageProps) {
                             species: pet.species,
                             breed: pet.breed ?? undefined,
                             age: pet.age ?? undefined,
+                            months: pet.months ?? undefined,
                             sex: pet.sex ?? undefined,
                             description: pet.description,
                             requirements: pet.requirements ?? undefined,

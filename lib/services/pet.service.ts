@@ -138,6 +138,7 @@ export async function getSimilarPets(petId: string, shelterId: string, species: 
       species: true,
       breed: true,
       age: true,
+      months: true,
       sex: true,
       status: true,
       images: true,

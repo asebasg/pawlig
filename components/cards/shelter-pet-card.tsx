@@ -14,6 +14,7 @@ import { PetStatus } from "@prisma/client";
 import { Edit, Trash2, Eye, Clock, CheckCircle, XCircle, BookOpenCheck } from "lucide-react";
 import Link from "next/link";
 import Image from 'next/image';
+import { formatAge } from "@/lib/utils/age-formatter";
 
 interface Pet {
     id: string;
@@ -21,6 +22,7 @@ interface Pet {
     species: string;
     breed: string | null;
     age: number | null;
+    months: number | null;
     sex: string | null;
     status: PetStatus;
     images: string[];
@@ -155,7 +157,7 @@ export default function ShelterPetCard({ pet }: ShelterPetCardProps) {
                     {/* Nombre y especie */}
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">{pet.name}</h3>
                     <p className="text-sm text-gray-600 mb-2">
-                        {pet.species && `${pet.species}`} {pet.sex && `• ${pet.sex}`} <br /> {pet.breed && `${pet.breed}`} <br /> {pet.age !== undefined && `${pet.age} ${pet.age === 1 ? "año" : "años"}`}
+                        {pet.species && `${pet.species}`} {pet.sex && `• ${pet.sex}`} <br /> {pet.breed && `${pet.breed}`} <br /> {formatAge(pet.age, pet.months)}
                     </p>
 
                     {/* Contador de postulaciones */}

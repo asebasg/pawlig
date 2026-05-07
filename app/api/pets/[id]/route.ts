@@ -176,7 +176,11 @@ export async function PUT(
         //  4. Actualizar
         const updatedPet = await prisma.pet.update({
             where: { id: petId },
-            data: validation.data,
+            data: {
+                ...validation.data,
+                // Aseguramos que si vienen como undefined (porque son parciales), no se pisen si no se desea,
+                // pero Zod validation.data ya contiene solo lo que se envió.
+            },
             include: {
                 shelter: {
                     select: {
