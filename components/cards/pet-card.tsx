@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Badge from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { formatAge } from '@/lib/utils/age-formatter';
 
 /**
  * Descripción: Tarjeta estandarizada para mostrar información resumida de una mascota.
@@ -22,6 +23,7 @@ export interface PetCardData {
   species: string;
   breed?: string | null;
   age?: number | null;
+  months?: number | null;
   sex?: string | null;
   shelter: {
     name: string;
@@ -122,10 +124,10 @@ export function PetCard({
 
         {/* Detalles: Edad y Sexo */}
         <div className="flex flex-wrap gap-2">
-          {pet.age !== null && pet.age !== undefined && (
+          {(pet.age !== null || pet.months !== null) && (
             <Badge variant="secondary" className="font-normal bg-secondary/50 text-secondary-foreground hover:bg-secondary/60">
               <Calendar className="w-3 h-3 mr-1" />
-              {pet.age} año{pet.age !== 1 ? 's' : ''}
+              {formatAge(pet.age, pet.months)}
             </Badge>
           )}
           {pet.sex && (

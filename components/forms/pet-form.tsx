@@ -52,6 +52,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             species: initialData?.species || PetSpecies.DOG,
             breed: initialData?.breed || "",
             age: initialData?.age || undefined,
+            months: initialData?.months || undefined,
             sex: initialData?.sex || PetSex.MALE,
             description: initialData?.description || "",
             requirements: initialData?.requirements || "",
@@ -178,10 +179,16 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             const url = mode === "create" ? "/api/pets" : `/api/pets/${initialData?.id}`;
             const method = mode === "create" ? "POST" : "PUT";
 
+            const payload = {
+                ...data,
+                age: data.age == null ? 0 : data.age,
+                months: data.months === undefined ? null : data.months
+            };
+
             const response = await fetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify(payload),
             });
 
             const result = await response.json();
@@ -262,21 +269,38 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
                 {/* Grid: Edad y Sexo */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Edad */}
-                    <div>
-                        <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
-                            Edad aproximada (años)
-                        </label>
-                        <input
-                            {...register("age", { valueAsNumber: true })}
-                            type="number"
-                            id="age"
-                            min="0"
-                            max="30"
-                            placeholder="Ej: 2"
-                            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        />
-                        {errors.age && <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>}
+                    {/* Edad (Años y Meses) */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
+                                Edad (años)
+                            </label>
+                            <input
+                                {...register("age", { setValueAs: (v) => v === "" ? 0 : Number(v) })}
+                                type="number"
+                                id="age"
+                                min="0"
+                                max="30"
+                                placeholder="Años"
+                                className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                            />
+                            {errors.age && <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>}
+                        </div>
+                        <div>
+                            <label htmlFor="months" className="block text-sm font-medium text-gray-700 mb-1">
+                                Meses
+                            </label>
+                            <input
+                                {...register("months", { setValueAs: (v) => v === "" ? null : Number(v) })}
+                                type="number"
+                                id="months"
+                                min="0"
+                                max="11"
+                                placeholder="Meses"
+                                className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                            />
+                            {errors.months && <p className="mt-1 text-sm text-red-600">{errors.months.message}</p>}
+                        </div>
                     </div>
 
                     {/* Sexo */}
