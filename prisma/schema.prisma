@@ -182,6 +182,7 @@ model Pet {
   species      String
   breed        String?
   age          Int?
+  months       Int?
   sex          String?
   status       PetStatus @default(AVAILABLE)
   description  String
