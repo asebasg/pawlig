@@ -400,7 +400,11 @@ export default function NotFound() {
         const yW = xO * Math.sin(lanR) + y1 * Math.cos(lanR);
         const sx = cx + xW;
         const sy = cy + yW * 0.4;
-        i === 0 ? ctx!.moveTo(sx, sy) : ctx!.lineTo(sx, sy);
+        if (i === 0) {
+          ctx!.moveTo(sx, sy);
+        } else {
+          ctx!.lineTo(sx, sy);
+        }
       }
       ctx!.stroke();
       ctx!.setLineDash([]);
