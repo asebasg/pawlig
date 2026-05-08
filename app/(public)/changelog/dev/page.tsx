@@ -30,9 +30,37 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "07 de mayo de 2026";
+  const lastDevUpdate = "08 de mayo de 2026";
 
   const devLogs = [
+    {
+      version: "v1.9.0-dev",
+      date: "08 de Mayo, 2026",
+      title: "Rediseño 404: Experiencia Orbital 3D",
+      description:
+        "Transformación de la página 404 en una experiencia dinámica de alta fidelidad basada en un sistema solar 3D con física orbital real.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Motor Orbital Kepleriano",
+          description: "Implementación de física orbital (Ley de Áreas) en Canvas 2D para movimiento fluido y realista.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Proyección 3D e Isometría",
+          description: "Cálculo de proyección paralela y oclusión dinámica para profundidad visual.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Optimización de Renderizado",
+          description: "Manejo eficiente de RAF y escalado reactivo (DPR) para nitidez en pantallas Retina.",
+          icon: <Zap size={18} className="text-amber-500" />,
+        },
+      ],
+    },
     {
       version: "v1.8.3-dev",
       date: "07 de Mayo, 2026",

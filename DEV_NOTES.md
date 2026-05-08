@@ -1,5 +1,22 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Nueva Página 404: Sistema Solar 3D (v1.9.0 — 08-05-2026)
+
+Se rediseñó la página de error 404 integrando una experiencia visual inmersiva basada en un sistema solar 3D. La implementación utiliza un motor de renderizado custom sobre Canvas 2D que simula órbitas keplerianas para los íconos de la marca.
+
+**Archivo modificado:**
+
+- `app/not-found.tsx` — Implementación integral del motor orbital, lógica de proyección 3D y UI de recuperación.
+
+**Detalles Técnicos:**
+
+- **Física Orbital:** Implementación de la Ley de Áreas de Kepler para variar la velocidad orbital según la excentricidad de la elipse.
+- **Proyección 3D:** Uso de proyección paralela con compresión en el eje Y (0.4x) para simular profundidad isométrica.
+- **Oclusión Dinámica:** Clasificación de profundidad (Z-index) para renderizar íconos por delante o detrás del cuerpo central ("404").
+- **Optimización:** Gestión de ciclo de vida del canvas con `requestAnimationFrame` y manejo reactivo del `resize`.
+
+---
+
 ## Selección y visualización de edad (Años y Meses) (v1.8.3 — 07-05-2026)
 
 Se implementó la capacidad de especificar la edad de las mascotas de forma más precisa, permitiendo ingresar tanto años como meses. Esto mejora la gestión de cachorros y la información disponible para los adoptantes.
