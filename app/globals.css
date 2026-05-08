@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,44 +7,32 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #7C3AED;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .font-poppins {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
   }
 }
 
-@keyframes orbit {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg);
-  }
-}
-
-.animate-orbit {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  animation: orbit var(--orbit-duration, 20s) linear infinite;
-  animation-delay: var(--orbit-delay, 0s);
-}
-
-/* Ocultar botón nativo de ver contraseña en navegadores como Edge */
+/* Ocultar botón nativo de ver contraseña en navegadores como Edge/IE */
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
