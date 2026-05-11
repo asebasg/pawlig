@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 export default function AdoptionsClient() {
   const [adoptions, setAdoptions] = useState<ShelterAdoption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPendingAction, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   // Estado para el modal
   const [modalState, setModalState] = useState<{
