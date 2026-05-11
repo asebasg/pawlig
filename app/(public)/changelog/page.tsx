@@ -29,6 +29,40 @@ export default function ChangelogPage() {
 
   const versions = [
     {
+      version: "v1.9.0",
+      date: "11 de Mayo, 2026",
+      title: "Gestión Inteligente de Postulaciones",
+      description:
+        "Sistema integral de gestión de postulaciones para albergues con notificaciones automáticas y automatización de estados.",
+      color: "from-purple-500 to-indigo-600",
+      updates: [
+        {
+          type: "added",
+          title: "Panel de Gestión de Albergues",
+          description:
+            "Nueva interfaz para que los albergues visualicen, aprueben o rechacen solicitudes de adopción.",
+          icon: <Rocket size={20} className="text-white" />,
+          bg: "bg-purple-500",
+        },
+        {
+          type: "added",
+          title: "Automatización de Estados",
+          description:
+            "Al aprobar una adopción, la mascota se marca como 'En proceso' y se gestionan las solicitudes restantes automáticamente.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-amber-400",
+        },
+        {
+          type: "improved",
+          title: "Notificaciones Automáticas",
+          description:
+            "Emails instantáneos para albergues y adoptantes sobre el estado de sus postulaciones.",
+          icon: <Heart size={20} className="text-white" />,
+          bg: "bg-pink-500",
+        },
+      ],
+    },
+    {
       version: "v1.8.0",
       date: "28 de Abril, 2026",
       title: "Seguridad y UX en Formularios",
