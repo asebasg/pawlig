@@ -1,6 +1,25 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
-## Nueva Página 404: Sistema Solar 3D (v1.9.0 — 08-05-2026)
+## Sistema de Gestión de Postulaciones (v1.9.0 — 11-05-2026)
+
+Implementación del flujo completo de gestión de adopciones, centralizando la lógica de negocio en servicios y asegurando tipado estricto en toda la capa de API.
+
+**Archivos creados:**
+
+- `types/adoption.ts` — Definición de tipos estricta (ShelterAdoption, UserAdoption) basada en Prisma Payloads.
+- `components/shelter/adoptions/` — Suite de componentes modulares para gestión de postulaciones.
+
+**Detalles Técnicos:**
+
+- **Arquitectura**: Delegación total de lógica de negocio a `adoption.service.ts`. Uso de transacciones atómicas de Prisma para asegurar consistencia entre el estado de la mascota y las postulaciones.
+- **Tipado**: Cero `any` mediante uso de `Prisma.AdoptionGetPayload`.
+- **Automatización**:
+  - Transición automática: `AVAILABLE` -> `IN_PROCESS` al aprobar.
+  - Rechazo masivo: Cierre automático de postulaciones pendientes al aprobar una solicitud.
+- **Seguridad**: Validación estricta con Zod y tipado seguro en bloques `catch` mediante `unknown` e `instanceof Error`.
+
+---
+
 
 Se rediseñó la página de error 404 integrando una experiencia visual inmersiva basada en un sistema solar 3D. La implementación utiliza un motor de renderizado custom sobre Canvas 2D que simula órbitas keplerianas para los íconos de la marca.
 

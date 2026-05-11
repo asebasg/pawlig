@@ -35,6 +35,34 @@ export default function DevNotesPage() {
   const devLogs = [
     {
       version: "v1.9.0-dev",
+      date: "11 de Mayo, 2026",
+      title: "Sistema Integrado de Gestión de Postulaciones",
+      description:
+        "Refactorización y extensión del flujo de adopciones para una gestión operativa más eficiente y segura.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Servicio de Adopción (AdoptionService)",
+          description: "Centralización de lógica de negocio y transacciones atómicas para gestión de estados de mascota/solicitud.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Tipado Estricto (Cero Any)",
+          description: "Implementación de tipos basados en Prisma GetPayload para una API fuertemente tipada.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "feat",
+          title: "UI Modular (Shelter)",
+          description: "Componentes modulares de aprobación, tarjetas de postulación y tablas de gestión con Zod validación.",
+          icon: <FileCode size={18} className="text-blue-500" />,
+        },
+      ],
+    },
+    {
+      version: "v1.9.0-dev",
       date: "08 de Mayo, 2026",
       title: "Rediseño 404: Experiencia Orbital 3D",
       description:
