@@ -1,14 +1,14 @@
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/auth-options';
-import { prisma } from '@/lib/utils/db';
-import AdoptionApplicationsClient from '@/components/AdoptionApplicationsClient';
-import Link from 'next/link';
-import { ArrowLeft, Info, Home } from 'lucide-react';
-import { UserRole } from '@prisma/client';
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth-options";
+import { prisma } from "@/lib/utils/db";
+import AdoptionsClient from "@/components/shelter/adoptions/adoptions-client";
+import Link from "next/link";
+import { ArrowLeft, Info, Home } from "lucide-react";
+import { UserRole } from "@prisma/client";
 import { Card, CardContent } from "@/components/ui/card";
 import Badge from "@/components/ui/badge";
-import { AdoptionStats } from '@/components/shelter/AdoptionStats';
+import { AdoptionStats } from "@/components/shelter/AdoptionStats";
 
 /**
  * PAGE: /shelter/adoptions
@@ -18,8 +18,8 @@ import { AdoptionStats } from '@/components/shelter/AdoptionStats';
  */
 
 export const metadata = {
-  title: 'Postulaciones',
-  description: 'Gestiona las postulaciones de adopción de tu albergue',
+  title: "Postulaciones",
+  description: "Gestiona las postulaciones de adopción de tu albergue",
 };
 
 export default async function ShelterAdoptionsPage() {
@@ -50,7 +50,7 @@ export default async function ShelterAdoptionsPage() {
 
   // 6. Obtener estadísticas de postulaciones (datos puros)
   const adoptionStats = await prisma.adoption.groupBy({
-    by: ['status'],
+    by: ["status"],
     where: {
       pet: {
         shelterId: shelter.id,
@@ -64,12 +64,19 @@ export default async function ShelterAdoptionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex flex-col">
-          <Link href="/shelter" className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+          <Link
+            href="/shelter"
+            className="inline-flex items-center gap-2 mb-6 mt-4 text-purple-600 hover:text-purple-700 text-base font-semibold"
+          >
             <ArrowLeft className="w-4 h-4" />
             Volver al Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight">Postulaciones de Adopción</h1>
-          <p className="text-gray-500 mt-1">Gestiona y revisa las solicitudes de adopción para tus mascotas</p>
+          <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+            Postulaciones de Adopción
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Gestiona y revisa las solicitudes de adopción para tus mascotas
+          </p>
         </div>
 
         {/* Info Albergue Rápida */}
@@ -78,10 +85,15 @@ export default async function ShelterAdoptionsPage() {
             <Home className="w-5 h-5 text-purple-600" />
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Albergue</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Albergue
+            </p>
             <div className="flex items-center gap-2">
               <p className="text-sm font-bold text-gray-900">{shelter.name}</p>
-              <Badge variant="default" className="bg-green-100 text-green-700 pointer-events-none">
+              <Badge
+                variant="default"
+                className="bg-green-100 text-green-700 pointer-events-none"
+              >
                 Verificado
               </Badge>
             </div>
@@ -106,19 +118,32 @@ export default async function ShelterAdoptionsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
                 <div className="flex items-start gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-400 mt-1.5 shrink-0" />
-                  <p className="text-sm text-blue-800"><strong>Pendiente:</strong> Nuevas solicitudes esperando revisión. Puedes <strong>aprobar</strong> o <strong>rechazar</strong>.</p>
+                  <p className="text-sm text-blue-800">
+                    <strong>Pendiente:</strong> Nuevas solicitudes esperando
+                    revisión. Puedes <strong>aprobar</strong> o{" "}
+                    <strong>rechazar</strong>.
+                  </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-400 mt-1.5 shrink-0" />
-                  <p className="text-sm text-blue-800"><strong>Aprobada:</strong> La mascota pasará a estado <strong>&quot;En Proceso&quot;</strong> automáticamente.</p>
+                  <p className="text-sm text-blue-800">
+                    <strong>Aprobada:</strong> La mascota pasará a estado{" "}
+                    <strong>&quot;En Proceso&quot;</strong> automáticamente.
+                  </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-400 mt-1.5 shrink-0" />
-                  <p className="text-sm text-blue-800"><strong>Rechazada:</strong> Deberás indicar un motivo. El usuario podrá volver a postularse después.</p>
+                  <p className="text-sm text-blue-800">
+                    <strong>Rechazada:</strong> Deberás indicar un motivo. El
+                    usuario podrá volver a postularse después.
+                  </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-400 mt-1.5 shrink-0" />
-                  <p className="text-sm text-blue-800"><strong>Finalizada:</strong> Una vez completado el proceso, la mascota se marcará como <strong>Adoptada</strong>.</p>
+                  <p className="text-sm text-blue-800">
+                    <strong>Finalizada:</strong> Una vez completado el proceso,
+                    la mascota se marcará como <strong>Adoptada</strong>.
+                  </p>
                 </div>
               </div>
             </div>
@@ -129,12 +154,14 @@ export default async function ShelterAdoptionsPage() {
       {/* Tabla de Postulaciones */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Lista de Postulaciones</h2>
+          <h2 className="text-xl font-bold text-gray-900">
+            Lista de Postulaciones
+          </h2>
           <Badge variant="outline" className="text-gray-500 font-normal">
             {petCount} Mascotas registradas
           </Badge>
         </div>
-        <AdoptionApplicationsClient />
+        <AdoptionsClient />
       </div>
     </div>
   );
@@ -155,7 +182,7 @@ export default async function ShelterAdoptionsPage() {
  *   el estado de verificación del albergue antes de mostrar datos sensibles.
  * - SSR Stats: Las estadísticas se agrupan en el servidor mediante Prisma.groupBy
  *   para garantizar que el usuario vea datos actualizados al cargar la página.
- * - UI Consistente: Utiliza componentes estandarizados de la aplicación como 
+ * - UI Consistente: Utiliza componentes estandarizados de la aplicación como
  *   Card y Badge para mantener la coherencia visual con el panel de vendedores.
  *
  * Dependencias Externas:

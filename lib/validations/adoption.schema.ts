@@ -88,6 +88,14 @@ export const adoptionQueryStringSchema = z.object({
 
 export type AdoptionQueryStringInput = z.infer<typeof adoptionQueryStringSchema>;
 
+export const createAdoptionSchema = z.object({
+  petId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID de mascota inválido'),
+  userId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'ID de usuario inválido'),
+  message: z.string().max(500, 'El mensaje no puede exceder 500 caracteres').optional(),
+});
+
+export type CreateAdoptionInput = z.infer<typeof createAdoptionSchema>;
+
 /*
  * ---------------------------------------------------------------------------
  * NOTAS DE IMPLEMENTACIÓN

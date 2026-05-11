@@ -25,6 +25,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { formatAge } from '@/lib/utils/age-formatter';
+import { AdoptionConfirmModal } from './modals/adoption-confirm-modal';
 
 /**
  * GET /api/pets/[id]
@@ -102,6 +103,7 @@ export default function PetDetailClient({
   const [isLoadingFavorite, setIsLoadingFavorite] = useState(false);
   const [isLoadingAdoption, setIsLoadingAdoption] = useState(false);
   const [adoptionSuccess, setAdoptionSuccess] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const images = pet.images || [];
   const hasMultipleImages = images.length > 1;
@@ -142,13 +144,15 @@ export default function PetDetailClient({
     }
   };
 
-  // Manejar solicitud de adopción
-  const handleAdoptionRequest = async () => {
+  const handleAdoptionClick = () => {
     if (!userSession) {
       window.location.href = `/login?callbackUrl=/adopciones/${pet.id}`;
       return;
     }
+    setIsModalOpen(true);
+  };
 
+  const handleConfirmAdoption = async (message?: string) => {
     const toastId = toast.loading("Solicitando adopción");
     try {
       setIsLoadingAdoption(true);
@@ -160,7 +164,7 @@ export default function PetDetailClient({
         },
         body: JSON.stringify({
           petId: pet.id,
-          message: null,
+          message: message || null,
         }),
       });
 
@@ -176,12 +180,13 @@ export default function PetDetailClient({
 
       toast.success("¡Solicitud enviada!", { id: toastId });
       setAdoptionSuccess(true);
+      setIsModalOpen(false);
       setTimeout(() => {
         window.location.href = '/user';
       }, 2000);
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Error al crear solicitud de adopción');
+      toast.error('Error al crear solicitud de adopción', { id: toastId });
     } finally {
       setIsLoadingAdoption(false);
     }
@@ -419,7 +424,7 @@ export default function PetDetailClient({
             {/* CTA - Solicitar Adopción */}
             {pet.status === 'AVAILABLE' ? (
               <Button
-                onClick={handleAdoptionRequest}
+                onClick={handleAdoptionClick}
                 disabled={isLoadingAdoption || adoptionSuccess}
                 className={cn(
                   "w-full py-6 text-base",
@@ -472,6 +477,15 @@ export default function PetDetailClient({
           </div>
         </div>
       )}
+
+      {/* Modal de confirmación de adopción */}
+      <AdoptionConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirmAdoption}
+        petName={pet.name}
+        shelterName={pet.shelter.name}
+      />
     </div>
   );
 }
