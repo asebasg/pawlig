@@ -58,6 +58,7 @@ export default function UsersManagementClient() {
 
     //  Paginación
     const [currentPage, setCurrentPage] = useState(1);
+    const [limit, setLimit] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
 
@@ -72,7 +73,7 @@ export default function UsersManagementClient() {
     // Resetear a página 1 cuando cambian los filtros
     useEffect(() => {
         setCurrentPage(1);
-    }, [roleFilter, statusFilter, debouncedSearchQuery]);
+    }, [roleFilter, statusFilter, debouncedSearchQuery, limit]);
 
     //  Cargar usuarios
     const fetchUsers = useCallback(async () => {
@@ -87,7 +88,7 @@ export default function UsersManagementClient() {
             if (statusFilter === "BLOCKED") params.append("isActive", "false");
             if (debouncedSearchQuery.trim()) params.append("search", debouncedSearchQuery.trim());
             params.append("page", currentPage.toString());
-            params.append("limit", "20");
+            params.append("limit", limit.toString());
 
             const response = await fetch(`/api/admin/users?${params.toString()}`);
 
@@ -106,7 +107,7 @@ export default function UsersManagementClient() {
         } finally {
             setLoading(false);
         }
-    }, [roleFilter, statusFilter, debouncedSearchQuery, currentPage]);
+    }, [roleFilter, statusFilter, debouncedSearchQuery, currentPage, limit]);
 
     //  Efecto para cargar usuarios al cambiar filtros o paginas
     useEffect(() => {
@@ -376,8 +377,23 @@ export default function UsersManagementClient() {
                         {/* Paginación */}
                         {totalPages > 1 && (
                             <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                                <div className="text-sm text-gray-500">
-                                    Mostrando página {currentPage} de {totalPages}
+                                <div className="flex flex-col md:flex-row items-center gap-4">
+                                    <div className="text-sm text-gray-500">
+                                        Mostrando página {currentPage} de {totalPages}
+                                    </div>
+                                <div className="flex items-center gap-2">
+                                    <label className="text-sm text-gray-500">Usuarios por página:</label>
+                                    <select
+                                        value={limit}
+                                        onChange={(e) => setLimit(Number(e.target.value))}
+                                        className="text-sm border border-gray-300 rounded-lg p-1"
+                                    >
+                                        <option value={10}>10</option>
+                                        <option value={25}>25</option>
+                                        <option value={50}>50</option>
+                                        <option value={100}>100</option>
+                                    </select>
+                                </div>
                                 </div>
                                 <div className="flex gap-2">
                                     <button
