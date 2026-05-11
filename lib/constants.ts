@@ -40,6 +40,7 @@ export const PUBLIC_LINKS = [
   { label: "Adopciones", href: "/adopciones" },
   { label: "Productos", href: "/productos" },
   { label: "Albergues", href: "/albergues" },
+  { label: "Nosotros", href: "/nosotros" },
 ];
 
 // Opciones del menú de usuario por rol
