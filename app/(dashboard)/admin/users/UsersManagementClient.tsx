@@ -7,6 +7,13 @@ import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAl
 import BlockUserButton from "@/components/admin/BlockUserButton";
 import Loader from '@/components/ui/loader'
 
+
+/**
+ * Descripción: Componente cliente para la gestión administrativa de usuarios.
+ * Permite listar, buscar, filtrar y realizar acciones sobre los usuarios del sistema.
+ * Requiere: useState, useEffect, useCallback, useRouter, UserRole, Municipality;
+ * Implementa: Búsqueda con debounce, paginación, filtrado por rol y estado;
+ */
 interface User {
     id: string;
     email: string;
@@ -47,11 +54,25 @@ export default function UsersManagementClient() {
     const [roleFilter, setRoleFilter] = useState<UserRole | "ALL">("ALL");
     const [statusFilter, setStatusFilter] = useState<"ALL" | "ACTIVE" | "BLOCKED">("ALL");
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
     //  Paginación
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
+
+    // Debounce de búsqueda
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchQuery(searchQuery);
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [searchQuery]);
+
+    // Resetear a página 1 cuando cambian los filtros
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [roleFilter, statusFilter, debouncedSearchQuery]);
 
     //  Cargar usuarios
     const fetchUsers = useCallback(async () => {
@@ -64,7 +85,7 @@ export default function UsersManagementClient() {
             if (roleFilter !== "ALL") params.append("role", roleFilter);
             if (statusFilter === "ACTIVE") params.append("isActive", "true");
             if (statusFilter === "BLOCKED") params.append("isActive", "false");
-            if (searchQuery.trim()) params.append("search", searchQuery.trim());
+            if (debouncedSearchQuery.trim()) params.append("search", debouncedSearchQuery.trim());
             params.append("page", currentPage.toString());
             params.append("limit", "20");
 
@@ -83,28 +104,15 @@ export default function UsersManagementClient() {
         } catch (err) {
             setError(err instanceof Error ? err.message : "Error desconocido");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }, [roleFilter, statusFilter, searchQuery, currentPage]);
+    }, [roleFilter, statusFilter, debouncedSearchQuery, currentPage]);
 
     //  Efecto para cargar usuarios al cambiar filtros o paginas
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
 
-    // Búsqueda con debounce
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (currentPage === 1) {
-                fetchUsers();
-            } else {
-                setCurrentPage(1);
-            }
-        }, 500);
-        return () => clearTimeout(timeoutId);
-    }, [searchQuery, currentPage, fetchUsers]);
-
-    // Formatear fecha
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("es-CO", {
             year: "numeric",
@@ -395,3 +403,13 @@ export default function UsersManagementClient() {
         </div>
     );
 }
+
+/*
+ * Descripción General: Este componente proporciona la interfaz de administración para gestionar la base de usuarios.
+ * Utiliza un estado local para manejar filtros y paginación, sincronizándose con la API administrativa.
+ * Lógica Clave:
+ * 1. Debounce de búsqueda para evitar llamadas excesivas a la API.
+ * 2. Manejo de paginación que se resetea al cambiar los filtros.
+ * 3. Integración con modales de acción para bloqueo y edición de usuarios.
+ * Dependencias Externas: Lucide React para iconos, Prisma Client para tipos, y Next.js para navegación.
+ */
