@@ -23,28 +23,7 @@ import { buttonVariants } from '@/components/ui/button-variants';
  * Implementa: HU-004 (Visualización del Panel de Usuario).
  */
 
-interface Adoption {
-  id: string;
-  petId: string;
-  petName: string;
-  petSpecies: string;
-  petBreed: string | null;
-  petAge: number | null;
-  petSex: string | null;
-  petImages: string[];
-  shelter: {
-    id: string;
-    name: string;
-    municipality: string;
-    contactWhatsApp?: string;
-    contactInstagram?: string;
-  };
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  message: string | null;
-  createdAt: string;
-  updatedAt: string;
-  isRecent: boolean;
-}
+import { UserAdoption } from '@/types/adoption';
 
 interface AdoptionStats {
   pending: number;
@@ -55,7 +34,7 @@ interface AdoptionStats {
 
 // El componente obtiene los datos mediante la sesión del servidor, no requiere props externas
 export default function AdoptionsSection() {
-  const [adoptions, setAdoptions] = useState<Adoption[]>([]);
+  const [adoptions, setAdoptions] = useState<UserAdoption[]>([]);
   const [stats, setStats] = useState<AdoptionStats>({
     pending: 0,
     approved: 0,
@@ -205,13 +184,13 @@ export default function AdoptionsSection() {
             // Mapeo de datos para PetCard
             const petData: PetCardData = {
               id: adoption.petId,
-              name: adoption.petName,
-              images: adoption.petImages,
-              species: adoption.petSpecies,
-              breed: adoption.petBreed,
-              age: adoption.petAge,
-              sex: adoption.petSex,
-              shelter: adoption.shelter,
+              name: adoption.pet.name,
+              images: adoption.pet.images,
+              species: adoption.pet.species,
+              breed: adoption.pet.breed,
+              age: adoption.pet.age,
+              sex: adoption.pet.sex,
+              shelter: adoption.pet.shelter,
             };
 
             // Configuración visual según estado
@@ -260,9 +239,9 @@ export default function AdoptionsSection() {
 
                       {isApproved && (
                         <>
-                          {adoption.shelter.contactWhatsApp && (
+                          {adoption.pet.shelter.contactWhatsApp && (
                             <Button asChild variant="default" className="flex-1 bg-green-600 hover:bg-green-700 h-8 text-xs" size="sm">
-                              <a href={`https://wa.me/${adoption.shelter.contactWhatsApp}`} target="_blank" rel="noopener noreferrer">
+                              <a href={`https://wa.me/${adoption.pet.shelter.contactWhatsApp}`} target="_blank" rel="noopener noreferrer">
                                 WhatsApp
                               </a>
                             </Button>
