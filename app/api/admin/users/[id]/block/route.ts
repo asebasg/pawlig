@@ -111,7 +111,7 @@ export async function PUT(
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     // Ejecutar bloqueo/desbloqueo con auditoria
-    const result = await prisma.$transaction(async (tx: Omit<typeof prisma, "$transaction">) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updatedUser = await tx.user.update({
         where: { id: userId },
         data: {
