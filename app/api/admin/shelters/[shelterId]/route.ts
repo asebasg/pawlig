@@ -115,7 +115,7 @@ export async function PATCH(
 
     if (action === "approve") {
       // ✅ MEJORA 3: APROBACIÓN incluye cambio de rol a SHELTER
-      updatedShelter = await prisma.$transaction(async (tx: Omit<typeof prisma, "$transaction">) => {
+      updatedShelter = await prisma.$transaction(async (tx) => {
         // 1. Actualizar Shelter (verified = true)
         const approvedShelter = await tx.shelter.update({
           where: { id: params.shelterId },
