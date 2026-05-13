@@ -19,13 +19,13 @@ interface AdoptionsTableProps {
 }
 
 export function AdoptionsTable({ applications, isLoading }: AdoptionsTableProps) {
-  const statusColors = {
+  const statusColors: Record<AdoptionStatus, string> = {
     [AdoptionStatus.PENDING]: "bg-yellow-100 text-yellow-700",
     [AdoptionStatus.APPROVED]: "bg-teal-100 text-teal-700",
     [AdoptionStatus.REJECTED]: "bg-pink-100 text-pink-700",
   };
 
-  const statusLabels = {
+  const statusLabels: Record<AdoptionStatus, string> = {
     [AdoptionStatus.PENDING]: "Pendiente",
     [AdoptionStatus.APPROVED]: "Aprobada",
     [AdoptionStatus.REJECTED]: "Rechazada",
@@ -58,7 +58,7 @@ export function AdoptionsTable({ applications, isLoading }: AdoptionsTableProps)
           </TableRow>
         </TableHeader>
         <TableBody>
-          {applications.map((app) => (
+          {applications.map((app: ShelterAdoption) => (
             <TableRow key={app.id} className="hover:bg-gray-50/50 transition-colors">
               <TableCell>
                 <div className="flex items-center gap-2">
@@ -75,8 +75,8 @@ export function AdoptionsTable({ applications, isLoading }: AdoptionsTableProps)
                 </div>
               </TableCell>
               <TableCell>
-                <Badge className={`${statusColors[app.status]} border-none shadow-none text-[10px] font-bold uppercase tracking-wider`}>
-                  {statusLabels[app.status]}
+                <Badge className={`${statusColors[app.status as AdoptionStatus]} border-none shadow-none text-[10px] font-bold uppercase tracking-wider`}>
+                  {statusLabels[app.status as AdoptionStatus]}
                 </Badge>
               </TableCell>
               <TableCell>
