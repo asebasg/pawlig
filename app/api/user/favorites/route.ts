@@ -57,7 +57,7 @@ export async function GET() {
         });
 
         // Transformar respuesta para que sea más limpia
-        const transformedFavorites = favorites.map((fav) => ({
+        const transformedFavorites = favorites.map((fav: typeof favorites[0]) => ({
             id: fav.pet.id,
             name: fav.pet.name,
             species: fav.pet.species,

@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({
-      favorites: favorites.map(f => f.petId),
+      favorites: favorites.map((f: { petId: string }) => f.petId),
     });
   } catch (error) {
     console.error('[POST /api/user/favorites/check] Error:', error);

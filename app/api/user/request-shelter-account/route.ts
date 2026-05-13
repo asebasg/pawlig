@@ -70,8 +70,8 @@ export async function POST(request: Request) {
         //  5. Hashear la contraseña
         const hashedPassword = await hashPassword(validatedData.password);
 
-        //  6. ✅ MEJORA 3: NO cambiar rol a SHELTER hasta aprobación
-        const newShelterAccount = await prisma.$transaction(async (tx) => {
+        //  6. NO cambiar rol a SHELTER hasta aprobación
+        const newShelterAccount = await prisma.$transaction(async (tx: Omit<typeof prisma, "$transaction">) => {
             // Actualizar usuario existente con nuevos datos (SIN cambiar rol)
             const user = await tx.user.update({
                 where: { id: session.user.id },

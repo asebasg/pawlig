@@ -110,9 +110,9 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
 
     const counts = {
         all: pets.length,
-        available: statusCounts.find((s) => s.status === PetStatus.AVAILABLE)?._count || 0,
-        inProcess: statusCounts.find((s) => s.status === PetStatus.IN_PROCESS)?._count || 0,
-        adopted: statusCounts.find((s) => s.status === PetStatus.ADOPTED)?._count || 0,
+        available: statusCounts.find((s: { status: PetStatus; _count: number }) => s.status === PetStatus.AVAILABLE)?._count || 0,
+        inProcess: statusCounts.find((s: { status: PetStatus; _count: number }) => s.status === PetStatus.IN_PROCESS)?._count || 0,
+        adopted: statusCounts.find((s: { status: PetStatus; _count: number }) => s.status === PetStatus.ADOPTED)?._count || 0,
     };
 
     return (
@@ -192,7 +192,7 @@ export default async function ShelterPetsPage({ searchParams }: PageProps) {
             ) : (
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {pets.map((pet) => (
+                        {pets.map((pet: typeof pets[0]) => (
                             <PetCard key={pet.id} pet={pet} />
                         ))}
                     </div>

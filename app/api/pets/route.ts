@@ -169,13 +169,14 @@ export async function POST(request: NextRequest) {
 
         // Manejo específico de errores Prisma
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2002') {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2002') {
                 return NextResponse.json(
                     { error: "Ya existe una mascota con estos datos" },
                     { status: 409 }
                 );
             }
-            if (error.code === 'P2025') {
+            if (prismaError.code === 'P2025') {
                 return NextResponse.json(
                     { error: "Albergue no encontrado" },
                     { status: 404 }
@@ -377,7 +378,8 @@ export async function GET(request: NextRequest) {
 
         // Manejo específico de errores Prisma
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2025') {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2025') {
                 return NextResponse.json(
                     { error: "Albergue no encontrado" },
                     { status: 404 }
