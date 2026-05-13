@@ -5,6 +5,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect } from "react";
 import { ShelterCard } from "./shelter-card";
+import { MapShelter } from "@/types/shelter";
 
 /**
  * Descripción: Mapa interactivo central que utiliza Leaflet y OpenStreetMap.
@@ -13,7 +14,7 @@ import { ShelterCard } from "./shelter-card";
  */
 
 // Fix para los iconos de Leaflet en Next.js
-// @ts-ignore
+// @ts-expect-error - Leaflet internals are not typed for this specific override
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -48,7 +49,7 @@ function MapUpdater({ center, zoom }: { center: [number, number]; zoom: number }
 }
 
 interface InteractiveMapProps {
-  shelters: any[];
+  shelters: MapShelter[];
   center: [number, number];
   zoom: number;
   onOpenLegal: (id: string) => void;

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, X, MapPin, PawPrint, Loader2 } from "lucide-react";
+import { Search, X, MapPin, Loader2 } from "lucide-react";
+import { MapShelter } from "@/types/shelter";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
@@ -12,12 +13,12 @@ import { Badge } from "@/components/ui/badge";
  */
 
 interface ShelterSearchProps {
-  onSelect: (shelter: any) => void;
+  onSelect: (shelter: MapShelter) => void;
 }
 
 export function ShelterSearch({ onSelect }: ShelterSearchProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<MapShelter[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
