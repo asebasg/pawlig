@@ -27,13 +27,13 @@ export function ApplicationCard({
 }: ApplicationCardProps) {
   const { adopter, pet, status, createdAt, message } = application;
 
-  const statusColors = {
+  const statusColors: Record<AdoptionStatus, string> = {
     [AdoptionStatus.PENDING]: "bg-yellow-100 text-yellow-700 border-yellow-200",
     [AdoptionStatus.APPROVED]: "bg-teal-100 text-teal-700 border-teal-200",
     [AdoptionStatus.REJECTED]: "bg-pink-100 text-pink-700 border-pink-200",
   };
 
-  const statusLabels = {
+  const statusLabels: Record<AdoptionStatus, string> = {
     [AdoptionStatus.PENDING]: "Pendiente",
     [AdoptionStatus.APPROVED]: "Aprobada",
     [AdoptionStatus.REJECTED]: "Rechazada",
@@ -43,8 +43,8 @@ export function ApplicationCard({
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full">
       {/* Header con Estado y Fecha */}
       <div className="px-5 py-3 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
-        <Badge className={`${statusColors[status]} font-semibold text-xs border`}>
-          {statusLabels[status]}
+        <Badge className={`${statusColors[status as AdoptionStatus]} font-semibold text-xs border`}>
+          {statusLabels[status as AdoptionStatus]}
         </Badge>
         <div className="flex items-center gap-1.5 text-xs text-gray-400">
           <Calendar className="w-3.5 h-3.5" />

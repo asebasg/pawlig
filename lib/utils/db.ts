@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 /**
  * Ruta/Componente/Servicio: Utilidad de Prisma Client
@@ -18,7 +18,7 @@ const createPrismaClient = () => {
   return client.$extends({
     query: {
       product: {
-        async delete({ args, query }) {
+        async delete({ args, query }: { args: Prisma.ProductDeleteArgs, query: (args: Prisma.ProductDeleteArgs) => Promise<unknown> }) {
           // Primero ejecutamos la eliminación del producto
           const result = await query(args);
           // Luego limpiamos los carritos (borrado en cascada manual)
@@ -29,7 +29,7 @@ const createPrismaClient = () => {
           }
           return result;
         },
-        async update({ args, query }) {
+        async update({ args, query }: { args: Prisma.ProductUpdateArgs, query: (args: Prisma.ProductUpdateArgs) => Promise<unknown> }) {
           // Ejecutamos la actualización del producto
           const result = await query(args);
           // Si el stock llegó a 0, limpiamos los carritos

@@ -4,7 +4,7 @@ import { Heart, HouseHeart, Shield, ClipboardCheck, Package, CheckCircle, Search
 import { prisma } from "@/lib/utils/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
-import { PetCard } from "@/components/cards/pet-card";
+import { PetCard, PetCardData } from "@/components/cards/pet-card";
 import { ConfettiButton } from "@/components/ui/confetti-button";
 import { FavoriteButton } from "@/components/ui/favorite-button";
 import { Button } from "@/components/ui/button";
@@ -235,8 +235,8 @@ export default async function Home() {
                 </Link>
               </div>
             ) : (
-              featuredPets.map((pet) => {
-                const petData = {
+              featuredPets.map((pet: typeof featuredPets[0]) => {
+                const petData: PetCardData = {
                   id: pet.id,
                   name: pet.name,
                   images: pet.images,
