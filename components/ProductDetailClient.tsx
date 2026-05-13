@@ -16,7 +16,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductCard } from './cards/product-card';
-import Badge from './ui/badge';
+import {Badge} from './ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
     Card,
