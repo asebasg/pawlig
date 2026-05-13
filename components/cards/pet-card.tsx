@@ -4,7 +4,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import { MapPin, Info, Calendar } from 'lucide-react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import Badge from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { formatAge } from '@/lib/utils/age-formatter';
