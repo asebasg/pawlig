@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MapPin } from "lucide-react";
 
 /**
  * Descripción: Selector de municipios para filtrar albergues en el mapa.

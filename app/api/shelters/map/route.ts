@@ -36,13 +36,13 @@ export async function GET() {
     });
 
     // Formatear la respuesta para el frontend
-    const formattedShelters = shelters.map((s: any) => ({
+    const formattedShelters = shelters.map((s) => ({
       id: s.id,
       name: s.name,
       municipality: s.municipality,
       address: s.address,
-      latitude: s.latitude,
-      longitude: s.longitude,
+      latitude: s.latitude as number,
+      longitude: s.longitude as number,
       contactWhatsApp: s.contactWhatsApp,
       contactInstagram: s.contactInstagram,
       petCount: s._count.pets,

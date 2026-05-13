@@ -6,6 +6,7 @@ import { ShelterSearch } from "@/components/shelters/shelter-search";
 import { MunicipalityFilter } from "@/components/shelters/municipality-filter";
 import { LegalInfoModal } from "./legal-info-modal";
 import { Loader2, SlidersHorizontal } from "lucide-react";
+import { MapShelter } from "@/types/shelter";
 
 /**
  * Descripción: Cliente principal que orquesta el mapa, los filtros y la búsqueda.
@@ -27,8 +28,8 @@ const DEFAULT_CENTER: [number, number] = [6.2442, -75.5812];
 const DEFAULT_ZOOM = 12;
 
 export function SheltersMapClient() {
-  const [allShelters, setAllShelters] = useState<any[]>([]);
-  const [filteredShelters, setFilteredShelters] = useState<any[]>([]);
+  const [allShelters, setAllShelters] = useState<MapShelter[]>([]);
+  const [filteredShelters, setFilteredShelters] = useState<MapShelter[]>([]);
   const [mapCenter, setMapCenter] = useState<[number, number]>(DEFAULT_CENTER);
   const [mapZoom, setMapZoom] = useState(DEFAULT_ZOOM);
   const [selectedLegalId, setSelectedLegalId] = useState<string | null>(null);
@@ -50,7 +51,7 @@ export function SheltersMapClient() {
     fetchShelters();
   }, []);
 
-  const handleSelectShelter = (shelter: any) => {
+  const handleSelectShelter = (shelter: MapShelter) => {
     if (shelter.latitude && shelter.longitude) {
       setMapCenter([shelter.latitude, shelter.longitude]);
       setMapZoom(16);
