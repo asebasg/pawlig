@@ -77,7 +77,7 @@ export function ShelterCard({ shelter, onOpenLegal }: ShelterCardProps) {
       </div>
 
       <div className="pt-2 border-t">
-        <Button asChild className="w-full h-8 text-xs font-semibold" variant="default">
+        <Button asChild className="w-full h-8 text-xs font-semibold" variant="outline">
           <Link href={`/adopciones?shelter=${shelter.id}`}>
             Ver mascotas
           </Link>

@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { prisma } from '@/lib/utils/db';
-import { UserRole } from '@prisma/client';
+import { UserRole, Municipality } from '@prisma/client';
 import { hashPassword } from '@/lib/auth/password';
 import { shelterApplicationSchema } from '@/lib/validations/user.schema';
 import { ZodError } from 'zod';
+import { geocodeAddress } from '@/lib/services/geocoding.service';
 
 export async function POST(request: Request) {
     try {
@@ -70,6 +71,9 @@ export async function POST(request: Request) {
         //  5. Hashear la contraseña
         const hashedPassword = await hashPassword(validatedData.password);
 
+        //  5.1 Obtener coordenadas del albergue automáticamente y de forma silenciosa
+        const coords = await geocodeAddress(validatedData.shelterAddress, validatedData.shelterMunicipality as Municipality);
+
         //  6. NO cambiar rol a SHELTER hasta aprobación
         const newShelterAccount = await prisma.$transaction(async (tx) => {
             // Actualizar usuario existente con nuevos datos (SIN cambiar rol)
@@ -98,6 +102,9 @@ export async function POST(request: Request) {
                     description: validatedData.shelterDescription,
                     contactWhatsApp: validatedData.contactWhatsApp,
                     contactInstagram: validatedData.contactInstagram,
+                    latitude: coords?.lat || null,
+                    longitude: coords?.lng || null,
+                    geocodedAt: coords ? new Date() : null,
                     verified: false, // Pendiente de aprobación
                     userId: user.id,
                 },

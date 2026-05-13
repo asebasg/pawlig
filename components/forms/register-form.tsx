@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { signIn } from 'next-auth/react';
@@ -10,6 +10,7 @@ import { Municipality } from '@prisma/client';
 import Link from 'next/link';
 import { PawPrint } from 'lucide-react';
 import { PasswordInput } from '@/components/ui/password-input';
+import { AddressInput } from '@/components/ui/address-input';
 
 /**
  * POST /api/auth/register
@@ -34,6 +35,7 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RegisterUserInput>({
     resolver: zodResolver(registerUserSchema),
@@ -217,18 +219,20 @@ export default function RegisterForm() {
         )}
       </div>
 
-      {/* Dirección */}
       <div>
         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
           Dirección *
         </label>
-        <input
-          {...register('address')}
-          type="text"
-          id="address"
-          aria-invalid={errors.address ? 'true' : 'false'}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
-          placeholder="Calle 123 #45-67"
+        <Controller
+          control={control}
+          name="address"
+          render={({ field }) => (
+            <AddressInput
+              value={field.value}
+              onChange={field.onChange}
+              error={!!errors.address}
+            />
+          )}
         />
         {errors.address && (
           <p className="text-red-500 text-sm mt-1">

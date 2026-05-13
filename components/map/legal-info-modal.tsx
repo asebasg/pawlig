@@ -86,7 +86,7 @@ export function LegalInfoModal({ shelterId, onClose }: LegalInfoModalProps) {
               <label className="text-[11px] uppercase tracking-wider font-bold text-muted-foreground flex items-center gap-1.5">
                 <AlignLeft className="w-3.5 h-3.5" /> Sobre el Albergue
               </label>
-              <div className="text-sm text-muted-foreground leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10 italic">
+              <div className="text-sm text-muted-foreground leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10">
                 {data.description || "Este albergue aún no ha proporcionado una descripción detallada."}
               </div>
             </div>

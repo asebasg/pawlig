@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { registerUserSchema } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
+import { AddressInput } from '@/components/ui/address-input';
 
 /**
  * GET /api/users/profile
@@ -49,6 +50,7 @@ export default function UserProfileForm() {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<UserProfileUpdateInput>({
@@ -221,17 +223,20 @@ export default function UserProfileForm() {
         )}
       </div>
 
-      {/* Dirección */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Dirección *
         </label>
-        <input
-          {...register('address')}
-          type="text"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-          placeholder="Ej: Carrera 50 #10-20, Apartamento 5"
+        <Controller
+          control={control}
+          name="address"
+          render={({ field }) => (
+            <AddressInput
+              value={field.value}
+              onChange={field.onChange}
+              error={!!errors.address}
+            />
+          )}
         />
         {errors.address && (
           <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>

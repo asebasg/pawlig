@@ -19,37 +19,44 @@ export async function geocodeAddress(
   municipality: Municipality
 ): Promise<{ lat: number; lng: number } | null> {
   try {
-    // Construir la consulta de búsqueda geográfica
-    const query = `${address}, ${municipality}, Valle de Aburrá, Colombia`;
+    // Extraer solo la vía principal, número y placa (antes de la coma)
+    const coreAddress = address.split(',')[0].trim();
+    const streetOnly = coreAddress.split('#')[0].trim(); // Solo ej: "Calle 2A"
     
-    // Respetar límite de tasa de Nominatim (1 petición por segundo)
-    await sleep(1000);
+    // Estrategia de Fallback: De más específico a más general
+    const searchQueries = [
+      `${coreAddress}, ${municipality}, Antioquia, Colombia`,
+      `${streetOnly}, ${municipality}, Antioquia, Colombia`,
+      `${municipality}, Antioquia, Colombia`
+    ];
     
-    const response = await fetch(
-      `${NOMINATIM_API}?q=${encodeURIComponent(query)}&format=json&limit=1`,
-      {
-        headers: {
-          "User-Agent": "PawLig/1.0 (contact@pawlig.com)", // Nominatim requiere un User-Agent válido
-        },
+    for (const query of searchQueries) {
+      // Respetar límite de tasa de Nominatim (1 petición por segundo)
+      await sleep(1000);
+      
+      const response = await fetch(
+        `${NOMINATIM_API}?q=${encodeURIComponent(query)}&format=json&limit=1`,
+        {
+          headers: {
+            "User-Agent": "PawLig/1.0 (contact@pawlig.com)",
+          },
+        }
+      );
+      
+      if (!response.ok) continue;
+      
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        return {
+          lat: parseFloat(data[0].lat),
+          lng: parseFloat(data[0].lon),
+        };
       }
-    );
-    
-    if (!response.ok) {
-      console.error(`Error en API de Nominatim: ${response.statusText}`);
-      return null;
     }
     
-    const data = await response.json();
-    
-    if (!data || data.length === 0) {
-      console.warn(`No se encontraron coordenadas para: ${query}`);
-      return null;
-    }
-    
-    return {
-      lat: parseFloat(data[0].lat),
-      lng: parseFloat(data[0].lon),
-    };
+    console.warn(`No se encontraron coordenadas para ninguna variante de: ${address} en ${municipality}`);
+    return null;
   } catch (error) {
     console.error("Error geocodificando la dirección:", error);
     return null;
