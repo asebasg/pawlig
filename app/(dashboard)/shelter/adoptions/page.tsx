@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ArrowLeft, Info, Home } from "lucide-react";
 import { UserRole } from "@prisma/client";
 import { Card, CardContent } from "@/components/ui/card";
-import Badge from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { AdoptionStats } from "@/components/shelter/AdoptionStats";
 
 /**
