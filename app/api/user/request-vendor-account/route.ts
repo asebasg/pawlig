@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         const hashedPassword = await hashPassword(validatedData.password);
 
         //  5. Transacción: Actualizar User y Crear Vendor
-        const newVendorAccount = await prisma.$transaction(async (tx) => {
+        const newVendorAccount = await prisma.$transaction(async (tx: Omit<typeof prisma, "$transaction">) => {
             // Actualizar usuario existente con nuevos datos (SIN cambiar rol)
             // Se actualizan datos personales para asegurar consistencia
             const user = await tx.user.update({

@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         const coords = await geocodeAddress(validatedData.shelterAddress, validatedData.shelterMunicipality as Municipality);
 
         //  6. NO cambiar rol a SHELTER hasta aprobación
-        const newShelterAccount = await prisma.$transaction(async (tx) => {
+        const newShelterAccount = await prisma.$transaction(async (tx: Omit<typeof prisma, "$transaction">) => {
             // Actualizar usuario existente con nuevos datos (SIN cambiar rol)
             const user = await tx.user.update({
                 where: { id: session.user.id },
