@@ -151,6 +151,14 @@ model Shelter {
   @@index([verified])
   @@index([municipality])
   @@index([name])
+
+  // Campos para geolocalización
+  latitude         Float?
+  longitude        Float?
+  geocodedAt       DateTime?
+
+  @@index([latitude, longitude])
+  @@index([geocodedAt])
 }
 
 model Vendor {
