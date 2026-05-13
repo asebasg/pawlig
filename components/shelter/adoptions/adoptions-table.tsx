@@ -3,7 +3,7 @@
 import { ShelterAdoption } from "@/types/adoption";
 import { AdoptionStatus } from "@prisma/client";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import Badge from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Dog } from "lucide-react";
 
 /**

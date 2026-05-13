@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ShelterAdoption } from "@/types/adoption";
 import { AdoptionStatus } from "@prisma/client";
 import { Calendar, MapPin, Phone, Mail, Check, X, MessageSquare } from "lucide-react";
-import Badge from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 /**
