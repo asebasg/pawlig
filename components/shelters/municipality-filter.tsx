@@ -35,30 +35,18 @@ interface MunicipalityFilterProps {
 
 export function MunicipalityFilter({ onFilterChange }: MunicipalityFilterProps) {
   return (
-    <div className="flex items-center">
-      <Select defaultValue="ALL" onValueChange={onFilterChange}>
-        <SelectTrigger className="w-[200px] h-14 bg-white/90 backdrop-blur-md border-2 border-transparent focus:ring-primary shadow-xl rounded-2xl transition-all duration-300">
-          <div className="flex items-center gap-2.5">
-            <MapPin className="w-5 h-5 text-primary" />
-            <div className="flex flex-col items-start leading-none">
-              <span className="text-[10px] uppercase tracking-tighter font-bold text-muted-foreground/60">Municipio</span>
-              <SelectValue placeholder="Filtrar por..." />
-            </div>
-          </div>
-        </SelectTrigger>
-        <SelectContent className="rounded-2xl shadow-2xl border-border/40 backdrop-blur-lg">
-          {MUNICIPALITIES.map((m) => (
-            <SelectItem 
-              key={m.value} 
-              value={m.value}
-              className="py-3 focus:bg-primary/10 rounded-xl transition-colors cursor-pointer"
-            >
-              {m.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+    <Select defaultValue="ALL" onValueChange={onFilterChange}>
+      <SelectTrigger className="w-full bg-white border-gray-200">
+        <SelectValue placeholder="Seleccionar municipio..." />
+      </SelectTrigger>
+      <SelectContent>
+        {MUNICIPALITIES.map((m) => (
+          <SelectItem key={m.value} value={m.value}>
+            {m.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 

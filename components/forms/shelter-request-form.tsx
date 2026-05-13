@@ -1,13 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { shelterApplicationSchema, ShelterApplicationInput } from '@/lib/validations/user.schema';
 import { $Enums } from '@prisma/client';
 import Link from 'next/link';
 import { PasswordInput } from '@/components/ui/password-input';
+import { AddressInput } from '@/components/ui/address-input';
 
 /**
  * POST /api/user/request-shelter-account
@@ -34,6 +35,7 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ShelterApplicationInput>({
     resolver: zodResolver(shelterApplicationSchema),
@@ -212,18 +214,21 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
             {errors.municipality && <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>}
           </div>
 
-          <div>
+          <div className="md:col-span-2">
             <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
               Dirección <span className='text-red-500 font-bold'>*</span>
             </label>
-            <input
-              {...register('address')}
-              type="text"
-              id="address"
-              readOnly={!!userProfile?.address}
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.address ? 'border-red-500' : 'border-gray-300'
-                } ${userProfile?.address ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-              placeholder="Calle 10 #20-30 Apto 405"
+            <Controller
+              control={control}
+              name="address"
+              render={({ field }) => (
+                <AddressInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={!!errors.address}
+                  disabled={!!userProfile?.address}
+                />
+              )}
             />
             {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address.message}</p>}
           </div>
@@ -311,16 +316,20 @@ export function ShelterRequestForm({ userProfile }: ShelterRequestFormProps) {
             )}
           </div>
 
-          <div>
+          <div className="md:col-span-2">
             <label htmlFor="shelterAddress" className="block text-sm font-medium text-gray-700 mb-1">
               Dirección del Albergue <span className='text-red-500 font-bold'>*</span>
             </label>
-            <input
-              {...register('shelterAddress')}
-              type="text"
-              id="shelterAddress"
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none ${errors.shelterAddress ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Calle Principal #100"
+            <Controller
+              control={control}
+              name="shelterAddress"
+              render={({ field }) => (
+                <AddressInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={!!errors.shelterAddress}
+                />
+              )}
             />
             {errors.shelterAddress && <p className="text-red-600 text-sm mt-1">{errors.shelterAddress.message}</p>}
           </div>
