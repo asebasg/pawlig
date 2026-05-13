@@ -21,10 +21,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/utils/db";
-import { UserRole } from "@prisma/client";
+import { UserRole, Prisma } from "@prisma/client";
 import { updatePetSchema, updatePetStatusSchema } from "@/lib/validations/pet.schema";
 import { ZodError } from "zod";
-import { Prisma } from "@prisma/client";
 
 /**
  *  GET /api/pets/[id]
@@ -79,7 +78,8 @@ export async function GET(
         
         // Manejo específico de errores Prisma
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2025') {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2025') {
                 return NextResponse.json(
                     { error: "Mascota no encontrada" },
                     { status: 404 }
@@ -216,13 +216,14 @@ export async function PUT(
 
         // Manejo específico de errores Prisma
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2025') {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2025') {
                 return NextResponse.json(
                     { error: "Mascota no encontrada" },
                     { status: 404 }
                 );
             }
-            if (error.code === 'P2002') {
+            if (prismaError.code === 'P2002') {
                 return NextResponse.json(
                     { error: "Conflicto al actualizar mascota" },
                     { status: 409 }
@@ -352,7 +353,8 @@ export async function PATCH(
 
         // Manejo específico de errores Prisma
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2025') {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2025') {
                 return NextResponse.json(
                     { error: "Mascota no encontrada" },
                     { status: 404 }
@@ -437,13 +439,14 @@ export async function DELETE(
         
         // Manejo específico de errores Prisma
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            if (error.code === 'P2025') {
+            const prismaError = error as Prisma.PrismaClientKnownRequestError;
+            if (prismaError.code === 'P2025') {
                 return NextResponse.json(
                     { error: "Mascota no encontrada" },
                     { status: 404 }
                 );
             }
-            if (error.code === 'P2003') {
+            if (prismaError.code === 'P2003') {
                 return NextResponse.json(
                     { error: "No se puede eliminar: la mascota tiene adopciones pendientes" },
                     { status: 409 }

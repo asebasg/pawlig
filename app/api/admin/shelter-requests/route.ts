@@ -64,7 +64,7 @@ export async function GET() {
         });
 
         //  3️. Transformar datos para el frontend
-        const formattedRequests = pendingRequests.map((shelter) => ({
+        const formattedRequests = pendingRequests.map((shelter: typeof pendingRequests[0]) => ({
             id: shelter.id,
             status: 'PENDING_APPROVAL', // Estado explícito
             submittedAt: shelter.createdAt,

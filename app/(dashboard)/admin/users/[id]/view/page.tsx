@@ -96,7 +96,7 @@ export default async function UserViewPage({ params }: { params: { id: string } 
 
         {/* Columna Derecha: Auditoría */}
         <div className="lg:col-span-1">
-          <AuditHistoryCard auditRecords={user.auditRecords.map(r => ({ ...r, createdAt: new Date(r.createdAt) }))} />
+          <AuditHistoryCard auditRecords={user.auditRecords.map((r: UserWithAudit["auditRecords"][number]) => ({ ...r, createdAt: new Date(r.createdAt) }))} />
         </div>
 
       </div>

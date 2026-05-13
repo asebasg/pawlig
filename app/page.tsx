@@ -49,14 +49,14 @@ export default async function Home() {
       where: {
         userId: session.user.id,
         petId: {
-          in: featuredPets.map((p) => p.id),
+          in: featuredPets.map((p: typeof featuredPets[0]) => p.id),
         },
       },
       select: {
         petId: true,
       },
     });
-    favoritePetIds = favorites.map((f) => f.petId);
+    favoritePetIds = favorites.map((f: typeof favorites[0]) => f.petId);
   }
 
   return (

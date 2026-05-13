@@ -29,10 +29,10 @@ export async function GET() {
 
     // Calcular resumen
     const subtotal = items.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
+      (acc: number, item: typeof items[0]) => acc + item.product.price * item.quantity,
       0,
     );
-    const itemsCount = items.reduce((acc, item) => acc + item.quantity, 0);
+    const itemsCount = items.reduce((acc: number, item: typeof items[0]) => acc + item.quantity, 0);
 
     return NextResponse.json({
       success: true,

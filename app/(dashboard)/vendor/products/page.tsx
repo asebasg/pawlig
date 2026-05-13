@@ -163,18 +163,18 @@ export default async function VendorProductsPage({ searchParams }: PageProps) {
     });
 
     const categories = categoryStats
-        .map(c => ({
+        .map((c: typeof categoryStats[0]) => ({
             name: c.category,
             count: c._count
         }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+        .sort((a: { name: string, count: number }, b: { name: string, count: number }) => a.name.localeCompare(b.name));
 
     const searchCategories = searchCategoryStats
-        .map(c => ({
+        .map((c: typeof searchCategoryStats[0]) => ({
             name: c.category,
             count: c._count
         }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+        .sort((a: { name: string, count: number }, b: { name: string, count: number }) => a.name.localeCompare(b.name));
 
     return (
         <div className="container mx-auto py-8 px-4">
