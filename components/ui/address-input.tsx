@@ -40,7 +40,7 @@ export function AddressInput({ value, onChange, disabled, error }: AddressInputP
     const match = value.match(regex);
 
     if (match) {
-      const [_, tVia, nVia, lVia, orient, nGen, lGen, nPlaca, comp] = match;
+      const [, tVia, nVia, lVia, orient, nGen, lGen, nPlaca, comp] = match;
       
       if (VIA_TYPES.includes(tVia)) setTipoVia(tVia);
       setNumeroVia(nVia || "");
@@ -51,7 +51,7 @@ export function AddressInput({ value, onChange, disabled, error }: AddressInputP
       setNumeroPlaca(nPlaca || "");
       setComplemento(comp || "");
     }
-  }, [value]);
+  }, [value, isInternalUpdate]);
 
   // Sincronizar de adentro hacia afuera
   useEffect(() => {
@@ -83,7 +83,7 @@ export function AddressInput({ value, onChange, disabled, error }: AddressInputP
       onChange(finalAddress);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tipoVia, numeroVia, letraVia, orientacionVia, numeroGeneradora, letraGeneradora, numeroPlaca, complemento]);
+  }, [tipoVia, numeroVia, letraVia, orientacionVia, numeroGeneradora, letraGeneradora, numeroPlaca, complemento, value, onChange]);
 
   return (
     <div className={`space-y-3 p-4 border rounded-xl bg-gray-50/50 ${error ? "border-red-500" : "border-gray-200"}`}>

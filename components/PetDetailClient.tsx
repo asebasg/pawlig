@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Heart,
   MapPin,
@@ -10,22 +10,17 @@ import {
   Instagram,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { PetCard } from './cards/pet-card';
-import Badge from './ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
-import { formatAge } from '@/lib/utils/age-formatter';
-import { AdoptionConfirmModal } from './modals/adoption-confirm-modal';
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { PetCard } from "./cards/pet-card";
+import { Badge } from "./ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { formatAge } from "@/lib/utils/age-formatter";
+import { AdoptionConfirmModal } from "./modals/adoption-confirm-modal";
 
 /**
  * GET /api/pets/[id]
@@ -44,7 +39,7 @@ interface Pet {
   age: number | null;
   months: number | null;
   sex: string | null;
-  status: 'AVAILABLE' | 'IN_PROCESS' | 'ADOPTED';
+  status: "AVAILABLE" | "IN_PROCESS" | "ADOPTED";
   description: string;
   requirements: string | null;
   images: string[];
@@ -71,7 +66,7 @@ interface SimilarPet {
   age: number | null;
   months: number | null;
   sex: string | null;
-  status: 'AVAILABLE' | 'IN_PROCESS' | 'ADOPTED';
+  status: "AVAILABLE" | "IN_PROCESS" | "ADOPTED";
   images: string[];
   shelter: {
     id: string;
@@ -108,7 +103,6 @@ export default function PetDetailClient({
   const images = pet.images || [];
   const hasMultipleImages = images.length > 1;
 
-
   // Navegación de galería
   const goToPrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -129,16 +123,16 @@ export default function PetDetailClient({
       setIsLoadingFavorite(true);
 
       const response = await fetch(`/api/pets/${pet.id}/favorite`, {
-        method: 'POST',
+        method: "POST",
       });
 
       if (!response.ok) {
-        throw new Error('Error al actualizar favorito');
+        throw new Error("Error al actualizar favorito");
       }
 
       setIsFavorited(!isFavorited);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setIsLoadingFavorite(false);
     }
@@ -157,10 +151,10 @@ export default function PetDetailClient({
     try {
       setIsLoadingAdoption(true);
 
-      const response = await fetch('/api/adoptions', {
-        method: 'POST',
+      const response = await fetch("/api/adoptions", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           petId: pet.id,
@@ -171,9 +165,13 @@ export default function PetDetailClient({
       if (!response.ok) {
         const error = await response.json();
         if (response.status === 409) {
-          toast.error('Ya tienes una solicitud de adopción para esta mascota', { id: toastId });
+          toast.error("Ya tienes una solicitud de adopción para esta mascota", {
+            id: toastId,
+          });
         } else {
-          toast.error(error.error || 'Error al crear solicitud', { id: toastId });
+          toast.error(error.error || "Error al crear solicitud", {
+            id: toastId,
+          });
         }
         return;
       }
@@ -182,17 +180,15 @@ export default function PetDetailClient({
       setAdoptionSuccess(true);
       setIsModalOpen(false);
       setTimeout(() => {
-        window.location.href = '/user';
+        window.location.href = "/user";
       }, 2000);
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error al crear solicitud de adopción', { id: toastId });
+      console.error("Error:", error);
+      toast.error("Error al crear solicitud de adopción", { id: toastId });
     } finally {
       setIsLoadingAdoption(false);
     }
   };
-
-
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -250,8 +246,11 @@ export default function PetDetailClient({
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${idx === currentImageIndex ? 'border-purple-600' : 'border-gray-200'
-                      }`}
+                    className={`h-16 w-16 flex-shrink-0 rounded overflow-hidden border-2 transition ${
+                      idx === currentImageIndex
+                        ? "border-purple-600"
+                        : "border-gray-200"
+                    }`}
                   >
                     <div className="relative w-full h-full">
                       <Image
@@ -274,18 +273,26 @@ export default function PetDetailClient({
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-3xl font-bold mb-2">{pet.name}</CardTitle>
+                <CardTitle className="text-3xl font-bold mb-2">
+                  {pet.name}
+                </CardTitle>
                 <Badge
                   className={cn(
                     "text-white border-0",
-                    pet.status === 'AVAILABLE' && "bg-teal-500 hover:bg-teal-600",
-                    pet.status === 'IN_PROCESS' && "bg-amber-500 hover:bg-amber-600",
-                    pet.status === 'ADOPTED' && "bg-gray-500 hover:bg-gray-600"
+                    pet.status === "AVAILABLE" &&
+                      "bg-teal-500 hover:bg-teal-600",
+                    pet.status === "IN_PROCESS" &&
+                      "bg-amber-500 hover:bg-amber-600",
+                    pet.status === "ADOPTED" && "bg-gray-500 hover:bg-gray-600",
                   )}
                 >
-                  {pet.status === 'AVAILABLE' ? 'Disponible' :
-                    pet.status === 'IN_PROCESS' ? 'En Proceso' :
-                      pet.status === 'ADOPTED' ? 'Adoptada' : pet.status}
+                  {pet.status === "AVAILABLE"
+                    ? "Disponible"
+                    : pet.status === "IN_PROCESS"
+                      ? "En Proceso"
+                      : pet.status === "ADOPTED"
+                        ? "Adoptada"
+                        : pet.status}
                 </Badge>
               </div>
               <button
@@ -294,8 +301,9 @@ export default function PetDetailClient({
                 className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition disabled:opacity-50"
               >
                 <Heart
-                  className={`w-6 h-6 ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600'
-                    }`}
+                  className={`w-6 h-6 ${
+                    isFavorited ? "fill-red-500 text-red-500" : "text-gray-600"
+                  }`}
                 />
               </button>
             </div>
@@ -315,7 +323,9 @@ export default function PetDetailClient({
               <div className="text-center">
                 <Info className="w-5 h-5 text-purple-600 mx-auto mb-2" />
                 <p className="text-sm text-gray-600">Raza</p>
-                <p className="font-semibold text-gray-900">{pet.breed || 'No especificada'}</p>
+                <p className="font-semibold text-gray-900">
+                  {pet.breed || "No especificada"}
+                </p>
               </div>
 
               {/* Edad */}
@@ -341,7 +351,9 @@ export default function PetDetailClient({
 
             {/* Descripción */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">Sobre {pet.name}</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                Sobre {pet.name}
+              </h2>
               <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">
                 {pet.description}
               </p>
@@ -350,8 +362,12 @@ export default function PetDetailClient({
             {/* Requisitos */}
             {pet.requirements && (
               <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h3 className="text-lg font-semibold text-blue-900 mb-2">Requisitos de Adopción</h3>
-                <p className="text-blue-800 whitespace-pre-wrap">{pet.requirements}</p>
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                  Requisitos de Adopción
+                </h3>
+                <p className="text-blue-800 whitespace-pre-wrap">
+                  {pet.requirements}
+                </p>
               </div>
             )}
           </CardContent>
@@ -364,8 +380,13 @@ export default function PetDetailClient({
         <Card className="mb-6 sticky top-20" accentColor="none">
           <CardHeader>
             <div className="mb-6">
-              <CardTitle className="text-lg font-semibold text-gray-900 mb-2 text-center">Albergue</CardTitle>
-              <Link href={`#`} className="text-purple-600 hover:text-purple-700 font-semibold text-lg hover:underline block text-center">
+              <CardTitle className="text-lg font-semibold text-gray-900 mb-2 text-center">
+                Albergue
+              </CardTitle>
+              <Link
+                href={`#`}
+                className="text-purple-600 hover:text-purple-700 font-semibold text-lg hover:underline block text-center"
+              >
                 {pet.shelter.name}
               </Link>
               <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mt-1">
@@ -387,14 +408,20 @@ export default function PetDetailClient({
             {/* Descripción del Albergue */}
             {pet.shelter.description && (
               <div className="mb-6 pb-6 border-b border-gray-200">
-                <p className="text-sm text-gray-600 mb-2">Acerca del Albergue</p>
-                <p className="text-sm text-gray-700 line-clamp-3">{pet.shelter.description}</p>
+                <p className="text-sm text-gray-600 mb-2">
+                  Acerca del Albergue
+                </p>
+                <p className="text-sm text-gray-700 line-clamp-3">
+                  {pet.shelter.description}
+                </p>
               </div>
             )}
 
             {/* Contacto */}
             <div className="mb-6 pb-6 border-b border-gray-200">
-              <p className="text-sm font-semibold text-gray-900 mb-3">Contactar Albergue</p>
+              <p className="text-sm font-semibold text-gray-900 mb-3">
+                Contactar Albergue
+              </p>
               <div className="flex flex-col gap-2">
                 {pet.shelter.contactWhatsApp && (
                   <a
@@ -422,22 +449,22 @@ export default function PetDetailClient({
             </div>
 
             {/* CTA - Solicitar Adopción */}
-            {pet.status === 'AVAILABLE' ? (
+            {pet.status === "AVAILABLE" ? (
               <Button
                 onClick={handleAdoptionClick}
                 disabled={isLoadingAdoption || adoptionSuccess}
                 className={cn(
                   "w-full py-6 text-base",
-                  adoptionSuccess ? 'bg-green-100 text-green-800 hover:bg-green-200' : 'bg-purple-600 hover:bg-purple-700'
+                  adoptionSuccess
+                    ? "bg-green-100 text-green-800 hover:bg-green-200"
+                    : "bg-purple-600 hover:bg-purple-700",
                 )}
               >
-                {isLoadingAdoption ? (
-                  "Enviando..."
-                ) : adoptionSuccess ? (
-                  "¡Solicitud enviada!"
-                ) : (
-                  "Solicitar Adopción"
-                )}
+                {isLoadingAdoption
+                  ? "Enviando..."
+                  : adoptionSuccess
+                    ? "¡Solicitud enviada!"
+                    : "Solicitar Adopción"}
               </Button>
             ) : (
               <div className="w-full py-3 px-4 rounded-lg bg-gray-100 text-gray-700 text-center font-semibold">
@@ -449,7 +476,9 @@ export default function PetDetailClient({
             {pet.adoptions.length > 0 && (
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <p className="text-xs text-gray-600 text-center">
-                  {pet.adoptions.length} postulación{pet.adoptions.length !== 1 ? 'es' : ''} recibida{pet.adoptions.length !== 1 ? 's' : ''}
+                  {pet.adoptions.length} postulación
+                  {pet.adoptions.length !== 1 ? "es" : ""} recibida
+                  {pet.adoptions.length !== 1 ? "s" : ""}
                 </p>
               </div>
             )}
@@ -460,7 +489,9 @@ export default function PetDetailClient({
       {/* Mascotas Similares */}
       {similarPets.length > 0 && (
         <div className="lg:col-span-3 mt-12 border-t pt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Otras mascotas que podrían interesarte</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-8">
+            Otras mascotas que podrían interesarte
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {similarPets.slice(0, 3).map((similarPet) => (
               <PetCard
@@ -468,8 +499,13 @@ export default function PetDetailClient({
                 pet={similarPet}
                 accentColor="none"
                 footer={
-                  <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
-                    <Link href={`/adopciones/${similarPet.id}`}>Ver detalles</Link>
+                  <Button
+                    asChild
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    <Link href={`/adopciones/${similarPet.id}`}>
+                      Ver detalles
+                    </Link>
                   </Button>
                 }
               />
