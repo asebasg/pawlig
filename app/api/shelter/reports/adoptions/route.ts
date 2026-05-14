@@ -26,24 +26,11 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user) {
-      redirect("/login?callbackUrl=/shelter");
+    if (!session || session.user.role !== UserRole.SHELTER || !session.user.shelterId) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
-    if (session.user.role !== UserRole.SHELTER) {
-      redirect("/unauthorized?reason=shelter_only");
-    }
-
-    const shelterId = session.user.shelterId as string;
-    const shelter = await prisma.shelter.findUnique({
-      where: { id: shelterId },
-      select: { id: true, verified: true },
-    });
-
-    if (!shelter?.verified) {
-      redirect("/unauthorized?reason=shelter_not_verified");
-    }
-
+    const shelterId = session.user.shelterId;
     const { searchParams } = new URL(req.url);
     const query = Object.fromEntries(searchParams.entries());
 

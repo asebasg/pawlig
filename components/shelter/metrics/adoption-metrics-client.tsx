@@ -6,7 +6,7 @@ import { AdoptionFilters } from "./adoption-filters";
 import { AdoptionTable } from "./adoption-table";
 import { AdoptionCharts } from "./adoption-charts";
 import { ExportButtons } from "./export-buttons";
-import { Loader } from "@/components/ui/loader";
+import Loader from "@/components/ui/loader";
 
 export function AdoptionMetricsClient() {
   const [filters, setFilters] = useState<AdoptionReportFilters>({});
@@ -55,7 +55,7 @@ export function AdoptionMetricsClient() {
 
       {loading ? (
         <div className="flex justify-center items-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
-          <Loader size="lg" />
+          <Loader />
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
