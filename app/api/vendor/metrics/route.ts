@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
     }
 
     const filters: VendorMetricsFilters = validation.data;
-    const metrics = await getVendorMetrics(vendorId, validation.data as VendorMetricsFilters);
+    const metrics = await getVendorMetrics(vendorId, filters);
 
     return NextResponse.json(metrics);
   } catch (error) {

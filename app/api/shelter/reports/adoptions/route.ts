@@ -12,8 +12,6 @@ import { getAdoptionMetrics } from "@/lib/services/adoption-report.service";
 import { AdoptionReportFilters } from "@/types/report.types";
 import { z } from "zod";
 import { AdoptionStatus, Municipality, UserRole } from "@prisma/client";
-import { redirect } from "next/navigation";
-import { prisma } from "@/lib/utils/db";
 
 const querySchema = z.object({
   startDate: z.string().optional(),

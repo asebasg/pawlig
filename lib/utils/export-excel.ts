@@ -14,7 +14,7 @@ export async function generateExcel<T>(options: ExportOptions<T>): Promise<Buffe
   workbook.creator = "PawLig";
   workbook.created = new Date();
 
-  const sheet = workbook.addWorksheet("Datos");
+  const sheet = workbook.addWorksheet(title);
 
   // Definir columnas
   sheet.columns = headers.map((h) => ({
