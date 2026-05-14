@@ -13,9 +13,10 @@ import { Badge } from "@/components/ui/badge";
 
 interface AdoptionTableProps {
   adoptions: AdoptionReportData[];
+  isAdmin?: boolean;
 }
 
-export function AdoptionTable({ adoptions }: AdoptionTableProps) {
+export function AdoptionTable({ adoptions, isAdmin = false }: AdoptionTableProps) {
   if (adoptions.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -31,6 +32,7 @@ export function AdoptionTable({ adoptions }: AdoptionTableProps) {
           <TableRow>
             <TableHead>Fecha</TableHead>
             <TableHead>Mascota</TableHead>
+            {isAdmin && <TableHead>Albergue</TableHead>}
             <TableHead>Adoptante</TableHead>
             <TableHead>Municipio</TableHead>
             <TableHead>Estado</TableHead>
@@ -41,6 +43,7 @@ export function AdoptionTable({ adoptions }: AdoptionTableProps) {
             <TableRow key={adoption.id} className="hover:bg-gray-50 transition-colors">
               <TableCell>{new Date(adoption.adoptionDate).toLocaleDateString()}</TableCell>
               <TableCell className="font-medium text-primary">{adoption.petName}</TableCell>
+              {isAdmin && <TableCell>{adoption.shelterName || "N/A"}</TableCell>}
               <TableCell>{adoption.adopterName}</TableCell>
               <TableCell>{adoption.municipality}</TableCell>
               <TableCell>

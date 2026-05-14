@@ -39,19 +39,23 @@ export function getPeriodDates(period: string, customStartDate?: string, customE
   return { startDate, endDate };
 }
 
-export async function getVendorMetrics(vendorId: string, filters: VendorMetricsFilters): Promise<VendorMetricsData> {
+export async function getVendorMetrics(vendorId: string | null, filters: VendorMetricsFilters): Promise<VendorMetricsData> {
   const { period = "month", startDate: customStart, endDate: customEnd, municipality } = filters;
   const { startDate, endDate } = getPeriodDates(period, customStart, customEnd);
 
   const whereClause: Prisma.OrderWhereInput = {
-    items: {
-      some: { product: { vendorId } },
-    },
     createdAt: { gte: startDate, lte: endDate },
   };
+  if (vendorId) {
+    whereClause.items = { some: { product: { vendorId } } };
+  }
 
   if (municipality) {
-    whereClause.shippingMunicipality = municipality;
+    if (vendorId === null) {
+      whereClause.items = { some: { product: { vendor: { municipality } } } };
+    } else {
+      whereClause.shippingMunicipality = municipality;
+    }
   }
 
   // Agrupaciones base de la orden
@@ -62,11 +66,11 @@ export async function getVendorMetrics(vendorId: string, filters: VendorMetricsF
   });
 
   // Agrupaciones de los items
+  const itemWhere: Prisma.OrderItemWhereInput = { order: whereClause };
+  if (vendorId) itemWhere.product = { vendorId };
+  
   const itemAggregations = await prisma.orderItem.aggregate({
-    where: {
-      product: { vendorId },
-      order: whereClause,
-    },
+    where: itemWhere,
     _sum: { quantity: true },
   });
 
@@ -87,7 +91,7 @@ export async function getVendorMetrics(vendorId: string, filters: VendorMetricsF
   };
 }
 
-export async function getVendorTopProducts(vendorId: string, filters: VendorMetricsFilters): Promise<TopProductData[]> {
+export async function getVendorTopProducts(vendorId: string | null, filters: VendorMetricsFilters): Promise<TopProductData[]> {
   const { period = "month", startDate: customStart, endDate: customEnd, municipality } = filters;
   const { startDate, endDate } = getPeriodDates(period, customStart, customEnd);
 
@@ -96,15 +100,23 @@ export async function getVendorTopProducts(vendorId: string, filters: VendorMetr
   };
 
   if (municipality) {
-    orderWhere.shippingMunicipality = municipality;
+    if (vendorId === null) {
+      orderWhere.items = { some: { product: { vendor: { municipality } } } };
+    } else {
+      orderWhere.shippingMunicipality = municipality;
+    }
+  }
+
+  const itemWhere: Prisma.OrderItemWhereInput = { order: orderWhere };
+  if (vendorId) {
+    itemWhere.product = { vendorId };
+  } else if (municipality) {
+    itemWhere.product = { vendor: { municipality } };
   }
 
   const grouped = await prisma.orderItem.groupBy({
     by: ["productId"],
-    where: {
-      product: { vendorId },
-      order: orderWhere,
-    },
+    where: itemWhere,
     _sum: { quantity: true },
     orderBy: { _sum: { quantity: "desc" } },
     take: 10,
@@ -113,7 +125,12 @@ export async function getVendorTopProducts(vendorId: string, filters: VendorMetr
   const productIds = grouped.map((g) => g.productId);
   const products = await prisma.product.findMany({
     where: { id: { in: productIds } },
-    select: { id: true, name: true, price: true },
+    select: { 
+      id: true, 
+      name: true, 
+      price: true,
+      vendor: { select: { businessName: true } }
+    },
   });
 
   return grouped.map((g) => {
@@ -122,23 +139,30 @@ export async function getVendorTopProducts(vendorId: string, filters: VendorMetr
     return {
       id: g.productId,
       name: p?.name || "Desconocido",
+      vendorName: p?.vendor?.businessName || "Desconocido",
       unitsSold: units,
       revenue: units * (p?.price || 0),
     };
   });
 }
 
-export async function getVendorOrders(vendorId: string, filters: VendorMetricsFilters) {
+export async function getVendorOrders(vendorId: string | null, filters: VendorMetricsFilters) {
   const { period = "month", startDate: customStart, endDate: customEnd, municipality } = filters;
   const { startDate, endDate } = getPeriodDates(period, customStart, customEnd);
 
   const whereClause: Prisma.OrderWhereInput = {
-    items: { some: { product: { vendorId } } },
     createdAt: { gte: startDate, lte: endDate },
   };
+  if (vendorId) {
+    whereClause.items = { some: { product: { vendorId } } };
+  }
 
   if (municipality) {
-    whereClause.shippingMunicipality = municipality;
+    if (vendorId === null) {
+      whereClause.items = { some: { product: { vendor: { municipality } } } };
+    } else {
+      whereClause.shippingMunicipality = municipality;
+    }
   }
 
   const statusGroup = await prisma.order.groupBy({
@@ -166,17 +190,23 @@ export async function getVendorOrders(vendorId: string, filters: VendorMetricsFi
   return { byStatus, byMunicipality };
 }
 
-export async function getVendorTrends(vendorId: string, filters: VendorMetricsFilters) {
+export async function getVendorTrends(vendorId: string | null, filters: VendorMetricsFilters) {
   const { period = "month", startDate: customStart, endDate: customEnd, municipality } = filters;
   const { startDate, endDate } = getPeriodDates(period, customStart, customEnd);
 
   const whereClause: Prisma.OrderWhereInput = {
-    items: { some: { product: { vendorId } } },
     createdAt: { gte: startDate, lte: endDate },
   };
+  if (vendorId) {
+    whereClause.items = { some: { product: { vendorId } } };
+  }
 
   if (municipality) {
-    whereClause.shippingMunicipality = municipality;
+    if (vendorId === null) {
+      whereClause.items = { some: { product: { vendor: { municipality } } } };
+    } else {
+      whereClause.shippingMunicipality = municipality;
+    }
   }
 
   const orders = await prisma.order.findMany({

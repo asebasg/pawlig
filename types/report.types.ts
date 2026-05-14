@@ -4,7 +4,7 @@
  * Implementa: HU-011 y HU-012.
  */
 
-import { Municipality, AdoptionStatus, OrderStatus } from "@prisma/client";
+import { Municipality, AdoptionStatus } from "@prisma/client";
 
 export type TimePeriod = "week" | "month" | "3months" | "6months" | "year" | "custom";
 
@@ -30,6 +30,7 @@ export interface AdoptionReportData {
   adoptionDate: Date;
   adopterName: string;
   petName: string;
+  shelterName?: string;
   municipality: Municipality;
   status: AdoptionStatus;
 }
@@ -37,6 +38,7 @@ export interface AdoptionReportData {
 export interface TopProductData {
   id: string;
   name: string;
+  vendorName: string;
   unitsSold: number;
   revenue: number;
 }

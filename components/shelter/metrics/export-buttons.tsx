@@ -6,9 +6,10 @@ import { AdoptionReportFilters } from "@/types/report.types";
 
 interface ExportButtonsProps {
   filters: AdoptionReportFilters;
+  exportUrl?: string;
 }
 
-export function ExportButtons({ filters }: ExportButtonsProps) {
+export function ExportButtons({ filters, exportUrl = "/api/shelter/reports/adoptions/export" }: ExportButtonsProps) {
   const handleExport = (format: "csv" | "excel" | "pdf") => {
     const params = new URLSearchParams();
     params.set("format", format);
@@ -17,7 +18,7 @@ export function ExportButtons({ filters }: ExportButtonsProps) {
     if (filters.municipality) params.set("municipality", filters.municipality);
     if (filters.status) params.set("status", filters.status);
     
-    window.open(`/api/shelter/reports/adoptions/export?${params.toString()}`, "_blank");
+    window.open(`${exportUrl}?${params.toString()}`, "_blank");
   };
 
   return (

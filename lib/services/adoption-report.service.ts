@@ -6,14 +6,15 @@
 
 import { prisma } from "@/lib/utils/db";
 import { AdoptionReportFilters, AdoptionReportData } from "@/types/report.types";
-import { Prisma } from "@prisma/client";
+import { Prisma, Municipality } from "@prisma/client";
 
-export async function getAdoptionMetrics(shelterId: string, filters: AdoptionReportFilters) {
+export async function getAdoptionMetrics(shelterId: string | null, filters: AdoptionReportFilters) {
   const { startDate, endDate, municipality, status } = filters;
 
-  const whereClause: Prisma.AdoptionWhereInput = {
-    pet: { shelterId },
-  };
+  const whereClause: Prisma.AdoptionWhereInput = {};
+  if (shelterId) {
+    whereClause.pet = { shelterId };
+  }
 
   if (startDate || endDate) {
     whereClause.createdAt = {};
@@ -26,7 +27,15 @@ export async function getAdoptionMetrics(shelterId: string, filters: AdoptionRep
   }
 
   if (municipality) {
-    whereClause.adopter = { municipality };
+    if (shelterId === null) {
+      whereClause.pet = {
+        shelter: {
+          municipality
+        }
+      };
+    } else {
+      whereClause.adopter = { municipality };
+    }
   }
 
   // 1. Obtener adopciones
@@ -42,6 +51,12 @@ export async function getAdoptionMetrics(shelterId: string, filters: AdoptionRep
       pet: {
         select: {
           name: true,
+          shelter: {
+            select: {
+              name: true,
+              municipality: true,
+            }
+          }
         },
       },
     },
@@ -54,7 +69,8 @@ export async function getAdoptionMetrics(shelterId: string, filters: AdoptionRep
     adoptionDate: a.createdAt,
     adopterName: a.adopter.name,
     petName: a.pet.name,
-    municipality: a.adopter.municipality,
+    shelterName: a.pet.shelter?.name,
+    municipality: (shelterId === null ? a.pet.shelter?.municipality : a.adopter.municipality) as Municipality,
     status: a.status,
   }));
 
