@@ -5,7 +5,7 @@ import { UserRole } from "@prisma/client";
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { prisma } from "@/lib/utils/db";
-import UnderConstruction from "@/components/layout/under-construction";
+import { VendorMetricsClient } from "@/components/vendor/metrics/vendor-metrics-client";
 
 /**
  * Resumen: Página placeholder para la gestión de pedidos del vendedor.
@@ -49,7 +49,7 @@ export default async function VendorMetricsPage() {
             </Link>
             <h1 className="text-2xl font-bold">Métricas de Ventas</h1>
             <p className="text-gray-500 dark:text-gray-400 mb-4">Panel de información de tus métricas de productos</p>
-            <UnderConstruction />
+            <VendorMetricsClient />
         </div>
     );
 }
