@@ -30,9 +30,37 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "08 de mayo de 2026";
+  const lastDevUpdate = "15 de mayo de 2026";
 
   const devLogs = [
+    {
+      version: "v1.10.0-dev",
+      date: "15 de Mayo, 2026",
+      title: "Sistema de Métricas y Georreferenciación",
+      description:
+        "Implementación completa de servicios de métricas, utilidades de exportación y motor de geocodificación para refugios.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Service Layer: Vendor Metrics",
+          description: "Desarrollo de servicios optimizados para agregación de datos y reportes de ventas.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "feat",
+          title: "Geocodificación Automática",
+          description: "Implementación de geocoding.service.ts y scripts de migración para normalización de direcciones.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Exportación Multi-formato",
+          description: "Desarrollo de utilidades para generación de reportes PDF/Excel/CSV con buffers eficientes.",
+          icon: <Zap size={18} className="text-amber-500" />,
+        },
+      ],
+    },
     {
       version: "v1.9.0-dev",
       date: "11 de Mayo, 2026",
