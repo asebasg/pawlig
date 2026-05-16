@@ -1,7 +1,17 @@
 // ! Todas las rutas que coincidan exactamente con "" corresponden a páginas no utilizadas
 // ! La ruta que no aparece aquí es /forgot-password. Para cambiarla, buscar en el code search "" y reemplazar por "forgot-password"
 
-import { UserRole } from "@prisma/client";
+import { UserRole, ProductCategory } from "@prisma/client";
+
+// Categorías de productos (SSOT para UI)
+export const PRODUCT_CATEGORIES: Record<ProductCategory, string> = {
+  [ProductCategory.ALIMENTO]: "Alimento",
+  [ProductCategory.JUGUETES]: "Juguetes",
+  [ProductCategory.ACCESORIOS]: "Accesorios",
+  [ProductCategory.HIGIENE]: "Higiene",
+  [ProductCategory.MEDICAMENTOS]: "Medicamentos",
+  [ProductCategory.OTROS]: "Otros",
+};
 
 // Rutas de navegación por rol
 export const NAVIGATION_BY_ROLE = {

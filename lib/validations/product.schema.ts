@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ProductCategory } from "@prisma/client";
 
 /**
  * lib/validations/product.schema.ts
@@ -24,9 +25,9 @@ export const createProductSchema = z.object({
     .int("El stock debe ser un número entero")
     .min(0, "El stock no puede ser negativo"),
 
-  category: z
-    .string()
-    .min(1, "Debe seleccionar una categoría"),
+  category: z.nativeEnum(ProductCategory, {
+    message: "Debe seleccionar una categoría"
+  }),
 
   description: z
     .string()
