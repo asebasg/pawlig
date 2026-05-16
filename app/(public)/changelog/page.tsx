@@ -25,9 +25,43 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "28 de abril de 2026";
+  const lastUpdate = "15 de mayo de 2026";
 
   const versions = [
+    {
+      version: "v1.10.0",
+      date: "15 de Mayo, 2026",
+      title: "Métricas y Mapa Interactivo",
+      description:
+        "Implementación de dashboards analíticos avanzados y visualización geoespacial de refugios.",
+      color: "from-indigo-500 to-purple-600",
+      updates: [
+        {
+          type: "added",
+          title: "Dashboards de Métricas",
+          description:
+            "Paneles estadísticos detallados para vendedores y refugios con datos en tiempo real.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-indigo-500",
+        },
+        {
+          type: "added",
+          title: "Exportación de Reportes",
+          description:
+            "Funcionalidad para generar y exportar reportes estadísticos en CSV, Excel y PDF.",
+          icon: <Sparkles size={20} className="text-white" />,
+          bg: "bg-amber-400",
+        },
+        {
+          type: "added",
+          title: "Mapa Interactivo",
+          description:
+            "Búsqueda, filtrado y visualización de refugios mediante un mapa georreferenciado.",
+          icon: <Rocket size={20} className="text-white" />,
+          bg: "bg-purple-500",
+        },
+      ],
+    },
     {
       version: "v1.9.0",
       date: "11 de Mayo, 2026",

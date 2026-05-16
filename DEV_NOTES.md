@@ -1,5 +1,25 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Sistema de Métricas y Mapa Interactivo (v1.10.0 — 15-05-2026)
+
+Implementación de un sistema analítico completo para administradores, vendedores y refugios, acompañado de una capa geoespacial para la localización de albergues.
+
+**Archivos creados/modificados:**
+
+- `lib/services/vendor-metrics.service.ts` — Lógica de negocio agregada y optimizada para el cálculo de métricas de ventas y adopciones.
+- `components/map/interactive-map.tsx` — Motor de visualización de mapas basado en coordenadas.
+- `lib/services/geocoding.service.ts` — Servicio para normalización de direcciones.
+- `lib/utils/export-csv.ts`, `export-excel.ts`, `export-pdf.ts` — Utilidades para la generación de reportes multiplataforma.
+
+**Detalles Técnicos:**
+
+- **Métricas**: Implementación de servicios dedicados con queries optimizadas en Prisma. Uso de agregaciones para tendencias y ventas en tiempo real.
+- **Geocodificación**: Implementación de un script de normalización (`scripts/geocode-shelters.ts`) que procesa direcciones y las convierte en coordenadas geográficas.
+- **Exportación**: Implementación de endpoints de API asíncronos que manejan buffers de datos para la generación de archivos exportables, minimizando el impacto en el hilo principal del servidor.
+- **Seguridad**: Validación de roles (Admin, Shelter, Vendor) en cada endpoint de métricas y exportación para restringir acceso a la información confidencial.
+
+---
+
 ## Sistema de Gestión de Postulaciones (v1.9.0 — 11-05-2026)
 
 Implementación del flujo completo de gestión de adopciones, centralizando la lógica de negocio en servicios y asegurando tipado estricto en toda la capa de API.

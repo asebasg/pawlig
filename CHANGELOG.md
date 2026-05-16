@@ -4,6 +4,34 @@
 
 ---
 
+## 15-05-2026 - Sistema de Métricas y Mapa Interactivo (v1.10.0)
+
+**Commit:** `#126`
+**Tipo:** Feature
+**Scope:** metrics, map, shelter, vendor, admin
+
+### Descripción
+
+Implementación de un avanzado sistema de métricas y reportes para administradores, refugios y vendedores, junto con una nueva funcionalidad de mapa interactivo para facilitar la localización de albergues.
+
+### Nuevas Funcionalidades
+
+- **Dashboard de Métricas**: Paneles analíticos para vendedores (ventas, productos, tendencias) y refugios (adopciones).
+- **Reportes Exportables**: Funcionalidad para exportar datos estadísticos a formatos CSV, Excel y PDF.
+- **Mapa Interactivo de Refugios**: Visualización geoespacial de albergues con búsqueda por municipio, marcadores personalizados y filtrado basado en ubicación.
+- **Geocodificación**: Servicio interno para normalizar y geolocalizar las direcciones de los refugios registrados.
+
+### Archivos Creados/Modificados
+
+- **`lib/services/vendor-metrics.service.ts`** (A) - Lógica de negocio para métricas de venta.
+- **`components/map/interactive-map.tsx`** (A) - Componente principal de mapa.
+- **`components/shelters/shelter-search.tsx`** (A) - Interfaz de búsqueda y filtrado de refugios.
+- **`app/api/shelters/map/route.ts`** (A) - API para datos del mapa.
+- **`lib/utils/export-csv.ts`** (A) - Utilidad para exportación de reportes.
+- **`prisma/schema.prisma`** (M) - Actualización de modelos para soportar geolocalización.
+
+---
+
 ## 28-04-2026 - Mejoras de Seguridad y UX en Formularios (v1.8.0)
 
 **Commit:** `dc28ed2`
