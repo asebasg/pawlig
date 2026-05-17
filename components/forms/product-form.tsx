@@ -9,6 +9,7 @@ import { Upload, X, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { PRODUCT_CATEGORIES } from '@/lib/constants';
 
 /**
  * POST /api/products
@@ -47,7 +48,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
             name: initialData?.name || "",
             price: initialData?.price || 0,
             stock: initialData?.stock || 0,
-            category: initialData?.category || "",
+            category: initialData?.category,
             description: initialData?.description || "",
             images: initialData?.images || [],
             vendorId,
@@ -245,12 +246,9 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                             className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                         >
                             <option value="">Seleccionar categoría</option>
-                            <option value="alimento">Alimento</option>
-                            <option value="juguetes">Juguetes</option>
-                            <option value="accesorios">Accesorios</option>
-                            <option value="higiene">Higiene</option>
-                            <option value="medicamentos">Medicamentos</option>
-                            <option value="otros">Otros</option>
+                            {Object.entries(PRODUCT_CATEGORIES).map(([key, label]) => (
+                                <option key={key} value={key}>{label}</option>
+                            ))}
                         </select>
                         {errors.category && (
                             <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>

@@ -151,7 +151,7 @@ function ProductGalleryContent() {
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
             <aside className="w-full lg:w-80 flex-shrink-0">
-                <div className="sticky top-20 p-6">
+                <div className="sticky top-20 p-6 max-h-[calc(100vh-6rem)] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
                     <ProductFilter
                         filters={filters}
                         onFilterChange={handleFilterChange}

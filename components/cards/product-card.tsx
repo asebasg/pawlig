@@ -8,6 +8,8 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { PRODUCT_CATEGORIES } from '@/lib/constants';
+import { ProductCategory } from '@prisma/client';
 
 /**
  * Descripción: Tarjeta de producto para el catálogo público.
@@ -125,7 +127,7 @@ export function ProductCard({
                         {formatPrice(product.price)} COP
                     </p>
                     <Badge variant="teal" className="py-0 px-2 font-normal uppercase">
-                        {product.category}
+                        {PRODUCT_CATEGORIES[product.category as ProductCategory] || product.category}
                     </Badge>
                 </div>
 

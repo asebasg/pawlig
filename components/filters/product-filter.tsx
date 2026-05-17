@@ -5,8 +5,9 @@ import { Search, X, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import {
     Select,
     SelectContent,
@@ -20,14 +21,6 @@ import {
  * Componente de filtros CONTROLADO para el catálogo de productos.
  * Recibe estado y handlers del padre, eliminando manipulación directa de URL para evitar throttling.
  */
-
-// const CATEGORIES = [
-//     { value: "ALIMENTO", label: "Alimento" },
-//     { value: "HIGIENE", label: "Higiene" },
-//     { value: "JUGUETES", label: "Juguetes" },
-//     { value: "MEDICAMENTOS", label: "Medicamentos" },
-//     { value: "OTROS", label: "Otros" },
-// ];
 
 const MUNICIPALITIES = [
     { value: "MEDELLIN", label: "Medellín" },
@@ -99,14 +92,14 @@ export function ProductFilter({ filters, onFilterChange, onClearFilters }: Produ
         return () => clearTimeout(timer);
     }, [localMinPrice, localMaxPrice, filters.minPrice, filters.maxPrice, onFilterChange]);
 
-    // const handleCategoryChange = (category: string, checked: boolean) => {
-    //     const currentCategories = filters.category || [];
-    //     const newCategories = checked
-    //         ? [...currentCategories, category]
-    //         : currentCategories.filter((c) => c !== category);
+    const handleCategoryChange = (category: string, checked: boolean) => {
+        const currentCategories = filters.category || [];
+        const newCategories = checked
+            ? [...currentCategories, category]
+            : currentCategories.filter((c) => c !== category);
 
-    //     onFilterChange("category", newCategories);
-    // };
+        onFilterChange("category", newCategories);
+    };
 
     const hasActiveFilters =
         filters.search ||
@@ -153,30 +146,29 @@ export function ProductFilter({ filters, onFilterChange, onClearFilters }: Produ
                 </div>
             </div>
 
-            {/* Categorías (Deshabilitado temporalmente) */}
-            {/* <div className="space-y-3">
+            {/* Categorías */}
+            <div className="space-y-3">
                 <Label className="flex flex-inline items-center">Categoría</Label>
-                <div className="space-y-2 opacity-60 cursor-not-allowed">
-                    {CATEGORIES.map((cat) => (
-                        <div key={cat.value} className="flex items-center gap-2">
+                <div className="space-y-2">
+                    {Object.entries(PRODUCT_CATEGORIES).map(([value, label]) => (
+                        <div key={value} className="flex items-center gap-2">
                             <Checkbox
-                                id={cat.value}
-                                checked={filters.category?.includes(cat.value)}
-                                disabled={true}
+                                id={value}
+                                checked={filters.category?.includes(value)}
                                 onCheckedChange={(checked) =>
-                                    handleCategoryChange(cat.value, checked as boolean)
+                                    handleCategoryChange(value, checked as boolean)
                                 }
                             />
                             <Label
-                                htmlFor={cat.value}
-                                className="text-sm font-normal cursor-not-allowed"
+                                htmlFor={value}
+                                className="text-sm font-normal cursor-pointer"
                             >
-                                {cat.label}
+                                {label}
                             </Label>
                         </div>
                     ))}
                 </div>
-            </div> */}
+            </div>
 
             {/* Rango de precio */}
             <div className="space-y-3">

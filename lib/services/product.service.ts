@@ -1,50 +1,50 @@
 import { prisma } from "@/lib/utils/db";
-import { Prisma } from "@prisma/client";
+import { Prisma, ProductCategory } from "@prisma/client";
 import {
-    CreateProductInput,
-    UpdateProductInput,
-    UpdateStockInput,
+  CreateProductInput,
+  UpdateProductInput,
+  UpdateStockInput,
 } from "@/lib/validations/product.schema";
 
 /**
- * Servicio: product.service.ts
- * Descripción: Servicio para gestión de productos (CRUD completo e inventario)
+ * Descripción: Servicio para la gestión de productos (CRUD completo e inventario).
+ * Requiere: Base de datos configurada y esquemas de validación de productos.
  * Implementa: RF-012, RF-013, RF-014, HU-010
  */
 
 // Interfaz para filtros de búsqueda
 export interface ProductFilters {
-    category?: string;
-    vendorId?: string;
-    availability?: string; // 'in_stock' | 'low_stock' | 'all'
-    search?: string;
-    page?: number;
-    limit?: number;
-    municipality?: string;
-    minPrice?: number;
-    maxPrice?: number;
+  category?: string;
+  vendorId?: string;
+  availability?: string; // "in_stock" | "low_stock" | "all"
+  search?: string;
+  page?: number;
+  limit?: number;
+  municipality?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 // Interfaz para resultado paginado
 export type ProductWithVendor = Prisma.ProductGetPayload<{
-    include: {
-        vendor: {
-            select: {
-                id: true,
-                businessName: true,
-                municipality: true,
-                address: true,
-            }
-        }
+  include: {
+    vendor: {
+      select: {
+        id: true;
+        businessName: true;
+        municipality: true;
+        address: true;
+      };
     };
+  };
 }>;
 
 // Actualiza la interfaz
 export interface PaginatedProducts {
-    products: ProductWithVendor[];
-    total: number;
-    page: number;
-    totalPages: number;
+  products: ProductWithVendor[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 
 /**
@@ -52,109 +52,104 @@ export interface PaginatedProducts {
  * @param filters - Filtros de búsqueda
  * @returns Productos paginados
  */
-
 export async function getProducts(
-    filters: ProductFilters = {}
+  filters: ProductFilters = {}
 ): Promise<PaginatedProducts> {
-    const {
-        category,
-        vendorId,
-        availability,
-        search,
-        page = 1,
-        limit = 12,
-        municipality,
-        minPrice,
-        maxPrice,
-    } = filters;
+  const {
+    category,
+    vendorId,
+    availability,
+    search,
+    page = 1,
+    limit = 12,
+    municipality,
+    minPrice,
+    maxPrice,
+  } = filters;
 
-    // Construir condiciones de búsqueda
-    const where: Prisma.ProductWhereInput = {};
+  // Construir condiciones de búsqueda
+  const where: Prisma.ProductWhereInput = {};
 
-    // 1. Filtro de Categoría (Flexible y Múltiple)
-    // El frontend envía categorías separadas por coma, ej: "ALIMENTO,HIGIENE"
-    if (category) {
-        const categories = category.split(",");
-        const searchCategories: string[] = [];
+  // 1. Filtro de Categoría (Flexible y Múltiple)
+  // El frontend envía categorías separadas por coma, ej: "ALIMENTO,HIGIENE"
+  if (category) {
+    const categories = category.split(",");
+    const searchCategories: ProductCategory[] = [];
 
-        categories.forEach((cat: string) => {
-            const trimmedCat = cat.trim();
-            if (trimmedCat === "ALIMENTO") {
-                searchCategories.push("ALIMENTO_PERROS", "ALIMENTO_GATOS");
-            } else if (trimmedCat === "OTROS") {
-                searchCategories.push("ACCESORIOS");
-            } else {
-                searchCategories.push(trimmedCat);
-            }
-        });
+    categories.forEach((cat: string) => {
+      const trimmedCat = cat.trim() as ProductCategory;
+      if (Object.values(ProductCategory).includes(trimmedCat)) {
+        searchCategories.push(trimmedCat);
+      }
+    });
 
-        if (searchCategories.length > 0) {
-            where.category = { in: searchCategories };
-        }
+    if (searchCategories.length > 0) {
+      where.category = { in: searchCategories };
     }
+  }
 
-    // 2. Filtro de Municipio
-    if (municipality && municipality !== "all") {
-        where.vendor = {
-            municipality: municipality as Prisma.EnumMunicipalityFilter // Fix: Use correct Prisma type
-        };
-    }
-
-    // 3. Filtro de Precio (Rango)
-    if (minPrice !== undefined || maxPrice !== undefined) {
-        where.price = {};
-        if (minPrice !== undefined) where.price.gte = minPrice;
-        if (maxPrice !== undefined) where.price.lte = maxPrice;
-    }
-
-    if (vendorId) {
-        where.vendorId = vendorId;
-    }
-
-    if (availability) {
-        if (availability === 'in_stock') {
-            where.stock = { gt: 0 };
-        } else if (availability === 'low_stock') {
-            where.stock = { gt: 0, lte: 10 };
-        }
-    }
-
-    if (search) {
-        where.OR = [
-            { name: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
-        ];
-    }
-
-    // Ejecutar consultas en paralelo
-    const [products, total] = await Promise.all([
-        prisma.product.findMany({
-            where,
-            include: {
-                vendor: {
-                    select: {
-                        id: true,
-                        businessName: true,
-                        municipality: true,
-                        address: true,
-                    },
-                },
-            },
-            orderBy: {
-                createdAt: "desc",
-            },
-            skip: (page - 1) * limit,
-            take: limit,
-        }),
-        prisma.product.count({ where }),
-    ]);
-
-    return {
-        products,
-        total,
-        page,
-        totalPages: Math.ceil(total / limit),
+  // 2. Filtro de Municipio
+  if (municipality && municipality !== "all") {
+    where.vendor = {
+      municipality: municipality as Prisma.EnumMunicipalityFilter // Fix: Use correct Prisma type
     };
+  }
+
+  // 3. Filtro de Precio (Rango)
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    where.price = {};
+    if (minPrice !== undefined) where.price.gte = minPrice;
+    if (maxPrice !== undefined) where.price.lte = maxPrice;
+  }
+
+  if (vendorId) {
+    where.vendorId = vendorId;
+  }
+
+  if (availability) {
+    if (availability === "in_stock") {
+      where.stock = { gt: 0 };
+    } else if (availability === "low_stock") {
+      where.stock = { gt: 0, lte: 10 };
+    }
+  }
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  // Ejecutar consultas en paralelo
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      include: {
+        vendor: {
+          select: {
+            id: true,
+            businessName: true,
+            municipality: true,
+            address: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.product.count({ where }),
+  ]);
+
+  return {
+    products,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 /**
@@ -163,21 +158,21 @@ export async function getProducts(
  * @returns Producto con datos del vendedor o null
  */
 export async function getProductById(id: string) {
-    return await prisma.product.findUnique({
-        where: { id },
-        include: {
-            vendor: {
-                select: {
-                    id: true,
-                    businessName: true,
-                    municipality: true,
-                    address: true,
-                    description: true,
-                    businessPhone: true,
-                },
-            },
+  return await prisma.product.findUnique({
+    where: { id },
+    include: {
+      vendor: {
+        select: {
+          id: true,
+          businessName: true,
+          municipality: true,
+          address: true,
+          description: true,
+          businessPhone: true,
         },
-    });
+      },
+    },
+  });
 }
 
 /**
@@ -186,27 +181,31 @@ export async function getProductById(id: string) {
  * @param vendorId - ID del vendedor (opcional, para priorizar mismo vendedor)
  * @param category - Categoría del producto
  */
-export async function getSimilarProducts(currentId: string, vendorId: string, category: string) {
-    return await prisma.product.findMany({
-        where: {
-            id: { not: currentId },
-            category: category,
-            stock: { gt: 0 } // Solo productos disponibles
-        },
-        include: {
-            vendor: {
-                select: {
-                    id: true,
-                    businessName: true,
-                    municipality: true,
-                }
-            }
-        },
-        take: 3,
-        orderBy: {
-            createdAt: 'desc'
+export async function getSimilarProducts(
+  currentId: string,
+  vendorId: string,
+  category: ProductCategory
+) {
+  return await prisma.product.findMany({
+    where: {
+      id: { not: currentId },
+      category: category,
+      stock: { gt: 0 } // Solo productos disponibles
+    },
+    include: {
+      vendor: {
+        select: {
+          id: true,
+          businessName: true,
+          municipality: true,
         }
-    });
+      }
+    },
+    take: 3,
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
 }
 
 /**
@@ -216,37 +215,37 @@ export async function getSimilarProducts(currentId: string, vendorId: string, ca
  * @returns Producto creado
  */
 export async function createProduct(
-    data: CreateProductInput,
-    vendorId: string
+  data: CreateProductInput,
+  vendorId: string
 ) {
-    // Verificar que el vendedor existe y está verificado
-    const vendor = await prisma.vendor.findUnique({
-        where: { id: vendorId },
-    });
+  // Verificar que el vendedor existe y está verificado
+  const vendor = await prisma.vendor.findUnique({
+    where: { id: vendorId },
+  });
 
-    if (!vendor) {
-        throw new Error("Vendedor no encontrado");
-    }
+  if (!vendor) {
+    throw new Error("Vendedor no encontrado");
+  }
 
-    if (!vendor.verified) {
-        throw new Error("Vendedor no verificado");
-    }
+  if (!vendor.verified) {
+    throw new Error("Vendedor no verificado");
+  }
 
-    // Crear producto
-    return await prisma.product.create({
-        data: {
-            ...data,
-            vendorId,
+  // Crear producto
+  return await prisma.product.create({
+    data: {
+      ...data,
+      vendorId,
+    },
+    include: {
+      vendor: {
+        select: {
+          id: true,
+          businessName: true,
         },
-        include: {
-            vendor: {
-                select: {
-                    id: true,
-                    businessName: true,
-                },
-            },
-        },
-    });
+      },
+    },
+  });
 }
 
 /**
@@ -257,36 +256,36 @@ export async function createProduct(
  * @returns Producto actualizado
  */
 export async function updateProduct(
-    id: string,
-    data: UpdateProductInput,
-    vendorId: string
+  id: string,
+  data: UpdateProductInput,
+  vendorId: string
 ) {
-    // Verificar que el producto existe y pertenece al vendedor
-    const product = await prisma.product.findUnique({
-        where: { id },
-    });
+  // Verificar que el producto existe y pertenece al vendedor
+  const product = await prisma.product.findUnique({
+    where: { id },
+  });
 
-    if (!product) {
-        throw new Error("Producto no encontrado");
-    }
+  if (!product) {
+    throw new Error("Producto no encontrado");
+  }
 
-    if (product.vendorId !== vendorId) {
-        throw new Error("No tienes permisos para editar este producto");
-    }
+  if (product.vendorId !== vendorId) {
+    throw new Error("No tienes permisos para editar este producto");
+  }
 
-    // Actualizar producto
-    return await prisma.product.update({
-        where: { id },
-        data,
-        include: {
-            vendor: {
-                select: {
-                    id: true,
-                    businessName: true,
-                },
-            },
+  // Actualizar producto
+  return await prisma.product.update({
+    where: { id },
+    data,
+    include: {
+      vendor: {
+        select: {
+          id: true,
+          businessName: true,
         },
-    });
+      },
+    },
+  });
 }
 
 /**
@@ -297,30 +296,30 @@ export async function updateProduct(
  * @returns Producto con stock actualizado
  */
 export async function updateStock(
-    id: string,
-    stockData: UpdateStockInput,
-    vendorId: string
+  id: string,
+  stockData: UpdateStockInput,
+  vendorId: string
 ) {
-    // Verificar propiedad
-    const product = await prisma.product.findUnique({
-        where: { id },
-    });
+  // Verificar propiedad
+  const product = await prisma.product.findUnique({
+    where: { id },
+  });
 
-    if (!product) {
-        throw new Error("Producto no encontrado");
-    }
+  if (!product) {
+    throw new Error("Producto no encontrado");
+  }
 
-    if (product.vendorId !== vendorId) {
-        throw new Error("No tienes permisos para modificar este producto");
-    }
+  if (product.vendorId !== vendorId) {
+    throw new Error("No tienes permisos para modificar este producto");
+  }
 
-    // Actualizar stock
-    return await prisma.product.update({
-        where: { id },
-        data: {
-            stock: stockData.stock,
-        },
-    });
+  // Actualizar stock
+  return await prisma.product.update({
+    where: { id },
+    data: {
+      stock: stockData.stock,
+    },
+  });
 }
 
 /**
@@ -330,34 +329,34 @@ export async function updateStock(
  * @returns Producto eliminado
  */
 export async function deleteProduct(id: string, vendorId: string) {
-    // Verificar propiedad
-    const product = await prisma.product.findUnique({
-        where: { id },
-    });
+  // Verificar propiedad
+  const product = await prisma.product.findUnique({
+    where: { id },
+  });
 
-    if (!product) {
-        throw new Error("Producto no encontrado");
-    }
+  if (!product) {
+    throw new Error("Producto no encontrado");
+  }
 
-    if (product.vendorId !== vendorId) {
-        throw new Error("No tienes permisos para eliminar este producto");
-    }
+  if (product.vendorId !== vendorId) {
+    throw new Error("No tienes permisos para eliminar este producto");
+  }
 
-    // Verificar si tiene órdenes asociadas
-    const orderItemsCount = await prisma.orderItem.count({
-        where: { productId: id },
-    });
+  // Verificar si tiene órdenes asociadas
+  const orderItemsCount = await prisma.orderItem.count({
+    where: { productId: id },
+  });
 
-    if (orderItemsCount > 0) {
-        throw new Error(
-            "No se puede eliminar un producto con órdenes asociadas. Considera marcarlo como sin stock."
-        );
-    }
+  if (orderItemsCount > 0) {
+    throw new Error(
+      "No se puede eliminar un producto con órdenes asociadas. Considera marcarlo como sin stock."
+    );
+  }
 
-    // Eliminar producto
-    return await prisma.product.delete({
-        where: { id },
-    });
+  // Eliminar producto
+  return await prisma.product.delete({
+    where: { id },
+  });
 }
 
 /**
@@ -367,21 +366,21 @@ export async function deleteProduct(id: string, vendorId: string) {
  * @returns Productos con stock bajo
  */
 export async function getLowStockProducts(
-    vendorId: string,
-    threshold: number = 10
+  vendorId: string,
+  threshold: number = 10
 ) {
-    return await prisma.product.findMany({
-        where: {
-            vendorId,
-            stock: {
-                gt: 0,
-                lte: threshold,
-            },
-        },
-        orderBy: {
-            stock: "asc",
-        },
-    });
+  return await prisma.product.findMany({
+    where: {
+      vendorId,
+      stock: {
+        gt: 0,
+        lte: threshold,
+      },
+    },
+    orderBy: {
+      stock: "asc",
+    },
+  });
 }
 
 /**
@@ -390,27 +389,27 @@ export async function getLowStockProducts(
  * @returns Estadísticas (total, en stock, agotados, stock bajo)
  */
 export async function getVendorProductStats(vendorId: string) {
-    const [total, inStock, outOfStock, lowStock] = await Promise.all([
-        prisma.product.count({
-            where: { vendorId },
-        }),
-        prisma.product.count({
-            where: { vendorId, stock: { gt: 0 } },
-        }),
-        prisma.product.count({
-            where: { vendorId, stock: 0 },
-        }),
-        prisma.product.count({
-            where: { vendorId, stock: { gt: 0, lte: 10 } },
-        }),
-    ]);
+  const [total, inStock, outOfStock, lowStock] = await Promise.all([
+    prisma.product.count({
+      where: { vendorId },
+    }),
+    prisma.product.count({
+      where: { vendorId, stock: { gt: 0 } },
+    }),
+    prisma.product.count({
+      where: { vendorId, stock: 0 },
+    }),
+    prisma.product.count({
+      where: { vendorId, stock: { gt: 0, lte: 10 } },
+    }),
+  ]);
 
-    return {
-        total,
-        inStock,
-        outOfStock,
-        lowStock,
-    };
+  return {
+    total,
+    inStock,
+    outOfStock,
+    lowStock,
+  };
 }
 
 /*
@@ -428,15 +427,11 @@ export async function getVendorProductStats(vendorId: string) {
  *   Aplica paginación para optimizar carga de datos.
  * - createProduct: Valida que el usuario sea vendedor y crea el producto asociado.
  * - updateProduct/updateStock: Verifican propiedad del producto antes de modificar.
- * - deleteProduct: Eliminación suave (soft delete) o hard delete según configuración.
+ * - deleteProduct: Eliminación suave o hard delete según configuración.
+ * - getSimilarProducts: Consulta y retorna productos similares según categoría.
  *
  * Dependencias Externas:
- * - Prisma: ORM para interacción con MongoDB.
- * - Zod schemas: Validación de datos de entrada.
+ * - Prisma ORM: Para la interacción segura con la base de datos de MongoDB.
+ * - Zod schemas: Validación robusta de datos de entrada.
  *
- * Reglas de Negocio:
- * - Solo vendedores pueden crear/editar productos.
- * - Stock no puede ser negativo.
- * - Productos con stock = 0 se marcan como "Agotado" en búsquedas públicas.
- * - Un vendedor solo puede modificar sus propios productos.
  */

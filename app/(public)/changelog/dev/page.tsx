@@ -30,9 +30,37 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "15 de mayo de 2026";
+  const lastDevUpdate = "16 de mayo de 2026";
 
   const devLogs = [
+    {
+      version: "v1.11.0-dev",
+      date: "16 de Mayo, 2026",
+      title: "Estandarización y Robustez en Productos",
+      description:
+        "Implementación del Estándar de Oro en documentación y refuerzo del tipado estricto en el buscador de productos.",
+      type: "improvement",
+      logs: [
+        {
+          category: "improvement",
+          title: "Buscador: Tipado de Categorías",
+          description: "Refactorización del filtro por categoría para usar validación dinámica contra el enum ProductCategory de Prisma.",
+          icon: <Zap size={18} className="text-amber-500" />,
+        },
+        {
+          category: "docs",
+          title: "Estándar de Oro PawLig",
+          description: "Inclusión de bloques JSDoc y Notas de Implementación exhaustivas en la capa de vistas de productos.",
+          icon: <FileCode size={18} className="text-blue-500" />,
+        },
+        {
+          category: "fix",
+          title: "Validación de Acceso Vendedor",
+          description: "Optimización de la cascada de redirecciones para cuentas de vendedor no verificadas o roles incorrectos.",
+          icon: <ShieldCheck size={18} className="text-emerald-500" />,
+        },
+      ],
+    },
     {
       version: "v1.10.0-dev",
       date: "15 de Mayo, 2026",

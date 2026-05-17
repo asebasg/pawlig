@@ -58,6 +58,15 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum ProductCategory {
+  ALIMENTO
+  JUGUETES
+  ACCESORIOS
+  HIGIENE
+  MEDICAMENTOS
+  OTROS
+}
+
 // ===== MODELS =====
 
 model User {
@@ -219,7 +228,7 @@ model Product {
   name        String
   price       Float
   stock       Int      @default(0)
-  category    String
+  category    ProductCategory
   description String?
   images      String[]
   createdAt   DateTime @default(now())

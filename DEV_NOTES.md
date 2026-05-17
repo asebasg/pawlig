@@ -1,5 +1,23 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Estandarización y Tipado en Gestión de Productos (v1.11.0 — 16-05-2026)
+
+Mejora de la robustez del sistema de gestión de productos mediante tipado estricto de categorías y estandarización de la documentación interna bajo el "Estándar de Oro".
+
+**Archivos modificados:**
+
+- `app/(dashboard)/vendor/products/page.tsx` — Refactorización de la lógica de filtrado y validación de acceso para vendedores.
+- `app/(public)/productos/[id]/page.tsx` — Estandarización de documentación y mejora en la carga de productos similares.
+
+**Detalles Técnicos:**
+
+- **Tipado Estricto de Búsqueda:** Se implementó una validación dinámica para el parámetro `categoryId` en el buscador de productos, utilizando `Object.values(ProductCategory)` para asegurar que solo se procesen categorías válidas de la base de datos.
+- **Validación en Cascada:** Optimización del flujo de seguridad en el panel de vendedor, implementando 4 niveles de verificación (Auth -> Rol -> VendorId -> Verified) con redirecciones semánticas.
+- **Estandarización:** Aplicación exhaustiva de la guía de estilo PawLig, incluyendo bloques JSDoc de cabecera y Notas de Implementación detalladas en el pie de página para mejorar la mantenibilidad por agentes de IA y humanos.
+- **Bug Fix:** Corrección de inconsistencias en el casteo de tipos de filtros que podían causar fallos silenciosos en las consultas de Prisma.
+
+---
+
 ## Sistema de Métricas y Mapa Interactivo (v1.10.0 — 15-05-2026)
 
 Implementación de un sistema analítico completo para administradores, vendedores y refugios, acompañado de una capa geoespacial para la localización de albergues.
