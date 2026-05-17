@@ -10,11 +10,13 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=flat-square&logo=mongodb)
 ![Prisma](https://img.shields.io/badge/Prisma-6.19-2D3748?style=flat-square&logo=prisma)
 ![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-orange?style=flat-square&logo=google-gemini)
+![Leaflet](https://img.shields.io/badge/Leaflet-Maps-green?style=flat-square&logo=leaflet)
+![Recharts](https://img.shields.io/badge/Recharts-Analytics-blue?style=flat-square&logo=recharts)
 
 **Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.8.0 | Última actualización: 06-05-2026_
+_Versión v1.8.0 | Última actualización: 17-05-2026_
 
 </div>
 
@@ -79,8 +81,14 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 
 ### 📊 Paneles de Control (Dashboards)
 
-- **Métricas e Indicadores:** Visualización de datos clave adaptada a cada rol de usuario.
+- **Métricas e Indicadores:** Visualización de datos clave adaptada a cada rol de usuario mediante gráficos interactivos.
 - **Gestión de Usuarios:** Herramientas administrativas para la moderación y seguridad de la comunidad.
+- **Reportes Exportables:** Generación de informes en formatos Excel y PDF para albergues y proveedores.
+
+### 🗺️ Mapa Interactivo de Refugios
+
+- **Geolocalización:** Mapa dinámico para la búsqueda y localización de albergues en el Valle de Aburrá.
+- **Filtros por Municipio:** Herramientas de búsqueda inteligente basadas en la ubicación geográfica.
 
 ---
 
@@ -102,6 +110,12 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 - **Zod:** Validación rigurosa de esquemas en cliente y servidor.
 - **Google Generative AI:** Integración con el modelo `gemini-2.5-flash`.
 - **Resend & React Email:** Infraestructura y diseño para comunicaciones transaccionales.
+
+### Visualización & Reportes
+
+- **Leaflet & React Leaflet:** Biblioteca para mapas interactivos y visualización geoespacial.
+- **Recharts:** Biblioteca de gráficos para la visualización de métricas y analítica.
+- **ExcelJS & jsPDF:** Herramientas para la generación y exportación de reportes dinámicos.
 
 ### Infraestructura
 
