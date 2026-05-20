@@ -1,0 +1,26 @@
+Categoría,Ítem,Puntos,Estado,Avance (%),Notas
+Sprints,Sprint 1,16,Completado,100,Incluye Registro de Adoptantes; Búsqueda de Mascotas y Bloqueo de Usuarios.
+Sprints,Sprint 2,20,Completado,100,Gestión de Mascotas; Inventario; Perfiles y Comunicación por Redes Sociales.
+Sprints,Sprint 3,5,Completado,100,Implementación del flujo de postulación y seguimiento de adopciones.
+Sprints,Sprint 4,16,En Progreso,31.25,Módulo de Reportes de Adopción listo. Pendiente persistencia de Órdenes en base de datos.
+Sprints,Sprint 5,11,En Progreso,72.73,Dashboard Administrativo funcional. Pendiente módulo de gestión de categorías (HU-015).
+Sprints,Funcionalidades Extra,10,Completado,100,Refinamiento con IA (Gemini); Solicitud de Vendedor y Páginas Públicas.
+Requerimientos,Requerimientos Funcionales (RF),18,En Progreso,94.4,17 de 18 RFs completados. RF-016 (Checkout) requiere persistencia en DB.
+Requerimientos,Requerimientos No Funcionales (RNF),8,Completado,100,Seguridad (BCrypt/JWT); Rendimiento; Usabilidad y Escalabilidad verificados.
+Historias de Usuario,HU-001 a HU-008,33,Completado,100,Funcionalidades base de usuarios y adopción totalmente operativas.
+Historias de Usuario,HU-009: Simulación de compra,8,En Progreso,50,Lógica de carrito lista; falta creación de registro Order en MongoDB para trazabilidad.
+Historias de Usuario,HU-010: Gestión de Inventario,5,Completado,100,Control de stock en tiempo real para vendedores desde su panel.
+Historias de Usuario,HU-011: Reporte de Adopciones,5,Completado,100,Generación de informes exportables en múltiples formatos (CSV/Excel/PDF).
+Historias de Usuario,HU-012: Reporte de Órdenes,3,En Progreso,0,Pendiente hasta que se complete la persistencia de órdenes en la HU-009.
+Historias de Usuario,HU-013: Dashboard Admin,8,Completado,100,Panel con métricas globales; visualización de tendencias y crecimiento.
+Historias de Usuario,HU-014: Bloqueo de Usuarios,3,Completado,100,Sistema de auditoría y restricción de acceso por parte del administrador.
+Historias de Usuario,HU-015: Gestión de Categorías,3,TODO,0,Pendiente de creación de endpoints y UI para administración dinámica de categorías.
+Historias de Usuario,HU-016 a HU-018,10,Completado,100,Asistente IA; Solicitudes de cuenta especializada y Centro de Ayuda.
+Documentación,Documentos de Análisis y Diseño,N/A,Completado,100,14 documentos técnicos en /docs (Acta; Requerimientos; Casos de Uso; etc.).
+Documentación,Documentación Técnica de Código,N/A,Completado,100,README; CHANGELOG; DEV_NOTES y Guías de IA estandarizadas.
+Repositorio,Evolución de Versiones,N/A,Completado,100,Ciclo de vida del software cumplido hasta la versión v1.11.0 (16-05-2026).
+Repositorio,Hitos Técnicos Alcanzados,N/A,Completado,100,Tailwind CSS; Google Gemini; Motor 3D en 404; Geocodificación y Vitest.
+Avance Total,Progreso General del Proyecto,78,En Progreso,87.18,Cálculo basado en 68 de los 78 puntos de historia planificados en la documentación.
+Issues Activos,Persistencia de Órdenes,N/A,En Progreso,0,Vincular el flujo de compra con la creación de registros en el modelo 'Order' de Prisma.
+Issues Activos,Administración de Categorías,N/A,TODO,0,Habilitar interfaz para que el administrador pueda añadir o editar categorías del Marketplace.
+Issues Activos,Notificaciones Proactivas de Stock,N/A,TODO,0,Implementar sistema de alertas automáticas (email) cuando el stock llegue a niveles críticos.
