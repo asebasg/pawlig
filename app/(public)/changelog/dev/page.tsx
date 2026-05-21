@@ -30,9 +30,37 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "16 de mayo de 2026";
+  const lastDevUpdate = "21 de mayo de 2026";
 
   const devLogs = [
+    {
+      version: "v1.12.0-dev",
+      date: "21 de Mayo, 2026",
+      title: "Auditoría Técnica y Documentación",
+      description:
+        "Evaluación exhaustiva de la base de código y actualización de la documentación técnica para reflejar la estructura reciente y medir el progreso del desarrollo.",
+      type: "docs",
+      logs: [
+        {
+          category: "docs",
+          title: "Actualización de CONTEXT",
+          description: "Actualización de CONTEXT.md con dependencias y estructura reciente del proyecto.",
+          icon: <FileCode size={18} className="text-blue-500" />,
+        },
+        {
+          category: "docs",
+          title: "Registro de Actualizaciones",
+          description: "Creación del registro de actualizaciones mensuales (enero-mayo 2026) y README.",
+          icon: <FileCode size={18} className="text-blue-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Auditoría Técnica y Métricas",
+          description: "Realización de auditoría técnica y generación de métricas de control de gestión.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
     {
       version: "v1.11.0-dev",
       date: "16 de Mayo, 2026",

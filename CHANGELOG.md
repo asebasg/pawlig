@@ -4,6 +4,42 @@
 
 ---
 
+## 21-05-2026 - Planificación y Estabilidad de la Plataforma (v1.12.0)
+
+**Commit:** `c7334a8`
+**Tipo:** Mantenimiento y Estabilidad
+**Scope:** plataforma, soporte
+
+### Descripción
+
+Revisión general de la plataforma para optimizar la velocidad de carga y asegurar la estabilidad de las secciones principales. Además, se actualizó el portal de soporte y las guías de ayuda al usuario.
+
+### Mejoras
+
+- **Optimización y Estabilidad**: Evaluación del rendimiento de la plataforma para asegurar una navegación fluida y sin interrupciones en los servicios de adopción y tienda.
+- **Centro de Soporte Actualizado**: Mejoras en la documentación interna de ayuda para resolver dudas frecuentes de forma más rápida.
+- **Preparación de Próximas Funciones**: Estructuración técnica de cara a futuros lanzamientos y mejoras operativas.
+
+---
+
+## 16-05-2026 - Mejoras de Búsqueda y Seguridad en Tienda (v1.11.0)
+
+**Commit:** `9883d7e`
+**Tipo:** Mejora de Experiencia y Seguridad
+**Scope:** tienda, seguridad
+
+### Descripción
+
+Optimización de las funciones de búsqueda en el marketplace de mascotas y refuerzo en las medidas de seguridad del panel de tiendas asociadas.
+
+### Mejoras
+
+- **Búsqueda Precisa**: Ajustes en el motor de búsqueda de productos para garantizar que las categorías muestren resultados exactos e instantáneos.
+- **Seguridad en Cuentas**: Fortalecimiento de los accesos y controles de seguridad para vendedores y comercios aliados en su panel de administración.
+- **Diseño de Productos**: Refinamientos visuales en las páginas de productos para mejorar la lectura y visualización de la información.
+
+---
+
 ## 15-05-2026 - Sistema de Métricas y Mapa Interactivo (v1.10.0)
 
 **Commit:** `#126`
