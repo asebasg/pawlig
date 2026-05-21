@@ -168,7 +168,6 @@ Implementación del sistema completo de notificaciones por email usando Resend y
 - **`app/api/admin/users/[id]/block/route.ts`** (M) - Email de bloqueo/desbloqueo al usuario afectado.
 - **`app/api/admin/shelters/[shelterId]/route.ts`** (M) - Emails de aprobación y rechazo de albergues.
 
-
 ---
 
 ## 20-04-2026 - Auditoría Administrativa y Enlaces Sociales (v1.6.0)
@@ -267,7 +266,6 @@ Despliegue integral del módulo de productos que transforma a PawLig en un marke
 - **`lib/validations/product.schema.ts`** (A)
 
 ---
-
 
 ---
 
@@ -460,7 +458,6 @@ Se corrigió un bug crítico en el filtro de búsqueda por sexo en la galería d
 
 ---
 
-
 ---
 
 ## 30-12-2025 - Documentación: Notas de Implementación en Archivos Clave
@@ -565,7 +562,6 @@ Implementación de páginas de login y registro con redirección basada en roles
   - Adición de constantes de navegación por rol
 
 ---
-
 
 ---
 
@@ -695,7 +691,6 @@ Actualización de la descripción y ubicación del proyecto en el README.
   - Actualización del formato de ubicación a "📍 Medellín, Antioquia, Colombia"
 
 ---
-
 
 ---
 

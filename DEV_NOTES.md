@@ -76,7 +76,6 @@ Implementación del flujo completo de gestión de adopciones, centralizando la l
 
 ---
 
-
 Se rediseñó la página de error 404 integrando una experiencia visual inmersiva basada en un sistema solar 3D. La implementación utiliza un motor de renderizado custom sobre Canvas 2D que simula órbitas keplerianas para los íconos de la marca.
 
 **Archivo modificado:**
