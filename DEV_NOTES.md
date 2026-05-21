@@ -1,5 +1,23 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Auditoría Técnica y Documentación del Proyecto (v1.12.0 — 21-05-2026)
+
+Evaluación exhaustiva de la base de código y actualización de la documentación técnica para reflejar la estructura reciente y medir el progreso del desarrollo.
+
+**Archivos creados/modificados:**
+
+- `CONTEXT.md` — Actualización con dependencias y estructura reciente del proyecto.
+- `monthly-updates.md` — Creación del registro de actualizaciones mensuales (enero-mayo 2026).
+- `README.md` — Actualización general de versión y fechas.
+- `.gitignore` — Actualización con nuevas carpetas y archivos.
+
+**Detalles Técnicos:**
+
+- **Auditoría:** Realización de una evaluación comparativa para identificar brechas funcionales y técnicas en persistencia de órdenes, gestión de categorías y despliegue.
+- **Métricas:** Generación de herramientas de control de gestión para seguimiento de tareas pendientes y *story points*.
+
+---
+
 ## Estandarización y Tipado en Gestión de Productos (v1.11.0 — 16-05-2026)
 
 Mejora de la robustez del sistema de gestión de productos mediante tipado estricto de categorías y estandarización de la documentación interna bajo el "Estándar de Oro".

@@ -18,6 +18,12 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 
+/**
+ * Descripción: Página del registro de cambios (Changelog) público de la plataforma PawLig.
+ * Requiere: Acceso público.
+ * Implementa: Historial visual y amigable de las actualizaciones de la aplicación para el usuario final.
+ */
+
 export const metadata: Metadata = {
   title: "Notas de Lanzamiento",
   description:
@@ -25,9 +31,69 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "15 de mayo de 2026";
+  const lastUpdate = "21 de mayo de 2026";
 
   const versions = [
+    {
+      version: "v1.12.0",
+      date: "21 de Mayo, 2026",
+      title: "Planificación y Estabilidad de la Plataforma",
+      description:
+        "Revisión general de la plataforma para optimizar la velocidad de carga y asegurar la estabilidad de las secciones principales.",
+      color: "from-blue-500 to-indigo-600",
+      updates: [
+        {
+          type: "improved",
+          title: "Estabilidad de Navegación",
+          description:
+            "Revisión integral del rendimiento de la plataforma para una navegación fluida en todos los servicios.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-indigo-500",
+        },
+        {
+          type: "improved",
+          title: "Portal de Ayuda",
+          description:
+            "Actualización del centro de soporte con guías claras para resolver dudas de forma más ágil.",
+          icon: <History size={20} className="text-white" />,
+          bg: "bg-blue-500",
+        },
+      ],
+    },
+    {
+      version: "v1.11.0",
+      date: "16 de Mayo, 2026",
+      title: "Mejoras de Búsqueda y Seguridad en Tienda",
+      description:
+        "Optimización de las funciones de búsqueda en el catálogo y mayor seguridad en el panel para comercios aliados.",
+      color: "from-emerald-500 to-teal-600",
+      updates: [
+        {
+          type: "improved",
+          title: "Búsqueda más Rápida",
+          description:
+            "Ajustes en el buscador para asegurar que las categorías de productos den resultados exactos.",
+          icon: <Shield size={20} className="text-white" />,
+          bg: "bg-emerald-500",
+        },
+        {
+          type: "improved",
+          title: "Seguridad para Tiendas",
+          description:
+            "Refuerzo en los controles de acceso en el panel de vendedor para mayor tranquilidad.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-amber-400",
+        },
+        {
+          type: "improved",
+          title: "Fichas de Productos",
+          description:
+            "Refinamientos de diseño para que sea más sencillo leer la información de las mascotas.",
+          icon: <Sparkles size={20} className="text-white" />,
+          bg: "bg-teal-500",
+        },
+      ],
+    },
     {
       version: "v1.10.0",
       date: "15 de Mayo, 2026",
@@ -655,3 +721,24 @@ export default function ChangelogPage() {
     </main>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Vista de registro de cambios (Changelog) público de la plataforma PawLig.
+ * Presenta las novedades y actualizaciones del sistema de cara al usuario final.
+ *
+ * Lógica Clave:
+ * - Historial Cronológico: Renderiza de forma estática la lista de actualizaciones de la app.
+ * - Estética Premium: Incorpora efectos visuales, degradados y animaciones modernas en el hero y las tarjetas de versiones.
+ * - Layout Responsivo: Adaptado para lectura cómoda tanto en dispositivos móviles como en pantallas grandes con barra de navegación lateral sticky.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconos ilustrativos de las categorías de cambios.
+ * - next/link: Navegación nativa optimizada.
+ * - next/image: Despliegue optimizado de imágenes de branding y de la comunidad.
+ *
+ */
