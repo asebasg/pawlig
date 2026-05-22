@@ -16,7 +16,7 @@
 **Proyecto de grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.8.0 | Última actualización: 17-05-2026_
+_Versión v1.11.0 | Última actualización: 21-05-2026_
 
 </div>
 
@@ -43,7 +43,7 @@ _Versión v1.8.0 | Última actualización: 17-05-2026_
 
 **PawLig** es una plataforma web full-stack integral diseñada para facilitar la adopción responsable de mascotas y dinamizar el comercio de productos especializados en el Valle de Aburrá. Nuestra misión es conectar a albergues, proveedores y adoptantes en un ecosistema seguro, eficiente y empático.
 
-La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Artificial Generativa**, para mejorar la calidad de las publicaciones y asegurar que cada mascota encuentre el hogar que merece.
+La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Artificial Generativa** y **Visualización Geoespacial**, para asegurar que cada mascota encuentre el hogar que merece y cada usuario tenga una experiencia óptima.
 
 ---
 
@@ -56,15 +56,16 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 - **Auditoría completa:** Registro detallado de acciones administrativas (bloqueos, cambios de rol) con justificaciones obligatorias, IP y User-Agent.
 - **Seguridad en UI:** Inputs de contraseña con toggle de visibilidad y protección contra duplicidad de iconos nativos del navegador.
 
-### 🐕 Ecosistema de Adopciones con IA
+### 🐕 Ecosistema de Adopciones con IA y Gestión Avanzada
 
-- **Asistente de IA (Google Gemini):** Refinamiento automático de descripciones de mascotas para maximizar el impacto emocional y la claridad.
-- **Gestión integral:** Ciclo de vida completo de la adopción, desde la publicación hasta la aprobación final.
+- **Asistente de IA (Google Gemini):** Refinamiento automático de descripciones de mascotas para maximizar el impacto emocional.
+- **Ciclo de Vida de Postulaciones:** Gestión integral de solicitudes con estados automatizados (Disponible, En Proceso, Adoptado) y transacciones atómicas.
+- **Edad Precisa:** Sistema de registro y formateo de edad en años y meses para una descripción detallada de los ejemplares.
 - **Búsqueda inteligente:** Filtros avanzados por especie, raza, edad, sexo y ubicación.
 
 ### 🛍️ Marketplace Especializado
 
-- **Catálogo dinámico:** Gestión de inventario en tiempo real para proveedores.
+- **Catálogo dinámico:** Gestión de inventario en tiempo real para proveedores con validaciones de categoría estrictas.
 - **IA para Ventas:** Optimizador de descripciones de productos mediante IA para mejorar la conversión.
 - **Carrito persistente:** Experiencia de compra fluida con persistencia local y sincronización de estado.
 
@@ -74,21 +75,22 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 - **Branding Cohesivo:** Correos electrónicos diseñados con React Email para una experiencia de marca consistente.
 - **Automatización:** Envío inteligente de estados de pedido y confirmaciones de adopción vía Resend.
 
-### 📑 Centro de Ayuda y Documentación
+### 🌌 Experiencia Visual Inmersiva
 
-- **Help Center Integrado:** Manual de usuario y guías rápidas accesibles directamente en la plataforma.
-- **Transparencia:** Acceso público a términos, privacidad y registro de cambios (Changelog).
+- **Motor Orbital 404:** Página de error personalizada con una simulación física de órbitas planetarias en 3D (Canvas 2D) basada en las leyes de Kepler.
+- **Interfaz Fluida:** Animaciones sutiles y diseño responsivo optimizado para una navegación intuitiva.
 
-### 📊 Paneles de Control (Dashboards)
+### 📊 Paneles de Control y Métricas (Dashboards)
 
-- **Métricas e Indicadores:** Visualización de datos clave adaptada a cada rol de usuario mediante gráficos interactivos.
-- **Gestión de Usuarios:** Herramientas administrativas para la moderación y seguridad de la comunidad.
-- **Reportes Exportables:** Generación de informes en formatos Excel y PDF para albergues y proveedores.
+- **Métricas Analíticas:** Visualización de tendencias de ventas, adopciones y rendimiento de inventario mediante Recharts.
+- **Reportes Exportables:** Generación dinámica de informes en formatos Excel, PDF y CSV para una gestión profesional de datos.
+- **Gestión de Usuarios:** Herramientas administrativas avanzadas para la moderación y seguridad de la comunidad.
 
-### 🗺️ Mapa Interactivo de Refugios
+### 🗺️ Mapa Interactivo y Geolocalización
 
-- **Geolocalización:** Mapa dinámico para la búsqueda y localización de albergues en el Valle de Aburrá.
-- **Filtros por Municipio:** Herramientas de búsqueda inteligente basadas en la ubicación geográfica.
+- **Localización de Albergues:** Mapa dinámico (Leaflet) para la búsqueda geográfica de refugios en el Valle de Aburrá.
+- **Geocodificación Inteligente:** Normalización y geolocalización automática de direcciones de albergues registrados.
+- **Filtros Espaciales:** Búsqueda por municipio y proximidad geográfica.
 
 ---
 
@@ -96,32 +98,32 @@ La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Arti
 
 ### Frontend & UI
 
-- **Next.js 14 (App Router):** Framework principal para una experiencia web moderna y rápida.
-- **React 18:** Biblioteca base para la construcción de interfaces.
+- **Next.js 14 (App Router):** Framework principal con renderizado en el servidor y rutas optimizadas.
+- **React 18:** Biblioteca base para la construcción de interfaces reactivas.
 - **Tailwind CSS:** Estilizado basado en utilidades con un sistema de diseño cohesivo.
-- **Lucide React:** Set de iconos consistente y ligero.
+- **Lucide React:** Set de iconos consistente.
 - **Radix UI:** Primitivas de componentes accesibles.
 
 ### Backend & Lógica
 
-- **TypeScript 5:** Tipado estático para un código robusto y mantenible.
+- **TypeScript 5:** Tipado estricto (Zero `any` policy) para un código robusto y mantenible.
 - **NextAuth.js:** Gestión de autenticación y sesiones seguras.
-- **Prisma ORM:** Modelado de datos y consultas tipadas a la base de datos.
-- **Zod:** Validación rigurosa de esquemas en cliente y servidor.
+- **Prisma ORM:** Modelado de datos y consultas tipadas a MongoDB Atlas.
+- **Zod:** Validación rigurosa de esquemas en cascada (cliente/servidor).
 - **Google Generative AI:** Integración con el modelo `gemini-2.5-flash`.
-- **Resend & React Email:** Infraestructura y diseño para comunicaciones transaccionales.
+- **Resend & React Email:** Infraestructura para comunicaciones transaccionales.
 
 ### Visualización & Reportes
 
-- **Leaflet & React Leaflet:** Biblioteca para mapas interactivos y visualización geoespacial.
-- **Recharts:** Biblioteca de gráficos para la visualización de métricas y analítica.
-- **ExcelJS & jsPDF:** Herramientas para la generación y exportación de reportes dinámicos.
+- **Leaflet & React Leaflet:** Visualización geoespacial y mapas interactivos.
+- **Recharts:** Biblioteca de gráficos para analítica avanzada.
+- **ExcelJS & jsPDF:** Motores de generación de reportes empresariales.
 
-### Infraestructura
+### Infraestructura & Testing
 
 - **MongoDB Atlas:** Base de datos NoSQL escalable.
-- **Cloudinary:** Gestión y optimización de activos multimedia (imágenes).
-- **Vitest:** Framework de pruebas unitarias y de integración de alto rendimiento.
+- **Cloudinary:** Gestión y optimización de activos multimedia.
+- **Vitest:** Suite de pruebas unitarias y de integración de alto rendimiento.
 
 ---
 
@@ -225,7 +227,7 @@ pawlig/
 
 ## 🔐 Seguridad y Calidad
 
-- **Validación Zod:** Ningún dato entra a la base de datos sin ser validado estrictamente.
+- **Validación Zod:** Ningún dato entra a la base de datos sin ser validado estrictamente mediante esquemas en cascada.
 - **Manejo de Errores:** Sistema centralizado para respuestas de API y retroalimentación al usuario.
 - **Testing:** Suite de pruebas que asegura la integridad de los servicios críticos de mascotas y usuarios.
 - **Escalabilidad:** Arquitectura basada en servicios que separa la lógica de negocio de los controladores de API.
