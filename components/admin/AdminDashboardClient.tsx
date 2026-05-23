@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClipboardCheck, Users, BarChart3, ArrowRight } from 'lucide-react';
+import { ClipboardCheck, Users, BarChart3, ArrowRight, CodeXml, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -47,7 +47,23 @@ export default function AdminDashboardClient({ userSession }: AdminDashboardClie
             href: '/admin/metrics',
             color: 'text-orange-500',
             bgColor: 'bg-orange-50',
-        }
+        },
+        {
+            title: 'Notas de Desarrollo',
+            description: 'Obtén logs, notas y actualizaciones de desarrollo para mantenerte al día con las últimas implementaciones y cambios en la plataforma.',
+            icon: CodeXml,
+            href: '/changelog/dev',
+            color: 'text-green-500',
+            bgColor: 'bg-green-50',
+        },
+        {
+            title: 'Repositorio',
+            description: 'Accede al repositorio de código fuente y gestiona las contribuciones de la comunidad.',
+            icon: Github,
+            href: 'https://github.com/asebasg/pawlig',
+            color: 'text-white',
+            bgColor: 'bg-gray-700',
+        },
     ];
 
     return (
