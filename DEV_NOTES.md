@@ -1,5 +1,22 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Dashboard del Administrador y Enlaces de Gestión (v1.13.0 — 23-05-2026)
+
+Implementación del panel de control centralizado para administradores con validación de seguridad de servidor y accesos directos para la administración del sistema.
+
+**Archivos creados/modificados:**
+
+- `app/(dashboard)/admin/page.tsx` — Página de servidor para la validación de rol administrativo y renderizado del dashboard.
+- `components/admin/AdminDashboardClient.tsx` — Interfaz interactiva de administración con accesos a moderación, usuarios, métricas y desarrollo.
+
+**Detalles Técnicos:**
+
+- **Control de Acceso Seguro:** Validación de la sesión en el servidor con NextAuth (`getServerSession`) y doble verificación del rol `ADMIN` en la base de datos de Prisma, redirigiendo a los usuarios no autorizados de forma segura.
+- **UI Modular del Administrador:** Grid de accesos rápidos con componentes de tarjetas (`Card`) interactivos para las áreas críticas de Moderación, Usuarios, Métricas y enlaces técnicos.
+- **Acceso a Desarrollo y Repositorio:** Integración directa en el panel de enlaces al repositorio de GitHub del proyecto y a la página interna de Notas de Desarrollo.
+
+---
+
 ## Auditoría Técnica y Documentación del Proyecto (v1.12.0 — 21-05-2026)
 
 Evaluación exhaustiva de la base de código y actualización de la documentación técnica para reflejar la estructura reciente y medir el progreso del desarrollo.

@@ -30,9 +30,37 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "21 de mayo de 2026";
+  const lastDevUpdate = "23 de mayo de 2026";
 
   const devLogs = [
+    {
+      version: "v1.13.0-dev",
+      date: "23 de Mayo, 2026",
+      title: "Dashboard del Administrador y Enlaces de Gestión",
+      description:
+        "Implementación del panel de control centralizado para administradores con validación de seguridad de servidor y accesos directos para la administración del sistema.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Dashboard de Administración",
+          description: "Página de servidor con validación estricta de sesión y verificación del rol ADMIN en la base de datos.",
+          icon: <ShieldCheck size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "feat",
+          title: "UI del Dashboard (Cliente)",
+          description: "Desarrollo del componente cliente interactivo con accesos rápidos a moderación, usuarios y métricas globales.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Enlaces de Gestión y Desarrollo",
+          description: "Integración en el panel de accesos directos al repositorio de GitHub y a las Notas de Desarrollo.",
+          icon: <Zap size={18} className="text-amber-500" />,
+        },
+      ],
+    },
     {
       version: "v1.12.0-dev",
       date: "21 de Mayo, 2026",
