@@ -38,6 +38,12 @@ enum AuditAction {
   DELETE
 }
 
+enum AuditCategory {
+  USER_MANAGEMENT
+  SHELTER_MODERATION
+  VENDOR_MODERATION
+}
+
 enum PetStatus {
   AVAILABLE
   IN_PROCESS
@@ -349,5 +355,27 @@ model CartItem {
   @@unique([userId, productId]) // Un usuario no puede tener el mismo producto duplicado
   @@index([userId])
   @@index([productId])
+  @@index([createdAt])
+}
+
+model SystemAuditLog {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  category     AuditCategory
+  action       String        // Ej: "APPROVE", "REJECT", "BLOCK", "CHANGE_ROLE"
+  actorId      String        @db.ObjectId 
+  actorEmail   String
+  resourceType String        // Ej: "SHELTER", "VENDOR", "USER"
+  resourceId   String        @db.ObjectId 
+  before       String?       // JSON String
+  after        String?       // JSON String
+  reason       String
+  ipAddress    String?
+  userAgent    String?
+  requestId    String?       // Correlación para tracing
+  createdAt    DateTime      @default(now())
+
+  @@index([category])
+  @@index([action])
+  @@index([resourceType, resourceId])
   @@index([createdAt])
 }

@@ -30,9 +30,43 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "23 de mayo de 2026";
+  const lastDevUpdate = "25 de mayo de 2026";
 
   const devLogs = [
+    {
+      version: "v1.14.0-dev",
+      date: "25 de Mayo, 2026",
+      title: "Moderation Hub Integrado y Auditoría del Sistema",
+      description:
+        "Implementación del módulo de moderación centralizado para administradores con control transaccional de solicitudes de albergues/vendedores y bitácora de auditoría polimórfica.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Bitácora de Auditoría del Sistema",
+          description: "Definición del modelo SystemAuditLog y enums asociados en Prisma para registro polimórfico de eventos del sistema.",
+          icon: <FileCode size={18} className="text-blue-500" />,
+        },
+        {
+          category: "feat",
+          title: "Servicio de Moderación Transaccional",
+          description: "Desarrollo de moderation.service.ts usando transacciones de Prisma para asegurar consistencia atómica y envío asíncrono de emails.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "feat",
+          title: "Endpoints RESTful de Moderación",
+          description: "Creación de APIs protegidas para el listado, aprobación y declinación de solicitudes bajo /api/admin/moderation.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "feat",
+          title: "UI del Moderation Hub y Visor de Auditoría",
+          description: "Desarrollo de vistas y componentes interactivos paginados envueltos en Suspense para cumplir con Next.js App Router.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
     {
       version: "v1.13.0-dev",
       date: "23 de Mayo, 2026",

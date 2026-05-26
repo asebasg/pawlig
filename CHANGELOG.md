@@ -4,6 +4,25 @@
 
 ---
 
+## 25-05-2026 - Creación del Moderation Hub Integrado (v1.13.0)
+
+**Commit:** `N/A`
+**Tipo:** Feature
+**Scope:** admin, moderation
+
+### Descripción
+
+Implementación del módulo unificado **Moderation Hub** bajo el segmento de rutas `/admin/moderation/*` (`/shelters`, `/vendors` y `/audit`). Este módulo centraliza las vistas y operaciones de administración para revisar, aprobar o declinar solicitudes de albergues y negocios/vendedores de manera transaccional, consolidando un registro de auditoría polimórfico persistente en base de datos.
+
+### Mejoras
+
+- **Aprobaciones/Rechazos Transaccionales**: Uso de Prisma transactions para aprobar solicitudes y actualizar el rol del usuario simultáneamente.
+- **Registro de Auditoría Polimórfico**: Nuevo modelo `SystemAuditLog` para rastrear los cambios en albergues, negocios y usuarios.
+- **Visor de Auditoría (Audit Log Viewer)**: Interfaz interactiva y paginada para consultar los eventos y operaciones realizadas por los administradores.
+- **Flujos de Notificación y Email**: Integración con servicios de correo electrónico para notificar de forma asíncrona la aprobación o declinación con sus respectivos motivos.
+
+---
+
 ## 21-05-2026 - Planificación y Estabilidad de la Plataforma (v1.12.0)
 
 **Commit:** `c7334a8`
