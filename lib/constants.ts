@@ -38,11 +38,19 @@ export const NAVIGATION_BY_ROLE = {
   ADMIN: [
     { label: "Inicio", href: "/" },
     { label: "Dashboard", href: "/admin" },
+    { label: "Moderación", href: "/admin/moderation" },
     { label: "Usuarios", href: "/admin/users" },
     { label: "Albergues", href: "/admin/shelters" },
     { label: "Vendedores", href: "/admin/vendors" },
   ]
 } as const;
+
+// Rutas internas del módulo de moderación
+export const MODERATION_NAV_LINKS = [
+  { label: "Albergues", href: "/admin/moderation/shelters" },
+  { label: "Negocios", href: "/admin/moderation/vendors" },
+  { label: "Auditoría", href: "/admin/moderation/audit" },
+] as const;
 
 // Links públicos
 export const PUBLIC_LINKS = [

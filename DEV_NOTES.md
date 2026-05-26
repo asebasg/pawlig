@@ -1,5 +1,31 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Moderation Hub Integrado — Control Centralizado y Auditoría (v1.14.0 — 25-05-2026)
+
+Implementación del módulo de moderación centralizado para administradores que permite gestionar las solicitudes de albergues y vendedores (negocios), manteniendo un historial de auditoría del sistema completo y seguro.
+
+**Archivos creados/modificados:**
+
+- `prisma/schema.prisma` — Adición del modelo `SystemAuditLog` y los enums `AuditCategory` y `AuditAction`.
+- `lib/services/moderation.service.ts` — Lógica de negocio orquestada con transacciones de Prisma para el flujo de aprobación y rechazo de solicitudes.
+- `lib/services/__tests__/moderation.service.spec.ts` — Pruebas unitarias para validar las operaciones y auditorías del servicio de moderación.
+- `app/api/admin/moderation/shelters/route.ts` & `[id]/route.ts` — Endpoints RESTful para la gestión y listado de solicitudes de albergues.
+- `app/api/admin/moderation/vendors/route.ts` & `[id]/route.ts` — Endpoints RESTful para la gestión y listado de solicitudes de vendedores.
+- `app/api/admin/moderation/audit/route.ts` — Endpoint para el listado paginado y filtrado de la bitácora de auditoría.
+- `app/(dashboard)/admin/moderation/page.tsx` — Página principal del Moderation Hub con menú de pestañas.
+- `components/admin/shelter-moderation-client.tsx` — Componente cliente para visualización y acciones sobre albergues.
+- `components/admin/vendor-moderation-client.tsx` — Componente cliente para visualización y acciones sobre vendedores.
+- `components/admin/audit-log-viewer.tsx` — Componente interactivo para el visor de la bitácora de auditoría.
+
+**Detalles Técnicos:**
+
+- **Auditoría Polimórfica:** Diseño del modelo `SystemAuditLog` en Prisma para almacenar eventos de auditoría a nivel de sistema. Admite relaciones lógicas variables con usuarios, albergues o vendedores mediante campos de ID genéricos (`targetId`), categoría (`AuditCategory`) y acción (`AuditAction`).
+- **Transacciones Robustas en Prisma:** Aprobaciones de solicitudes empaquetadas en `prisma.$transaction`. Esto garantiza que los cambios de estado (e.g. `User.role` a `SHELTER` o `VENDOR`, y `Shelter.status` o `Vendor.status` a `APPROVED`) y la inserción del log de auditoría se realicen de forma atómica.
+- **Notificaciones Asíncronas No Bloqueantes:** El envío de notificaciones por correo electrónico (Resend) tras la decisión del administrador se realiza de forma asíncrona, evitando bloquear la respuesta de la transacción en la API y permitiendo tolerancia ante fallos del proveedor de email.
+- **Compatibilidad con Suspense:** Todos los componentes cliente (`shelter-moderation-client.tsx`, `vendor-moderation-client.tsx`, `audit-log-viewer.tsx`) que consumen parámetros de búsqueda dinámicos están envueltos en componentes `<Suspense>` para cumplir estrictamente con los estándares de hidratación del Next.js App Router.
+
+---
+
 ## Dashboard del Administrador y Enlaces de Gestión (v1.13.0 — 23-05-2026)
 
 Implementación del panel de control centralizado para administradores con validación de seguridad de servidor y accesos directos para la administración del sistema.
