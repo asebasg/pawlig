@@ -3,8 +3,6 @@ import { moderationService } from "./moderation.service";
 import { prisma } from "@/lib/utils/db";
 import {
   sendShelterApprovalEmail,
-  sendShelterRejectionEmail,
-  sendVendorApprovalEmail,
   sendVendorRejectionEmail,
 } from "@/lib/services/email.service";
 import { UserRole } from "@prisma/client";
