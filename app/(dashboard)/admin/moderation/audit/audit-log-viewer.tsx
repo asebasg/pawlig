@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   Loader2, Search, Calendar, ChevronDown, Eye, User, FileText,
@@ -56,10 +56,13 @@ export function AuditLogViewer() {
   // Modal state
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
+  // Ref para rastrear la cantidad de logs sin crear dependencia reactiva
+  const logsLengthRef = useRef(0);
+
   const take = 50;
 
-  const fetchLogs = async (isLoadMore = false) => {
-    const skip = isLoadMore ? logs.length : 0;
+  const fetchLogs = useCallback(async (isLoadMore = false) => {
+    const skip = isLoadMore ? logsLengthRef.current : 0;
     const params = new URLSearchParams({
       skip: skip.toString(),
       take: take.toString(),
@@ -77,9 +80,14 @@ export function AuditLogViewer() {
       const data: AuditLog[] = await res.json();
       
       if (isLoadMore) {
-        setLogs((prev) => [...prev, ...data]);
+        setLogs((prev) => {
+          const updated = [...prev, ...data];
+          logsLengthRef.current = updated.length;
+          return updated;
+        });
       } else {
         setLogs(data);
+        logsLengthRef.current = data.length;
       }
       
       setHasMore(data.length === take);
@@ -89,11 +97,11 @@ export function AuditLogViewer() {
       setLoading(false);
       setLoadingMore(false);
     }
-  };
+  }, [startDate, endDate]);
 
   useEffect(() => {
     fetchLogs();
-  }, [startDate, endDate]);
+  }, [fetchLogs]);
 
   const filteredLogs = logs.filter((log) => {
     const matchSearch = log.actorEmail.toLowerCase().includes(search.toLowerCase()) ||
@@ -367,7 +375,7 @@ export function AuditLogViewer() {
               <div className="pt-2">
                 <span className="text-gray-500 font-medium block mb-2">Motivo / Descripción:</span>
                 <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 text-gray-700 italic">
-                  "{selectedLog.reason}"
+                  &ldquo;{selectedLog.reason}&rdquo;
                 </div>
               </div>
 

@@ -154,7 +154,7 @@ export function ShelterModerationClient() {
                 {shelter.description && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                     <p className="text-xs text-gray-600 line-clamp-3 italic">
-                      "{shelter.description}"
+                      &ldquo;{shelter.description}&rdquo;
                     </p>
                   </div>
                 )}

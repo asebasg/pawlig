@@ -159,7 +159,7 @@ export function VendorModerationClient() {
                 {vendor.description && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                     <p className="text-xs text-gray-600 line-clamp-3 italic">
-                      "{vendor.description}"
+                      &ldquo;{vendor.description}&rdquo;
                     </p>
                   </div>
                 )}
