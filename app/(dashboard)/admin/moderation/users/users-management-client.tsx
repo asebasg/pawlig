@@ -3,9 +3,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, Municipality } from "@prisma/client";
-import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye } from "lucide-react";
+import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye, Heart, Home, ShoppingBag } from "lucide-react";
 import BlockUserButton from "@/components/admin/BlockUserButton";
 import Loader from "@/components/ui/loader";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * Descripción: Componente cliente para la gestión administrativa de usuarios.
@@ -184,20 +191,45 @@ export default function UsersManagementClient() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Rol
             </label>
-            <div className="relative">
-              <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value as UserRole | "ALL")}
-                className="text-black w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              >
-                <option value="ALL">Todos</option>
-                <option value="ADOPTER">Adoptantes</option>
-                <option value="SHELTER">Albergues</option>
-                <option value="VENDOR">Vendedores</option>
-                <option value="ADMIN">Administradores</option>
-              </select>
-            </div>
+            <Select value={roleFilter} onValueChange={(val) => setRoleFilter(val as UserRole | "ALL")}>
+              <SelectTrigger className="w-full rounded-lg bg-gray-50 border-gray-200 hover:bg-white focus:bg-white transition-colors px-4 py-2 text-black h-[42px]">
+                <div className="flex items-center gap-2">
+                  <SelectValue placeholder="Todos los roles" />
+                </div>
+              </SelectTrigger>
+              <SelectContent className="rounded-xl shadow-lg border-gray-100 bg-white">
+                <SelectItem value="ALL">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-gray-500" />
+                    <span>Todos</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="ADOPTER">
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-blue-500" />
+                    <span>Adoptantes</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="SHELTER">
+                  <div className="flex items-center gap-2">
+                    <Home className="h-4 w-4 text-teal-500" />
+                    <span>Albergues</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="VENDOR">
+                  <div className="flex items-center gap-2">
+                    <ShoppingBag className="h-4 w-4 text-orange-500" />
+                    <span>Vendedores</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="ADMIN">
+                  <div className="flex items-center gap-2">
+                    <ShieldAlert className="h-4 w-4 text-purple-500" />
+                    <span>Administradores</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -376,16 +408,17 @@ export default function UsersManagementClient() {
                   </div>
                   <div className="flex items-center gap-2">
                     <label className="text-sm text-gray-500">Usuarios por página:</label>
-                    <select
-                      value={limit}
-                      onChange={(e) => setLimit(Number(e.target.value))}
-                      className="text-sm border border-gray-300 rounded-lg p-1"
-                    >
-                      <option value={10}>10</option>
-                      <option value={25}>25</option>
-                      <option value={50}>50</option>
-                      <option value={100}>100</option>
-                    </select>
+                    <Select value={limit.toString()} onValueChange={(val) => setLimit(Number(val))}>
+                      <SelectTrigger className="w-20 rounded-lg bg-gray-50 border-gray-200 hover:bg-white focus:bg-white transition-colors px-2 py-1 text-sm h-8 text-black">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl shadow-lg border-gray-100 bg-white">
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div className="flex gap-2">
