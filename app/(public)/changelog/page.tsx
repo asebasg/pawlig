@@ -35,42 +35,8 @@ export default function ChangelogPage() {
 
   const versions = [
     {
-      version: "v1.13.1",
-      date: "25 de Mayo, 2026",
-      title: "Moderation Hub: Refactorización y Consolidación",
-      description:
-        "Unificación de la gestión de usuarios dentro del Moderation Hub, eliminando secciones duplicadas y mejorando los filtros de moderación.",
-      color: "from-violet-600 to-purple-700",
-      updates: [
-        {
-          type: "improved",
-          title: "Rutas Unificadas",
-          description:
-            "Toda la gestión administrativa ahora vive bajo /admin/moderation, eliminando la sección independiente de usuarios.",
-          icon: <Wrench size={20} className="text-white" />,
-          bg: "bg-violet-600",
-        },
-        {
-          type: "improved",
-          title: "Filtros por Estado",
-          description:
-            "Los listados de albergues y vendedores ahora se pueden filtrar por Pendiente, Aprobado o Rechazado.",
-          icon: <Zap size={20} className="text-white" />,
-          bg: "bg-purple-500",
-        },
-        {
-          type: "added",
-          title: "Selector de Filtros",
-          description:
-            "Nuevo componente de selección para filtrar usuarios por rol y límite en la vista de moderación.",
-          icon: <Sparkles size={20} className="text-white" />,
-          bg: "bg-indigo-500",
-        },
-      ],
-    },
-    {
       version: "v1.13.0",
-      date: "25 de Mayo, 2026",
+      date: "27 de Mayo, 2026",
       title: "Moderation Hub: Centro de Control Administrativo",
       description:
         "Nuevo módulo centralizado para que los administradores gestionen solicitudes de albergues y vendedores con auditoría completa del sistema.",

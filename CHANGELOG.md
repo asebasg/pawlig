@@ -4,7 +4,7 @@
 
 ---
 
-## 25-05-2026 - Moderation Hub: Refactorización de Rutas y Componentes (v1.13.1)
+## 27-05-2026 - Moderation Hub: Refactorización de Rutas y Componentes (v1.13.1)
 
 **Commit:** `6239ec2`
 **Tipo:** Refactor

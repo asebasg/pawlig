@@ -24,18 +24,18 @@ import Link from "next/link";
  */
 
 export const metadata: Metadata = {
-  title: "Notas de Desarrollo | PawLig",
+  title: "Notas de Desarrollo",
   description:
     "Registro técnico de actualizaciones, refactorizaciones y mejoras internas de la plataforma PawLig.",
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "25 de mayo de 2026";
+  const lastDevUpdate = "27 de mayo de 2026";
 
   const devLogs = [
     {
       version: "v1.14.0-dev",
-      date: "25 de Mayo, 2026",
+      date: "27 de Mayo, 2026",
       title: "Moderation Hub Integrado y Auditoría del Sistema",
       description:
         "Implementación del módulo de moderación centralizado para administradores con control transaccional de solicitudes de albergues/vendedores y bitácora de auditoría polimórfica.",

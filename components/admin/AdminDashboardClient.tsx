@@ -26,7 +26,7 @@ export default function AdminDashboardClient({ userSession }: AdminDashboardClie
     const sections = [
         {
             title: 'Moderación',
-            description: 'Gestiona toda la moderación de la plataforma de manera centralizada. Accede al registro de auditoría, gestiona usuarios y solicitudes de albergues y vendedores..',
+            description: 'Gestiona toda la moderación de la plataforma de manera centralizada. Accede al registro de auditoría, gestiona usuarios y solicitudes de albergues y vendedores.',
             icon: ClipboardCheck,
             href: '/admin/moderation',
             color: 'text-blue-500',
