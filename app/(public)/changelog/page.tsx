@@ -31,9 +31,85 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "21 de mayo de 2026";
+  const lastUpdate = "25 de mayo de 2026";
 
   const versions = [
+    {
+      version: "v1.13.1",
+      date: "25 de Mayo, 2026",
+      title: "Moderation Hub: Refactorización y Consolidación",
+      description:
+        "Unificación de la gestión de usuarios dentro del Moderation Hub, eliminando secciones duplicadas y mejorando los filtros de moderación.",
+      color: "from-violet-600 to-purple-700",
+      updates: [
+        {
+          type: "improved",
+          title: "Rutas Unificadas",
+          description:
+            "Toda la gestión administrativa ahora vive bajo /admin/moderation, eliminando la sección independiente de usuarios.",
+          icon: <Wrench size={20} className="text-white" />,
+          bg: "bg-violet-600",
+        },
+        {
+          type: "improved",
+          title: "Filtros por Estado",
+          description:
+            "Los listados de albergues y vendedores ahora se pueden filtrar por Pendiente, Aprobado o Rechazado.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-purple-500",
+        },
+        {
+          type: "added",
+          title: "Selector de Filtros",
+          description:
+            "Nuevo componente de selección para filtrar usuarios por rol y límite en la vista de moderación.",
+          icon: <Sparkles size={20} className="text-white" />,
+          bg: "bg-indigo-500",
+        },
+      ],
+    },
+    {
+      version: "v1.13.0",
+      date: "25 de Mayo, 2026",
+      title: "Moderation Hub: Centro de Control Administrativo",
+      description:
+        "Nuevo módulo centralizado para que los administradores gestionen solicitudes de albergues y vendedores con auditoría completa del sistema.",
+      color: "from-purple-600 to-indigo-700",
+      updates: [
+        {
+          type: "added",
+          title: "Moderation Hub",
+          description:
+            "Panel unificado bajo /admin/moderation para revisar, aprobar o rechazar solicitudes de albergues y vendedores.",
+          icon: <Shield size={20} className="text-white" />,
+          bg: "bg-purple-600",
+        },
+        {
+          type: "added",
+          title: "Registro de Auditoría del Sistema",
+          description:
+            "Bitácora paginada e interactiva que registra cada acción administrativa: aprobaciones, rechazos y bloqueos con fecha, IP y motivo.",
+          icon: <History size={20} className="text-white" />,
+          bg: "bg-indigo-600",
+        },
+        {
+          type: "added",
+          title: "Aprobaciones Transaccionales",
+          description:
+            "Las aprobaciones actualizan el rol del usuario y el estado de la solicitud de forma atómica, garantizando consistencia total.",
+          icon: <Rocket size={20} className="text-white" />,
+          bg: "bg-violet-500",
+        },
+        {
+          type: "improved",
+          title: "Notificaciones Asíncronas",
+          description:
+            "Los emails de aprobación o rechazo se envían sin bloquear la respuesta de la API, con tolerancia a fallos del proveedor.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-blue-500",
+        },
+      ],
+    },
     {
       version: "v1.12.0",
       date: "21 de Mayo, 2026",
