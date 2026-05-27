@@ -18,7 +18,13 @@ import {
 export const moderationService = {
   async getPendingShelters() {
     return prisma.shelter.findMany({
-      where: { verified: false, rejectionReason: null },
+      where: { 
+        verified: false, 
+        OR: [
+          { rejectionReason: null },
+          { rejectionReason: { isSet: false } }
+        ]
+      },
       include: { user: true },
       orderBy: { createdAt: "desc" },
     });
@@ -26,9 +32,53 @@ export const moderationService = {
 
   async getPendingVendors() {
     return prisma.vendor.findMany({
-      where: { verified: false, rejectionReason: null },
+      where: { 
+        verified: false, 
+        OR: [
+          { rejectionReason: null },
+          { rejectionReason: { isSet: false } }
+        ]
+      },
       include: { user: true },
       orderBy: { createdAt: "desc" },
+    });
+  },
+
+  async getApprovedShelters() {
+    return prisma.shelter.findMany({
+      where: { verified: true },
+      include: { user: true },
+      orderBy: { updatedAt: "desc" },
+    });
+  },
+
+  async getApprovedVendors() {
+    return prisma.vendor.findMany({
+      where: { verified: true },
+      include: { user: true },
+      orderBy: { updatedAt: "desc" },
+    });
+  },
+
+  async getRejectedShelters() {
+    return prisma.shelter.findMany({
+      where: { 
+        verified: false, 
+        rejectionReason: { not: null, isSet: true }
+      },
+      include: { user: true },
+      orderBy: { updatedAt: "desc" },
+    });
+  },
+
+  async getRejectedVendors() {
+    return prisma.vendor.findMany({
+      where: { 
+        verified: false, 
+        rejectionReason: { not: null, isSet: true }
+      },
+      include: { user: true },
+      orderBy: { updatedAt: "desc" },
     });
   },
 

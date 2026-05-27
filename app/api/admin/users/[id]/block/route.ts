@@ -152,8 +152,8 @@ export async function PUT(
     });
 
     // Invalidar caché para reflejar los cambios en la UI (Issue 101)
-    revalidatePath(`/admin/users/${userId}/view`);
-    revalidatePath("/admin/users");
+    revalidatePath(`/admin/moderation/users/${userId}/view`);
+    revalidatePath("/admin/moderation/users");
 
     // Enviar notificación por email (RN-018)
     sendUserBlockStatusEmail({

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { UserX, UserCheck } from "lucide-react";
-import BlockUserModal from "@/app/(dashboard)/admin/users/BlockUserModal";
+import BlockUserModal from "@/app/(dashboard)/admin/moderation/users/block-user-modal";
 
 /**
  * POST /api/admin/users/[id]/block

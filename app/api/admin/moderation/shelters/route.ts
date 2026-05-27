@@ -10,7 +10,7 @@ import { UserRole } from "@prisma/client";
  * Requiere: Sesión autenticada con rol ADMIN.
  * Implementa: HU-ModerationHub
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -18,7 +18,18 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const shelters = await moderationService.getPendingShelters();
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status");
+
+    let shelters;
+    if (status === "approved") {
+      shelters = await moderationService.getApprovedShelters();
+    } else if (status === "rejected") {
+      shelters = await moderationService.getRejectedShelters();
+    } else {
+      shelters = await moderationService.getPendingShelters();
+    }
+
     return NextResponse.json(shelters, { status: 200 });
   } catch (error: unknown) {
     console.error("[MODERATION_SHELTERS_GET]", error);

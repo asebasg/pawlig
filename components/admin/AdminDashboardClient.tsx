@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClipboardCheck, Users, BarChart3, ArrowRight, CodeXml, Github } from 'lucide-react';
+import { ClipboardCheck, BarChart3, ArrowRight, CodeXml, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -31,14 +31,6 @@ export default function AdminDashboardClient({ userSession }: AdminDashboardClie
             href: '/admin/moderation',
             color: 'text-blue-500',
             bgColor: 'bg-blue-50',
-        },
-        {
-            title: 'Usuarios',
-            description: 'Administra las cuentas de usuarios, cambia roles y gestiona permisos del sistema.',
-            icon: Users,
-            href: '/admin/users',
-            color: 'text-purple-500',
-            bgColor: 'bg-purple-50',
         },
         {
             title: 'Reportes Globales y Métricas',
