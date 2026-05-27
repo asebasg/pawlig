@@ -40,8 +40,7 @@ export const NAVIGATION_BY_ROLE = {
     { label: "Dashboard", href: "/admin" },
     { label: "Moderación", href: "/admin/moderation" },
     { label: "Usuarios", href: "/admin/users" },
-    { label: "Albergues", href: "/admin/shelters" },
-    { label: "Vendedores", href: "/admin/vendors" },
+    { label: "Métricas", href: "/admin/metrics" },
   ]
 } as const;
 
@@ -83,8 +82,6 @@ export const USER_MENU_OPTIONS = {
   ],
   ADMIN: [
     { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
-    { label: "Moderación", href: "/admin/moderation", icon: "ShieldPlus" },
-    { label: "Métricas", href: "/admin/metrics", icon: "TrendingUp" },
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },

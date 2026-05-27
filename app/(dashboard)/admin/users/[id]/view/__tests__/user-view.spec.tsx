@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import UserViewClient from '@/components/admin/UserViewClient';
 import { AuditHistoryCard } from '@/components/admin/AuditHistoryCard';
-import { UserRole, AuditAction } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 // Mock de dependencias
 vi.mock('next/navigation', () => ({
@@ -65,19 +65,23 @@ describe('UserViewClient', () => {
 describe('AuditHistoryCard', () => {
     const mockAuditRecords = [
         {
-          action: AuditAction.BLOCK,
+          id: 'log-1',
+          action: 'BLOCK',
           reason: 'Contenido inapropiado',
           createdAt: new Date('2024-01-01T10:00:00Z'),
-          performedBy: { name: 'Admin Principal', email: 'admin@pawlig.com' },
+          actorEmail: 'admin@pawlig.com',
+          actorId: 'admin-123',
           ipAddress: '192.168.1.1',
         },
         {
-            action: AuditAction.CHANGE_ROLE,
+            id: 'log-2',
+            action: 'CHANGE_ROLE',
             reason: 'Promoción a moderador',
-            oldValue: 'ADOPTER',
-            newValue: 'SHELTER',
+            before: JSON.stringify({ role: 'ADOPTER' }),
+            after: JSON.stringify({ role: 'SHELTER' }),
             createdAt: new Date('2024-02-01T11:00:00Z'),
-            performedBy: { name: 'Admin Principal', email: 'admin@pawlig.com' },
+            actorEmail: 'admin@pawlig.com',
+            actorId: 'admin-123',
         }
     ];
 

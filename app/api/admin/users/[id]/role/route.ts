@@ -43,6 +43,7 @@ export async function PUT(
       userId,
       newRole,
       adminId,
+      session.user.email as string,
       reason,
       ipAddress,
       userAgent

@@ -131,16 +131,20 @@ export async function PUT(
         },
       });
 
-      await tx.userAudit.create({
+      await tx.systemAuditLog.create({
         data: {
+          category: "USER_MANAGEMENT",
           action: action,
+          actorId: session.user.id,
+          actorEmail: session.user.email as string,
+          resourceType: "USER",
+          resourceId: userId,
+          before: JSON.stringify({ isActive: action === "BLOCK" }),
+          after: JSON.stringify({ isActive: action === "UNBLOCK" }),
           reason: reason,
-          oldValue: action === "BLOCK" ? "ACTIVE" : "BLOCKED",
-          newValue: action === "BLOCK" ? "BLOCKED" : "ACTIVE",
-          adminId: session.user.id,
-          userId: userId,
           ipAddress: ipAddress,
           userAgent: userAgent,
+          requestId: crypto.randomUUID(),
         },
       });
 
