@@ -1,6 +1,31 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
-## Moderation Hub Integrado — Control Centralizado y Auditoría (v1.14.0 — 25-05-2026)
+## Moderation Hub: Refactorización de Rutas y Componentes (v1.13.1 — 25-05-2026)
+
+Consolidación de la gestión de usuarios dentro del Moderation Hub, eliminando la sección independiente y unificando todas las operaciones administrativas bajo `/admin/moderation/*`.
+
+**Archivos creados/modificados:**
+
+- `lib/constants.ts` — Nuevos enlaces de navegación del Moderation Hub (`/admin/moderation/users`, `/admin/moderation/shelters`, etc.).
+- `components/admin/BlockUserButton.tsx` — Actualizado para referenciar la nueva ruta del modal de moderación.
+- `components/admin/EditUserButton.tsx` — Actualizado para reflejar las nuevas rutas de moderación.
+- `components/admin/AdminDashboardClient.tsx` — Eliminado el enlace independiente de gestión de usuarios; ahora apunta al hub.
+- `app/(dashboard)/admin/profile/page.tsx` — Enlace actualizado a `/admin/moderation/users`.
+- `app/api/admin/moderation/shelters/route.ts` & `vendors/route.ts` — Filtrado por estado (`PENDING`, `APPROVED`, `REJECTED`) para gestión granular.
+- `app/api/admin/users/[id]/block/route.ts` — Rutas actualizadas para reflejar la nueva arquitectura de moderación.
+- `components/admin/moderation/UserRoleLimitSelect.tsx` — Nuevo componente de selección para filtros de rol y límite en la vista de usuarios.
+- `package.json` — Actualización de `@prisma/client` y `prisma` a `6.19.3`.
+
+**Detalles Técnicos:**
+
+- **Eliminación de Duplicidad**: Los componentes `BlockUserModal` y `UsersManagementClient` fueron removidos al quedar su funcionalidad absorbida por los componentes del Moderation Hub (`shelter-moderation-client.tsx`, `vendor-moderation-client.tsx`).
+- **Filtrado por Estado en API**: Los endpoints de listado de albergues y vendedores ahora aceptan un parámetro `status` para filtrar por `PENDING`, `APPROVED` o `REJECTED`, permitiendo vistas segmentadas en el hub.
+- **Selector de Filtros Reutilizable**: `UserRoleLimitSelect` implementado como componente controlado con `useSearchParams` para sincronizar el estado de filtros con la URL, compatible con el estándar de `<Suspense>` del App Router.
+- **Compatibilidad Prisma 6.19.3**: Actualización de dependencias para aprovechar mejoras de rendimiento y compatibilidad con MongoDB Atlas.
+
+---
+
+## Moderation Hub Integrado — Control Centralizado y Auditoría (v1.13.0 — 25-05-2026)
 
 Implementación del módulo de moderación centralizado para administradores que permite gestionar las solicitudes de albergues y vendedores (negocios), manteniendo un historial de auditoría del sistema completo y seguro.
 

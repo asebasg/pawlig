@@ -4,9 +4,31 @@
 
 ---
 
+## 25-05-2026 - Moderation Hub: Refactorización de Rutas y Componentes (v1.13.1)
+
+**Commit:** `6239ec2`
+**Tipo:** Refactor
+**Scope:** admin, moderation
+
+### Descripción
+
+Refactorización del módulo de moderación para consolidar la gestión de usuarios directamente en el Moderation Hub, eliminando la sección independiente de gestión de usuarios y unificando todas las operaciones administrativas bajo `/admin/moderation/*`.
+
+### Cambios
+
+- **Rutas Unificadas**: El enlace del perfil de administrador ahora apunta a `/admin/moderation/users`. Eliminada la página independiente de gestión de usuarios.
+- **Componentes Eliminados**: `BlockUserModal` y `UsersManagementClient` removidos al quedar absorbidos por el hub.
+- **API de Moderación Mejorada**: Los endpoints de albergues y vendedores ahora filtran por estado (`PENDING`, `APPROVED`, `REJECTED`) para una gestión más granular.
+- **Constantes Actualizadas**: `lib/constants.ts` incluye los nuevos enlaces de navegación del Moderation Hub.
+- **Botones Refactorizados**: `BlockUserButton` y `EditUserButton` actualizados para referenciar las nuevas rutas de moderación.
+- **Selector de Filtros**: Nuevo componente de selección para filtros de rol y límite de usuarios en la vista de moderación.
+- **Prisma Actualizado**: Versiones de `@prisma/client` y `prisma` actualizadas a `6.19.3`.
+
+---
+
 ## 25-05-2026 - Creación del Moderation Hub Integrado (v1.13.0)
 
-**Commit:** `N/A`
+**Commit:** `0e4dfd8`
 **Tipo:** Feature
 **Scope:** admin, moderation
 
