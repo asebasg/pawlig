@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Edit } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "../ui/button-variants";
-// import EditUserModal from "@/app/(dashboard)/admin/users/EditUserModal";
+// import EditUserModal from "@/app/(dashboard)/admin/moderation/users/edit-user-modal";
 
 /**
  * PUT /api/admin/users/[id] (Pendiente)
@@ -70,7 +70,7 @@ export default function EditUserButton({
               Formulario de edición en construcción para {user.name}...
             </p>
             <div className="flex justify-center gap-3">
-              {/* <Link href={`/admin/users/edit/${user.id`}> */}
+              {/* <Link href={`/admin/moderation/users/edit/${user.id`}`}> */}
               <button
                 onClick={handleSuccess}
                 className={cn(buttonVariants({ variant: "default", size: "sm" }))}

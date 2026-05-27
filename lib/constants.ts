@@ -39,13 +39,13 @@ export const NAVIGATION_BY_ROLE = {
     { label: "Inicio", href: "/" },
     { label: "Dashboard", href: "/admin" },
     { label: "Moderación", href: "/admin/moderation" },
-    { label: "Usuarios", href: "/admin/users" },
     { label: "Métricas", href: "/admin/metrics" },
-  ]
+  ],
 } as const;
 
 // Rutas internas del módulo de moderación
 export const MODERATION_NAV_LINKS = [
+  { label: "Usuarios", href: "/admin/moderation/users" },
   { label: "Albergues", href: "/admin/moderation/shelters" },
   { label: "Negocios", href: "/admin/moderation/vendors" },
   { label: "Auditoría", href: "/admin/moderation/audit" },
@@ -65,7 +65,11 @@ export const USER_MENU_OPTIONS = {
   ADOPTER: [
     { label: "Dashboard", href: "/user", icon: "LayoutDashboard" },
     { label: "Mi Perfil", href: "/user/profile", icon: "User" },
-    { label: "Solicitar Albergue", href: "/user/request-shelter", icon: "Plus" },
+    {
+      label: "Solicitar Albergue",
+      href: "/user/request-shelter",
+      icon: "Plus",
+    },
     { label: "Solicitar Vendedor", href: "/user/request-vendor", icon: "Plus" },
   ],
   SHELTER: [
@@ -85,13 +89,13 @@ export const USER_MENU_OPTIONS = {
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
-  ]
+  ],
 } as const;
 
 // Opciones comunes del menú
 export const COMMON_MENU_OPTIONS = [
   { label: "Configuración", href: "/settings", icon: "Settings" },
-  { label: "Ayuda", href: "/help", icon: "HelpCircle" }
+  { label: "Ayuda", href: "/help", icon: "HelpCircle" },
 ];
 
 // Enlaces del footer
@@ -114,53 +118,66 @@ export const FOOTER_LINKS = {
     { label: "Notas de Lanzamiento", href: "/changelog" },
   ],
   social: [
-    { label: "WhatsApp", href: "https://wa.me/573225316150", icon: "MessageCircle" },
-    { label: "Instagram", href: "https://instagram.com/tianpgz", icon: "Instagram" },
-    { label: "Facebook", href: "https://www.facebook.com/profile.php?id=100095403841310", icon: "Facebook" },
+    {
+      label: "WhatsApp",
+      href: "https://wa.me/573225316150",
+      icon: "MessageCircle",
+    },
+    {
+      label: "Instagram",
+      href: "https://instagram.com/tianpgz",
+      icon: "Instagram",
+    },
+    {
+      label: "Facebook",
+      href: "https://www.facebook.com/profile.php?id=100095403841310",
+      icon: "Facebook",
+    },
     { label: "Twitter", href: "https://twitter.com/tianpgz", icon: "Twitter" },
     { label: "GitHub", href: "https://github.com/asebasg", icon: "Github" },
-  ]
+  ],
 };
 
 // Información de contacto
 export const CONTACT_INFO = {
   email: "soporte@pawlig.com",
   phone: "+57 (4) 123-4567",
-  address: "Medellín, Antioquia, Colombia"
+  address: "Medellín, Antioquia, Colombia",
 };
 
 // Definición de cambios de rol considerados críticos
 export const CRITICAL_ROLE_CHANGES = {
   // Elevación a ADMIN siempre es crítica
   [`${UserRole.ADOPTER}_TO_${UserRole.ADMIN}`]: {
-    message: '¿Estás seguro de promover a este Usuario a Administrador?',
-    warning: 'Tendrá acceso completo al sistema.',
+    message: "¿Estás seguro de promover a este Usuario a Administrador?",
+    warning: "Tendrá acceso completo al sistema.",
   },
   [`${UserRole.SHELTER}_TO_${UserRole.ADMIN}`]: {
-    message: '¿Promover este Albergue a Administrador?',
-    warning: 'Perderá sus permisos específicos de albergue.',
+    message: "¿Promover este Albergue a Administrador?",
+    warning: "Perderá sus permisos específicos de albergue.",
   },
   [`${UserRole.VENDOR}_TO_${UserRole.ADMIN}`]: {
-    message: '¿Promover este Vendedor a Administrador?',
-    warning: 'Perderá sus permisos específicos de vendedor.',
+    message: "¿Promover este Vendedor a Administrador?",
+    warning: "Perderá sus permisos específicos de vendedor.",
   },
 
   // Degradaciones que pierden permisos importantes
   [`${UserRole.SHELTER}_TO_${UserRole.ADOPTER}`]: {
-    message: '¿Degradar este Albergue a Adoptante?',
-    warning: 'Ya no podrá gestionar mascotas ni adopciones.',
+    message: "¿Degradar este Albergue a Adoptante?",
+    warning: "Ya no podrá gestionar mascotas ni adopciones.",
   },
   [`${UserRole.VENDOR}_TO_${UserRole.ADOPTER}`]: {
-    message: '¿Degradar este Vendedor a Adoptante?',
-    warning: 'Ya no podrá gestionar productos ni inventario.',
+    message: "¿Degradar este Vendedor a Adoptante?",
+    warning: "Ya no podrá gestionar productos ni inventario.",
   },
 } as const;
 
 // Función para verificar si un cambio de rol es crítico
 export function isCriticalRoleChange(
   currentRole: UserRole,
-  newRole: UserRole
+  newRole: UserRole,
 ): boolean {
-  const key = `${currentRole}_TO_${newRole}` as keyof typeof CRITICAL_ROLE_CHANGES;
+  const key =
+    `${currentRole}_TO_${newRole}` as keyof typeof CRITICAL_ROLE_CHANGES;
   return key in CRITICAL_ROLE_CHANGES;
 }

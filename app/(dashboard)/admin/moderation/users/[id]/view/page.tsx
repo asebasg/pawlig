@@ -8,6 +8,11 @@ import UserActionsClient from "@/components/admin/UserActionsClient";
 import Link from "next/link";
 import { User, Mail, Phone, MapPin, Calendar, CheckCircle, XCircle, ArrowLeft, CalendarCheck2 } from "lucide-react";
 
+/**
+ * Descripción: Página del servidor para mostrar la información detallada de un usuario y gestionar sus roles/estado.
+ * Requiere: Identificador de usuario en los parámetros de ruta (`id`).
+ * Implementa: Vista de detalle de usuario e historial de auditoría.
+ */
 type UserWithAudit = PrismaUser & {
   auditRecords: SystemAuditLog[];
 };
@@ -32,8 +37,8 @@ export default async function UserViewPage({ params }: { params: { id: string } 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <Link
-        href="/admin/users"
-        className="inline-flex items-center gap-2 py-4 mb-2 rounded-lg text-black hover:text-gray-700 transition-colors"
+        href="/admin/moderation/users"
+        className="inline-flex items-center gap-2 py-4 mb-2 rounded-lg text-black hover:text-gray-700 transition-colors font-semibold"
       >
         <ArrowLeft className="w-5 h-5" />
         Regresar al Panel de Gestión
@@ -73,8 +78,8 @@ export default async function UserViewPage({ params }: { params: { id: string } 
 
           {/* Solo mostrar gestión de roles si el usuario no es ADMIN */}
           <div className="flex flex-col md:flex-row gap-6 w-full [&>*]:flex-1">
-            {user.role !== 'ADMIN' && <UserActionsClient user={{ id: user.id, name: user.name, email: user.email, isActive: user.isActive, role: user.role }} />}
-            {user.role !== 'ADMIN' && <UserViewClient user={{ id: user.id, name: user.name, role: user.role }} />}
+            {user.role !== "ADMIN" && <UserActionsClient user={{ id: user.id, name: user.name, email: user.email, isActive: user.isActive, role: user.role }} />}
+            {user.role !== "ADMIN" && <UserViewClient user={{ id: user.id, name: user.name, role: user.role }} />}
           </div>
         </div>
 
@@ -102,7 +107,7 @@ function InfoItem({ icon: Icon, label, value, valueColor = "text-gray-800" }: { 
 }
 
 export const metadata = {
-  title: 'Detalles del Usuario',
+  title: "Detalles del Usuario",
 };
 
 /*
@@ -111,34 +116,17 @@ export const metadata = {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este es el Server Component principal para la página de vista de detalle
- * de un usuario. Su responsabilidad es obtener los datos del servidor,
- * manejar el estado de "no encontrado" y componer la UI general de la página,
- * delegando la interactividad a componentes de cliente.
+ * Server Component principal para la página de vista de detalle de un usuario.
  *
  * Lógica Clave:
- * - Obtención de Datos del Servidor ('fetch'): La página es 'async', lo que
- *   le permite llamar directamente a 'getUserById' (que usa la caché de
- *   Next.js) para obtener los datos del usuario antes del renderizado.
- * - Manejo de 404: Si 'getUserById' devuelve 'null', se llama a 'notFound()'
- *   de Next.js. Esto interrumpe el renderizado y muestra la página 404 más
- *   cercana, lo cual es la práctica recomendada.
- * - Estructura de Layout (Grid): La página utiliza un sistema de grid de
- *   Tailwind CSS para crear un layout responsive: una sola columna en móviles
- *   ('grid-cols-1') que se convierte en un layout de 2/3 + 1/3 en pantallas
- *   grandes ('lg:grid-cols-3').
- * - Composición de Componentes: Este componente actúa como un orquestador.
- *   Renderiza los diferentes 'Card', el 'AuditHistoryCard' y el
- *   'UserViewClient', pasándoles los datos necesarios como props.
- * - Renderizado Condicional: La sección de "Gestión de Roles"
- *   ('UserViewClient') solo se renderiza si el rol del usuario que se está
- *   viendo no es   'ADMIN', cumpliendo con la regla de negocio de no permitir
- *   la modificación de otros administradores.
+ * - Obtención de Datos del Servidor ('fetch'): Llama a 'getUserById' para obtener
+ *   los datos y su historial de auditoría de forma asíncrona.
+ * - Manejo de 404: Si el usuario no existe, invoca 'notFound()'.
+ * - Control de Acceso UI: No permite que un admin modifique a otro admin.
  *
  * Dependencias Externas:
- * - 'next/navigation': Para 'notFound'.
- * - '@/lib/services/user.service': Para obtener los datos del usuario.
- * - Componentes UI: 'Card', 'AuditHistoryCard', 'UserViewClient'.
- * - 'lucide-react': Para los iconos.
+ * - Next.js (notFound, Link, metadata).
+ * - Lucide React para iconos.
  *
  */
+
