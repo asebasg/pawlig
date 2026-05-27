@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getUserById } from "@/lib/services/user.service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User as PrismaUser, AuditAction } from "@prisma/client";
+import { User as PrismaUser, SystemAuditLog } from "@prisma/client";
 import { AuditHistoryCard } from "@/components/admin/AuditHistoryCard";
 import UserViewClient from "@/components/admin/UserViewClient";
 import UserActionsClient from "@/components/admin/UserActionsClient";
@@ -9,23 +9,7 @@ import Link from "next/link";
 import { User, Mail, Phone, MapPin, Calendar, CheckCircle, XCircle, ArrowLeft, CalendarCheck2 } from "lucide-react";
 
 type UserWithAudit = PrismaUser & {
-  auditRecords: ({
-    performedBy: {
-      name: string;
-      email: string;
-    };
-  } & {
-    id: string;
-    action: AuditAction;
-    reason: string;
-    oldValue: string | null;
-    newValue: string | null;
-    adminId: string;
-    userId: string;
-    ipAddress: string | null;
-    userAgent: string | null;
-    createdAt: Date;
-  })[];
+  auditRecords: SystemAuditLog[];
 };
 
 export default async function UserViewPage({ params }: { params: { id: string } }) {
@@ -96,7 +80,7 @@ export default async function UserViewPage({ params }: { params: { id: string } 
 
         {/* Columna Derecha: Auditoría */}
         <div className="lg:col-span-1">
-          <AuditHistoryCard auditRecords={user.auditRecords.map((r: UserWithAudit["auditRecords"][number]) => ({ ...r, createdAt: new Date(r.createdAt) }))} />
+          <AuditHistoryCard auditRecords={user.auditRecords} />
         </div>
 
       </div>

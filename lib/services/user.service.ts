@@ -1,6 +1,6 @@
 import { unstable_cache, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/utils/db";
-import { AuditAction, UserRole } from "@prisma/client";
+import { AuditCategory, UserRole } from "@prisma/client";
 
 /**
  * Ruta/Componente/Servicio: User Service
@@ -37,16 +37,27 @@ export const getUserById = unstable_cache(
           vendor: {
             select: { id: true, businessName: true, verified: true },
           },
-          auditRecords: {
-            include: {
-              performedBy: { select: { name: true, email: true } },
-            },
-            orderBy: { createdAt: "desc" },
-            take: 20,
-          },
         },
       });
-      return user;
+
+      if (!user) return null;
+
+      const resourceIds = [id];
+      if (user.shelter?.id) resourceIds.push(user.shelter.id);
+      if (user.vendor?.id) resourceIds.push(user.vendor.id);
+
+      const auditRecords = await prisma.systemAuditLog.findMany({
+        where: {
+          OR: [
+            { resourceId: { in: resourceIds } },
+            { actorId: id },
+          ],
+        },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      });
+
+      return { ...user, auditRecords };
     } catch (error) {
       console.error("Error fetching user by ID:", error);
       return null;
@@ -63,6 +74,7 @@ export async function updateUserRole(
   userId: string,
   newRole: UserRole,
   adminId: string,
+  adminEmail: string,
   reason: string,
   ipAddress?: string,
   userAgent?: string,
@@ -78,21 +90,27 @@ export async function updateUserRole(
     throw new Error("Cannot change the role of another admin");
   }
 
+  const requestId = crypto.randomUUID();
+
   const transaction = await prisma.$transaction([
     prisma.user.update({
       where: { id: userId },
       data: { role: newRole },
     }),
-    prisma.userAudit.create({
+    prisma.systemAuditLog.create({
       data: {
-        action: AuditAction.CHANGE_ROLE,
+        category: AuditCategory.USER_MANAGEMENT,
+        action: "CHANGE_ROLE",
+        actorId: adminId,
+        actorEmail: adminEmail,
+        resourceType: "USER",
+        resourceId: userId,
+        before: JSON.stringify({ role: currentUser.role }),
+        after: JSON.stringify({ role: newRole }),
         reason,
-        oldValue: currentUser.role,
-        newValue: newRole,
-        adminId,
-        userId,
         ipAddress,
         userAgent,
+        requestId,
       },
     }),
   ]);

@@ -105,44 +105,14 @@ model User {
   passwordResetTokens PasswordResetToken[]
   cartItems           CartItem[]
 
-  // Auditoría (HU-014)
-  adminActions UserAudit[] @relation("AdminActions")
-  auditRecords UserAudit[] @relation("AffectedUser")
+  // Auditoría (HU-014) - Migrado a SystemAuditLog
+  // (Las relaciones directas a logs se manejan manualmente dado el polimorfismo de SystemAuditLog)
 
   @@index([role])
   @@index([isActive])
   @@index([municipality])
 }
 
-model UserAudit {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  // Acción realizada (HU-014)
-  action AuditAction // Enum tipado (no String)
-  reason String // Justificación obligatoria (RN-017)
-
-  // Trazabilidad
-  oldValue String?
-  newValue String?
-
-  // Relaciones
-  performedBy User   @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
-  adminId     String @db.ObjectId
-
-  affectedUser User   @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
-  userId       String @db.ObjectId
-
-  // Metadata de seguridad (RNF-002)
-  ipAddress String?
-  userAgent String?
-
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([adminId])
-  @@index([action])
-  @@index([createdAt])
-}
 
 model Shelter {
   id               String       @id @default(auto()) @map("_id") @db.ObjectId

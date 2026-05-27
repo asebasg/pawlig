@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole, Municipality, PetStatus, AdoptionStatus, OrderStatus, AuditAction, ProductCategory } from "@prisma/client";
+import { PrismaClient, UserRole, Municipality, PetStatus, AdoptionStatus, OrderStatus, AuditCategory, ProductCategory } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -21,7 +21,7 @@ async function main() {
     await prisma.product.deleteMany();
     await prisma.shelter.deleteMany();
     await prisma.vendor.deleteMany();
-    await prisma.userAudit.deleteMany();
+    await prisma.systemAuditLog.deleteMany();
     await prisma.user.deleteMany();
     console.log("🗑️  Base de datos limpiada.");
 
@@ -994,28 +994,83 @@ async function main() {
     console.log("✅ Órdenes creadas.");
 
     // ─────────────────────────────────────────────
-    // 9. AUDITORÍA (UserAudit)
+    // 9. AUDITORÍA (SystemAuditLog)
     // ─────────────────────────────────────────────
-    await prisma.userAudit.createMany({
+    await prisma.systemAuditLog.createMany({
         data: [
+            // Gestión de Usuarios
             {
-                action: AuditAction.BLOCK,
+                category: AuditCategory.USER_MANAGEMENT,
+                action: "BLOCK",
+                actorId: admin.id,
+                actorEmail: admin.email,
+                resourceType: "USER",
+                resourceId: adopters[6].id, // usuario bloqueado
+                before: JSON.stringify({ isActive: true }),
+                after: JSON.stringify({ isActive: false }),
                 reason: "El usuario reportó comportamiento inapropiado hacia los albergues.",
-                adminId: admin.id,
-                userId: adopters[6].id, // usuario bloqueado
                 ipAddress: "192.168.1.100",
                 userAgent: "Mozilla/5.0 (Windows NT 10.0)",
+                requestId: crypto.randomUUID(),
             },
             {
-                action: AuditAction.CHANGE_ROLE,
+                category: AuditCategory.USER_MANAGEMENT,
+                action: "CHANGE_ROLE",
+                actorId: admin.id,
+                actorEmail: admin.email,
+                resourceType: "USER",
+                resourceId: adopters[5].id,
+                before: JSON.stringify({ role: "ADOPTER" }),
+                after: JSON.stringify({ role: "SHELTER" }),
                 reason: "Cambio de rol solicitado por el usuario para acceder al panel de albergue.",
-                oldValue: "ADOPTER",
-                newValue: "SHELTER",
-                adminId: admin.id,
-                userId: adopters[5].id,
                 ipAddress: "192.168.1.101",
                 userAgent: "Mozilla/5.0 (Macintosh)",
+                requestId: crypto.randomUUID(),
             },
+            // Moderación de Albergues
+            {
+                category: AuditCategory.SHELTER_MODERATION,
+                action: "APPROVE",
+                actorId: admin.id,
+                actorEmail: admin.email,
+                resourceType: "SHELTER",
+                resourceId: shelter1.id,
+                before: JSON.stringify({ verified: false, role: "ADOPTER" }),
+                after: JSON.stringify({ verified: true, role: "SHELTER" }),
+                reason: "Documentación verificada y aprobada correctamente.",
+                ipAddress: "192.168.1.102",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0)",
+                requestId: crypto.randomUUID(),
+            },
+            {
+                category: AuditCategory.SHELTER_MODERATION,
+                action: "REJECT",
+                actorId: admin.id,
+                actorEmail: admin.email,
+                resourceType: "SHELTER",
+                resourceId: shelterUserPending.id, // Simulando que el albergue fue rechazado antes
+                before: JSON.stringify({ rejectionReason: null }),
+                after: JSON.stringify({ rejectionReason: "Documentación incompleta o ilegible." }),
+                reason: "Falta el RUT y certificado de cámara de comercio.",
+                ipAddress: "192.168.1.102",
+                userAgent: "Mozilla/5.0 (Windows NT 10.0)",
+                requestId: crypto.randomUUID(),
+            },
+            // Moderación de Negocios
+            {
+                category: AuditCategory.VENDOR_MODERATION,
+                action: "APPROVE",
+                actorId: admin.id,
+                actorEmail: admin.email,
+                resourceType: "VENDOR",
+                resourceId: vendor1.id,
+                before: JSON.stringify({ verified: false, role: "ADOPTER" }),
+                after: JSON.stringify({ verified: true, role: "VENDOR" }),
+                reason: "Perfil comercial validado exitosamente.",
+                ipAddress: "192.168.1.103",
+                userAgent: "Mozilla/5.0 (Linux)",
+                requestId: crypto.randomUUID(),
+            }
         ],
     });
 

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/utils/db";
 import { UserRole, AuditCategory } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 import {
   sendShelterApprovalEmail,
   sendShelterRejectionEmail,
@@ -79,6 +80,7 @@ export const moderationService = {
       loginUrl: `${appUrl}/login`,
     }).catch(console.error);
 
+    revalidateTag("user-detail");
     return result;
   },
 
@@ -125,6 +127,7 @@ export const moderationService = {
       rejectionReason: reason,
     }).catch(console.error);
 
+    revalidateTag("user-detail");
     return result;
   },
 
@@ -176,6 +179,7 @@ export const moderationService = {
       loginUrl: `${appUrl}/login`,
     }).catch(console.error);
 
+    revalidateTag("user-detail");
     return result;
   },
 
@@ -222,6 +226,7 @@ export const moderationService = {
       rejectionReason: reason,
     }).catch(console.error);
 
+    revalidateTag("user-detail");
     return result;
   },
 
