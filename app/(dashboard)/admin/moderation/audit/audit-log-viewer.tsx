@@ -43,6 +43,20 @@ interface AuditLog {
   createdAt: string;
 }
 
+function getActionVariant(action: string): React.ComponentProps<typeof Badge>["variant"] {
+  const map: Record<string, React.ComponentProps<typeof Badge>["variant"]> = {
+    APPROVE:     "green",
+    REJECT:      "red",
+    BLOCK:       "orange",
+    UNBLOCK:     "teal",
+    CHANGE_ROLE: "blue",
+    CREATE:      "purple",
+    UPDATE:      "yellow",
+    DELETE:      "destructive",
+  };
+  return map[action] ?? "secondary";
+}
+
 export function AuditLogViewer() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -294,10 +308,7 @@ export function AuditLogViewer() {
                           {log.actorEmail}
                         </td>
                         <td className="px-6 py-4">
-                          <Badge 
-                            variant={log.action === "APPROVE" ? "default" : log.action === "REJECT" ? "destructive" : "secondary"}
-                            className="font-medium"
-                          >
+                          <Badge variant={getActionVariant(log.action)} className="font-medium">
                             {log.action}
                           </Badge>
                         </td>
@@ -357,7 +368,7 @@ export function AuditLogViewer() {
                 
                 <span className="text-gray-500 font-medium">Acción:</span>
                 <span className="col-span-2">
-                  <Badge variant={selectedLog.action === "APPROVE" ? "default" : selectedLog.action === "REJECT" ? "destructive" : "secondary"}>
+                  <Badge variant={getActionVariant(selectedLog.action)}>
                     {selectedLog.action}
                   </Badge>
                 </span>
