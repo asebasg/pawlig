@@ -3,11 +3,19 @@ import { Metadata } from "next";
 import {
   ArrowLeft, HelpCircle, Info, Heart, Home, ShoppingBag, Wrench, Mail,
   ShieldCheck, UserPlus, CheckCircle2, MessageCircle,
-  Clock, MapPin, Monitor, BookOpen, BarChart2, Settings, Lock,
+  Clock, MapPin, Monitor, BookOpen, Settings, Lock,
   Zap, ChevronRight, Phone, Github,
 } from "lucide-react";
 import Link from "next/link";
 import { AccordionSection } from "@/components/help/accordion-section";
+
+/**
+ * Centro de Ayuda de PawLig.
+ *
+ * Descripción: Página estática que funciona como manual de usuario integral de la plataforma.
+ * Requiere: AccordionSection, Lucide Icons, Next.js Metadata.
+ * Implementa: Navegación por anclas, sistema de acordeones, diseño responsivo, secciones por rol.
+ */
 
 export const metadata: Metadata = {
   title: "Centro de Ayuda - PawLig",
@@ -52,7 +60,7 @@ const Steps = ({ steps }: { steps: string[] }) => (
 
 export default function HelpPage() {
   const currentYear = new Date().getFullYear();
-  const lastUpdate = "20 de febrero de 2026";
+  const lastUpdate = "21 de mayo de 2026";
 
   return (
     <main className="container mx-auto px-4 py-16 max-w-5xl">
@@ -101,7 +109,7 @@ export default function HelpPage() {
 
         {/* Contenido con acordeones */}
         <div className="lg:col-span-3 space-y-3">
-          <p className="text-xs text-slate-400 font-medium italic mb-4">Última actualización: {lastUpdate} · Haz clic en cada sección para expandirla.</p>
+          <p className="text-xs text-slate-400 font-medium italic mb-4">Última actualización: {lastUpdate} &middot; Haz clic en cada sección para expandirla.</p>
 
           {/* ── 1. INTRODUCCIÓN ── */}
           <AccordionSection icon={<Info className="text-primary" size={20} />} number="1" id="introduccion" title="Introducción a PawLig" defaultOpen>
@@ -174,8 +182,8 @@ export default function HelpPage() {
               <Tip type="warning">El correo solo puede usarse una vez. Los Albergues y Vendedores deben solicitar cuenta especializada (ver secciones 6 y 7).</Tip>
             </SubSection>
             <SubSection title="3.3. Iniciar sesión">
-              <Steps steps={['Haga clic en <strong>"Iniciar Sesión"</strong>.', "Ingrese su correo y contraseña.", "El sistema lo redirigirá según su rol: Adoptante → Panel de Usuario · Albergue → Panel del Albergue · Vendedor → Panel del Vendedor · Administrador → Panel Administrativo."]} />
-              <Tip type="warning">Después de 3 intentos fallidos, su cuenta se bloqueará temporalmente 15 minutos. La sesión dura máximo 24 horas.</Tip>
+              <Steps steps={['Haga clic en <strong>"Iniciar Sesión"</strong>.', "Ingrese su correo y contraseña. Puede utilizar el botón de visibilidad (ícono de ojo) para verificar los caracteres ingresados.", "El sistema lo redirigirá según su rol: Adoptante &rarr; Panel de Usuario &middot; Albergue &rarr; Panel del Albergue &middot; Vendedor &rarr; Panel del Vendedor &middot; Administrador &rarr; Panel Administrativo."]} />
+              <Tip type="warning">Después de 3 intentos fallidos, su cuenta se bloqueará temporalmente por 15 minutos. La sesión tiene una duración máxima de 24 horas.</Tip>
             </SubSection>
             <SubSection title="3.4. Recuperar contraseña">
               <Steps steps={['Haga clic en <strong>"¿Olvidaste tu contraseña?"</strong> en la pantalla de Login.', "Ingrese su correo registrado y haga clic en \"Enviar enlace\".", "Revise su correo (también spam). El enlace es válido por 1 hora.", "Cree su nueva contraseña y confirme. Luego inicie sesión normalmente."]} />
@@ -212,8 +220,8 @@ export default function HelpPage() {
               <p className="text-sm">Acceda haciendo clic en su nombre o en <strong>&quot;Mi Panel&quot;</strong>. Desde aquí puede ver favoritas, seguir postulaciones, revisar el historial de compras y actualizar su perfil.</p>
             </SubSection>
             <SubSection title="5.2. Buscar mascotas">
-              <Steps steps={['Haga clic en <strong>&quot;Adopciones&quot;</strong> en el menú principal.', "Use los filtros: Especie · Municipio · Edad · Sexo · Estado (Disponible / En proceso).", "Los resultados muestran foto, nombre, edad, municipio, albergue y estado."]} />
-              <Tip type="success">Si no encuentra resultados, amplíe los criterios de búsqueda o elimine algunos filtros.</Tip>
+              <Steps steps={['Haga clic en <strong>&quot;Adopciones&quot;</strong> en el menú principal.', "Use los filtros avanzados por especie, municipio, edad, sexo y estado (Disponible / En proceso).", "Utilice el <strong>Mapa Interactivo</strong> para localizar albergues cercanos geográficamente en todo el Valle de Aburrá.", "Los resultados muestran foto, nombre, edad formateada, ubicación exacta, albergue responsable y estado actual."]} />
+              <Tip type="success">Si no encuentra resultados, intente ampliar los criterios de búsqueda o utilice el mapa para explorar otras zonas.</Tip>
             </SubSection>
             <SubSection title="5.3. Ver detalles de una mascota">
               <p className="text-sm">Haga clic en cualquier tarjeta de mascota para ver: galería de fotos, especie, raza, edad, sexo, descripción de carácter, requisitos de adopción, estado de salud e información del albergue. Desde aquí puede guardar como favorita, postularse y contactar al albergue.</p>
@@ -242,8 +250,8 @@ export default function HelpPage() {
               <Steps steps={['Vaya a su panel → <strong>"Mis Postulaciones"</strong>.', "Verá el estado: 🟡 Pendiente · 🟢 Aprobada · 🔴 Rechazada.", "Haga clic en cualquier postulación para ver más detalles."]} />
             </SubSection>
             <SubSection title="5.8–5.10. Compras, carrito y checkout">
-              <Steps steps={['Vaya a <strong>"Productos"</strong> y use los filtros (categoría, precio, vendedor).', 'Haga clic en un producto, seleccione cantidad y haga clic en <strong>"Agregar al Carrito"</strong>.', "Desde el ícono del carrito 🛒 puede ver productos, modificar cantidades (+/−) y eliminar items.", 'Haga clic en <strong>"Finalizar Compra"</strong>, verifique su dirección y método de pago simulado y confirme el pedido.', "Recibirá un email con el número de orden y los datos del vendedor para coordinar entrega real."]} />
-              <Tip type="warning">PawLig simula el proceso de compra con fines demostrativos. NO se procesan pagos reales.</Tip>
+              <Steps steps={['Explore el catálogo en <strong>&quot;Productos&quot;</strong> con búsqueda precisa por categorías y rango de precios.', 'Seleccione un producto para ver detalles, elija la cantidad deseada y haga clic en <strong>&quot;Agregar al Carrito&quot;</strong>.', "Gestione sus artículos desde el carrito 🛒: modifique cantidades o elimine productos antes de proceder.", 'Complete el proceso en <strong>&quot;Finalizar Compra&quot;</strong> ingresando sus datos de envío y confirmando la orden.', "El sistema enviará una notificación por correo electrónico con el resumen del pedido y la información del vendedor para la entrega."]} />
+              <Tip type="warning">La plataforma utiliza un entorno de pago simulado para fines educativos y demostrativos. No se realizan transacciones monetarias reales.</Tip>
             </SubSection>
           </AccordionSection>
 
@@ -261,7 +269,7 @@ export default function HelpPage() {
               </div>
             </SubSection>
             <SubSection title="6.3. Publicar una mascota">
-              <Steps steps={['Haga clic en <strong>&quot;Publicar Mascota&quot;</strong>.', "Complete información básica: Nombre, Especie, Raza, Edad y Sexo.", "Escriba una descripción del carácter y personalidad (20–500 caracteres).", "Indique requisitos para la adopción (espacio, experiencia, etc.).", "Marque el estado de salud (vacunado/esterilizado).", "Suba al menos 1 foto (JPEG/PNG, máx. 5 MB). Se recomiendan 3–5 fotos.", 'Haga clic en <strong>&quot;Publicar&quot;</strong>. La mascota aparece inmediatamente en la galería pública.']} />
+              <Steps steps={['Haga clic en <strong>&quot;Publicar Mascota&quot;</strong> desde su panel administrativo.', "Ingrese los datos básicos, especificando la edad exacta en <strong>años y meses</strong> (0-11) para una mayor precisión en el perfil.", "Redacte la descripción del carácter y los requisitos de adopción necesarios.", "Indique el estado de salud y suba fotografías de alta calidad (máximo 5 MB por imagen).", 'Haga clic en <strong>&quot;Publicar&quot;</strong> para que el perfil sea visible en la galería de adopciones.']} />
             </SubSection>
             <SubSection title="6.3.1. Refinamiento con IA">
               <div className="p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-100 text-xs">
@@ -274,16 +282,17 @@ export default function HelpPage() {
             </SubSection>
             <SubSection title="6.5. Estados de la mascota">
               <div className="grid grid-cols-3 gap-2 text-xs">
-                {[["🟢 Disponible", "Lista para adopción. Visible en búsquedas."], ["🟡 En Proceso", "Con postulación en revisión. Oculta de búsquedas."], ["⚫ Adoptada", "Con hogar definitivo. Oculta de búsquedas."]].map(([s, d]) => (
+                {[["🟢 Disponible", "Visible para todos los usuarios."], ["🟡 En Proceso", "Se activa automáticamente al recibir una postulación. Se oculta de las búsquedas."], ["⚫ Adoptada", "Estado final tras concluir el proceso con éxito."]].map(([s, d]) => (
                   <div key={s} className="p-2 bg-slate-50 rounded-xl border border-slate-100"><p className="font-bold mb-1">{s}</p><p className="text-slate-500">{d}</p></div>
                 ))}
               </div>
+              <Tip type="info">El sistema gestiona de forma inteligente la visibilidad de las mascotas según el flujo de postulaciones recibidas.</Tip>
             </SubSection>
             <SubSection title="6.6–6.7. Gestionar y resolver postulaciones">
               <Steps steps={['Vaya a <strong>"Postulaciones"</strong> en su panel.', "Haga clic en \"Ver Detalles\" para revisar datos del adoptante y su mensaje.", "<strong>Aprobar:</strong> haga clic en \"Aprobar\" y confirme. El adoptante recibe un email.", "<strong>Rechazar:</strong> haga clic en \"Rechazar\", ingrese motivo (obligatorio) y confirme."]} />
             </SubSection>
             <SubSection title="6.8. Reportes de adopciones">
-              <Steps steps={['Vaya a <strong>&quot;Reportes&quot; → &quot;Historial de Adopciones&quot;</strong>.', "Configure filtros: fechas, municipio y estado.", 'Haga clic en <strong>&quot;Generar Reporte&quot;</strong> para ver métricas, gráficos y totales.', 'Exporte con <strong>&quot;Descargar Excel&quot;</strong>.']} />
+              <Steps steps={['Acceda a <strong>&quot;Reportes&quot; &rarr; &quot;Dashboard Analítico&quot;</strong>.', "Visualice métricas clave y tendencias de adopción en tiempo real.", 'Utilice los botones de exportación para descargar la información detallada en formatos <strong>Excel, PDF o CSV</strong> para su gestión administrativa.']} />
             </SubSection>
             <SubSection title="6.9. Actualizar perfil del albergue">
               <p className="text-sm">Vaya a su nombre → <strong>&quot;Mi Perfil&quot;</strong>. Puede actualizar: descripción, dirección, WhatsApp, Instagram y logo.</p>
@@ -305,40 +314,30 @@ export default function HelpPage() {
               <Tip type="info">Si el stock llega a 0, el producto se marca automáticamente como &quot;Agotado&quot;. El stock se descuenta automáticamente con cada compra completada.</Tip>
             </SubSection>
             <SubSection title="7.4–7.5. Órdenes y reportes de ventas">
-              <Steps steps={['Vaya a <strong>"Órdenes"</strong> para ver pedidos con: número, fecha, cliente, productos, total y estado.', "Haga clic en \"Ver Detalles\" para acceder a datos de contacto, dirección y método de pago del cliente.", 'Actualice el estado de la orden con el dropdown: Pendiente → Confirmada → Enviada → Entregada.', 'Vaya a <strong>"Reportes" → "Ventas"</strong> para ver métricas, productos más vendidos y exportar a Excel.']} />
+              <Steps steps={['Gestione sus pedidos en <strong>&quot;Órdenes&quot;</strong>, donde podrá consultar el detalle del cliente y los productos solicitados.', 'Actualice el estado del envío para mantener informado al comprador automáticamente por correo electrónico.', 'Acceda a <strong>&quot;Reportes&quot; &rarr; &quot;Métricas de Venta&quot;</strong> para analizar el rendimiento de su negocio y exportar sus datos en <strong>Excel o PDF</strong>.']} />
             </SubSection>
           </AccordionSection>
 
           {/* ── 8. ADMIN ── */}
           <AccordionSection icon={<Settings className="text-primary" size={20} />} number="8" id="admin" title="Guía para Administradores">
             <div className="p-4 bg-slate-900 text-white rounded-2xl mb-4">
-              <p className="font-bold text-sm mb-2 flex items-center gap-2"><Lock size={14} className="text-primary" /> Acceso restringido al rol Administrador</p>
+              <p className="font-bold text-sm mb-2 flex items-center gap-2"><Lock size={14} className="text-primary" /> Acceso exclusivo para el rol Administrador</p>
               <div className="grid grid-cols-2 gap-1.5 text-xs">
-                {["Gestionar todos los usuarios", "Aprobar/rechazar solicitudes", "Bloquear usuarios", "Ver métricas globales", "Configurar categorías de productos", "Moderar contenido"].map(f => (
+                {["Moderation Hub centralizado", "Aprobaciones transaccionales", "Audit Log polimórfico", "Métricas globales en tiempo real", "Gestión integral de usuarios", "Control de categorías"].map(f => (
                   <div key={f} className="flex items-center gap-1.5 bg-white/10 p-1.5 rounded-lg"><ChevronRight size={11} className="text-primary shrink-0" />{f}</div>
                 ))}
               </div>
             </div>
-            <SubSection title="8.1. Gestionar usuarios">
-              <Steps steps={['En el panel administrativo, haga clic en <strong>"Usuarios"</strong>.', "Verá todos los usuarios con: nombre, email, rol, fecha de registro y estado.", "Use filtros por rol, municipio, estado o nombre/email.", 'Desde <strong>"Ver Perfil"</strong> puede ver actividad completa, cambiar rol y bloquear/desbloquear la cuenta.']} />
+            <SubSection title="8.1. Moderation Hub">
+              <p className="text-sm mb-3">El <strong>Moderation Hub</strong> es el centro de control unificado para todas las operaciones administrativas críticas.</p>
+              <Steps steps={['Acceda a <strong>&quot;Administración&quot; &rarr; &quot;Moderation Hub&quot;</strong>.', 'Gestione solicitudes de albergues y vendedores mediante flujos de aprobación transaccionales.', 'Consulte el <strong>System Audit Log</strong> para rastrear cada acción realizada en la plataforma con su respectiva justificación.']} />
             </SubSection>
-            <SubSection title="8.2. Aprobar solicitudes (Albergues y Vendedores)">
-              <Steps steps={['Vaya a <strong>"Albergues" → "Solicitudes Pendientes"</strong> (o "Vendedores").', "Revise la información: representante, entidad, NIT, descripción.", "<strong>APROBAR:</strong> haga clic en \"Aprobar\" y confirme. El sistema envía email al solicitante.", "<strong>RECHAZAR:</strong> ingrese un motivo claro, confirme. El sistema notifica con el motivo."]} />
-              <Tip type="success">Verifique la legitimidad del albergue buscando su NIT en registros públicos.</Tip>
+            <SubSection title="8.2. Gestión de Usuarios y Seguridad">
+              <Steps steps={['Utilice el buscador avanzado para localizar cuentas por nombre, email o rol.', 'Desde el perfil de usuario, puede realizar cambios de rol, bloquear cuentas por comportamiento inadecuado o desbloquear tras revisiones.', 'El bloqueo de una cuenta oculta automáticamente todo su contenido asociado (mascotas o productos) de la vista pública.']} />
+              <Tip type="warning">Todas las acciones de bloqueo requieren una justificación obligatoria que será enviada al usuario por correo electrónico.</Tip>
             </SubSection>
-            <SubSection title="8.3. Bloquear usuarios">
-              <Steps steps={["Localice el usuario y haga clic en \"Bloquear Usuario\".", "Ingrese el motivo (obligatorio): contenido inapropiado, fraude, comportamiento abusivo o violación de términos.", "Confirme. El sistema desactiva la cuenta, oculta sus publicaciones y notifica al usuario."]} />
-              <Tip type="warning">Use esta función solo en casos justificados. Puede desbloquear desde la misma sección.</Tip>
-            </SubSection>
-            <SubSection title="8.4. Dashboard de métricas">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-                {["Total de usuarios", "Albergues activos", "Vendedores activos", "Mascotas (disponibles vs adoptadas)", "Total de adopciones", "Total de órdenes"].map(m => (
-                  <div key={m} className="p-2 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-1.5"><BarChart2 size={12} className="text-primary shrink-0 mt-0.5" />{m}</div>
-                ))}
-              </div>
-            </SubSection>
-            <SubSection title="8.5. Configurar categorías de productos">
-              <Steps steps={['Vaya a <strong>"Configuración" → "Categorías de Productos"</strong>.', '<strong>Agregar:</strong> "Nueva Categoría" → nombre → descripción opcional → "Crear".', "<strong>Editar:</strong> ícono de editar → modifique → guarde.", "<strong>Eliminar:</strong> el sistema advierte si hay productos usando esa categoría (debe reasignarlos antes)."]} />
+            <SubSection title="8.3. Auditoría del Sistema">
+              <p className="text-sm">El sistema mantiene un registro persistente de todas las modificaciones críticas, incluyendo cambios de estado, aprobaciones y sanciones, asegurando la trazabilidad total de la operación.</p>
             </SubSection>
           </AccordionSection>
 
@@ -440,7 +439,7 @@ export default function HelpPage() {
                 </a>
               </div>
             </div>
-            <p className="text-[10px] text-slate-400 text-right mt-4 font-bold tracking-widest uppercase">© {currentYear} PawLig v1.5.0 Stable</p>
+            <p className="text-[10px] text-slate-400 text-right mt-4 font-bold tracking-widest uppercase">&copy; {currentYear} PawLig v1.13.1 Stable</p>
           </AccordionSection>
 
           {/* ── 12. GLOSARIO ── */}
@@ -475,3 +474,10 @@ export default function HelpPage() {
     </main>
   );
 }
+
+/*
+NOTAS DE IMPLEMENTACIÓN
+Descripción General: Componente de servidor que renderiza el manual de usuario organizado por categorías funcionales y roles de usuario.
+Lógica Clave: Utiliza secciones de acordeón para mejorar la legibilidad y navegación en dispositivos móviles. La información se mantiene sincronizada con las últimas versiones del proyecto (v1.13.1).
+Dependencias Externas: Lucide React para iconografía y Tailwind CSS para el sistema de diseño.
+*/
