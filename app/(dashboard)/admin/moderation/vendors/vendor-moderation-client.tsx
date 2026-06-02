@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Loader2, Check, X, MapPin, Mail, Phone, User, CheckCircle, Briefcase } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, Check, X, MapPin, Mail, Phone, User, CheckCircle, Briefcase, Search } from "lucide-react";
 import { RejectRequestModal } from "@/components/admin/reject-request-modal";
 
 /**
@@ -38,6 +39,7 @@ export function VendorModerationClient() {
   const [rejectModalData, setRejectModalData] = useState<{ id: string; name: string } | null>(null);
 
   const [activeTab, setActiveTab] = useState<"pending" | "approved" | "rejected">("pending");
+  const [search, setSearch] = useState("");
 
   const fetchVendors = async (tab: "pending" | "approved" | "rejected") => {
     setLoading(true);
@@ -102,6 +104,16 @@ export function VendorModerationClient() {
     setVendors((prev) => prev.filter((v) => v.id !== id));
   };
 
+  const filteredVendors = vendors.filter((v) => {
+    const q = search.toLowerCase();
+    return (
+      v.businessName.toLowerCase().includes(q) ||
+      v.municipality.toLowerCase().includes(q) ||
+      v.user.email.toLowerCase().includes(q) ||
+      v.user.name.toLowerCase().includes(q)
+    );
+  });
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -112,51 +124,81 @@ export function VendorModerationClient() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-center mb-6">
-        <div className="bg-gray-100 p-1 rounded-lg inline-flex gap-1 border border-gray-200">
-          <button
-            onClick={() => setActiveTab("pending")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              activeTab === "pending"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
-            }`}
-          >
-            Pendientes
-          </button>
-          <button
-            onClick={() => setActiveTab("approved")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              activeTab === "approved"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
-            }`}
-          >
-            Aprobados
-          </button>
-          <button
-            onClick={() => setActiveTab("rejected")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              activeTab === "rejected"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
-            }`}
-          >
-            Rechazados
-          </button>
+      <div>
+        <h2 className="text-xl font-bold text-gray-900 tracking-tight">Moderación de Negocios</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Revisa y gestiona las solicitudes de registro de negocios proveedores en la plataforma.
+        </p>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+        <div className="flex flex-col gap-4 lg:flex-row justify-between items-start lg:items-center">
+          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg border border-gray-200">
+            <button
+              onClick={() => setActiveTab("pending")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                activeTab === "pending"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+              }`}
+            >
+              Pendientes
+            </button>
+            <button
+              onClick={() => setActiveTab("approved")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                activeTab === "approved"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+              }`}
+            >
+              Aprobados
+            </button>
+            <button
+              onClick={() => setActiveTab("rejected")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                activeTab === "rejected"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+              }`}
+            >
+              Rechazados
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3 w-full lg:w-auto">
+            <div className="relative w-full lg:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Buscar por nombre, municipio, email..."
+                className="pl-9 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => { setActiveTab("pending"); setSearch(""); }}
+              className="h-10 border-gray-200 text-gray-600 shrink-0"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Limpiar Filtros
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-900">
           {activeTab === "pending" ? "Negocios Pendientes" : activeTab === "approved" ? "Negocios Aprobados" : "Negocios Rechazados"}
-        </h2>
+        </h3>
         <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
           {vendors.length} {activeTab === "pending" ? "solicitudes" : activeTab === "approved" ? "verificados" : "rechazados"}
         </span>
       </div>
 
-      {vendors.length === 0 ? (
+      {filteredVendors.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-12 flex flex-col items-center justify-center text-center border border-gray-100">
           <div className="bg-green-100 p-4 rounded-full mb-4">
             <CheckCircle className="h-10 w-10 text-green-600" />
@@ -172,7 +214,7 @@ export function VendorModerationClient() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {vendors.map((vendor) => (
+          {filteredVendors.map((vendor) => (
             <div key={vendor.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
               <div className="p-6 border-b border-gray-50 flex-1">
                 <div className="flex justify-between items-start mb-4">

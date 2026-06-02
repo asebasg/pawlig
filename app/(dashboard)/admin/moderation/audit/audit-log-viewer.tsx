@@ -3,9 +3,26 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
-  Loader2, Search, Calendar, ChevronDown, Eye, User, FileText,
-  Database, ShieldAlert, Clock, ListFilter, CheckCircle2, XCircle,
-  Lock, Unlock, UserCog, PlusCircle, RefreshCw, Trash2
+  Loader2,
+  Search,
+  Calendar,
+  ChevronDown,
+  Eye,
+  User,
+  FileText,
+  Database,
+  ShieldAlert,
+  Clock,
+  ListFilter,
+  CheckCircle2,
+  XCircle,
+  Lock,
+  Unlock,
+  UserCog,
+  PlusCircle,
+  RefreshCw,
+  Trash2,
+  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -44,26 +61,28 @@ interface AuditLog {
 }
 
 const ACTION_LABELS: Record<string, string> = {
-  APPROVE:     "Aprobación",
-  REJECT:      "Rechazo",
-  BLOCK:       "Bloqueo",
-  UNBLOCK:     "Desbloqueo",
+  APPROVE: "Aprobación",
+  REJECT: "Rechazo",
+  BLOCK: "Bloqueo",
+  UNBLOCK: "Desbloqueo",
   CHANGE_ROLE: "Cambio de Rol",
-  CREATE:      "Creación",
-  UPDATE:      "Actualización",
-  DELETE:      "Eliminación",
+  CREATE: "Creación",
+  UPDATE: "Actualización",
+  DELETE: "Eliminación",
 };
 
-function getActionVariant(action: string): React.ComponentProps<typeof Badge>["variant"] {
+function getActionVariant(
+  action: string,
+): React.ComponentProps<typeof Badge>["variant"] {
   const map: Record<string, React.ComponentProps<typeof Badge>["variant"]> = {
-    APPROVE:     "green",
-    REJECT:      "red",
-    BLOCK:       "orange",
-    UNBLOCK:     "teal",
+    APPROVE: "green",
+    REJECT: "red",
+    BLOCK: "orange",
+    UNBLOCK: "teal",
     CHANGE_ROLE: "blue",
-    CREATE:      "purple",
-    UPDATE:      "yellow",
-    DELETE:      "destructive",
+    CREATE: "purple",
+    UPDATE: "yellow",
+    DELETE: "destructive",
   };
   return map[action] ?? "secondary";
 }
@@ -77,7 +96,7 @@ export function AuditLogViewer() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [hasMore, setHasMore] = useState(true);
-  
+
   // Modal state
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
@@ -86,53 +105,60 @@ export function AuditLogViewer() {
 
   const take = 50;
 
-  const fetchLogs = useCallback(async (isLoadMore = false) => {
-    const skip = isLoadMore ? logsLengthRef.current : 0;
-    const params = new URLSearchParams({
-      skip: skip.toString(),
-      take: take.toString(),
-    });
+  const fetchLogs = useCallback(
+    async (isLoadMore = false) => {
+      const skip = isLoadMore ? logsLengthRef.current : 0;
+      const params = new URLSearchParams({
+        skip: skip.toString(),
+        take: take.toString(),
+      });
 
-    if (startDate) params.append("startDate", startDate);
-    if (endDate) params.append("endDate", endDate);
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
 
-    try {
-      if (isLoadMore) setLoadingMore(true);
-      else setLoading(true);
+      try {
+        if (isLoadMore) setLoadingMore(true);
+        else setLoading(true);
 
-      const res = await fetch(`/api/admin/moderation/audit?${params.toString()}`);
-      if (!res.ok) throw new Error("Error al cargar auditoría");
-      const data: AuditLog[] = await res.json();
-      
-      if (isLoadMore) {
-        setLogs((prev) => {
-          const updated = [...prev, ...data];
-          logsLengthRef.current = updated.length;
-          return updated;
-        });
-      } else {
-        setLogs(data);
-        logsLengthRef.current = data.length;
+        const res = await fetch(
+          `/api/admin/moderation/audit?${params.toString()}`,
+        );
+        if (!res.ok) throw new Error("Error al cargar auditoría");
+        const data: AuditLog[] = await res.json();
+
+        if (isLoadMore) {
+          setLogs((prev) => {
+            const updated = [...prev, ...data];
+            logsLengthRef.current = updated.length;
+            return updated;
+          });
+        } else {
+          setLogs(data);
+          logsLengthRef.current = data.length;
+        }
+
+        setHasMore(data.length === take);
+      } catch {
+        toast.error("Hubo un problema al cargar los logs de auditoría.");
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-      
-      setHasMore(data.length === take);
-    } catch {
-      toast.error("Hubo un problema al cargar los logs de auditoría.");
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  }, [startDate, endDate]);
+    },
+    [startDate, endDate],
+  );
 
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
 
   const filteredLogs = logs.filter((log) => {
-    const matchSearch = log.actorEmail.toLowerCase().includes(search.toLowerCase()) ||
+    const matchSearch =
+      log.actorEmail.toLowerCase().includes(search.toLowerCase()) ||
       log.resourceType.toLowerCase().includes(search.toLowerCase()) ||
       log.action.toLowerCase().includes(search.toLowerCase()) ||
-      (log.requestId && log.requestId.toLowerCase().includes(search.toLowerCase()));
+      (log.requestId &&
+        log.requestId.toLowerCase().includes(search.toLowerCase()));
 
     const matchAction = actionFilter === "ALL" || log.action === actionFilter;
 
@@ -141,16 +167,17 @@ export function AuditLogViewer() {
 
   return (
     <div className="space-y-6">
-      
+      <div>
+        <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+          Registro de Auditoría
+        </h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Visualiza los cambios y acciones recientes en la plataforma.
+        </p>
+      </div>
       {/* Search and Filters Card */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col gap-4 lg:flex-row justify-between items-start lg:items-center">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900 tracking-tight">Registro de Auditoría</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Visualiza los cambios y acciones recientes en la plataforma.
-            </p>
-          </div>
           <div className="flex flex-col md:flex-row items-center gap-3 w-full lg:w-auto">
             <div className="relative w-full md:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -161,8 +188,9 @@ export function AuditLogViewer() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
+              
             </div>
-            
+
             <div className="w-full md:w-56">
               <Select value={actionFilter} onValueChange={setActionFilter}>
                 <SelectTrigger className="w-full rounded-full bg-gray-50 border-gray-200 hover:bg-white focus:bg-white transition-colors px-4">
@@ -253,7 +281,21 @@ export function AuditLogViewer() {
                 />
               </div>
             </div>
+            
           </div>
+          <Button
+              variant="outline"
+              onClick={() => {
+                setSearch("");
+                setActionFilter("ALL");
+                setStartDate("");
+                setEndDate("");
+              }}
+              className="h-10 border-gray-200 text-gray-600 w-full md:w-auto"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Limpiar Filtros
+            </Button>
         </div>
       </div>
 
@@ -305,13 +347,20 @@ export function AuditLogViewer() {
                 <tbody className="divide-y divide-gray-100 bg-white">
                   {filteredLogs.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                        No se encontraron registros de auditoría que coincidan con la búsqueda.
+                      <td
+                        colSpan={5}
+                        className="px-6 py-12 text-center text-gray-500"
+                      >
+                        No se encontraron registros de auditoría que coincidan
+                        con la búsqueda.
                       </td>
                     </tr>
                   ) : (
                     filteredLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                      <tr
+                        key={log.id}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                           {new Date(log.createdAt).toLocaleString("es-CO")}
                         </td>
@@ -319,13 +368,20 @@ export function AuditLogViewer() {
                           {log.actorEmail}
                         </td>
                         <td className="px-6 py-4">
-                          <Badge variant={getActionVariant(log.action)} className="font-medium">
+                          <Badge
+                            variant={getActionVariant(log.action)}
+                            className="font-medium"
+                          >
                             {ACTION_LABELS[log.action] ?? log.action}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="font-semibold text-gray-900">{log.resourceType}</span>
-                          <p className="text-xs text-gray-400 font-mono mt-0.5">{log.resourceId.split("-")[0]}...</p>
+                          <span className="font-semibold text-gray-900">
+                            {log.resourceType}
+                          </span>
+                          <p className="text-xs text-gray-400 font-mono mt-0.5">
+                            {log.resourceId.split("-")[0]}...
+                          </p>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <Button
@@ -346,14 +402,18 @@ export function AuditLogViewer() {
             </div>
             {hasMore && filteredLogs.length >= take && (
               <div className="p-4 border-t border-gray-100 flex justify-center bg-gray-50">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => fetchLogs(true)}
                   disabled={loadingMore}
                   className="bg-white hover:bg-gray-50 text-gray-700 border-gray-200"
                 >
-                  {loadingMore ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ChevronDown className="h-4 w-4 mr-2" />}
+                  {loadingMore ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 mr-2" />
+                  )}
                   Cargar más registros
                 </Button>
               </div>
@@ -364,7 +424,10 @@ export function AuditLogViewer() {
 
       {/* Log Details Modal */}
       {selectedLog && (
-        <Dialog open={!!selectedLog} onOpenChange={(open) => !open && setSelectedLog(null)}>
+        <Dialog
+          open={!!selectedLog}
+          onOpenChange={(open) => !open && setSelectedLog(null)}
+        >
           <DialogContent className="sm:max-w-lg bg-white border border-gray-100 shadow-xl">
             <DialogHeader className="border-b border-gray-100 pb-4 mb-4">
               <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -375,27 +438,39 @@ export function AuditLogViewer() {
             <div className="space-y-4 text-sm">
               <div className="grid grid-cols-3 gap-2">
                 <span className="text-gray-500 font-medium">Actor:</span>
-                <span className="col-span-2 text-gray-900 font-semibold">{selectedLog.actorEmail}</span>
-                
+                <span className="col-span-2 text-gray-900 font-semibold">
+                  {selectedLog.actorEmail}
+                </span>
+
                 <span className="text-gray-500 font-medium">Acción:</span>
                 <span className="col-span-2">
                   <Badge variant={getActionVariant(selectedLog.action)}>
                     {ACTION_LABELS[selectedLog.action] ?? selectedLog.action}
                   </Badge>
                 </span>
-                
+
                 <span className="text-gray-500 font-medium">Fecha:</span>
-                <span className="col-span-2 text-gray-900">{new Date(selectedLog.createdAt).toLocaleString("es-CO")}</span>
-                
-                <span className="text-gray-500 font-medium mt-2 pt-2 border-t border-gray-100">Recurso:</span>
-                <span className="col-span-2 text-gray-900 mt-2 pt-2 border-t border-gray-100 font-semibold">{selectedLog.resourceType}</span>
-                
+                <span className="col-span-2 text-gray-900">
+                  {new Date(selectedLog.createdAt).toLocaleString("es-CO")}
+                </span>
+
+                <span className="text-gray-500 font-medium mt-2 pt-2 border-t border-gray-100">
+                  Recurso:
+                </span>
+                <span className="col-span-2 text-gray-900 mt-2 pt-2 border-t border-gray-100 font-semibold">
+                  {selectedLog.resourceType}
+                </span>
+
                 <span className="text-gray-500 font-medium">ID Recurso:</span>
-                <span className="col-span-2 text-gray-600 font-mono text-xs">{selectedLog.resourceId}</span>
+                <span className="col-span-2 text-gray-600 font-mono text-xs">
+                  {selectedLog.resourceId}
+                </span>
               </div>
-              
+
               <div className="pt-2">
-                <span className="text-gray-500 font-medium block mb-2">Motivo / Descripción:</span>
+                <span className="text-gray-500 font-medium block mb-2">
+                  Motivo / Descripción:
+                </span>
                 <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 text-gray-700 italic">
                   &ldquo;{selectedLog.reason}&rdquo;
                 </div>
@@ -403,7 +478,9 @@ export function AuditLogViewer() {
 
               {selectedLog.requestId && (
                 <div className="pt-2">
-                  <span className="text-gray-500 font-medium block mb-1">Request ID (Trace):</span>
+                  <span className="text-gray-500 font-medium block mb-1">
+                    Request ID (Trace):
+                  </span>
                   <div className="bg-slate-900 p-2 rounded-lg text-slate-300 font-mono text-xs over>flow-x-auto">
                     {selectedLog.requestId}
                   </div>
