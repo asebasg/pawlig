@@ -1,8 +1,8 @@
 # Registro de Actualizaciones Mensuales — PawLig (2026)
 
 **Documento Legal y de Referencia**  
-Período: 01-01-2026 a 17-05-2026  
-Última actualización: 17-05-2026
+Período: 01-01-2026 a 31-05-2026
+Última actualización: 31-05-2026
 
 ---
 
@@ -53,7 +53,7 @@ Período: 01-01-2026 a 17-05-2026
 | **Abril** | **Sistema de Notificaciones por Email (v1.7.0)** — Implementación del sistema completo de notificaciones por email usando Resend y React Email. | 11 plantillas HTML responsive creadas. Funcionalidades: recuperación de contraseña, notificaciones de adopción, aprobación/rechazo de refugios y vendedores, bloqueo/desbloqueo de cuenta, órdenes de compra. Commit: feat(email). |
 | | **Bloqueo de Usuarios y Sincronización de Auditoría (v1.7.1)** — Resolución de problema de sincronización en historial de auditoría del panel administrativo. | Componente nuevo: EditUserButton.tsx. Refactorización: AuditHistoryCard.tsx con paginación. Integración: UserActionsClient.tsx. Implementación de revalidatePath. Commit: 29323ee. |
 | | **Mejoras de Seguridad y UX en Formularios (v1.8.0)** — Implementación del componente PasswordInput con toggle de visibilidad. | Componente: `password-input.tsx` (reutilizable). Integración: login-form.tsx, register-form.tsx, shelter-request-form.tsx, vendor-request-form.tsx. CSS: Ocultar botón nativo en Edge/IE. Commit: dc28ed2. |
-| | **Selección y Visualización de Edad en Años y Meses (v1.8.3)** — Implementación de especificación precisa de edad de mascotas. | Schema actualizado: `prisma/schema.prisma` (campo `months` Int?). Validaciones: `lib/validations/pet.schema.ts` (rango 0-11). Utilidad: `lib/utils/age-formatter.ts`. Formateo en español: "1 año y 2 meses", "6 meses". Integración en formularios y tarjetas. Commit: 07-05-2026. |
+| | **Auditoría Administrativa y Enlaces Sociales (v1.6.0)** — Implementación del historial de auditoría técnica y actualización de presencia digital. | Componente: `AuditHistoryCard.tsx`. Constantes: Actualización de enlaces sociales globales en `lib/constants.ts`. Mejora de trazabilidad administrativa y conexión con comunidad. Commit: 20-04-2026. |
 
 ---
 
@@ -61,10 +61,14 @@ Período: 01-01-2026 a 17-05-2026
 
 | Mes | Implementaciones | Notas Adicionales |
 |-----|------------------|-------------------|
-| **Mayo** | **Sistema de Gestión de Postulaciones (v1.9.0)** — Implementación del flujo completo de gestión de adopciones con tipado estricto. | Archivo de tipos: `types/adoption.ts` basado en Prisma Payloads. Componentes modulares: `components/shelter/adoptions/`. Arquitectura: Delegación a `adoption.service.ts` con transacciones atómicas. Automatización: Transición de estado (`AVAILABLE` → `IN_PROCESS`), rechazo masivo de postulaciones. Seguridad: Validación con Zod, tipado seguro. Commit: 11-05-2026. |
-| | **Rediseño de Página de Error 404 — Motor Orbital 3D** — Implementación de página 404 inmersiva con sistema solar 3D en Canvas 2D. | Archivo: `app/not-found.tsx`. Física orbital: Ley de Áreas de Kepler. Proyección 3D: Paralela con compresión en eje Y (0.4x). Oclusión dinámica: Clasificación Z-index. Optimización: requestAnimationFrame, manejo reactivo del resize. Experiencia visual inmersiva. Commit: 14-05-2026. |
-| | **Estandarización y Tipado en Gestión de Productos (v1.11.0)** — Mejora de robustez del sistema de gestión de productos mediante tipado estricto de categorías. | Refactorización: `app/(dashboard)/vendor/products/page.tsx`. Tipado dinámico: Validación de `categoryId` usando `Object.values(ProductCategory)`. Validación en cascada: 4 niveles (Auth → Rol → VendorId → Verified). Estandarización: Bloques JSDoc de cabecera y Notas de Implementación. Bugfix: Inconsistencias en casteo de tipos de filtros. Commit: 16-05-2026. |
-| | **Sistema de Métricas y Mapa Interactivo (v1.10.0)** — Implementación de sistema analítico completo con capa geoespacial para localización de albergues. | Archivos creados: `lib/services/vendor-metrics.service.ts`, `components/map/interactive-map.tsx`, `lib/services/geocoding.service.ts`. Utilidades: exportación CSV, Excel, PDF (`lib/utils/export-*.ts`). Características: Dashboard de métricas, reportes exportables, mapa interactivo de refugios, geocodificación de direcciones. Seguridad: Validación de roles en endpoints. Commit: 15-05-2026 (#126). |
+| **Mayo** | **Moderation Hub: Refactorización y Consolidación (v1.13.1)** — Unificación de la gestión administrativa bajo un núcleo de moderación centralizado. | Rutas: `/admin/moderation/*`. Eliminación de componentes redundantes (`BlockUserModal`, `UsersManagementClient`). Filtrado granular por estado en API. Actualización a Prisma 6.19.3. Commit: 6239ec2 (27-05-2026). |
+| | **Moderation Hub Integrado y Auditoría Polimórfica (v1.13.0)** — Implementación de centro de control transaccional con registro de eventos del sistema. | Modelo: `SystemAuditLog`. Lógica: Transacciones atómicas en `moderation.service.ts`. Visor de auditoría paginado. Notificaciones asíncronas para aprobaciones/rechazos. Commit: 0e4dfd8 (25-05-2026). |
+| | **Planificación y Estabilidad de la Plataforma (v1.12.0)** — Optimización de rendimiento y actualización de recursos de soporte al usuario. | Alcance: Mejora de tiempos de carga, estabilidad en flujos de adopción. Actualización de guías en el Centro de Ayuda. Preparación técnica para escalabilidad. Commit: c7334a8 (21-05-2026). |
+| | **Estandarización y Tipado en Gestión de Productos (v1.11.0)** — Mejora de robustez del sistema mediante tipado estricto y validación en cascada. | Refactorización: `app/(dashboard)/vendor/products/page.tsx`. Validación de categorías vía Enums. Seguridad: 4 niveles de verificación. Documentación bajo Estándar de Oro. Commit: 16-05-2026. |
+| | **Sistema de Métricas y Mapa Interactivo (v1.10.0)** — Implementación de panel analítico y visualización geoespacial de albergues. | Archivos: `vendor-metrics.service.ts`, `interactive-map.tsx`, `geocoding.service.ts`. Reportes: Exportación CSV, Excel, PDF. Mapa: Búsqueda por municipio y marcadores personalizados. Commit: 15-05-2026 (#126). |
+| | **Rediseño de Página de Error 404 — Motor Orbital 3D** — Implementación de página 404 inmersiva con sistema solar 3D en Canvas 2D. | Archivo: `app/not-found.tsx`. Física: Leyes de Kepler. Proyección: Isometría 3D sobre 2D. Optimización: `requestAnimationFrame`. Experiencia visual de alta fidelidad. Commit: 14-05-2026. |
+| | **Sistema de Gestión de Postulaciones (v1.9.0)** — Flujo transaccional de adopciones con automatización de estados. | Tipos: `AdoptionGetPayload`. Automatización: Transiciones `AVAILABLE` → `IN_PROCESS`. Rechazo masivo automático. Validación estricta con Zod. Commit: 11-05-2026. |
+| | **Selección y Visualización de Edad en Años y Meses (v1.8.3)** — Implementación de precisión temporal para perfiles de mascotas. | Schema: Campo `months` en `Pet`. Utilidad: `age-formatter.ts` (español). Integración en formularios y visualización global. Mejora en descripción de cachorros. Commit: 07-05-2026. |
 
 ---
 
@@ -72,14 +76,14 @@ Período: 01-01-2026 a 17-05-2026
 
 | Métrica | Cantidad |
 |---------|----------|
-| **Versiones Lanzadas** | 11 (v1.0.0 → v1.11.0) |
-| **Archivos Creados** | 50+ componentes, servicios y utilidades |
-| **Archivos Modificados** | 100+ archivos documentados y actualizados |
-| **Commits Documentados** | 90+ commits |
-| **Features Principales** | 11 features principales + múltiples bugfixes |
-| **Dependencias Agregadas** | @google/generative-ai, @google/auth-library, vitest suite, react-testing-library |
+| **Versiones Lanzadas** | 14 (v1.0.0 → v1.13.1) |
+| **Archivos Creados** | 60+ componentes, servicios y utilidades |
+| **Archivos Modificados** | 150+ archivos documentados y actualizados |
+| **Commits Documentados** | 110+ commits |
+| **Features Principales** | 14 features principales + múltiples bugfixes |
+| **Dependencias Agregadas** | @google/generative-ai, exceljs, jspdf, leaflet, recharts, resend |
 | **Meses Activos** | 5/5 (Enero, Febrero, Abril, Mayo + Marzo estabilización) |
-| **Scope de Cambios** | core, ui, auth, email, metrics, map, products, adoptions, admin |
+| **Scope de Cambios** | core, ui, auth, email, metrics, map, products, adoptions, admin, moderation |
 
 ---
 
@@ -92,120 +96,60 @@ Período: 01-01-2026 a 17-05-2026
 - ✅ Estandarización de documentación de código
 
 ### Q2 2026 (Abril-Mayo)
+- ✅ Moderation Hub centralizado con auditoría polimórfica (v1.13.1)
 - ✅ Sistema de notificaciones por email completamente integrado (11 plantillas)
-- ✅ Gestión administrativa mejorada (auditoría, bloqueo/desbloqueo de usuarios)
 - ✅ Sistema de métricas y reportes exportables (CSV, Excel, PDF)
-- ✅ Mapa interactivo con geocodificación
-- ✅ Tipado estricto en toda la aplicación (Zero `any` policy)
+- ✅ Mapa interactivo con geocodificación de albergues
+- ✅ Tipado estricto en toda la aplicación y gestión de estados transaccionales
 - ✅ Motor 3D para página de error 404
 
 ---
 
 ## Cambios Notables en la Arquitectura
 
-### Sistema de Tipos
-- Implementación de `Prisma.GetPayload<T>` para tipado seguro
-- Eliminación de uso de `any` en bloques catch (uso de `unknown` + `instanceof`)
-- Esquemas Zod para validación en cascada
+### Sistema de Auditoría
+- **Auditoría Polimórfica**: Implementación de `SystemAuditLog` para rastrear eventos transversales (usuarios, albergues, vendedores).
+- **Trazabilidad Administrativa**: Registro obligatorio de justificaciones para acciones de bloqueo y cambio de roles.
 
-### Patrones de Diseño
-- Delegación de lógica de negocio a servicios reutilizables
-- Componentes modulares en estructura por features
-- Separación clara: API routes → Services → Components
+### Transaccionalidad
+- **Prisma Transactions**: Uso de `$transaction` para asegurar la atomicidad en flujos de aprobación (cambio de rol + actualización de estado + log de auditoría).
+- **Automatización de Estados**: Lógica en servicios para cascada de estados en adopciones y productos.
 
-### Seguridad
-- Validación de roles en múltiples niveles
-- Tokens de recuperación con expiración (1 hora)
-- Invalidación de caché con `revalidatePath` en Next.js
-- Endpoints no bloqueantes para operaciones asincrónicas
-
-### Performance
-- Exportación de reportes con gestión de buffers
-- Uso de `requestAnimationFrame` para animaciones 3D
-- Caché en rutas estáticas donde es aplicable
+### Seguridad y UX
+- **Validación en Cascada**: Implementación de middleware y validaciones de servicio en 4 niveles.
+- **Componentes Controlados**: Sincronización de filtros con URL mediante `useSearchParams` y `Suspense`.
 
 ---
 
 ## Dependencias y Stack Tecnológico
 
 ### Frontend
-- Next.js 14+ (App Router)
-- React 18+
-- TypeScript 5+
-- Tailwind CSS 3+
-- Radix UI (componentes accesibles)
+- Next.js 14+ (App Router), React 18+
+- Tailwind CSS 3+, Radix UI
+- Lucide React (Iconografía)
+- Leaflet (Mapas interactivos)
+- Recharts (Analítica visual)
 
 ### Backend/Services
-- Prisma ORM
-- NextAuth.js (autenticación)
-- Resend API (email)
+- Prisma ORM 6.19.3 (MongoDB Atlas)
+- NextAuth.js (Autenticación basada en roles)
+- Resend API & React Email
 - Google Generative AI SDK
-- Zod (validación)
+- ExcelJS & jsPDF (Generación de reportes)
 
 ### Testing & QA
-- Vitest
-- @testing-library/react
-- JSDOM
-
-### Herramientas
-- ESLint
-- Git/GitHub
-- Vercel (deployment)
+- Vitest & JSDOM
+- Testing Library (React)
 
 ---
 
 ## Documentación Interna
 
 ### Archivos de Referencia
-- **`.rules.md`**: Estándares de codificación, convenciones, mejores prácticas
-- **`CHANGELOG.md`**: Registro detallado de cambios por versión
-- **`DEV_NOTES.md`**: Detalles técnicos de desarrollo y decisiones de arquitectura
-- **`README.md`**: Instrucciones de configuración, deploy, contribución
-
-### Estructura de Directorio
-```
-pawlig/
-├── app/                      # Next.js App Router
-│   ├── (auth)/              # Rutas de autenticación
-│   ├── (dashboard)/         # Rutas protegidas
-│   ├── (public)/            # Rutas públicas
-│   └── api/                 # API Routes
-├── components/              # Componentes React
-│   ├── ui/                  # Componentes base (Button, Card, etc.)
-│   ├── forms/               # Formularios
-│   ├── layout/              # Layout compartido
-│   ├── cards/               # Componentes de tarjeta
-│   ├── filters/             # Sistemas de filtrado
-│   ├── map/                 # Componentes de mapa
-│   └── admin/               # Componentes administrativos
-├── lib/                     # Lógica compartida
-│   ├── services/            # Servicios de negocio
-│   ├── utils/               # Utilidades
-│   ├── validations/         # Esquemas Zod
-│   ├── email/               # Plantillas de email
-│   └── auth/                # Configuración de autenticación
-├── prisma/                  # Esquema de base de datos
-├── public/                  # Assets estáticos
-└── types/                   # Definiciones de tipos TypeScript
-```
-
----
-
-## Control de Calidad y Mejoras Futuras
-
-### Métricas de Éxito Implementadas
-- ✅ Tipado de tipos 100% (Zero `any`)
-- ✅ Cobertura de pruebas en componentes críticos
-- ✅ Documentación exhaustiva
-- ✅ Validación en cascada de datos
-- ✅ Manejo de errores robusto
-
-### Áreas de Enfoque para Próximos Trimestres
-- [ ] Expansión de suite de pruebas (coverage 80%+)
-- [ ] Optimización de performance (Core Web Vitals)
-- [ ] Integración de analytics avanzado
-- [ ] Escalabilidad de base de datos
-- [ ] Implementación de microservicios (si aplica)
+- **`.rules.md`**: El "Estándar de Oro" de codificación y documentación.
+- **`CHANGELOG.md`**: Registro técnico detallado por versión.
+- **`DEV_NOTES.md`**: Bitácora de decisiones técnicas y refactorizaciones.
+- **`CONTEXT.md`**: Mapa completo de la arquitectura y dependencias.
 
 ---
 
@@ -217,12 +161,11 @@ Este documento sirve como registro oficial de cambios y es de carácter **legal 
 - **Desarrollador Principal**: @asebasg
 - **Colaboradores**: @sospigz, google-labs-jules[bot]
 
-**Período de Documentación**: 01-01-2026 a 17-05-2026  
-**Próxima Revisión Recomendada**: 31-05-2026
+**Período de Documentación**: 01-01-2026 a 31-05-2026
+**Próxima Revisión Recomendada**: 15-06-2026
 
 ---
 
-**Documento Generado**: 2026-05-17  
-**Versión**: 1.0  
+**Documento Generado**: 2026-05-31
+**Versión**: 1.1
 **Estado**: ✅ Completado y Verificado
-
