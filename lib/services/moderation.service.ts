@@ -282,7 +282,7 @@ export const moderationService = {
 
   async getAuditLogs(params?: { skip?: number; take?: number; startDate?: Date; endDate?: Date }) {
     const { skip = 0, take = 50, startDate, endDate } = params || {};
-    
+
     return prisma.systemAuditLog.findMany({
       where: {
         createdAt: {
@@ -295,6 +295,7 @@ export const moderationService = {
       orderBy: { createdAt: "desc" },
     });
   }
+
 };
 
 /*
