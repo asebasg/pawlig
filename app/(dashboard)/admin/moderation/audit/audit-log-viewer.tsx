@@ -4,8 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   Loader2,
-  Search,
-  Calendar,
   ChevronDown,
   Eye,
   User,
@@ -23,6 +21,8 @@ import {
   RefreshCw,
   Trash2,
   X,
+  Search,
+  Calendar,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -97,13 +97,16 @@ export function AuditLogViewer() {
   const [endDate, setEndDate] = useState("");
   const [hasMore, setHasMore] = useState(true);
 
-  // Modal state
+  // Modal de detalles
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
   // Ref para rastrear la cantidad de logs sin crear dependencia reactiva
   const logsLengthRef = useRef(0);
 
   const take = 50;
+
+  // Obtiene el día actual del sistema en formato YYYY-MM-DD para limitar la fecha máxima
+  const todayStr = new Date().toLocaleDateString("en-CA"); // Formato YYYY-MM-DD local
 
   const fetchLogs = useCallback(
     async (isLoadMore = false) => {
@@ -113,8 +116,16 @@ export function AuditLogViewer() {
         take: take.toString(),
       });
 
-      if (startDate) params.append("startDate", startDate);
-      if (endDate) params.append("endDate", endDate);
+      if (startDate) {
+        // Convierte el string "YYYY-MM-DD" al inicio del día local en la zona horaria del cliente y saca ISO
+        const startISO = new Date(startDate + "T00:00:00").toISOString();
+        params.append("startDate", startISO);
+      }
+      if (endDate) {
+        // Convierte el string "YYYY-MM-DD" al fin del día local en la zona horaria del cliente y saca ISO
+        const endISO = new Date(endDate + "T23:59:59.999").toISOString();
+        params.append("endDate", endISO);
+      }
 
       try {
         if (isLoadMore) setLoadingMore(true);
@@ -165,6 +176,13 @@ export function AuditLogViewer() {
     return matchSearch && matchAction;
   });
 
+  function handleClearFilters() {
+    setSearch("");
+    setActionFilter("ALL");
+    setStartDate("");
+    setEndDate("");
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -175,25 +193,32 @@ export function AuditLogViewer() {
           Visualiza los cambios y acciones recientes en la plataforma.
         </p>
       </div>
-      {/* Search and Filters Card */}
+
+      {/* Filtros */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col gap-4 lg:flex-row justify-between items-start lg:items-center">
           <div className="flex flex-col md:flex-row items-center gap-3 w-full lg:w-auto">
+
+            {/* Búsqueda por texto */}
             <div className="relative w-full md:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
+                id="audit-search"
                 type="text"
                 placeholder="Buscar por email, recurso..."
                 className="pl-9 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              
             </div>
 
+            {/* Filtro por acción */}
             <div className="w-full md:w-56">
               <Select value={actionFilter} onValueChange={setActionFilter}>
-                <SelectTrigger className="w-full rounded-full bg-gray-50 border-gray-200 hover:bg-white focus:bg-white transition-colors px-4">
+                <SelectTrigger
+                  id="audit-action-filter"
+                  className="w-full rounded-full bg-gray-50 border-gray-200 hover:bg-white focus:bg-white transition-colors px-4"
+                >
                   <div className="flex items-center gap-2">
                     <ListFilter className="h-4 w-4 text-purple-500" />
                     <SelectValue placeholder="Todas las acciones" />
@@ -202,7 +227,6 @@ export function AuditLogViewer() {
                 <SelectContent className="rounded-xl shadow-lg border-gray-100">
                   <SelectItem value="ALL">
                     <div className="flex items-center gap-2">
-                      {/* <ListFilter className="h-4 w-4 text-gray-500" /> */}
                       <span>Todas las acciones</span>
                     </div>
                   </SelectItem>
@@ -258,48 +282,47 @@ export function AuditLogViewer() {
               </Select>
             </div>
 
+            {/* Inputs de fecha nativos del navegador */}
             <div className="flex items-center gap-3 w-full md:w-auto">
               <div className="relative flex-1 sm:w-40">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                 <Input
+                  id="audit-start-date"
                   type="date"
-                  className="pl-9 bg-gray-50 border-gray-200"
+                  max={todayStr}
+                  className="pl-9 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  placeholder="Inicio"
                 />
               </div>
               <span className="text-gray-400 text-sm">-</span>
               <div className="relative flex-1 sm:w-40">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                 <Input
+                  id="audit-end-date"
                   type="date"
-                  className="pl-9 bg-gray-50 border-gray-200"
+                  max={todayStr}
+                  className="pl-9 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  placeholder="Fin"
                 />
               </div>
             </div>
-            
           </div>
+
           <Button
-              variant="outline"
-              onClick={() => {
-                setSearch("");
-                setActionFilter("ALL");
-                setStartDate("");
-                setEndDate("");
-              }}
-              className="h-10 border-gray-200 text-gray-600 w-full md:w-auto"
-            >
-              <X className="w-4 h-4 mr-2" />
-              Limpiar Filtros
-            </Button>
+            id="audit-clear-filters"
+            variant="outline"
+            onClick={handleClearFilters}
+            className="h-10 border-gray-200 text-gray-600 w-full md:w-auto"
+          >
+            <X className="w-4 h-4 mr-2" />
+            Limpiar Filtros
+          </Button>
         </div>
       </div>
 
-      {/* Table Card */}
+      {/* Tabla */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-600">
@@ -369,7 +392,7 @@ export function AuditLogViewer() {
                         </td>
                         <td className="px-6 py-4">
                           <Badge
-                            variant={getActionVariant(log.action)}
+                             variant={getActionVariant(log.action)}
                             className="font-medium"
                           >
                             {ACTION_LABELS[log.action] ?? log.action}
@@ -400,6 +423,7 @@ export function AuditLogViewer() {
                 </tbody>
               </table>
             </div>
+
             {hasMore && filteredLogs.length >= take && (
               <div className="p-4 border-t border-gray-100 flex justify-center bg-gray-50">
                 <Button
@@ -422,7 +446,7 @@ export function AuditLogViewer() {
         )}
       </div>
 
-      {/* Log Details Modal */}
+      {/* Modal de detalles */}
       {selectedLog && (
         <Dialog
           open={!!selectedLog}
@@ -481,7 +505,7 @@ export function AuditLogViewer() {
                   <span className="text-gray-500 font-medium block mb-1">
                     Request ID (Trace):
                   </span>
-                  <div className="bg-slate-900 p-2 rounded-lg text-slate-300 font-mono text-xs over>flow-x-auto">
+                  <div className="bg-slate-900 p-2 rounded-lg text-slate-300 font-mono text-xs overflow-x-auto">
                     {selectedLog.requestId}
                   </div>
                 </div>
@@ -500,12 +524,16 @@ export function AuditLogViewer() {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Visualizador interactivo de logs de auditoría rediseñado con layout elegante.
+ * Visualizador interactivo de logs de auditoría con filtros avanzados.
  *
  * Lógica Clave:
- * - Filtra por rango de fechas directamente en la API.
- * - Filtra por texto en el cliente sobre los datos cargados.
- * - Los detalles largos como `requestId` y `reason` se visualizan en un modal (Dialog)
- *   para mantener la tabla limpia, escalable y visualmente atractiva.
+ * - El rango de fechas se gestiona con dos inputs date nativos del navegador.
+ * - Al construir la query de la API, se normalizan las fechas al inicio (00:00) y
+ *   al fin (23:59) del día en la zona horaria del cliente y se envían como strings ISO.
+ *   Esto soluciona la discrepancia de zona horaria con el almacenamiento en base de datos.
+ * - Filtros de texto y acción se aplican en el cliente sobre los datos ya cargados.
+ * - Los detalles de cada registro se visualizan en un Dialog para mantener
+ *   la tabla limpia y escalable.
  *
  */
+
