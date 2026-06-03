@@ -24,11 +24,27 @@ export async function GET(request: Request) {
     const startDateStr = searchParams.get("startDate");
     const endDateStr = searchParams.get("endDate");
 
+    let startDate: Date | undefined;
+    if (startDateStr) {
+      startDate = new Date(startDateStr);
+      if (!startDateStr.includes("T")) {
+        startDate.setUTCHours(0, 0, 0, 0);
+      }
+    }
+
+    let endDate: Date | undefined;
+    if (endDateStr) {
+      endDate = new Date(endDateStr);
+      if (!endDateStr.includes("T")) {
+        endDate.setUTCHours(23, 59, 59, 999);
+      }
+    }
+
     const auditLogs = await moderationService.getAuditLogs({
       skip,
       take,
-      startDate: startDateStr ? new Date(startDateStr) : undefined,
-      endDate: endDateStr ? new Date(endDateStr) : undefined,
+      startDate,
+      endDate,
     });
 
     return NextResponse.json(auditLogs, { status: 200 });
