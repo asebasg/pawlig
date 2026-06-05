@@ -26,3 +26,9 @@ class ResizeObserver {
   disconnect() {}
 }
 global.ResizeObserver = ResizeObserver;
+
+// Mock next/cache
+vi.mock("next/cache", () => ({
+  revalidateTag: vi.fn(),
+  revalidatePath: vi.fn(),
+}));
