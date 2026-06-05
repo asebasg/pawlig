@@ -41,6 +41,12 @@ enum AuditAction {
   DELETE
 }
 
+enum AuditCategory {
+  USER_MANAGEMENT
+  SHELTER_MODERATION
+  VENDOR_MODERATION
+}
+
 enum PetStatus {
   AVAILABLE
   IN_PROCESS
@@ -102,44 +108,14 @@ model User {
   passwordResetTokens PasswordResetToken[]
   cartItems           CartItem[]
 
-  // Auditoría (HU-014)
-  adminActions UserAudit[] @relation("AdminActions")
-  auditRecords UserAudit[] @relation("AffectedUser")
+  // Auditoría (HU-014) - Migrado a SystemAuditLog
+  // (Las relaciones directas a logs se manejan manualmente dado el polimorfismo de SystemAuditLog)
 
   @@index([role])
   @@index([isActive])
   @@index([municipality])
 }
 
-model UserAudit {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  // Acción realizada (HU-014)
-  action AuditAction // Enum tipado (no String)
-  reason String // Justificación obligatoria (RN-017)
-
-  // Trazabilidad
-  oldValue String?
-  newValue String?
-
-  // Relaciones
-  performedBy User   @relation("AdminActions", fields: [adminId], references: [id], onDelete: Cascade)
-  adminId     String @db.ObjectId
-
-  affectedUser User   @relation("AffectedUser", fields: [userId], references: [id], onDelete: Cascade)
-  userId       String @db.ObjectId
-
-  // Metadata de seguridad (RNF-002)
-  ipAddress String?
-  userAgent String?
-
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([adminId])
-  @@index([action])
-  @@index([createdAt])
-}
 
 model Shelter {
   id               String       @id @default(auto()) @map("_id") @db.ObjectId
@@ -354,451 +330,503 @@ model CartItem {
   @@index([productId])
   @@index([createdAt])
 }
+
+model SystemAuditLog {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  category     AuditCategory
+  action       String        // Ej: "APPROVE", "REJECT", "BLOCK", "CHANGE_ROLE"
+  actorId      String        @db.ObjectId
+  actorEmail   String
+  resourceType String        // Ej: "SHELTER", "VENDOR", "USER"
+  resourceId   String        @db.ObjectId
+  before       String?       // JSON String
+  after        String?       // JSON String
+  reason       String
+  ipAddress    String?
+  userAgent    String?
+  requestId    String?       // Correlación para tracing
+  createdAt    DateTime      @default(now())
+
+  @@index([category])
+  @@index([action])
+  @@index([resourceType, resourceId])
+  @@index([createdAt])
+}
 ```
 
 # Estructura del Proyecto
 
 ```text
 .
-├── .github
-│   ├── ISSUE_TEMPLATE
-│   │   ├── bug-report.md
-│   │   ├── documentation.md
-│   │   ├── feature-request.md
-│   │   ├── performance.md
-│   │   ├── question.md
-│   │   └── refactor.md
-│   └── pull_request_template.md
-├── app
-│   ├── (auth)
-│   │   ├── login
-│   │   │   └── page.tsx
-│   │   ├── register
-│   │   │   └── page.tsx
-│   │   └── unauthorized
-│   │       └── page.tsx
-│   ├── (dashboard)
-│   │   ├── admin
-│   │   │   ├── metrics
-│   │   │   │   └── page.tsx
-│   │   │   ├── profile
-│   │   │   │   └── page.tsx
-│   │   │   └── users
-│   │   │       ├── [id]
-│   │   │       │   └── view
-│   │   │       │       ├── __tests__
-│   │   │       │       │   └── user-view.spec.tsx
-│   │   │       │       └── page.tsx
-│   │   │       ├── BlockUserModal.tsx
-│   │   │       ├── page.tsx
-│   │   │       └── UsersManagementClient.tsx
-│   │   ├── shelter
-│   │   │   ├── adoptions
-│   │   │   │   └── page.tsx
-│   │   │   ├── metrics
-│   │   │   │   └── page.tsx
-│   │   │   ├── pets
-│   │   │   │   ├── [id]
-│   │   │   │   │   └── edit
-│   │   │   │   │       └── page.tsx
-│   │   │   │   ├── new
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
-│   │   │   ├── profile
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   ├── user
-│   │   │   ├── profile
-│   │   │   │   └── page.tsx
-│   │   │   ├── request-shelter
-│   │   │   │   └── page.tsx
-│   │   │   ├── request-vendor
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   └── vendor
-│   │       ├── metrics
-│   │       │   └── page.tsx
-│   │       ├── orders
-│   │       │   └── page.tsx
-│   │       ├── products
-│   │       │   ├── [id]
-│   │       │   │   └── edit
-│   │       │   │       └── page.tsx
-│   │       │   ├── new
-│   │       │   │   └── page.tsx
-│   │       │   └── page.tsx
-│   │       ├── profile
-│   │       │   └── page.tsx
-│   │       └── page.tsx
-│   ├── (public)
-│   │   ├── adopciones
-│   │   │   ├── [id]
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   ├── albergues
-│   │   │   └── page.tsx
-│   │   ├── changelog
-│   │   │   ├── dev
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   ├── faq
-│   │   │   └── page.tsx
-│   │   ├── help
-│   │   │   └── page.tsx
-│   │   ├── nosotros
-│   │   │   └── page.tsx
-│   │   ├── privacy
-│   │   │   └── page.tsx
-│   │   ├── productos
-│   │   │   ├── [id]
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   └── terms
-│   │       └── page.tsx
-│   ├── api
-│   │   ├── admin
-│   │   │   ├── metrics
-│   │   │   │   ├── adoptions
-│   │   │   │   │   ├── export
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── sales
-│   │   │   │       ├── export
-│   │   │   │       │   └── route.ts
-│   │   │   │       ├── orders
-│   │   │   │       │   └── route.ts
-│   │   │   │       ├── products
-│   │   │   │       │   └── route.ts
-│   │   │   │       ├── trends
-│   │   │   │       │   └── route.ts
-│   │   │   │       └── route.ts
-│   │   │   ├── shelter-requests
-│   │   │   │   └── route.ts
-│   │   │   ├── shelters
-│   │   │   │   └── [shelterId]
-│   │   │   │       └── route.ts
-│   │   │   └── users
-│   │   │       ├── [id]
-│   │   │       │   ├── block
-│   │   │       │   │   └── route.ts
-│   │   │       │   └── role
-│   │   │       │       └── route.ts
-│   │   │       └── route.ts
-│   │   ├── adoptions
-│   │   │   ├── [id]
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
-│   │   ├── ai
-│   │   │   └── refine
-│   │   │       └── route.ts
-│   │   ├── auth
-│   │   │   ├── [...nextauth]
-│   │   │   │   └── route.ts
-│   │   │   ├── forgot-password
-│   │   │   │   └── route.ts
-│   │   │   └── register
-│   │   │       └── route.ts
-│   │   ├── cart
-│   │   │   ├── [id]
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
-│   │   ├── cloudinary
-│   │   │   └── sign
-│   │   │       └── route.ts
-│   │   ├── pets
-│   │   │   ├── [id]
-│   │   │   │   ├── favorite
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── status
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
-│   │   │   ├── search
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
-│   │   ├── products
-│   │   │   ├── [id]
-│   │   │   │   ├── stock
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
-│   │   ├── shelter
-│   │   │   ├── adoptions
-│   │   │   │   └── route.ts
-│   │   │   └── reports
-│   │   │       └── adoptions
-│   │   │           ├── export
-│   │   │           │   └── route.ts
-│   │   │           └── route.ts
-│   │   ├── shelters
-│   │   │   ├── [id]
-│   │   │   │   └── route.ts
-│   │   │   ├── map
-│   │   │   │   └── route.ts
-│   │   │   └── search
-│   │   │       └── route.ts
-│   │   ├── upload
-│   │   │   └── route.ts
-│   │   ├── user
-│   │   │   ├── favorites
-│   │   │   │   ├── check
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
-│   │   │   ├── profile
-│   │   │   │   └── route.ts
-│   │   │   ├── request-shelter-account
-│   │   │   │   └── route.ts
-│   │   │   └── request-vendor-account
-│   │   │       └── route.ts
-│   │   └── vendor
-│   │       ├── metrics
-│   │       │   ├── export
-│   │       │   │   └── route.ts
-│   │       │   ├── orders
-│   │       │   │   └── route.ts
-│   │       │   ├── products
-│   │       │   │   └── route.ts
-│   │       │   ├── trends
-│   │       │   │   └── route.ts
-│   │       │   └── route.ts
-│   │       └── profile
-│   │           └── route.ts
-│   ├── fonts
-│   │   ├── GeistMonoVF.woff
-│   │   └── GeistVF.woff
-│   ├── globals.css
-│   ├── icon.png
-│   ├── layout.tsx
-│   ├── not-found.tsx
-│   └── page.tsx
-├── components
-│   ├── admin
-│   │   ├── metrics
-│   │   │   ├── admin-dashboard-tabs.tsx
-│   │   │   └── admin-metrics-client.tsx
-│   │   ├── AuditHistoryCard.tsx
-│   │   ├── BlockUserButton.tsx
-│   │   ├── EditUserButton.tsx
-│   │   ├── RoleChangeModal.tsx
-│   │   ├── UserActionsClient.tsx
-│   │   └── UserViewClient.tsx
-│   ├── adopter
-│   │   ├── adopter-dashboard-client.tsx
-│   │   ├── adoptions-section.tsx
-│   │   ├── cart-section.tsx
-│   │   └── favorites-section.tsx
-│   ├── cards
-│   │   ├── pet-card.tsx
-│   │   ├── product-card.tsx
-│   │   └── shelter-pet-card.tsx
-│   ├── cart
-│   │   ├── cart-item.tsx
-│   │   └── cart-summary.tsx
-│   ├── filters
-│   │   ├── pet-filter.tsx
-│   │   └── product-filter.tsx
-│   ├── forms
-│   │   ├── login-form.tsx
-│   │   ├── pet-form.tsx
-│   │   ├── product-form.tsx
-│   │   ├── register-form.tsx
-│   │   ├── shelter-request-form.tsx
-│   │   ├── user-profile-form.tsx
-│   │   ├── vendor-profile-form.tsx
-│   │   └── vendor-request-form.tsx
-│   ├── help
-│   │   └── accordion-section.tsx
-│   ├── layout
-│   │   ├── cart-button.tsx
-│   │   ├── floating-cart-button.tsx
-│   │   ├── footer.tsx
-│   │   ├── index.ts
-│   │   ├── navbar-auth.tsx
-│   │   ├── navbar-mobile.tsx
-│   │   ├── navbar-public.tsx
-│   │   ├── navbar.tsx
-│   │   ├── under-construction.tsx
-│   │   └── user-menu.tsx
-│   ├── map
-│   │   ├── interactive-map.tsx
-│   │   ├── legal-info-modal.tsx
-│   │   ├── shelter-card.tsx
-│   │   └── shelters-map-client.tsx
-│   ├── modals
-│   │   └── adoption-confirm-modal.tsx
-│   ├── products
-│   │   └── PaymentModal.tsx
-│   ├── shelter
-│   │   ├── adoptions
-│   │   │   ├── adoptions-client.tsx
-│   │   │   ├── adoptions-table.tsx
-│   │   │   ├── application-card.tsx
-│   │   │   ├── applications-list.tsx
-│   │   │   └── approval-modal.tsx
-│   │   ├── metrics
-│   │   │   ├── adoption-charts.tsx
-│   │   │   ├── adoption-filters.tsx
-│   │   │   ├── adoption-metrics-client.tsx
-│   │   │   ├── adoption-table.tsx
-│   │   │   └── export-buttons.tsx
-│   │   ├── AdoptionStats.tsx
-│   │   └── ShelterDashboardClient.tsx
-│   ├── shelters
-│   │   ├── municipality-filter.tsx
-│   │   └── shelter-search.tsx
-│   ├── ui
-│   │   ├── address-input.tsx
-│   │   ├── alert-dialog.tsx
-│   │   ├── badge.tsx
-│   │   ├── button-variants.ts
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── checkbox.tsx
-│   │   ├── confetti-button.tsx
-│   │   ├── dialog.tsx
-│   │   ├── favorite-button.tsx
-│   │   ├── input.tsx
-│   │   ├── label.tsx
-│   │   ├── loader.tsx
-│   │   ├── logo.tsx
-│   │   ├── password-input.tsx
-│   │   ├── radio-group.tsx
-│   │   ├── select.tsx
-│   │   └── table.tsx
-│   ├── vendor
-│   │   ├── metrics
-│   │   │   ├── metrics-cards.tsx
-│   │   │   ├── metrics-filters.tsx
-│   │   │   ├── orders-by-status-chart.tsx
-│   │   │   ├── sales-chart.tsx
-│   │   │   ├── top-products-table.tsx
-│   │   │   └── vendor-metrics-client.tsx
-│   │   ├── ProductsClient.tsx
-│   │   ├── ProductTable.tsx
-│   │   ├── StockUpdateModal.tsx
-│   │   ├── VendorDashboardClient.tsx
-│   │   └── VendorStats.tsx
-│   ├── PetDetailClient.tsx
-│   ├── PetGalleryClient.tsx
-│   ├── ProductDetailClient.tsx
-│   └── ProductGalleryClient.tsx
-├── docs
-│   ├── images
-│   │   ├── adopcion.png
-│   │   ├── diagrama_clases.png
-│   │   ├── diagrama_flujo_general.png
-│   │   ├── diagrama_uml.png
-│   │   ├── gestionar_citas.png
-│   │   ├── pet.png
-│   │   ├── postular_adopcion.png
-│   │   ├── publicar_mascota.png
-│   │   └── simular_compra.png
-│   ├── 01_Acta_de_Constitucion.md
-│   ├── 02_Stakeholders.md
-│   ├── 03_Alcance_del_Proyecto.md
-│   ├── 04_Requerimientos.md
-│   ├── 05_Historias_de_Usuario.md
-│   ├── 06_Mapa_de_Procesos.md
-│   ├── 07_Casos_de_Uso.md
-│   ├── 08_Arquitectura_Software.md
-│   ├── 09_Modelo_Entidad_Relacion.md
-│   ├── 10_Diagramas_UML.md
-│   ├── 11_Manual_Diseño.md
-│   ├── 12_Plan_de_Pruebas.md
-│   ├── 13_Casos_de_Prueba.md
-│   └── 14_Manual_del_Usuario.md
-├── lib
-│   ├── auth
-│   │   ├── auth-options.ts
-│   │   ├── password.ts
-│   │   ├── require-role.ts
-│   │   └── session.ts
-│   ├── email
-│   │   ├── components
-│   │   │   └── EmailLayout.tsx
-│   │   └── templates
-│   │       ├── account-blocked.tsx
-│   │       ├── adoption-status.tsx
-│   │       ├── new-adoption.tsx
-│   │       ├── new-order-vendor.tsx
-│   │       ├── order-confirmation.tsx
-│   │       ├── order-status.tsx
-│   │       ├── password-reset.tsx
-│   │       ├── shelter-approved.tsx
-│   │       ├── shelter-rejected.tsx
-│   │       ├── vendor-approved.tsx
-│   │       └── vendor-rejected.tsx
-│   ├── hooks
-│   │   ├── use-cart-sync.ts
-│   │   └── use-cart.ts
-│   ├── services
-│   │   ├── adoption-report.service.ts
-│   │   ├── adoption.service.ts
-│   │   ├── cart.service.ts
-│   │   ├── email.service.test.ts
-│   │   ├── email.service.ts
-│   │   ├── geocoding.service.ts
-│   │   ├── pet.service.spec.ts
-│   │   ├── pet.service.ts
-│   │   ├── product.service.ts
-│   │   ├── user.service.ts
-│   │   └── vendor-metrics.service.ts
-│   ├── utils
-│   │   ├── age-formatter.test.ts
-│   │   ├── age-formatter.ts
-│   │   ├── db.ts
-│   │   ├── export-csv.ts
-│   │   ├── export-excel.ts
-│   │   ├── export-pdf.ts
-│   │   └── logger.ts
-│   ├── validations
-│   │   ├── adoption.schema.ts
-│   │   ├── cart.schema.ts
-│   │   ├── cloudinary.schema.ts
-│   │   ├── pet-search.schema.ts
-│   │   ├── pet.schema.ts
-│   │   ├── product.schema.ts
-│   │   └── user.schema.ts
-│   ├── cloudinary.ts
-│   ├── constants.ts
-│   └── utils.ts
-├── prisma
-│   ├── schema.prisma
-│   └── seed.ts
-├── public
-│   └── images
-│       ├── 404-page.png
-│       ├── medellin-map.png
-│       ├── nosotros_hero_image_1778473832814.png
-│       ├── pet-adopted.png
-│       ├── pet-community.png
-│       ├── pet-home.png
-│       └── under_construction.png
-├── scripts
-│   ├── geocode-shelters.ts
-│   └── test-live-emails.ts
-├── types
-│   ├── adoption.ts
-│   ├── api.types.ts
-│   ├── email.types.ts
-│   ├── next-auth.d.ts
-│   ├── report.types.ts
-│   └── shelter.ts
 ├── .env.local.example
 ├── .eslintrc.json
+├── .github
+│   ├── ISSUE_TEMPLATE
+│   │   ├── bug-report.md
+│   │   ├── documentation.md
+│   │   ├── feature-request.md
+│   │   ├── performance.md
+│   │   ├── question.md
+│   │   └── refactor.md
+│   └── pull_request_template.md
 ├── .gitignore
 ├── .rules.md
 ├── CHANGELOG.md
 ├── CONTEXT.md
-├── credentials-seed.txt
 ├── DEV_NOTES.md
+├── README.md
+├── app
+│   ├── (auth)
+│   │   ├── login
+│   │   │   └── page.tsx
+│   │   ├── register
+│   │   │   └── page.tsx
+│   │   └── unauthorized
+│   │       └── page.tsx
+│   ├── (dashboard)
+│   │   ├── admin
+│   │   │   ├── metrics
+│   │   │   │   └── page.tsx
+│   │   │   ├── moderation
+│   │   │   │   ├── audit
+│   │   │   │   │   ├── audit-log-viewer.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── shelters
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── shelter-moderation-client.tsx
+│   │   │   │   ├── users
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   └── view
+│   │   │   │   │   │       ├── __tests__
+│   │   │   │   │   │       │   └── user-view.spec.tsx
+│   │   │   │   │   │       └── page.tsx
+│   │   │   │   │   ├── block-user-modal.tsx
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── users-management-client.tsx
+│   │   │   │   └── vendors
+│   │   │   │       ├── page.tsx
+│   │   │   │       └── vendor-moderation-client.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── profile
+│   │   │       └── page.tsx
+│   │   ├── shelter
+│   │   │   ├── adoptions
+│   │   │   │   └── page.tsx
+│   │   │   ├── metrics
+│   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── pets
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── edit
+│   │   │   │   │       └── page.tsx
+│   │   │   │   ├── new
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   └── profile
+│   │   │       └── page.tsx
+│   │   ├── user
+│   │   │   ├── page.tsx
+│   │   │   ├── profile
+│   │   │   │   └── page.tsx
+│   │   │   ├── request-shelter
+│   │   │   │   └── page.tsx
+│   │   │   └── request-vendor
+│   │   │       └── page.tsx
+│   │   └── vendor
+│   │       ├── metrics
+│   │       │   └── page.tsx
+│   │       ├── orders
+│   │       │   └── page.tsx
+│   │       ├── page.tsx
+│   │       ├── products
+│   │       │   ├── [id]
+│   │       │   │   └── edit
+│   │       │   │       └── page.tsx
+│   │       │   ├── new
+│   │       │   │   └── page.tsx
+│   │       │   └── page.tsx
+│   │       └── profile
+│   │           └── page.tsx
+│   ├── (public)
+│   │   ├── adopciones
+│   │   │   ├── [id]
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── albergues
+│   │   │   └── page.tsx
+│   │   ├── changelog
+│   │   │   ├── dev
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── faq
+│   │   │   └── page.tsx
+│   │   ├── help
+│   │   │   └── page.tsx
+│   │   ├── nosotros
+│   │   │   └── page.tsx
+│   │   ├── privacy
+│   │   │   └── page.tsx
+│   │   ├── productos
+│   │   │   ├── [id]
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   └── terms
+│   │       └── page.tsx
+│   ├── api
+│   │   ├── admin
+│   │   │   ├── metrics
+│   │   │   │   ├── adoptions
+│   │   │   │   │   ├── export
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── sales
+│   │   │   │       ├── export
+│   │   │   │       │   └── route.ts
+│   │   │   │       ├── orders
+│   │   │   │       │   └── route.ts
+│   │   │   │       ├── products
+│   │   │   │   │       │   └── route.ts
+│   │   │   │       ├── route.ts
+│   │   │   │       └── trends
+│   │   │   │           └── route.ts
+│   │   │   ├── moderation
+│   │   │   │   ├── audit
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── shelters
+│   │   │   │   │   ├── [id]
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── vendors
+│   │   │   │       ├── [id]
+│   │   │   │       │   └── route.ts
+│   │   │   │       └── route.ts
+│   │   │   ├── shelter-requests
+│   │   │   │   └── route.ts
+│   │   │   ├── shelters
+│   │   │   │   └── [shelterId]
+│   │   │   │       └── route.ts
+│   │   │   └── users
+│   │   │       ├── [id]
+│   │   │       │   ├── block
+│   │   │       │   │   └── route.ts
+│   │   │       │   └── role
+│   │   │       │       └── route.ts
+│   │   │       └── route.ts
+│   │   ├── adoptions
+│   │   │   ├── [id]
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── ai
+│   │   │   └── refine
+│   │   │       └── route.ts
+│   │   ├── auth
+│   │   │   ├── [...nextauth]
+│   │   │   │   └── route.ts
+│   │   │   ├── forgot-password
+│   │   │   │   └── route.ts
+│   │   │   └── register
+│   │   │       └── route.ts
+│   │   ├── cart
+│   │   │   ├── [id]
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── cloudinary
+│   │   │   └── sign
+│   │   │       └── route.ts
+│   │   ├── pets
+│   │   │   ├── [id]
+│   │   │   │   ├── favorite
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── route.ts
+│   │   │   │   └── status
+│   │   │   │       └── route.ts
+│   │   │   ├── route.ts
+│   │   │   └── search
+│   │   │       └── route.ts
+│   │   ├── products
+│   │   │   ├── [id]
+│   │   │   │   ├── route.ts
+│   │   │   │   └── stock
+│   │   │   │       └── route.ts
+│   │   │   └── route.ts
+│   │   ├── shelter
+│   │   │   ├── adoptions
+│   │   │   │   └── route.ts
+│   │   │   └── reports
+│   │   │       └── adoptions
+│   │   │           ├── export
+│   │   │           │   └── route.ts
+│   │   │           └── route.ts
+│   │   ├── shelters
+│   │   │   ├── [id]
+│   │   │   │   └── route.ts
+│   │   │   ├── map
+│   │   │   │   └── route.ts
+│   │   │   └── search
+│   │   │       └── route.ts
+│   │   ├── upload
+│   │   │   └── route.ts
+│   │   ├── user
+│   │   │   ├── favorites
+│   │   │   │   ├── check
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── profile
+│   │   │   │   └── route.ts
+│   │   │   ├── request-shelter-account
+│   │   │   │   └── route.ts
+│   │   │   └── request-vendor-account
+│   │   │       └── route.ts
+│   │   └── vendor
+│   │       ├── metrics
+│   │       │   ├── export
+│   │       │   │   └── route.ts
+│   │       │   ├── orders
+│   │       │   │   └── route.ts
+│   │       │   ├── products
+│   │       │   │   └── route.ts
+│   │       │   ├── route.ts
+│   │       │   └── trends
+│   │       │       └── route.ts
+│   │       └── profile
+│   │           └── route.ts
+│   ├── fonts
+│   │   ├── GeistMonoVF.woff
+│   │   └── GeistVF.woff
+│   ├── globals.css
+│   ├── icon.png
+│   ├── layout.tsx
+│   ├── not-found.tsx
+│   └── page.tsx
+├── components
+│   ├── PetDetailClient.tsx
+│   ├── PetGalleryClient.tsx
+│   ├── ProductDetailClient.tsx
+│   ├── ProductGalleryClient.tsx
+│   ├── admin
+│   │   ├── AdminDashboardClient.tsx
+│   │   ├── AuditHistoryCard.tsx
+│   │   ├── BlockUserButton.tsx
+│   │   ├── EditUserButton.tsx
+│   │   ├── RoleChangeModal.tsx
+│   │   ├── UserActionsClient.tsx
+│   │   ├── UserViewClient.tsx
+│   │   ├── metrics
+│   │   │   ├── admin-dashboard-tabs.tsx
+│   │   │   └── admin-metrics-client.tsx
+│   │   ├── moderation-tabs.tsx
+│   │   └── reject-request-modal.tsx
+│   ├── adopter
+│   │   ├── adopter-dashboard-client.tsx
+│   │   ├── adoptions-section.tsx
+│   │   ├── cart-section.tsx
+│   │   └── favorites-section.tsx
+│   ├── cards
+│   │   ├── pet-card.tsx
+│   │   ├── product-card.tsx
+│   │   └── shelter-pet-card.tsx
+│   ├── cart
+│   │   ├── cart-item.tsx
+│   │   └── cart-summary.tsx
+│   ├── filters
+│   │   ├── pet-filter.tsx
+│   │   └── product-filter.tsx
+│   ├── forms
+│   │   ├── login-form.tsx
+│   │   ├── pet-form.tsx
+│   │   ├── product-form.tsx
+│   │   ├── register-form.tsx
+│   │   ├── shelter-request-form.tsx
+│   │   ├── user-profile-form.tsx
+│   │   ├── vendor-profile-form.tsx
+│   │   └── vendor-request-form.tsx
+│   ├── help
+│   │   └── accordion-section.tsx
+│   ├── layout
+│   │   ├── cart-button.tsx
+│   │   ├── floating-cart-button.tsx
+│   │   ├── footer.tsx
+│   │   ├── index.ts
+│   │   ├── navbar-auth.tsx
+│   │   ├── navbar-mobile.tsx
+│   │   ├── navbar-public.tsx
+│   │   ├── navbar.tsx
+│   │   ├── under-construction.tsx
+│   │   └── user-menu.tsx
+│   ├── map
+│   │   ├── interactive-map.tsx
+│   │   ├── legal-info-modal.tsx
+│   │   ├── shelter-card.tsx
+│   │   └── shelters-map-client.tsx
+│   ├── modals
+│   │   └── adoption-confirm-modal.tsx
+│   ├── products
+│   │   └── PaymentModal.tsx
+│   ├── shelter
+│   │   ├── AdoptionStats.tsx
+│   │   ├── ShelterDashboardClient.tsx
+│   │   ├── adoptions
+│   │   │   ├── adoptions-client.tsx
+│   │   │   ├── adoptions-table.tsx
+│   │   │   ├── application-card.tsx
+│   │   │   ├── applications-list.tsx
+│   │   │   └── approval-modal.tsx
+│   │   └── metrics
+│   │       ├── adoption-charts.tsx
+│   │       ├── adoption-filters.tsx
+│   │       ├── adoption-metrics-client.tsx
+│   │       ├── adoption-table.tsx
+│   │       └── export-buttons.tsx
+│   ├── shelters
+│   │   ├── municipality-filter.tsx
+│   │   └── shelter-search.tsx
+│   ├── ui
+│   │   ├── address-input.tsx
+│   │   ├── alert-dialog.tsx
+│   │   ├── badge.tsx
+│   │   ├── button-variants.ts
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── checkbox.tsx
+│   │   ├── confetti-button.tsx
+│   │   ├── dialog.tsx
+│   │   ├── favorite-button.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── loader.tsx
+│   │   ├── logo.tsx
+│   │   ├── password-input.tsx
+│   │   ├── radio-group.tsx
+│   │   ├── select.tsx
+│   │   └── table.tsx
+│   └── vendor
+│       ├── ProductTable.tsx
+│       ├── ProductsClient.tsx
+│       ├── StockUpdateModal.tsx
+│       ├── VendorDashboardClient.tsx
+│       ├── VendorStats.tsx
+│       └── metrics
+│           ├── metrics-cards.tsx
+│           ├── metrics-filters.tsx
+│           ├── orders-by-status-chart.tsx
+│           ├── sales-chart.tsx
+│           ├── top-products-table.tsx
+│           └── vendor-metrics-client.tsx
+├── credentials-seed.txt
+├── docs
+│   ├── 01_Acta_de_Constitucion.md
+│   ├── 02_Stakeholders.md
+│   ├── 03_Alcance_del_Proyecto.md
+│   ├── 04_Requerimientos.md
+│   ├── 05_Historias_de_Usuario.md
+│   ├── 06_Mapa_de_Procesos.md
+│   ├── 07_Casos_de_Uso.md
+│   ├── 08_Arquitectura_Software.md
+│   ├── 09_Modelo_Entidad_Relacion.md
+│   ├── 10_Diagramas_UML.md
+│   ├── 11_Manual_Diseño.md
+│   ├── 12_Plan_de_Pruebas.md
+│   ├── 13_Casos_de_Prueba.md
+│   ├── 14_Manual_del_Usuario.md
+│   └── images
+│       ├── adopcion.png
+│       ├── diagrama_clases.png
+│       ├── diagrama_flujo_general.png
+│       ├── diagrama_uml.png
+│       ├── gestionar_citas.png
+│       ├── pet.png
+│       ├── postular_adopcion.png
+│       ├── publicar_mascota.png
+│       └── simular_compra.png
+├── lib
+│   ├── auth
+│   │   ├── auth-options.ts
+│   │   ├── password.ts
+│   │   ├── require-role.ts
+│   │   └── session.ts
+│   ├── cloudinary.ts
+│   ├── constants.ts
+│   ├── email
+│   │   ├── components
+│   │   │   └── EmailLayout.tsx
+│   │   └── templates
+│   │       ├── account-blocked.tsx
+│   │       ├── adoption-status.tsx
+│   │       ├── new-adoption.tsx
+│   │       ├── new-order-vendor.tsx
+│   │       ├── order-confirmation.tsx
+│   │       ├── order-status.tsx
+│   │       ├── password-reset.tsx
+│   │       ├── shelter-approved.tsx
+│   │       ├── shelter-rejected.tsx
+│   │       ├── vendor-approved.tsx
+│   │       └── vendor-rejected.tsx
+│   ├── hooks
+│   │   ├── use-cart-sync.ts
+│   │   └── use-cart.ts
+│   ├── services
+│   │   ├── adoption-report.service.ts
+│   │   ├── adoption.service.ts
+│   │   ├── cart.service.ts
+│   │   ├── email.service.test.ts
+│   │   ├── email.service.ts
+│   │   ├── geocoding.service.ts
+│   │   ├── moderation.service.spec.ts
+│   │   ├── moderation.service.ts
+│   │   ├── pet.service.spec.ts
+│   │   ├── pet.service.ts
+│   │   ├── product.service.ts
+│   │   ├── user.service.ts
+│   │   └── vendor-metrics.service.ts
+│   ├── utils
+│   │   ├── age-formatter.test.ts
+│   │   ├── age-formatter.ts
+│   │   ├── db.ts
+│   │   ├── export-csv.ts
+│   │   ├── export-excel.ts
+│   │   ├── export-pdf.ts
+│   │   └── logger.ts
+│   ├── utils.ts
+│   └── validations
+│       ├── adoption.schema.ts
+│       ├── cart.schema.ts
+│       ├── cloudinary.schema.ts
+│       ├── pet-search.schema.ts
+│       ├── pet.schema.ts
+│       ├── product.schema.ts
+│       └── user.schema.ts
 ├── middleware.ts
+├── monthly-updates.md
 ├── next.config.mjs
 ├── package-lock.json
 ├── package.json
 ├── postcss.config.mjs
-├── README.md
+├── prisma
+│   ├── schema.prisma
+│   └── seed.ts
+├── public
+│   └── images
+│       ├── 404-page.png
+│       ├── medellin-map.png
+│       ├── nosotros_hero_image_1778473832814.png
+│       ├── pet-adopted.png
+│       ├── pet-community.png
+│       ├── pet-home.png
+│       └── under_construction.png
+├── scripts
+│   ├── geocode-shelters.ts
+│   └── test-live-emails.ts
 ├── tailwind.config.ts
 ├── tsconfig.json
+├── types
+│   ├── adoption.ts
+│   ├── api.types.ts
+│   ├── email.types.ts
+│   ├── next-auth.d.ts
+│   ├── report.types.ts
+│   └── shelter.ts
 ├── vitest.config.ts
 └── vitest.setup.ts
 ```
@@ -809,7 +837,7 @@ model CartItem {
 
 - `@google/generative-ai`: `^0.24.1`
 - `@hookform/resolvers`: `^5.2.2`
-- `@prisma/client`: `^6.19.0`
+- `@prisma/client`: `^6.2.1`
 - `@radix-ui/react-checkbox`: `^1.3.3`
 - `@radix-ui/react-label`: `^2.1.8`
 - `@radix-ui/react-radio-group`: `^1.3.8`
@@ -831,7 +859,6 @@ model CartItem {
 - `lucide-react`: `^0.554.0`
 - `next`: `14.2.33`
 - `next-auth`: `^4.24.7`
-- `prisma`: `^6.19.0`
 - `react`: `^18`
 - `react-day-picker`: `^10.0.0`
 - `react-dom`: `^18`
@@ -862,10 +889,11 @@ model CartItem {
 - `eslint-config-next`: `14.2.33`
 - `jsdom`: `^27.4.0`
 - `postcss`: `^8`
+- `prisma`: `^6.2.1`
 - `tailwindcss`: `^3.4.1`
 - `ts-node`: `^10.9.2`
 - `typescript`: `^5`
 - `vite-tsconfig-paths`: `^6.0.3`
 - `vitest`: `^4.0.16`
 
-> **Última actualización**: 16 de mayo de 2026.
+> **Última actualización**: 31 de mayo de 2026.
