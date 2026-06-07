@@ -1,269 +1,184 @@
-# 🐾 PawLig - Plataforma Integral de Adopción de Mascotas
+# 🐾 PawLig — Plataforma Integral de Adopción y Marketplace
 
 <div align="center">
 
-**Una plataforma moderna para conectar mascotas con hogares responsables**
+**Ecosistema digital unificado para la conexión de mascotas, hogares responsables y comercio especializado en el Valle de Aburrá.**
 
 ![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.1-38B2AC?style=flat-square&logo=tailwind-css)
+![Prisma](https://img.shields.io/badge/Prisma-6.19.3-2D3748?style=flat-square&logo=prisma)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=flat-square&logo=mongodb)
-![Prisma](https://img.shields.io/badge/Prisma-6.19-2D3748?style=flat-square&logo=prisma)
-![Google Gemini](https://img.shields.io/badge/Google%20Gemini-AI-orange?style=flat-square&logo=google-gemini)
-![Leaflet](https://img.shields.io/badge/Leaflet-Maps-green?style=flat-square&logo=leaflet)
-![Recharts](https://img.shields.io/badge/Recharts-Analytics-blue?style=flat-square&logo=recharts)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-2.5--flash-orange?style=flat-square&logo=google-gemini)
 
-**Proyecto de grado** <br>
+**Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.13.1 | Última actualización: 25-05-2026_
+_Versión v1.13.1 | Última actualización: 31-05-2026_
 
 </div>
 
 ---
 
-## 📋 Tabla de Contenidos
-
-1. [Descripción General](#-descripción-general)
-2. [Características Principales](#-características-principales)
-3. [Tecnologías Utilizadas](#-tecnologías-utilizadas)
-4. [Instalación y Configuración](#-instalación-y-configuración)
-5. [Estructura del Proyecto](#-estructura-del-proyecto)
-6. [Roles y Permisos](#-roles-y-permisos-de-usuario)
-7. [Modelo de Datos](#-modelo-de-datos)
-8. [Scripts Disponibles](#-scripts-disponibles)
-9. [Características de Seguridad](#-características-de-seguridad)
-10. [Cómo Contribuir](#-cómo-contribuir)
-11. [Licencia](#-licencia)
-12. [Contacto](#-soporte-y-contacto)
+> [!IMPORTANT]
+> **Estándar de Codificación (Gold Standard):** Se recomienda encarecidamente consultar y adherirse al [Manual de Reglas y Estándares (.rules.md)](https://raw.githubusercontent.com/asebasg/pawlig/refs/heads/main/.rules.md?token=GHSAT0AAAAAAD64R4DLTFA44UVLOWT5UOGS2RE43TQ) antes de iniciar cualquier labor de desarrollo. Este documento establece las directrices críticas de arquitectura, nomenclatura y calidad de código del proyecto.
 
 ---
 
-## 📜 Descripción General
+## 📖 Descripción Detallada
 
-**PawLig** es una plataforma web full-stack integral diseñada para facilitar la adopción responsable de mascotas y dinamizar el comercio de productos especializados en el Valle de Aburrá. Nuestra misión es conectar a albergues, proveedores y adoptantes en un ecosistema seguro, eficiente y empático.
+**PawLig** es una solución full-stack robusta diseñada para mitigar la fragmentación en los procesos de adopción de mascotas y dinamizar el mercado de productos para animales en la región del Valle de Aburrá. La plataforma actúa como un nexo tecnológico entre tres actores clave:
 
-La plataforma integra tecnologías de vanguardia, incluyendo **Inteligencia Artificial Generativa** y **Visualización Geoespacial**, para asegurar que cada mascota encuentre el hogar que merece y cada usuario tenga una experiencia óptima.
+1.  **Albergues (Shelters):** Gestión integral del ciclo de vida de la mascota y seguimiento de adopciones.
+2.  **Proveedores (Vendors):** Marketplace especializado con gestión de inventario en tiempo real.
+3.  **Adoptantes (Adopters):** Experiencia de usuario optimizada para la búsqueda empática de compañeros y adquisición de suministros.
 
----
-
-## ✨ Características Principales
-
-### 🔐 Autenticación y Seguridad de Nivel Empresarial
-
-- **Sistema multi-rol estricto:** Admin, Albergue (Shelter), Proveedor (Vendor) y Adoptante (Adopter).
-- **Protección de rutas:** Middleware avanzado que valida sesiones y permisos en tiempo real.
-- **Auditoría completa:** Registro detallado de acciones administrativas (bloqueos, cambios de rol) con justificaciones obligatorias, IP y User-Agent.
-- **Seguridad en UI:** Inputs de contraseña con toggle de visibilidad y protección contra duplicidad de iconos nativos del navegador.
-
-### 🐕 Ecosistema de Adopciones con IA y Gestión Avanzada
-
-- **Asistente de IA (Google Gemini):** Refinamiento automático de descripciones de mascotas para maximizar el impacto emocional.
-- **Ciclo de Vida de Postulaciones:** Gestión integral de solicitudes con estados automatizados (Disponible, En Proceso, Adoptado) y transacciones atómicas.
-- **Edad Precisa:** Sistema de registro y formateo de edad en años y meses para una descripción detallada de los ejemplares.
-- **Búsqueda inteligente:** Filtros avanzados por especie, raza, edad, sexo y ubicación.
-
-### 🛍️ Marketplace Especializado
-
-- **Catálogo dinámico:** Gestión de inventario en tiempo real para proveedores con validaciones de categoría estrictas.
-- **IA para Ventas:** Optimizador de descripciones de productos mediante IA para mejorar la conversión.
-- **Carrito persistente:** Experiencia de compra fluida con persistencia local y sincronización de estado.
-
-### 📧 Sistema de Notificaciones por Email
-
-- **Comunicación omnicanal:** 11 plantillas personalizadas para flujos críticos (adopciones, pedidos, seguridad).
-- **Branding Cohesivo:** Correos electrónicos diseñados con React Email para una experiencia de marca consistente.
-- **Automatización:** Envío inteligente de estados de pedido y confirmaciones de adopción vía Resend.
-
-### 🌌 Experiencia Visual Inmersiva
-
-- **Motor Orbital 404:** Página de error personalizada con una simulación física de órbitas planetarias en 3D (Canvas 2D) basada en las leyes de Kepler.
-- **Interfaz Fluida:** Animaciones sutiles y diseño responsivo optimizado para una navegación intuitiva.
-
-### 📊 Paneles de Control y Métricas (Dashboards)
-
-- **Métricas Analíticas:** Visualización de tendencias de ventas, adopciones y rendimiento de inventario mediante Recharts.
-- **Reportes Exportables:** Generación dinámica de informes en formatos Excel, PDF y CSV para una gestión profesional de datos.
-- **Gestión de Usuarios:** Herramientas administrativas avanzadas para la moderación y seguridad de la comunidad.
-
-### 🗺️ Mapa Interactivo y Geolocalización
-
-- **Localización de Albergues:** Mapa dinámico (Leaflet) para la búsqueda geográfica de refugios en el Valle de Aburrá.
-- **Geocodificación Inteligente:** Normalización y geolocalización automática de direcciones de albergues registrados.
-- **Filtros Espaciales:** Búsqueda por municipio y proximidad geográfica.
+A través de la integración de **IA Generativa**, **Geolocalización** y un **Motor de Simulación Física**, PawLig redefine la experiencia de usuario en plataformas de bienestar animal, asegurando trazabilidad, seguridad y eficiencia operativa.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## ✨ Características Técnicas Principales
 
-### Frontend & UI
+### 🧠 Asistente de IA (Google Gemini 2.5-flash)
+- **Refinamiento Automático:** Endpoint `/api/ai/refine` que procesa descripciones originales mediante el modelo `gemini-2.5-flash`.
+- **Contextualización:** Prompting dinámico para optimizar el impacto emocional en perfiles de mascotas o la conversión de ventas en productos.
+- **Validación:** Restricción estricta de 500 caracteres para asegurar legibilidad.
 
-- **Next.js 14 (App Router):** Framework principal con renderizado en el servidor y rutas optimizadas.
-- **React 18:** Biblioteca base para la construcción de interfaces reactivas.
-- **Tailwind CSS:** Estilizado basado en utilidades con un sistema de diseño cohesivo.
-- **Lucide React:** Set de iconos consistente.
-- **Radix UI:** Primitivas de componentes accesibles.
+### 🌌 404 Orbital Engine (Motor de Simulación Física)
+- **Cinemática:** Implementación de las Leyes de Kepler (Ley de Áreas) para simular velocidades orbitales realistas en un Canvas 2D.
+- **Proyección 3D:** Uso de proyección paralela con compresión del eje Y (0.4x) para generar una perspectiva isométrica profunda.
+- **Oclusión Dinámica:** Clasificación de profundidad por eje Z que permite a los iconos de la marca pasar por delante y detrás del núcleo "404".
 
-### Backend & Lógica
+### 🛡️ Moderation Hub & Auditoría Polimórfica
+- **SystemAuditLog:** Modelo Prisma diseñado para rastrear acciones administrativas (BLOCK, UNBLOCK, CHANGE_ROLE, DELETE).
+- **Atomicidad:** Transacciones transaccionales en `moderation.service.ts` mediante `$transaction` para asegurar la integridad en cambios de rol y estados.
+- **Control Granular:** Filtrado por estado (`PENDING`, `APPROVED`, `REJECTED`) en los paneles de administración de albergues y vendedores.
 
-- **TypeScript 5:** Tipado estricto (Zero `any` policy) para un código robusto y mantenible.
-- **NextAuth.js:** Gestión de autenticación y sesiones seguras.
-- **Prisma ORM:** Modelado de datos y consultas tipadas a MongoDB Atlas.
-- **Zod:** Validación rigurosa de esquemas en cascada (cliente/servidor).
-- **Google Generative AI:** Integración con el modelo `gemini-2.5-flash`.
-- **Resend & React Email:** Infraestructura para comunicaciones transaccionales.
+### 🗺️ Visualización Geoespacial (Leaflet)
+- **Búsqueda Proactiva:** Mapa interactivo integrado con la API de Nominatim (OpenStreetMap) para geolocalización de refugios.
+- **Normalización:** Servicio de geocodificación interna con estrategias de fallback y respeto estricto de rate-limits (1 req/sec).
 
-### Visualización & Reportes
-
-- **Leaflet & React Leaflet:** Visualización geoespacial y mapas interactivos.
-- **Recharts:** Biblioteca de gráficos para analítica avanzada.
-- **ExcelJS & jsPDF:** Motores de generación de reportes empresariales.
-
-### Infraestructura & Testing
-
-- **MongoDB Atlas:** Base de datos NoSQL escalable.
-- **Cloudinary:** Gestión y optimización de activos multimedia.
-- **Vitest:** Suite de pruebas unitarias y de integración de alto rendimiento.
+### 📊 Reportes y Analítica Avanzada
+- **Motores de Exportación:** Generación asíncrona de reportes en formatos Excel (`exceljs`), PDF (`jspdf`, `jspdf-autotable`) y CSV.
+- **Visualización:** Dashboards dinámicos implementados con `recharts` para el seguimiento de tendencias de adopción y ventas.
 
 ---
 
-## 📦 Instalación y Configuración
+## 🛠️ Arquitectura y Tech Stack
+
+| Capa | Tecnología | Versión |
+| :--- | :--- | :--- |
+| **Framework** | Next.js (App Router) | 14.2.33 |
+| **Lenguaje** | TypeScript | 5.0+ |
+| **Base de Datos** | MongoDB Atlas | Cloud |
+| **ORM** | Prisma | 6.19.3 |
+| **Autenticación** | NextAuth.js | 4.24.7 |
+| **Estilos** | Tailwind CSS | 3.4.1 |
+| **IA** | Google Generative AI | 0.24.1 |
+| **Emails** | Resend / React Email | 6.12.2 / 1.0.12 |
+| **Mapas** | Leaflet / React Leaflet | 1.9.4 / 4.2.1 |
+| **Testing** | Vitest / JSDOM | 4.0.16 / 27.4.0 |
+
+---
+
+## 🚀 Instalación y Configuración
 
 ### Prerrequisitos
+- **Node.js:** 18.17 o superior.
+- **npm:** 9 o superior.
+- **Base de Datos:** Instancia de MongoDB Atlas activa.
 
-- Node.js 18.17 o superior.
-- npm 9 o superior.
-- Una instancia de MongoDB (Local o Atlas).
-- Credenciales de Cloudinary y Google Gemini API.
+### Guía de Inicio Rápido
+1.  **Clonar y Acceder:**
+    ```bash
+    git clone https://github.com/asebasg/pawlig.git
+    cd pawlig
+    ```
+2.  **Instalar Dependencias:**
+    ```bash
+    npm install
+    ```
+3.  **Variables de Entorno:**
+    Duplica el archivo `.env.local.example` a `.env.local` y configura las siguientes claves:
+    ```env
+    # DB & Auth
+    DATABASE_URL="mongodb+srv://..."
+    NEXTAUTH_SECRET="your_secret_key"
+    NEXTAUTH_URL="http://localhost:3000"
 
-### Pasos de Configuración
+    # Services
+    GEMINI_API_KEY="your_google_ai_key"
+    RESEND_API_KEY="your_resend_api_key"
+    EMAIL_FROM="PawLig <soporte@pawlig.com>"
 
-1. **Clonar el Repositorio:**
-
-   ```bash
-   git clone https://github.com/asebasg/pawlig.git
-   cd pawlig
-   ```
-
-2. **Instalar Dependencias:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Configurar el Entorno:**
-   Crea un archivo `.env` basado en `.env.local.example` y completa las variables:
-
-   ```env
-   DATABASE_URL="mongodb+srv://..."
-   NEXTAUTH_SECRET="tu-secreto"
-   NEXTAUTH_URL="http://localhost:3000"
-   CLOUDINARY_API_KEY="..."
-   GEMINI_API_KEY="..."
-   RESEND_API_KEY="..."
-   NEXT_PUBLIC_APP_URL="http://localhost:3000"
-   ```
-
-4. **Preparar la Base de Datos:**
-
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-
-5. **Lanzar el Entorno de Desarrollo:**
-
-   ```bash
-   npm run dev
-   ```
+    # Assets
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your_cloud_name"
+    CLOUDINARY_API_KEY="your_api_key"
+    CLOUDINARY_API_SECRET="your_api_secret"
+    ```
+4.  **Sincronizar Esquema:**
+    ```bash
+    npx prisma generate
+    npx prisma db push
+    ```
+5.  **Ejecutar Desarrollo:**
+    ```bash
+    npm run dev
+    ```
 
 ---
 
-## 🗂️ Estructura del Proyecto
+## 💻 Ejemplos de Uso
 
-```text
-pawlig/
-├── app/                  # App Router: Rutas, layouts y componentes de página
-│   ├── (auth)/           # Rutas de autenticación (Login, Registro)
-│   ├── (dashboard)/      # Paneles privados protegidos por rol
-│   ├── (public)/         # Páginas de acceso libre (Adopciones, Productos, Ayuda)
-│   └── api/              # Endpoints de la API interna
-├── components/           # Componentes React organizados por dominio
-│   ├── ui/               # Componentes atómicos (Botones, Inputs, etc.)
-│   ├── forms/            # Lógica de formularios y validaciones
-│   └── layout/           # Elementos estructurales (Navbar, Footer)
-├── lib/                  # Núcleo: Servicios, utilidades y configuraciones
-│   ├── email/            # Plantillas y componentes de correo electrónico
-│   └── services/         # Lógica de negocio y servicios externos
-├── prisma/               # Esquema de datos y migraciones
-├── public/               # Assets estáticos (Imágenes, Iconos)
-├── types/                # Definiciones de tipos TypeScript globales
-└── middleware.ts         # Control de acceso y seguridad de rutas
+### Refinamiento de Descripción con IA
+Para utilizar el asistente de IA en un componente personalizado:
+```typescript
+const response = await fetch("/api/ai/refine", {
+  method: "POST",
+  body: JSON.stringify({
+    description: "Perro pequeño y juguetón busca casa",
+    type: "pet"
+  })
+});
+const { refinedText } = await response.json();
+// Resultado: "Este encantador perrito de energía vibrante..."
+```
+
+### Formateo de Edad Localizado
+La plataforma utiliza una utilidad centralizada para la precisión de edad (`lib/utils/age-formatter.ts`):
+```typescript
+import { formatAge } from "@/lib/utils/age-formatter";
+
+const label = formatAge(1, 3); // Retorna: "1 año y 3 meses"
+const babyLabel = formatAge(0, 0); // Retorna: "Recién nacido"
 ```
 
 ---
 
-## 🔑 Roles y Permisos
+## 📋 Scripts Disponibles
 
-- **👑 ADMIN:** Supervisión global, auditoría de seguridad y gestión de roles/bloqueos.
-- **🏠 SHELTER (Albergue):** Publicación de mascotas, gestión de solicitudes de adopción y métricas de impacto.
-- **🏬 VENDOR (Proveedor):** Gestión de catálogo de productos, inventario y procesamiento de pedidos.
-- **🐾 ADOPTER (Adoptante):** Proceso de adopción, compras en el marketplace y gestión de favoritos.
-
----
-
-## 🧪 Scripts Disponibles
-
-| Comando             | Descripción                                                  |
-| :------------------ | :----------------------------------------------------------- |
-| `npm run dev`       | Inicia el servidor de desarrollo con Hot Reload.             |
-| `npm run build`     | Genera la versión optimizada para producción.                |
-| `npm run start`     | Inicia el servidor de producción.                            |
-| `npm run test`      | Ejecuta la suite de pruebas con Vitest.                      |
-| `npm run lint`      | Analiza el código en busca de problemas de estilo o errores. |
-| `npx prisma studio` | Abre una interfaz web para explorar la base de datos.        |
+- `npm run dev`: Inicia el servidor de desarrollo en `localhost:3000`.
+- `npm run build`: Compila la aplicación, genera el cliente de Prisma y optimiza assets.
+- `npm run start`: Arranca la aplicación compilada en modo producción.
+- `npm run test`: Ejecuta la suite de pruebas unitarias y de integración con Vitest.
+- `npm run lint`: Verifica la adherencia a las reglas de estilo y tipado.
 
 ---
 
-## 🔐 Seguridad y Calidad
+## 🤝 Contribución y Soporte
 
-- **Validación Zod:** Ningún dato entra a la base de datos sin ser validado estrictamente mediante esquemas en cascada.
-- **Manejo de Errores:** Sistema centralizado para respuestas de API y retroalimentación al usuario.
-- **Testing:** Suite de pruebas que asegura la integridad de los servicios críticos de mascotas y usuarios.
-- **Escalabilidad:** Arquitectura basada en servicios que separa la lógica de negocio de los controladores de API.
+Para contribuir al proyecto:
+1. Realice un Fork del repositorio.
+2. Cree una rama para su feature (`git checkout -b feat/amazing-feature`).
+3. Asegúrese de cumplir con el **Estándar de Oro** documentado en `.rules.md`.
+4. Envíe un Pull Request detallado en **español**.
 
----
-
-## 🤝 Cómo Contribuir
-
-1. Realiza un **Fork** del proyecto.
-2. Crea una **Rama** para tu funcionalidad (`git checkout -b feat/nueva-funcionalidad`).
-3. Realiza tus cambios siguiendo los estándares de **Conventional Commits**.
-4. Asegúrate de que las pruebas pasen (`npm run test`).
-5. Envía un **Pull Request** detallando tus cambios.
+**Contacto Técnico:**
+- **Andrés Sebastián Ospina Guzmán** — [asebasg07@gmail.com](mailto:asebasg07@gmail.com)
+- **Mateo Úsuga Vasco** — [mateo.usuga.v21@gmail.com](mailto:mateo.usuga.v21@gmail.com)
+- **Santiago Lezcano Escobar** — [santiag1725g@gmail.com](mailto:santiag1725g@gmail.com)
 
 ---
-
-## 📝 Licencia
-
-Este proyecto ha sido desarrollado con fines académicos en la **Universidad de San Buenaventura, Medellín**. Todos los derechos reservados © 2026.
-
----
-
-## 📞 Soporte y Contacto
-
-**Equipo de Desarrollo:**
-
-- **Andrés Sebastián Ospina Guzmán** - [asebasg07@gmail.com](mailto:asebasg07@gmail.com)
-- **Mateo Úsuga Vasco** - [mateo.usuga.v21@gmail.com](mailto:mateo.usuga.v21@gmail.com)
-- **Santiago Lezcano Escobar** - [santiag1725g@gmail.com](mailto:santiag1725g@gmail.com)
-
----
-
 <div align="center">
-
-**Desarrollado con ❤️ para transformar la vida de las mascotas.**
-
-[⬆ Volver al inicio](#-pawlig---plataforma-integral-de-adopción-de-mascotas)
-
+Desarrollado con ❤️ por el equipo de PawLig en Medellín, Antioquia, Colombia 🇨🇴.
 </div>
