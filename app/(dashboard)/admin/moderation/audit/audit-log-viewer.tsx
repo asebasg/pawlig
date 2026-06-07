@@ -260,19 +260,19 @@ export function AuditLogViewer() {
                       <span>Cambio de Rol</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="CREATE">
+                  <SelectItem value="CREATE" disabled>
                     <div className="flex items-center gap-2">
                       <PlusCircle className="h-4 w-4 text-emerald-500" />
                       <span>Creación</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="UPDATE">
+                  <SelectItem value="UPDATE" disabled>
                     <div className="flex items-center gap-2">
                       <RefreshCw className="h-4 w-4 text-indigo-500" />
                       <span>Actualización</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="DELETE">
+                  <SelectItem value="DELETE" disabled>
                     <div className="flex items-center gap-2">
                       <Trash2 className="h-4 w-4 text-red-600" />
                       <span>Eliminación</span>
