@@ -181,3 +181,17 @@ export function isCriticalRoleChange(
     `${currentRole}_TO_${newRole}` as keyof typeof CRITICAL_ROLE_CHANGES;
   return key in CRITICAL_ROLE_CHANGES;
 }
+
+// Carpetas de destino en Cloudinary por contexto de la plataforma
+export const CLOUDINARY_FOLDERS = {
+  PETS: "pets",
+  PRODUCTS: "products",
+  AVATARS: "avatars",
+} as const;
+
+export type CloudinaryFolder = (typeof CLOUDINARY_FOLDERS)[keyof typeof CLOUDINARY_FOLDERS];
+
+// Tipos de recurso válidos para operaciones de eliminación en Cloudinary
+export const CLOUDINARY_RESOURCE_TYPES = ["image", "video", "raw"] as const;
+
+export type CloudinaryResourceType = (typeof CLOUDINARY_RESOURCE_TYPES)[number];

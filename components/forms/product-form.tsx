@@ -120,13 +120,62 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
     };
 
     /**
-     *  FUNCIÓN: removeImage
-     *  Eliminar imagen del array
+     * Extrae el publicId de una URL de Cloudinary
      */
-    const removeImage = (index: number) => {
+    const extractPublicId = (cloudinaryUrl: string): string | null => {
+        try {
+            const url = new URL(cloudinaryUrl);
+            const pathParts = url.pathname.split('/');
+            const pawligIndex = pathParts.findIndex(p => p === 'pawlig');
+            if (pawligIndex === -1) return null;
+            
+            const publicIdWithExt = pathParts.slice(pawligIndex).join('/');
+            const lastDotIndex = publicIdWithExt.lastIndexOf('.');
+            if (lastDotIndex !== -1) {
+                return publicIdWithExt.substring(0, lastDotIndex);
+            }
+            return publicIdWithExt;
+        } catch {
+            return null;
+        }
+    };
+
+    /**
+     *  FUNCIÓN: removeImage
+     *  Eliminar imagen del array y de Cloudinary
+     */
+    const removeImage = async (index: number) => {
+        const urlToRemove = images[index];
+        if (!urlToRemove) return;
+
+        // Actualización optimista de UI
         const newImages = images.filter((_, i) => i !== index);
         setImages(newImages);
         setValue("images", newImages, { shouldValidate: true });
+
+        try {
+            const publicId = extractPublicId(urlToRemove);
+            if (!publicId) {
+                console.warn("No se pudo extraer el publicId de la URL", urlToRemove);
+                return;
+            }
+
+            const response = await fetch("/api/cloudinary/delete", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ publicId, url: urlToRemove }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || "Error al eliminar la imagen");
+            }
+            
+            toast.success("Imagen eliminada correctamente");
+        } catch (error) {
+            console.error("Error eliminando imagen de Cloudinary:", error);
+            toast.error("La imagen se quitó del formulario, pero hubo un error al borrarla del servidor.");
+        }
     };
 
     /**

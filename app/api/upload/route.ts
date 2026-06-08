@@ -107,15 +107,20 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        //  6. Upload a Cloudinary
+        //  6. Generar sufijo único y estampar ID del usuario para ownership
+        const uniqueSuffix = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+        const stampedPublicId = `${session.user.id}_${uniqueSuffix}`;
+
+        //  7. Upload a Cloudinary
         const uploadResponse = await cloudinary.uploader.upload(image, {
             folder: `pawlig/${folder}`, // Organización en Cloudinary
+            public_id: stampedPublicId, // Estampa de propiedad
             transformation: [
                 { width: 1200, height: 900, crop: "limit" }, // Máximo 1200x900
                 { quality: "auto:good" }, // Calidad automática optimizada
                 { fetch_format: "auto" }, // Formato automático (WebP si es compatible)
             ],
-            allowed_formats: ["jpg", "png"],
+            allowed_formats: ["jpg", "png", "webp"],
         });
 
         //  7. Retornar URL
@@ -143,49 +148,4 @@ export async function POST(request: NextRequest) {
     }
 }
 
-/**
- *  DELETE /api/upload
- *  Eliminar imagen de Cloudinary (opcional)
- * 
- * BODY:
- * {
- *   publicId: string
- * }
- */
-export async function DELETE(request: NextRequest) {
-    try {
-        //  1. Autenticación
-        const session = await getServerSession(authOptions);
-
-        if (!session?.user) {
-            return NextResponse.json(
-                { error: "No autenticado" },
-                { status: 401 }
-            );
-        }
-
-        //  2. Parsear body
-        const body = await request.json();
-        const { publicId } = body;
-
-        if (!publicId) {
-            return NextResponse.json(
-                { error: "publicId requerido" },
-                { status: 400 }
-            );
-        }
-
-        //  3. Eliminar de Cloudinary
-        await cloudinary.uploader.destroy(publicId);
-
-        return NextResponse.json({
-            message: "Imagen eliminada exitosamente",
-        });
-    } catch (error) {
-        console.error("[DELETE /api/upload] Error:", error);
-        return NextResponse.json(
-            { error: "Error al eliminar imagen" },
-            { status: 500 }
-        );
-    }
-}
+
