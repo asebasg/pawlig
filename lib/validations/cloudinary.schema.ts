@@ -1,19 +1,36 @@
 import { z } from "zod";
 
 /**
- * Ruta/Componente/Servicio: Esquema de Intención de Subida a Cloudinary
- * Descripción: Define un esquema de Zod para validar la carpeta de destino antes de generar una firma de subida segura.
+ * Ruta/Componente/Servicio: Schemas de Cloudinary
+ * Descripción: Define los schemas de Zod para validar operaciones con recursos de Cloudinary:
+ *              subida de archivos (uploadIntentSchema) y eliminacion de recursos (deleteResourceSchema).
  * Requiere: -
- * Implementa: RNF-004
+ * Implementa: RNF-004, Issue-135
  */
 
 export const uploadIntentSchema = z.object({
   folder: z.enum(["pets", "products", "avatars"], {
-    message: "Carpeta de destino no permitida"
+    message: "Carpeta de destino no permitida",
   }),
 });
 
 export type UploadIntent = z.infer<typeof uploadIntentSchema>;
+
+export const deleteResourceSchema = z.object({
+  publicId: z
+    .string({ message: "El publicId es requerido" })
+    .min(1, "El publicId no puede estar vacío")
+    .trim(),
+  resourceType: z
+    .enum(["image", "video", "raw"], {
+      message: "El resourceType debe ser image, video o raw",
+    })
+    .optional()
+    .default("image"),
+  url: z.string().url("Debe ser una URL válida").optional(),
+});
+
+export type DeleteResource = z.infer<typeof deleteResourceSchema>;
 
 /*
  * ---------------------------------------------------------------------------
@@ -21,20 +38,22 @@ export type UploadIntent = z.infer<typeof uploadIntentSchema>;
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este archivo proporciona una capa de seguridad para la generación de firmas
- * de subida de Cloudinary. Al validar la 'intención de subida' del cliente
- * contra una lista predefinida de carpetas permitidas, se previene que un
- * actor malicioso pueda solicitar una firma para subir archivos a una
- * ubicación no autorizada en el bucket de Cloudinary.
+ * Este archivo proporciona los schemas de validacion centralizados para todas
+ * las operaciones con recursos de Cloudinary en la plataforma. Cubre tanto
+ * la generacion de firmas de subida (uploadIntentSchema) como la eliminacion
+ * segura de recursos ya subidos (deleteResourceSchema).
  *
  * Lógica Clave:
- * - 'z.enum': Se utiliza 'z.enum' para crear una lista blanca estricta de las
- *   únicas carpetas de destino válidas ('pets', 'products', 'avatars'). Si el
- *   cliente solicita una firma para cualquier otra carpeta, la validación
- *   fallará, y la solicitud será rechazada antes de interactuar con el SDK
- *   de Cloudinary.
+ * - 'uploadIntentSchema': Usa 'z.enum' para crear una lista blanca estricta
+ *   de carpetas de destino validas. Previene subidas a ubicaciones no
+ *   autorizadas del bucket de Cloudinary.
+ * - 'deleteResourceSchema': Valida el 'publicId' requerido y el 'resourceType'
+ *   opcional. El 'resourceType' tiene default "image" para cubrir el caso de
+ *   uso mas comun sin forzar al caller a especificarlo explicitamente.
+ *   El campo 'publicId' es limpiado con '.trim()' para evitar espacios
+ *   accidentales que causarian fallos en la API de Cloudinary.
  *
  * Dependencias Externas:
- * - 'zod': Para la creación del esquema de validación.
+ * - 'zod': Para la creacion de los schemas de validacion.
  *
  */

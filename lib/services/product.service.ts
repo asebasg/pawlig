@@ -5,6 +5,7 @@ import {
   UpdateProductInput,
   UpdateStockInput,
 } from "@/lib/validations/product.schema";
+import { deleteImagesFromCloudinary } from "@/lib/cloudinary";
 
 /**
  * Descripción: Servicio para la gestión de productos (CRUD completo e inventario).
@@ -354,9 +355,16 @@ export async function deleteProduct(id: string, vendorId: string) {
   }
 
   // Eliminar producto
-  return await prisma.product.delete({
+  const deletedProduct = await prisma.product.delete({
     where: { id },
   });
+
+  // Eliminación en cascada de imágenes en Cloudinary (fire-and-forget)
+  if (deletedProduct.images && deletedProduct.images.length > 0) {
+    deleteImagesFromCloudinary(deletedProduct.images).catch(console.error);
+  }
+
+  return deletedProduct;
 }
 
 /**
