@@ -75,6 +75,48 @@ export function isValidCloudinaryUrl(url: string): boolean {
   return url.startsWith(`https://res.cloudinary.com/${cloudName}/`);
 }
 
+/**
+ * Extrae el publicId de una URL de Cloudinary
+ */
+export function extractPublicId(cloudinaryUrl: string): string | null {
+  try {
+    const url = new URL(cloudinaryUrl);
+    const pathParts = url.pathname.split('/');
+    const pawligIndex = pathParts.findIndex(p => p === 'pawlig' || p === 'pawlig-dev' || p === 'pawlig-prod');
+    if (pawligIndex === -1) return null;
+    
+    const publicIdWithExt = pathParts.slice(pawligIndex).join('/');
+    const lastDotIndex = publicIdWithExt.lastIndexOf('.');
+    if (lastDotIndex !== -1) {
+      return publicIdWithExt.substring(0, lastDotIndex);
+    }
+    return publicIdWithExt;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Elimina múltiples imágenes de Cloudinary en segundo plano (fire-and-forget con promise capture)
+ */
+export async function deleteImagesFromCloudinary(urls: string[]) {
+  if (!isConfigured || !urls || urls.length === 0) return;
+
+  const promises = urls.map(async (url) => {
+    const publicId = extractPublicId(url);
+    if (publicId) {
+      try {
+        await cloudinary.uploader.destroy(publicId);
+      } catch (error) {
+        console.error(`[Cloudinary] Error eliminando ${publicId}:`, error);
+      }
+    }
+  });
+
+  // Usamos allSettled para que un fallo individual no detenga el lote completo
+  await Promise.allSettled(promises);
+}
+
 export default cloudinary;
 
 /*

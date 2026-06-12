@@ -24,6 +24,7 @@ import { prisma } from "@/lib/utils/db";
 import { UserRole, Prisma } from "@prisma/client";
 import { updatePetSchema, updatePetStatusSchema } from "@/lib/validations/pet.schema";
 import { ZodError } from "zod";
+import { deleteImagesFromCloudinary } from "@/lib/cloudinary";
 
 /**
  *  GET /api/pets/[id]
@@ -409,7 +410,7 @@ export async function DELETE(
 
         const existingPet = await prisma.pet.findUnique({
             where: { id: petId },
-            select: { shelterId: true, name: true }
+            select: { shelterId: true, name: true, images: true }
         });
 
         if (!existingPet) {
@@ -430,6 +431,12 @@ export async function DELETE(
         await prisma.pet.delete({
             where: { id: petId },
         });
+
+        // 4. Eliminación en cascada en Cloudinary
+        // Se ejecuta sin bloquear el retorno HTTP usando void para asegurar respuesta rapida
+        if (existingPet.images && existingPet.images.length > 0) {
+            deleteImagesFromCloudinary(existingPet.images).catch(console.error);
+        }
 
         return NextResponse.json({
             message: `Mascota "${existingPet.name}" eliminada exitosamente`,

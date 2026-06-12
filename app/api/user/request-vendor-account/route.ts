@@ -58,14 +58,16 @@ export async function POST(request: Request) {
                     { status: 409 }
                 );
             }
-            return NextResponse.json(
-                {
-                    error: 'Ya tienes una solicitud de vendedor pendiente',
-                    code: 'PENDING_REQUEST_EXISTS',
-                    message: 'Tu solicitud está siendo revisada por un administrador',
-                },
-                { status: 409 }
-            );
+            if (existingVendorRequest.rejectionReason === null) {
+                return NextResponse.json(
+                    {
+                        error: 'Ya tienes una solicitud de vendedor pendiente',
+                        code: 'PENDING_REQUEST_EXISTS',
+                        message: 'Tu solicitud está siendo revisada por un administrador',
+                    },
+                    { status: 409 }
+                );
+            }
         }
 
         //  4. Hashear la contraseña (si se envió una nueva, aunque el form la pide, 
@@ -92,9 +94,10 @@ export async function POST(request: Request) {
                 },
             });
 
-            // Crear registro de vendedor (sin verificar)
-            const vendor = await tx.vendor.create({
-                data: {
+            // Crear o actualizar registro de vendedor (sin verificar)
+            const vendor = await tx.vendor.upsert({
+                where: { userId: user.id },
+                create: {
                     businessName: validatedData.businessName,
                     businessPhone: validatedData.businessPhone,
                     description: validatedData.businessDescription,
@@ -103,6 +106,15 @@ export async function POST(request: Request) {
                     verified: false, // Pendiente de aprobación
                     userId: user.id,
                 },
+                update: {
+                    businessName: validatedData.businessName,
+                    businessPhone: validatedData.businessPhone,
+                    description: validatedData.businessDescription,
+                    municipality: validatedData.businessMunicipality,
+                    address: validatedData.businessAddress,
+                    verified: false, // Pendiente de aprobación
+                    rejectionReason: null, // Limpiar motivo de rechazo previo
+                }
             });
 
             return { user, vendor };
