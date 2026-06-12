@@ -47,25 +47,32 @@ export async function POST(request: Request) {
         //  3. (Paso eliminado) - userEmail verificado via session
 
 
-        //  4. Verificar si el usuario actual ya tiene una solicitud de albergue pendiente
-        const existingShelterRequest = await prisma.shelter.findFirst({
+        //  4. Verificar si el usuario actual ya tiene una solicitud de albergue pendiente o aprobada
+        const existingShelterRequest = await prisma.shelter.findUnique({
             where: {
                 userId: session.user.id,
-                verified: false,
             },
         });
 
         if (existingShelterRequest) {
-            return NextResponse.json(
-                {
-                    error: 'Ya tienes una solicitud de albergue pendiente',
-                    code: 'PENDING_REQUEST_EXISTS',
-                    message: 'Tu solicitud está siendo revisada por un administrador',
-                    shelterName: existingShelterRequest.name,
-                    createdAt: existingShelterRequest.createdAt,
-                },
-                { status: 409 }
-            );
+            if (existingShelterRequest.verified) {
+                return NextResponse.json(
+                    { error: 'Ya eres un albergue verificado', code: 'ALREADY_SHELTER' },
+                    { status: 409 }
+                );
+            }
+            if (existingShelterRequest.rejectionReason === null) {
+                return NextResponse.json(
+                    {
+                        error: 'Ya tienes una solicitud de albergue pendiente',
+                        code: 'PENDING_REQUEST_EXISTS',
+                        message: 'Tu solicitud está siendo revisada por un administrador',
+                        shelterName: existingShelterRequest.name,
+                        createdAt: existingShelterRequest.createdAt,
+                    },
+                    { status: 409 }
+                );
+            }
         }
 
         //  5. Hashear la contraseña
@@ -92,9 +99,10 @@ export async function POST(request: Request) {
                 },
             });
 
-            // Crear registro de albergue (sin verificar)
-            const shelter = await tx.shelter.create({
-                data: {
+            // Crear o actualizar registro de albergue (sin verificar)
+            const shelter = await tx.shelter.upsert({
+                where: { userId: user.id },
+                create: {
                     name: validatedData.shelterName,
                     nit: validatedData.shelterNit,
                     municipality: validatedData.shelterMunicipality,
@@ -108,6 +116,20 @@ export async function POST(request: Request) {
                     verified: false, // Pendiente de aprobación
                     userId: user.id,
                 },
+                update: {
+                    name: validatedData.shelterName,
+                    nit: validatedData.shelterNit,
+                    municipality: validatedData.shelterMunicipality,
+                    address: validatedData.shelterAddress,
+                    description: validatedData.shelterDescription,
+                    contactWhatsApp: validatedData.contactWhatsApp,
+                    contactInstagram: validatedData.contactInstagram,
+                    latitude: coords?.lat || null,
+                    longitude: coords?.lng || null,
+                    geocodedAt: coords ? new Date() : null,
+                    verified: false, // Pendiente de aprobación
+                    rejectionReason: null, // Limpiar motivo de rechazo previo
+                }
             });
 
             return { user, shelter };
