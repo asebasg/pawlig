@@ -4,6 +4,26 @@
 
 ---
 
+## 12-06-2026 - Seguridad en Multimedia y Desbloqueo de Solicitudes (v1.14.0)
+
+**Commit:** `68d5ea4` (Merge PR #151)
+**Tipo:** Feature & Fix
+**Scope:** api, upload, cloudinary, profile
+
+### Descripción
+
+Esta actualización incorpora mejoras críticas de seguridad en la gestión de recursos multimedia de Cloudinary, centraliza las eliminaciones con verificación estricta de propiedad (RBAC), y resuelve el bloqueo que impedía a albergues y vendedores reenviar solicitudes si habían sido previamente denegadas.
+
+### Cambios
+
+- **Endpoint de Eliminación Centralizado**: Creación de `DELETE /api/cloudinary/delete` que implementa verificación de propiedad por roles (SHELTER, VENDOR, ADOPTER) y restringe la eliminación de recursos fuera del entorno del proyecto.
+- **Desbloqueo de Solicitudes de Cuenta (ISSUE-139)**: Corrección en las rutas `/api/user/request-shelter-account` y `/api/user/request-vendor-account` para permitir reenvíos tras denegaciones previas, manteniendo la restricción solo si la solicitud actual está `PENDING` o `APPROVED`.
+- **Refactorización de Formularios**: Actualización de los formularios de edición de mascotas (`pet-form.tsx`) y productos (`product-form.tsx`) para interactuar directamente con el nuevo endpoint de eliminación.
+- **Mejoras en el SDK de Cloudinary**: Nuevos helpers (`extractPublicId` y `deleteImagesFromCloudinary`) para la gestión unificada de identificadores y limpieza asíncrona por lotes.
+- **Limpieza de Endpoints Inseguros**: Remoción del antiguo handler `DELETE` desprotegido en la ruta `/api/upload`.
+
+---
+
 ## 27-05-2026 - Moderation Hub: Refactorización de Rutas y Componentes (v1.13.1)
 
 **Commit:** `6239ec2`
