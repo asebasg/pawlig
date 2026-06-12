@@ -30,9 +30,43 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "27 de mayo de 2026";
+  const lastDevUpdate = "12 de junio de 2026";
 
   const devLogs = [
+    {
+      version: "v1.15.0-dev",
+      date: "12 de Junio, 2026",
+      title: "Seguridad de Multimedia y Ciclo de Solicitudes",
+      description:
+        "Implementación del endpoint seguro de eliminación de Cloudinary con RBAC, remoción de métodos inseguros y habilitación del reenvío de solicitudes tras rechazo.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Endpoint Seguro de Eliminación Cloudinary",
+          description: "Desarrollo de DELETE /api/cloudinary/delete con validación estricta de propiedad (RBAC) por rol y verificación de prefijo de entorno.",
+          icon: <ShieldCheck size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "fix",
+          title: "Reenvío de Solicitudes Denegadas",
+          description: "Corrección en APIs de solicitud para permitir reenvíos de albergue y vendedor cuando el estado es REJECTED o DENIED.",
+          icon: <Wrench size={18} className="text-amber-500" />,
+        },
+        {
+          category: "refactor",
+          title: "Limpieza de /api/upload",
+          description: "Eliminación del handler DELETE desprotegido en la API de subida de archivos original.",
+          icon: <Code2 size={18} className="text-blue-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Helpers y Lote de Borrado",
+          description: "Integración de extractPublicId y deleteImagesFromCloudinary con Promise.allSettled en lib/cloudinary.ts.",
+          icon: <Zap size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
     {
       version: "v1.14.0-dev",
       date: "27 de Mayo, 2026",

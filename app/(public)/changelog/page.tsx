@@ -31,9 +31,43 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "25 de mayo de 2026";
+  const lastUpdate = "12 de junio de 2026";
 
   const versions = [
+    {
+      version: "v1.14.0",
+      date: "12 de Junio, 2026",
+      title: "Seguridad Multimedia y Desbloqueo de Solicitudes",
+      description:
+        "Mejora crítica en la seguridad de borrado de archivos multimedia en Cloudinary y corrección en el reenvío de solicitudes de cuenta denegadas.",
+      color: "from-emerald-600 to-teal-700",
+      updates: [
+        {
+          type: "added",
+          title: "Eliminación Segura de Recursos",
+          description:
+            "Implementación del endpoint DELETE /api/cloudinary/delete que verifica sesión, estado de cuenta y propiedad real de los archivos antes de eliminarlos.",
+          icon: <Shield size={20} className="text-white" />,
+          bg: "bg-emerald-600",
+        },
+        {
+          type: "fixed",
+          title: "Reenvío de Solicitudes Denegadas",
+          description:
+            "Se corrigió la validación lógica en solicitudes de albergues y vendedores para permitir el reenvío de formularios tras un rechazo previo.",
+          icon: <Bug size={20} className="text-white" />,
+          bg: "bg-rose-500",
+        },
+        {
+          type: "improved",
+          title: "Optimización de Limpieza Asíncrona",
+          description:
+            "Introducción de helpers robustos que ejecutan la eliminación de múltiples imágenes de forma concurrente con tolerancia a fallos.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-amber-500",
+        },
+      ],
+    },
     {
       version: "v1.13.0",
       date: "27 de Mayo, 2026",

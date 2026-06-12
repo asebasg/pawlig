@@ -1,5 +1,29 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Seguridad en Multimedia y Ciclo de Solicitudes (v1.14.0 — 12-06-2026)
+
+Mejoras críticas de seguridad y control de propiedad de imágenes en Cloudinary y corrección en el reenvío de formularios de solicitud de cuentas comerciales/refugios.
+
+**Archivos creados/modificados:**
+
+- `app/api/cloudinary/delete/route.ts` — Endpoint centralizado para la eliminación segura de imágenes con control RBAC.
+- `lib/cloudinary.ts` — Agregado `extractPublicId` y el método `deleteImagesFromCloudinary` para borrado en lote no bloqueante.
+- `app/api/upload/route.ts` — Eliminación del handler DELETE obsoleto y no seguro.
+- `app/api/user/request-shelter-account/route.ts` — Corrección de validación lógica para permitir reenvíos tras denegación de cuenta.
+- `app/api/user/request-vendor-account/route.ts` — Corrección de validación lógica para permitir reenvíos tras denegación de cuenta.
+- `components/forms/pet-form.tsx` — Modificación para interactuar con el endpoint seguro de Cloudinary.
+- `components/forms/product-form.tsx` — Modificación para interactuar con el endpoint seguro de Cloudinary.
+- `lib/validations/cloudinary.schema.ts` — Validación Zod para el borrado seguro.
+
+**Detalles Técnicos:**
+
+- **Control de Propiedad RBAC**: Se implementó la verificación de propiedad para SHELTER, VENDOR y ADOPTER a través de búsquedas dinámicas en Prisma. El endpoint asegura que un usuario solo pueda eliminar imágenes que le pertenecen (por ejemplo, mascotas pertenecientes al albergue asociado). Los administradores están exentos de esta verificación para fines de moderación global.
+- **Seguridad en API de Carga**: Se removió el handler DELETE en `/api/upload` que permitía eliminar recursos arbitrariamente sin control de sesión. Ahora todo flujo de eliminación multimedia debe consumir `/api/cloudinary/delete`.
+- **Desbloqueo de Solicitudes (ISSUE-139)**: Se corrigió la regla restrictiva que buscaba cualquier registro previo de solicitud en base de datos. Ahora la validación solo bloquea la creación si existe una solicitud activa en estado `PENDING` o `APPROVED`, permitiendo que usuarios con solicitudes previas `REJECTED` puedan corregir errores y reenviar el formulario.
+- **Borrado en Lote Silencioso**: `deleteImagesFromCloudinary` utiliza `Promise.allSettled` permitiendo que fallas individuales en la API de Cloudinary no detengan la limpieza del lote restante, optimizando el rendimiento.
+
+---
+
 ## Moderation Hub: Refactorización de Rutas y Componentes (v1.13.1 — 25-05-2026)
 
 Consolidación de la gestión de usuarios dentro del Moderation Hub, eliminando la sección independiente y unificando todas las operaciones administrativas bajo `/admin/moderation/*`.
