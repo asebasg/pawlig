@@ -45,17 +45,11 @@ export default function ChangelogClient({ versions, lastUpdate }: ChangelogClien
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll al inicio del contenedor de la lista
-    if (listRef.current) {
-      const offset = 100; // Espacio para no quedar pegado al borde superior
-      const elementPosition = listRef.current.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
+    // Scroll al inicio de la página
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const handleSidebarClick = (e: React.MouseEvent<HTMLAnchorElement>, versionId: string, index: number) => {
@@ -85,10 +79,15 @@ export default function ChangelogClient({ versions, lastUpdate }: ChangelogClien
         {/* Navegación Lateral (Sticky) */}
         <aside className="hidden lg:block lg:col-span-3">
           <div className="sticky top-24 bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-white/50">
-            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6 flex items-center gap-2">
-              <History size={14} /> Historial
-            </h3>
-            <nav className="flex flex-col gap-2">
+            <div className="mb-6">
+              <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
+                <History size={14} /> Historial
+              </h3>
+              <p className="text-[10px] text-slate-400 font-medium">
+                Última actualización: <span className="text-slate-600 font-bold">{lastUpdate}</span>
+              </p>
+            </div>
+            <nav className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto scrollbar-hide">
               {versions.map((v, i) => {
                 const targetPage = Math.floor(i / itemsPerPage) + 1;
                 const isCurrentPage = targetPage === currentPage;
@@ -116,12 +115,6 @@ export default function ChangelogClient({ versions, lastUpdate }: ChangelogClien
                 );
               })}
             </nav>
-            <div className="mt-8 pt-6 border-t border-slate-100">
-              <p className="text-xs text-slate-400 text-center font-medium">
-                Última actualización: <br />{" "}
-                <span className="text-slate-600 font-bold">{lastUpdate}</span>
-              </p>
-            </div>
           </div>
         </aside>
 

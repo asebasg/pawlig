@@ -1,14 +1,6 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import {
-  Code2,
-  BadgeAlert,
-  GitBranch,
-  FileCode,
-  ShieldCheck,
-} from "lucide-react";
-import Link from "next/link";
 import { PaginationSystem } from "@/components/ui/pagination-system";
 
 interface Log {
@@ -43,16 +35,11 @@ export default function DevNotesClient({ devLogs }: DevNotesClientProps) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    if (listRef.current) {
-      const offset = 80;
-      const elementPosition = listRef.current.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
+    // Scroll al inicio de la página
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const categoryStyles: Record<string, string> = {
@@ -137,30 +124,6 @@ export default function DevNotesClient({ devLogs }: DevNotesClientProps) {
         className="mt-12"
       />
 
-      {/* Dev Footer */}
-      <footer className="mt-24 pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6 text-slate-400">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <GitBranch size={16} />
-            <span className="text-xs font-mono">branch: main</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={16} />
-            <span className="text-xs font-mono">status: stable</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <Link href="https://github.com/asebasg/pawlig" className="hover:text-slate-600 transition-colors">
-            <Code2 size={18} />
-          </Link>
-          <Link href="https://github.com/asebasg/pawlig/issues/new/choose" className="hover:text-red-600 transition-colors">
-            <BadgeAlert size={18} />
-          </Link>
-          <Link href="https://drive.google.com/drive/folders/16V41xWkq5CkAVAwj_ojDM3ri-jfaXh2m" className="hover:text-green-600 transition-colors">
-            <FileCode size={18} />
-          </Link>
-        </div>
-      </footer>
     </div>
   );
 }
