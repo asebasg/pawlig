@@ -1,4 +1,11 @@
-# Esquema de la Base de Datos (schema.prisma)
+# Contexto y Estructura del Proyecto — PawLig (v1.8.0)
+
+> **Última actualización**: 15 de junio de 2026.
+> **Versión**: v1.8.0
+
+---
+
+## 1. Esquema de la Base de Datos (schema.prisma)
 
 ```prisma
 // This is your Prisma schema file,
@@ -335,10 +342,10 @@ model SystemAuditLog {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   category     AuditCategory
   action       String        // Ej: "APPROVE", "REJECT", "BLOCK", "CHANGE_ROLE"
-  actorId      String        @db.ObjectId
+  actorId      String        @db.ObjectId 
   actorEmail   String
   resourceType String        // Ej: "SHELTER", "VENDOR", "USER"
-  resourceId   String        @db.ObjectId
+  resourceId   String        @db.ObjectId 
   before       String?       // JSON String
   after        String?       // JSON String
   reason       String
@@ -354,11 +361,10 @@ model SystemAuditLog {
 }
 ```
 
-# Estructura del Proyecto
+## 2. Estructura del Proyecto
 
 ```text
 .
-├── .env.local.example
 ├── .eslintrc.json
 ├── .github
 │   ├── ISSUE_TEMPLATE
@@ -411,44 +417,44 @@ model SystemAuditLog {
 │   │   │   ├── page.tsx
 │   │   │   └── profile
 │   │   │       └── page.tsx
-│   │   ├── shelter
-│   │   │   ├── adoptions
+│   ├── (shelter)
+│   │   ├── adoptions
+│   │   │   └── page.tsx
+│   │   ├── metrics
+│   │   │   └── page.tsx
+│   │   ├── page.tsx
+│   │   ├── pets
+│   │   │   ├── [id]
+│   │   │   │   └── edit
+│   │   │   │       └── page.tsx
+│   │   │   ├── new
 │   │   │   │   └── page.tsx
-│   │   │   ├── metrics
+│   │   │   └── page.tsx
+│   │   └── profile
+│   │       └── page.tsx
+│   ├── (user)
+│   │   ├── page.tsx
+│   │   ├── profile
+│   │   │   └── page.tsx
+│   │   ├── request-shelter
+│   │   │   └── page.tsx
+│   │   └── request-vendor
+│   │       └── page.tsx
+│   ├── (vendor)
+│   │   ├── metrics
+│   │       └── page.tsx
+│   │   ├── orders
+│   │   │   └── page.tsx
+│   │   ├── page.tsx
+│   │   ├── products
+│   │   │   ├── [id]
+│   │   │   │   └── edit
+│   │   │   │       └── page.tsx
+│   │   │   ├── new
 │   │   │   │   └── page.tsx
-│   │   │   ├── page.tsx
-│   │   │   ├── pets
-│   │   │   │   ├── [id]
-│   │   │   │   │   └── edit
-│   │   │   │   │       └── page.tsx
-│   │   │   │   ├── new
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
-│   │   │   └── profile
-│   │   │       └── page.tsx
-│   │   ├── user
-│   │   │   ├── page.tsx
-│   │   │   ├── profile
-│   │   │   │   └── page.tsx
-│   │   │   ├── request-shelter
-│   │   │   │   └── page.tsx
-│   │   │   └── request-vendor
-│   │   │       └── page.tsx
-│   │   └── vendor
-│   │       ├── metrics
-│   │       │   └── page.tsx
-│   │       ├── orders
-│   │       │   └── page.tsx
-│   │       ├── page.tsx
-│   │       ├── products
-│   │       │   ├── [id]
-│   │       │   │   └── edit
-│   │       │   │       └── page.tsx
-│   │       │   ├── new
-│   │       │   │   └── page.tsx
-│   │       │   └── page.tsx
-│   │       └── profile
-│   │           └── page.tsx
+│   │   │   └── page.tsx
+│   │   └── profile
+│   │       └── page.tsx
 │   ├── (public)
 │   │   ├── adopciones
 │   │   │   ├── [id]
@@ -457,7 +463,9 @@ model SystemAuditLog {
 │   │   ├── albergues
 │   │   │   └── page.tsx
 │   │   ├── changelog
+│   │   │   ├── changelog-client.tsx
 │   │   │   ├── dev
+│   │   │   │   ├── dev-notes-client.tsx
 │   │   │   │   └── page.tsx
 │   │   │   └── page.tsx
 │   │   ├── faq
@@ -487,7 +495,7 @@ model SystemAuditLog {
 │   │   │   │       ├── orders
 │   │   │   │       │   └── route.ts
 │   │   │   │       ├── products
-│   │   │   │   │       │   └── route.ts
+│   │   │   │       │   └── route.ts
 │   │   │   │       ├── route.ts
 │   │   │   │       └── trends
 │   │   │   │           └── route.ts
@@ -533,6 +541,8 @@ model SystemAuditLog {
 │   │   │   │   └── route.ts
 │   │   │   └── route.ts
 │   │   ├── cloudinary
+│   │   │   ├── delete
+│   │   │   │   └── route.ts
 │   │   │   └── sign
 │   │   │       └── route.ts
 │   │   ├── pets
@@ -566,7 +576,7 @@ model SystemAuditLog {
 │   │   │   │   └── route.ts
 │   │   │   └── search
 │   │   │       └── route.ts
-│   │   ├── upload
+│   │  ├── upload
 │   │   │   └── route.ts
 │   │   ├── user
 │   │   │   ├── favorites
@@ -577,7 +587,7 @@ model SystemAuditLog {
 │   │   │   │   └── route.ts
 │   │   │   ├── request-shelter-account
 │   │   │   │   └── route.ts
-│   │   │   └── request-vendor-account
+│   │   │   ├── request-vendor-account
 │   │   │       └── route.ts
 │   │   └── vendor
 │   │       ├── metrics
@@ -589,7 +599,7 @@ model SystemAuditLog {
 │   │       │   │   └── route.ts
 │   │       │   ├── route.ts
 │   │       │   └── trends
-│   │       │       └── route.ts
+│   │      │       └── route.ts
 │   │       └── profile
 │   │           └── route.ts
 │   ├── fonts
@@ -697,6 +707,7 @@ model SystemAuditLog {
 │   │   ├── label.tsx
 │   │   ├── loader.tsx
 │   │   ├── logo.tsx
+│   │   ├── pagination-system.tsx
 │   │   ├── password-input.tsx
 │   │   ├── radio-group.tsx
 │   │   ├── select.tsx
@@ -816,6 +827,8 @@ model SystemAuditLog {
 │       ├── pet-home.png
 │       └── under_construction.png
 ├── scripts
+│   ├── create-pr.ps1
+│   ├── create-pr.sh
 │   ├── geocode-shelters.ts
 │   └── test-live-emails.ts
 ├── tailwind.config.ts
@@ -831,9 +844,9 @@ model SystemAuditLog {
 └── vitest.setup.ts
 ```
 
-# Dependencias del Proyecto
+## 3. Dependencias del Proyecto
 
-## Dependencias de Producción
+### Dependencias de Producción
 
 - `@google/generative-ai`: `^0.24.1`
 - `@hookform/resolvers`: `^5.2.2`
@@ -871,7 +884,7 @@ model SystemAuditLog {
 - `tailwind-merge`: `^3.4.0`
 - `zod`: `^4.1.12`
 
-## Dependencias de Desarrollo
+### Dependencias de Desarrollo
 
 - `@testing-library/jest-dom`: `^6.9.1`
 - `@testing-library/react`: `^16.3.1`
@@ -895,5 +908,3 @@ model SystemAuditLog {
 - `typescript`: `^5`
 - `vite-tsconfig-paths`: `^6.0.3`
 - `vitest`: `^4.0.16`
-
-> **Última actualización**: 31 de mayo de 2026.
