@@ -3,6 +3,12 @@
 import React, { useState, useRef } from "react";
 import { PaginationSystem } from "@/components/ui/pagination-system";
 
+/**
+ * Descripción: Componente cliente para renderizar y paginar las notas de desarrollo técnico de PawLig.
+ * Requiere: Props de devLogs.
+ * Implementa: Paginación y scroll suave al cambiar de página.
+ */
+
 interface Log {
   category: string;
   title: string;
@@ -35,11 +41,19 @@ export default function DevNotesClient({ devLogs }: DevNotesClientProps) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    
+    // Desenfocar el botón activo para prevenir que el navegador anule el scroll al mantener el foco
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     // Scroll al inicio de la página
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 50);
   };
 
   const categoryStyles: Record<string, string> = {
@@ -127,3 +141,21 @@ export default function DevNotesClient({ devLogs }: DevNotesClientProps) {
     </div>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Componente cliente para renderizar las notas internas de desarrollo (logs técnicos).
+ *
+ * Lógica Clave:
+ * - Paginación e Integración de Scroll: El cambio de página ejecuta un scroll smooth hacia
+ *   el inicio de la página. Se desenfoca el botón activo de paginación para evitar interferencias
+ *   con el foco y la posición del viewport del navegador.
+ *
+ * Dependencias Externas:
+ * - PaginationSystem: Componente para manejo interactivo de paginación.
+ *
+ */

@@ -11,6 +11,12 @@ import {
 import Link from "next/link";
 import { PaginationSystem } from "@/components/ui/pagination-system";
 
+/**
+ * Descripción: Componente cliente para renderizar y paginar el changelog de PawLig.
+ * Requiere: Props de versions y lastUpdate.
+ * Implementa: Paginación y scroll suave al cambiar de página y seleccionar en sidebar.
+ */
+
 interface Update {
   type: string;
   title: string;
@@ -45,11 +51,19 @@ export default function ChangelogClient({ versions, lastUpdate }: ChangelogClien
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    
+    // Desenfocar el botón activo para prevenir que el navegador anule el scroll al mantener el foco
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     // Scroll al inicio de la página
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 50);
   };
 
   const handleSidebarClick = (e: React.MouseEvent<HTMLAnchorElement>, versionId: string, index: number) => {
@@ -251,3 +265,23 @@ export default function ChangelogClient({ versions, lastUpdate }: ChangelogClien
     </div>
   );
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Componente interactivo del lado del cliente para visualizar las notas de versión.
+ *
+ * Lógica Clave:
+ * - Paginación e Integración de Scroll: El cambio de página ejecuta un scroll smooth hacia
+ *   el inicio. Se desenfoca el botón activo para prevenir que el foco del navegador anule el scroll.
+ * - Sidebar Interactivo: Permite navegar directamente a una versión específica con
+ *   scroll smooth al elemento.
+ *
+ * Dependencias Externas:
+ * - lucide-react: Iconos decorativos y descriptivos de las actualizaciones.
+ * - PaginationSystem: Componente de paginación reutilizable.
+ *
+ */
