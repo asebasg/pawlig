@@ -1,8 +1,9 @@
 # Registro de Actualizaciones Mensuales — PawLig (2026)
 
 **Documento Legal y de Referencia**  
-Período: 01-01-2026 a 31-05-2026
-Última actualización: 31-05-2026
+Período: 01-01-2026 a 15-06-2026  
+Versión actual: v1.8.0  
+Última actualización: 15-06-2026
 
 ---
 
@@ -12,6 +13,7 @@ Período: 01-01-2026 a 31-05-2026
 3. [Marzo 2026](#marzo-2026)
 4. [Abril 2026](#abril-2026)
 5. [Mayo 2026](#mayo-2026)
+6. [Junio 2026](#junio-2026)
 
 ---
 
@@ -72,17 +74,25 @@ Período: 01-01-2026 a 31-05-2026
 
 ---
 
+## Junio 2026
+
+| Mes | Implementaciones | Notas Adicionales |
+|-----|------------------|-------------------|
+| **Junio** | **Mejoras de UX en Changelog y Tipado Estricto (v1.8.0)** — Optimización de la experiencia de usuario en el registro de cambios y fortalecimiento del sistema de tipos. | Implementación de tipos globales en `types/`. Configuración de Vitest para entorno de pruebas. Adición de animación 'blob' en Tailwind. Commit: 5fada4a. |
+
+---
+
 ## Resumen Estadístico (2026)
 
 | Métrica | Cantidad |
 |---------|----------|
-| **Versiones Lanzadas** | 14 (v1.0.0 → v1.13.1) |
-| **Archivos Creados** | 60+ componentes, servicios y utilidades |
-| **Archivos Modificados** | 150+ archivos documentados y actualizados |
-| **Commits Documentados** | 110+ commits |
-| **Features Principales** | 14 features principales + múltiples bugfixes |
+| **Versiones Lanzadas** | 15 (v1.0.0 → v1.8.0) |
+| **Archivos Creados** | 70+ componentes, servicios y utilidades |
+| **Archivos Modificados** | 160+ archivos documentados y actualizados |
+| **Commits Documentados** | 111 commits |
+| **Features Principales** | 15 features principales + múltiples bugfixes |
 | **Dependencias Agregadas** | @google/generative-ai, exceljs, jspdf, leaflet, recharts, resend |
-| **Meses Activos** | 5/5 (Enero, Febrero, Abril, Mayo + Marzo estabilización) |
+| **Meses Activos** | 6/6 (Enero-Junio) |
 | **Scope de Cambios** | core, ui, auth, email, metrics, map, products, adoptions, admin, moderation |
 
 ---
@@ -161,11 +171,11 @@ Este documento sirve como registro oficial de cambios y es de carácter **legal 
 - **Desarrollador Principal**: @asebasg
 - **Colaboradores**: @sospigz, google-labs-jules[bot]
 
-**Período de Documentación**: 01-01-2026 a 31-05-2026
-**Próxima Revisión Recomendada**: 15-06-2026
+**Período de Documentación**: 01-01-2026 a 15-06-2026
+**Próxima Revisión Recomendada**: 30-06-2026
 
 ---
 
-**Documento Generado**: 2026-05-31
+**Documento Generado**: 2026-06-15
 **Versión**: 1.1
 **Estado**: ✅ Completado y Verificado
