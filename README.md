@@ -21,7 +21,7 @@ _Versión v1.8.0 | Última actualización: 15 de junio de 2026_
 ---
 
 > [!IMPORTANT]
-> **Estándar de Codificación (Gold Standard):** Se recomienda encarecidamente consultar y adherirse al [Manual de Reglas y Estándares (.rules.md)](https://raw.githubusercontent.com/asebasg/pawlig/refs/heads/main/.rules.md?token=GHSAT0AAAAAAD7IEHQWCQPVD6CWJDKPHZAG2RPQXYA) antes de iniciar cualquier labor de desarrollo. Este documento establece las directrices críticas de arquitectura, nomenclatura y calidad de código del proyecto.
+> **Estándar de Codificación (Gold Standard):** Se recomienda encarecidamente consultar y adherirse al __**Manual de Reglas y Estándares (.rules.md)**__ antes de iniciar cualquier labor de desarrollo. Este documento establece las directrices críticas de arquitectura, nomenclatura y calidad de código del proyecto.
 
 
 ---
@@ -147,7 +147,7 @@ A través de la integración de **IA Generativa**, **Geolocalización** y un **M
 ### Contribuir
 1. Realice un **Fork** del proyecto.
 2. Cree una rama para su mejora: `git checkout -b feat/nueva-funcionalidad`.
-3. Siga el [**Estándar de Oro**](https://raw.githubusercontent.com/asebasg/pawlig/refs/heads/main/.rules.md?token=GHSAT0AAAAAAD7IEHQWCQPVD6CWJDKPHZAG2RPQXYA) documentado en `.rules.md`.
+3. Siga el __**Estándar de Oro**__ documentado en `.rules.md`.
 4. Envíe un **Pull Request** detallado en español.
 
 ### Licencia
@@ -155,5 +155,5 @@ Este proyecto es un trabajo académico desarrollado para la **Universidad de San
 
 ---
 <div align="center">
-Desarrollado con ❤️ por el equipo de PawLig en Medellín, Colombia 🇨🇴.
+Desarrollado con ❤️ por el equipo de PawLig desde Medellín, Colombia 🇨🇴.
 </div>
