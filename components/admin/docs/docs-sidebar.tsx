@@ -28,14 +28,19 @@ const CATEGORY_ICON: Record<DocCategory, React.ElementType> = {
   final: FileText,
 };
 
-const CATEGORY_ORDER: DocCategory[] = ["analysis", "design", "testing", "final"];
+const CATEGORY_ORDER: DocCategory[] = [
+  "analysis",
+  "design",
+  "testing",
+  "final",
+];
 
 /**
  * Sidebar fijo con la lista de documentos agrupados por categoría.
  * Recibe el slug activo para resaltar el ítem correspondiente.
  */
-function DocsSidebar({ activeSlug }: DocsSidebarProps) {
-  const docs = getAllDocsMetadata();
+async function DocsSidebar({ activeSlug }: DocsSidebarProps) {
+  const docs = await getAllDocsMetadata();
 
   const grouped = CATEGORY_ORDER.reduce<Record<string, typeof docs>>(
     (acc, category) => {
@@ -79,7 +84,10 @@ function DocsSidebar({ activeSlug }: DocsSidebarProps) {
             <div key={category}>
               {/* Etiqueta de categoría */}
               <div className="flex items-center gap-1.5 px-2 mb-2">
-                <Icon className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+                <Icon
+                  className="w-3.5 h-3.5 text-muted-foreground"
+                  aria-hidden="true"
+                />
                 <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   {CATEGORY_LABEL[category]}
                 </span>
