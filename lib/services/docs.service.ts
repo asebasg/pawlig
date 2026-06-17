@@ -80,7 +80,7 @@ export async function getDocBySlug(slug: string): Promise<DocContent> {
  *
  * @returns Copia del array AVAILABLE_DOCS con slug, title, filePath y category.
  */
-export function getAllDocsMetadata() {
+export async function getAllDocsMetadata() {
   return AVAILABLE_DOCS;
 }
 
