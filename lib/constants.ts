@@ -2,6 +2,7 @@
 // ! La ruta que no aparece aquí es /forgot-password. Para cambiarla, buscar en el code search "" y reemplazar por "forgot-password"
 
 import { UserRole, ProductCategory } from "@prisma/client";
+import { DocMetadata } from "@/types/docs.types";
 
 // Categorías de productos (SSOT para UI)
 export const PRODUCT_CATEGORIES: Record<ProductCategory, string> = {
@@ -195,3 +196,21 @@ export type CloudinaryFolder = (typeof CLOUDINARY_FOLDERS)[keyof typeof CLOUDINA
 export const CLOUDINARY_RESOURCE_TYPES = ["image", "video", "raw"] as const;
 
 export type CloudinaryResourceType = (typeof CLOUDINARY_RESOURCE_TYPES)[number];
+
+// Documentos de proyecto disponibles para la sección de documentación
+export const AVAILABLE_DOCS: DocMetadata[] = [
+  { slug: "acta-de-constitucion",    title: "Acta de Constitución",      filePath: "01_Acta_de_Constitucion.md",    category: "analysis" },
+  { slug: "stakeholders",            title: "Stakeholders",              filePath: "02_Stakeholders.md",            category: "analysis" },
+  { slug: "alcance-del-proyecto",    title: "Alcance del Proyecto",      filePath: "03_Alcance_del_Proyecto.md",    category: "analysis" },
+  { slug: "requerimientos",          title: "Requerimientos",            filePath: "04_Requerimientos.md",          category: "analysis" },
+  { slug: "historias-de-usuario",    title: "Historias de Usuario",      filePath: "05_Historias_de_Usuario.md",    category: "analysis" },
+  { slug: "mapa-de-procesos",        title: "Mapa de Procesos",          filePath: "06_Mapa_de_Procesos.md",        category: "analysis" },
+  { slug: "casos-de-uso",            title: "Casos de Uso",              filePath: "07_Casos_de_Uso.md",            category: "analysis" },
+  { slug: "arquitectura-software",   title: "Arquitectura de Software",  filePath: "08_Arquitectura_Software.md",   category: "design" },
+  { slug: "modelo-entidad-relacion", title: "Modelo Entidad-Relación",   filePath: "09_Modelo_Entidad_Relacion.md", category: "design" },
+  { slug: "diagramas-uml",           title: "Diagramas UML",             filePath: "10_Diagramas_UML.md",           category: "design" },
+  { slug: "manual-diseno",           title: "Manual de Diseño",          filePath: "11_Manual_Diseño.md",           category: "design" },
+  { slug: "plan-de-pruebas",         title: "Plan de Pruebas",           filePath: "12_Plan_de_Pruebas.md",         category: "testing" },
+  { slug: "casos-de-prueba",         title: "Casos de Prueba",           filePath: "13_Casos_de_Prueba.md",         category: "testing" },
+  { slug: "manual-del-usuario",      title: "Manual del Usuario",        filePath: "14_Manual_del_Usuario.md",      category: "final" },
+];
