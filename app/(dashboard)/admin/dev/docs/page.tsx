@@ -67,7 +67,7 @@ const CATEGORY_ORDER: DocCategory[] = ["analysis", "design", "testing", "final"]
 export default async function DocsIndexPage() {
   await requireRole([UserRole.ADMIN]);
 
-  const docs = getAllDocsMetadata();
+  const docs = await getAllDocsMetadata();
 
   // Agrupar documentos por categoría preservando el orden de CATEGORY_ORDER
   const grouped = CATEGORY_ORDER.reduce<Record<string, typeof docs>>(
