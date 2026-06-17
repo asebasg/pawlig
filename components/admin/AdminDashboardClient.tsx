@@ -41,10 +41,10 @@ export default function AdminDashboardClient({ userSession }: AdminDashboardClie
             bgColor: 'bg-orange-50',
         },
         {
-            title: 'Notas de Desarrollo',
+            title: 'Documentación',
             description: 'Obtén logs, notas y actualizaciones de desarrollo para mantenerte al día con las últimas implementaciones y cambios en la plataforma.',
             icon: CodeXml,
-            href: '/changelog/dev',
+            href: '/admin/dev/docs',
             color: 'text-green-500',
             bgColor: 'bg-green-50',
         },
