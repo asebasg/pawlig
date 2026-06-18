@@ -2,7 +2,7 @@
  * GET /admin/dev/docs/[slug]
  * Descripción: Página de visualización de un documento técnico individual.
  *              Obtiene el contenido Markdown procesado a HTML y lo renderiza
- *              junto al sidebar de navegación y el botón de exportación PDF.
+ *              junto al sidebar de navegación.
  * Requiere:    Rol ADMIN autenticado. Parámetro slug válido en AVAILABLE_DOCS.
  * Implementa:  Panel de desarrollo interno — vista de documento.
  */
@@ -10,10 +10,9 @@
 import { notFound } from "next/navigation";
 import { UserRole } from "@prisma/client";
 import { requireRole } from "@/lib/auth/require-role";
-import { getDocBySlug } from "@/lib/services/docs.service";
+import { getDocBySlug, getAllDocsMetadata } from "@/lib/services/docs.service";
 import DocsSidebar from "@/components/admin/docs/docs-sidebar";
 import DocViewer from "@/components/admin/docs/doc-viewer";
-import DocPdfButton from "@/components/admin/docs/doc-pdf-button";
 
 interface DocPageProps {
   params: Promise<{ slug: string }>;
@@ -37,6 +36,8 @@ export default async function DocPage({ params }: DocPageProps) {
 
   const { slug } = await params;
 
+  const allDocs = await getAllDocsMetadata();
+
   let doc: Awaited<ReturnType<typeof getDocBySlug>>;
   try {
     doc = await getDocBySlug(slug);
@@ -47,13 +48,15 @@ export default async function DocPage({ params }: DocPageProps) {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar de navegación */}
-      <DocsSidebar activeSlug={slug} />
+      <DocsSidebar docs={allDocs} activeSlug={slug} />
 
       {/* Área de contenido principal */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Barra superior */}
-        <header className="sticky top-0 z-10 flex items-center justify-between gap-4
-                           px-6 py-4 border-b border-border bg-background/80 backdrop-blur-sm">
+        <header
+          className="sticky top-0 z-10 flex items-center justify-between gap-4
+                           px-6 py-4 border-b border-border bg-background/80 backdrop-blur-sm"
+        >
           <div className="min-w-0">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-0.5">
               Documentación técnica
@@ -62,7 +65,6 @@ export default async function DocPage({ params }: DocPageProps) {
               {doc.title}
             </h1>
           </div>
-          <DocPdfButton slug={doc.slug} title={doc.title} />
         </header>
 
         {/* Contenido del documento */}
@@ -84,9 +86,8 @@ export default async function DocPage({ params }: DocPageProps) {
  *
  * Descripción General:
  * Server Component que orquesta la vista de un documento técnico individual.
- * Delega la presentación a tres componentes especializados: DocsSidebar para
- * la navegación, DocViewer para el contenido HTML y DocPdfButton para la
- * exportación.
+ * Delega la presentación a dos componentes especializados: DocsSidebar para
+ * la navegación y DocViewer para el contenido HTML.
  *
  * Lógica Clave:
  * - params como Promise: A partir de Next.js 15, los params de rutas dinámicas
@@ -104,6 +105,6 @@ export default async function DocPage({ params }: DocPageProps) {
  * Dependencias Externas:
  * - getDocBySlug: Servicio de lectura y procesado Markdown (docs.service.ts).
  * - requireRole: Guardia de autorización (lib/auth/require-role.ts).
- * - DocsSidebar, DocViewer, DocPdfButton: Componentes de presentación.
+ * - DocsSidebar, DocViewer: Componentes de presentación.
  *
  */

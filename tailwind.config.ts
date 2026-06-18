@@ -52,8 +52,34 @@ const config: Config = {
           },
         },
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            a: {
+              color: "var(--primary)",
+              textDecoration: "none",
+              "&:hover": {
+                textDecoration: "underline",
+              },
+            },
+            blockquote: {
+              borderLeftColor: "var(--primary)",
+            },
+            "ol > li::marker": {
+              color: "var(--primary)",
+            },
+            "ul > li::marker": {
+              color: "var(--primary)",
+            },
+            code: {
+              color: "var(--primary)",
+            },
+          },
+        },
+      },
     },
   },
   plugins: [typography],
 };
 export default config;
+
