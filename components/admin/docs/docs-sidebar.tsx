@@ -2,15 +2,17 @@
  * Descripción: Sidebar de navegación de la sección de documentación técnica.
  *              Lista todos los documentos agrupados por categoría y marca el
  *              documento activo según el slug actual.
+ *              Recibe los metadatos de documentos como prop desde el layout padre,
+ *              evitando llamadas duplicadas al servicio de datos.
  * Implementa:  Vista de documento en /admin/dev/docs/[slug].
  */
 
 import Link from "next/link";
 import { BookOpen, FileText, FlaskConical, ScrollText } from "lucide-react";
-import { getAllDocsMetadata } from "@/lib/services/docs.service";
-import { DocCategory } from "@/types/docs.types";
+import { DocCategory, DocMetadata } from "@/types/docs.types";
 
 interface DocsSidebarProps {
+  docs: DocMetadata[];
   activeSlug: string;
 }
 
@@ -37,10 +39,9 @@ const CATEGORY_ORDER: DocCategory[] = [
 
 /**
  * Sidebar fijo con la lista de documentos agrupados por categoría.
- * Recibe el slug activo para resaltar el ítem correspondiente.
+ * Recibe la lista de documentos y el slug activo desde el layout padre.
  */
-async function DocsSidebar({ activeSlug }: DocsSidebarProps) {
-  const docs = await getAllDocsMetadata();
+function DocsSidebar({ docs, activeSlug }: DocsSidebarProps) {
 
   const grouped = CATEGORY_ORDER.reduce<Record<string, typeof docs>>(
     (acc, category) => {
@@ -141,13 +142,17 @@ export default DocsSidebar;
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Server Component que renderiza el sidebar de navegación de documentos.
- * Consume getAllDocsMetadata() directamente (sin prop drilling desde el page)
- * para mantener el componente autónomo y reutilizable.
+ * Componente presentacional que renderiza el sidebar de navegación de documentos.
+ * Los datos llegan como prop desde DocsLayout, que es quien llama al servicio
+ * una única vez. Esto evita llamadas duplicadas al servicio y centraliza
+ * la obtención de datos en la capa de layout.
  *
  * Lógica Clave:
- * - Agrupación: Mismo patrón que DocsIndexPage usando CATEGORY_ORDER como
- *   fuente de orden para garantizar la secuencia correcta de secciones.
+ * - Prop drilling controlado: docs y activeSlug provienen del layout padre.
+ *   El sidebar no tiene dependencias directas al servicio de datos.
+ * - Agrupación: Usa CATEGORY_ORDER como fuente de orden para garantizar
+ *   la secuencia correcta de secciones independientemente del orden en
+ *   que estén declarados en AVAILABLE_DOCS.
  * - Estado activo: Determinado por comparación directa de slug (string),
  *   sin necesidad de usePathname ni cliente. Aplica aria-current="page"
  *   para accesibilidad de lectores de pantalla.
@@ -158,7 +163,7 @@ export default DocsSidebar;
  * - IDs únicos: sidebar-link-{slug} facilita el testing automatizado.
  *
  * Dependencias Externas:
- * - lucide-react: Íconos de categorías.
- * - getAllDocsMetadata: Fuente de datos (lib/services/docs.service.ts).
+ * - lucide-react: Iconos de categorias.
+ * - DocMetadata, DocCategory: Tipos definidos en types/docs.types.ts.
  *
  */
