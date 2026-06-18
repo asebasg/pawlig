@@ -66,16 +66,16 @@ export default function DevNotesClient({ devLogs }: DevNotesClientProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl" ref={listRef}>
+    <div className="container mx-auto px-4 py-4 max-w-4xl" ref={listRef}>
       {/* Timeline */}
-      <div className="space-y-12 min-h-[500px]">
+      <div className="relative pl-8 border-l border-slate-300 space-y-12 min-h-[500px]">
         {currentLogs.map((entry) => (
           <section
             key={entry.version}
-            className="relative pl-8 border-l border-slate-100 animate-in fade-in slide-in-from-left-4 duration-500"
+            className="relative animate-in fade-in slide-in-from-left-4 duration-500"
           >
             {/* Timeline Dot */}
-            <div className="absolute -left-[5px] top-1.5 w-[9px] h-[9px] rounded-full bg-slate-300 ring-4 ring-white" />
+            <div className="absolute -left-[calc(2rem+5px)] top-1.5 w-[9px] h-[9px] rounded-full bg-slate-500 ring-4 ring-white" />
 
             <div className="flex flex-col gap-6">
               <header>

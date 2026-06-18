@@ -13,7 +13,7 @@ import { BookOpen, FileText, FlaskConical, ScrollText } from "lucide-react";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAllDocsMetadata } from "@/lib/services/docs.service";
 import { DocCategory } from "@/types/docs.types";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 export const metadata = {
   title: "[DEV] Documentación del Proyecto",
@@ -85,18 +85,24 @@ export default async function DocsIndexPage() {
   );
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="container mx-auto py-8 px-4 space-y-6">
+      <div className="mb-4">
+        <Link
+          href="/admin/dev"
+          className="inline-flex items-center gap-2 text-primary hover:brightness-75 transition-all font-semibold"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver al Dev Dashboard
+        </Link>
+      </div>
+
       {/* Encabezado */}
       <div className="mb-10">
-        <p className="text-sm font-medium text-primary uppercase tracking-widest mb-2">
-          Panel de Desarrollo
-        </p>
         <h1 className="text-4xl font-bold text-foreground mb-3">
           Documentación del Proyecto
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl">
-          Accede a todos los documentos técnicos del ciclo de vida del proyecto:
-          análisis, diseño, pruebas y entregables finales.
+          Accede a todos los documentos técnicos del ciclo de vida del proyecto: análisis, diseño, pruebas y entregables finales.
         </p>
       </div>
 
