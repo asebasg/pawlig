@@ -56,7 +56,7 @@ function DocsSidebar({ docs, activeSlug }: DocsSidebarProps) {
       id="docs-sidebar"
       aria-label="Navegación de documentos"
       className="hidden lg:flex flex-col w-64 shrink-0 border-r border-border
-                 bg-background h-screen sticky top-0 overflow-y-auto"
+                 bg-background h-screen sticky top-0 overflow-y-auto scrollbar-hide"
     >
       {/* Encabezado del sidebar */}
       <div className="px-4 py-5 border-b border-border">
