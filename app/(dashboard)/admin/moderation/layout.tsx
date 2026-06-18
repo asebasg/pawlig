@@ -16,7 +16,7 @@ export default function ModerationLayout({
 }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen py-6 w-full">
-      <Link href="/admin" className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold">
+      <Link href="/admin" className="inline-flex items-center gap-2 mb-4 text-primary hover:brightness-75 transition-all font-semibold">
         <ArrowLeft className="w-4 h-4" />
         Volver al Dashboard
       </Link>

@@ -44,25 +44,29 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Endpoint Seguro de Eliminación Cloudinary",
-          description: "Desarrollo de DELETE /api/cloudinary/delete con validación estricta de propiedad (RBAC) por rol y verificación de prefijo de entorno.",
+          description:
+            "Desarrollo de DELETE /api/cloudinary/delete con validación estricta de propiedad (RBAC) por rol y verificación de prefijo de entorno.",
           icon: <ShieldCheck size={18} className="text-emerald-500" />,
         },
         {
           category: "fix",
           title: "Reenvío de Solicitudes Denegadas",
-          description: "Corrección en APIs de solicitud para permitir reenvíos de albergue y vendedor cuando el estado es REJECTED o DENIED.",
+          description:
+            "Corrección en APIs de solicitud para permitir reenvíos de albergue y vendedor cuando el estado es REJECTED o DENIED.",
           icon: <Wrench size={18} className="text-amber-500" />,
         },
         {
           category: "refactor",
           title: "Limpieza de /api/upload",
-          description: "Eliminación del handler DELETE desprotegido en la API de subida de archivos original.",
+          description:
+            "Eliminación del handler DELETE desprotegido en la API de subida de archivos original.",
           icon: <Code2 size={18} className="text-blue-500" />,
         },
         {
           category: "improvement",
           title: "Helpers y Lote de Borrado",
-          description: "Integración de extractPublicId y deleteImagesFromCloudinary con Promise.allSettled en lib/cloudinary.ts.",
+          description:
+            "Integración de extractPublicId y deleteImagesFromCloudinary con Promise.allSettled en lib/cloudinary.ts.",
           icon: <Zap size={18} className="text-indigo-500" />,
         },
       ],
@@ -78,25 +82,29 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Bitácora de Auditoría del Sistema",
-          description: "Definición del modelo SystemAuditLog y enums asociados en Prisma para registro polimórfico de eventos del sistema.",
+          description:
+            "Definición del modelo SystemAuditLog y enums asociados en Prisma para registro polimórfico de eventos del sistema.",
           icon: <FileCode size={18} className="text-blue-500" />,
         },
         {
           category: "feat",
           title: "Servicio de Moderación Transaccional",
-          description: "Desarrollo de moderation.service.ts usando transacciones de Prisma para asegurar consistencia atómica y envío asíncrono de emails.",
+          description:
+            "Desarrollo de moderation.service.ts usando transacciones de Prisma para asegurar consistencia atómica y envío asíncrono de emails.",
           icon: <Cpu size={18} className="text-emerald-500" />,
         },
         {
           category: "feat",
           title: "Endpoints RESTful de Moderación",
-          description: "Creación de APIs protegidas para el listado, aprobación y declinación de solicitudes bajo /api/admin/moderation.",
+          description:
+            "Creación de APIs protegidas para el listado, aprobación y declinación de solicitudes bajo /api/admin/moderation.",
           icon: <ShieldCheck size={18} className="text-indigo-500" />,
         },
         {
           category: "feat",
           title: "UI del Moderation Hub y Visor de Auditoría",
-          description: "Desarrollo de vistas y componentes interactivos paginados envueltos en Suspense para cumplir con Next.js App Router.",
+          description:
+            "Desarrollo de vistas y componentes interactivos paginados envueltos en Suspense para cumplir con Next.js App Router.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
       ],
@@ -112,19 +120,22 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Dashboard de Administración",
-          description: "Página de servidor con validación estricta de sesión y verificación del rol ADMIN en la base de datos.",
+          description:
+            "Página de servidor con validación estricta de sesión y verificación del rol ADMIN en la base de datos.",
           icon: <ShieldCheck size={18} className="text-emerald-500" />,
         },
         {
           category: "feat",
           title: "UI del Dashboard (Cliente)",
-          description: "Desarrollo del componente cliente interactivo con accesos rápidos a moderación, usuarios y métricas globales.",
+          description:
+            "Desarrollo del componente cliente interactivo con accesos rápidos a moderación, usuarios y métricas globales.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
         {
           category: "improvement",
           title: "Enlaces de Gestión y Desarrollo",
-          description: "Integración en el panel de accesos directos al repositorio de GitHub y a las Notas de Desarrollo.",
+          description:
+            "Integración en el panel de accesos directos al repositorio de GitHub y a las Notas de Desarrollo.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
       ],
@@ -140,19 +151,22 @@ export default function DevNotesPage() {
         {
           category: "docs",
           title: "Actualización de CONTEXT",
-          description: "Actualización de CONTEXT.md con dependencias y estructura reciente del proyecto.",
+          description:
+            "Actualización de CONTEXT.md con dependencias y estructura reciente del proyecto.",
           icon: <FileCode size={18} className="text-blue-500" />,
         },
         {
           category: "docs",
           title: "Registro de Actualizaciones",
-          description: "Creación del registro de actualizaciones mensuales (enero-mayo 2026) y README.",
+          description:
+            "Creación del registro de actualizaciones mensuales (enero-mayo 2026) y README.",
           icon: <FileCode size={18} className="text-blue-500" />,
         },
         {
           category: "improvement",
           title: "Auditoría Técnica y Métricas",
-          description: "Realización de auditoría técnica y generación de métricas de control de gestión.",
+          description:
+            "Realización de auditoría técnica y generación de métricas de control de gestión.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
       ],
@@ -168,19 +182,22 @@ export default function DevNotesPage() {
         {
           category: "improvement",
           title: "Buscador: Tipado de Categorías",
-          description: "Refactorización del filtro por categoría para usar validación dinámica contra el enum ProductCategory de Prisma.",
+          description:
+            "Refactorización del filtro por categoría para usar validación dinámica contra el enum ProductCategory de Prisma.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
         {
           category: "docs",
           title: "Estándar de Oro PawLig",
-          description: "Inclusión de bloques JSDoc y Notas de Implementación exhaustivas en la capa de vistas de productos.",
+          description:
+            "Inclusión de bloques JSDoc y Notas de Implementación exhaustivas en la capa de vistas de productos.",
           icon: <FileCode size={18} className="text-blue-500" />,
         },
         {
           category: "fix",
           title: "Validación de Acceso Vendedor",
-          description: "Optimización de la cascada de redirecciones para cuentas de vendedor no verificadas o roles incorrectos.",
+          description:
+            "Optimización de la cascada de redirecciones para cuentas de vendedor no verificadas o roles incorrectos.",
           icon: <ShieldCheck size={18} className="text-emerald-500" />,
         },
       ],
@@ -196,19 +213,22 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Service Layer: Vendor Metrics",
-          description: "Desarrollo de servicios optimizados para agregación de datos y reportes de ventas.",
+          description:
+            "Desarrollo de servicios optimizados para agregación de datos y reportes de ventas.",
           icon: <Cpu size={18} className="text-emerald-500" />,
         },
         {
           category: "feat",
           title: "Geocodificación Automática",
-          description: "Implementación de geocoding.service.ts y scripts de migración para normalización de direcciones.",
+          description:
+            "Implementación de geocoding.service.ts y scripts de migración para normalización de direcciones.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
         {
           category: "improvement",
           title: "Exportación Multi-formato",
-          description: "Desarrollo de utilidades para generación de reportes PDF/Excel/CSV con buffers eficientes.",
+          description:
+            "Desarrollo de utilidades para generación de reportes PDF/Excel/CSV con buffers eficientes.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
       ],
@@ -224,19 +244,22 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Servicio de Adopción (AdoptionService)",
-          description: "Centralización de lógica de negocio y transacciones atómicas para gestión de estados de mascota/solicitud.",
+          description:
+            "Centralización de lógica de negocio y transacciones atómicas para gestión de estados de mascota/solicitud.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
         {
           category: "improvement",
           title: "Tipado Estricto (Cero Any)",
-          description: "Implementación de tipos basados en Prisma GetPayload para una API fuertemente tipada.",
+          description:
+            "Implementación de tipos basados en Prisma GetPayload para una API fuertemente tipada.",
           icon: <Cpu size={18} className="text-emerald-500" />,
         },
         {
           category: "feat",
           title: "UI Modular (Shelter)",
-          description: "Componentes modulares de aprobación, tarjetas de postulación y tablas de gestión con Zod validación.",
+          description:
+            "Componentes modulares de aprobación, tarjetas de postulación y tablas de gestión con Zod validación.",
           icon: <FileCode size={18} className="text-blue-500" />,
         },
       ],
@@ -252,19 +275,22 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Motor Orbital Kepleriano",
-          description: "Implementación de física orbital (Ley de Áreas) en Canvas 2D para movimiento fluido y realista.",
+          description:
+            "Implementación de física orbital (Ley de Áreas) en Canvas 2D para movimiento fluido y realista.",
           icon: <Cpu size={18} className="text-emerald-500" />,
         },
         {
           category: "improvement",
           title: "Proyección 3D e Isometría",
-          description: "Cálculo de proyección paralela y oclusión dinámica para profundidad visual.",
+          description:
+            "Cálculo de proyección paralela y oclusión dinámica para profundidad visual.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
         {
           category: "improvement",
           title: "Optimización de Renderizado",
-          description: "Manejo eficiente de RAF y escalado reactivo (DPR) para nitidez en pantallas Retina.",
+          description:
+            "Manejo eficiente de RAF y escalado reactivo (DPR) para nitidez en pantallas Retina.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
       ],
@@ -280,19 +306,22 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Esquema Prisma: Pet.months",
-          description: "Nuevo campo opcional para almacenar meses de vida de la mascota.",
+          description:
+            "Nuevo campo opcional para almacenar meses de vida de la mascota.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
         {
           category: "improvement",
           title: "Utilidad de Formateo de Edad",
-          description: "Implementación de age-formatter.ts para normalizar strings como '1 año y 2 meses'.",
+          description:
+            "Implementación de age-formatter.ts para normalizar strings como '1 año y 2 meses'.",
           icon: <Wrench size={18} className="text-slate-500" />,
         },
         {
           category: "feat",
           title: "UI: Formulario de Mascota",
-          description: "Inclusión de input numérico para meses con validación en el rango 0-11.",
+          description:
+            "Inclusión de input numérico para meses con validación en el rango 0-11.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
       ],
@@ -308,13 +337,15 @@ export default function DevNotesPage() {
         {
           category: "feat",
           title: "Capa de Servicio: CartService",
-          description: "Desarrollo de métodos CRUD persistentes en Prisma para la gestión del carrito.",
+          description:
+            "Desarrollo de métodos CRUD persistentes en Prisma para la gestión del carrito.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
         {
           category: "refactor",
           title: "Sync de URL en Dashboard",
-          description: "Implementación de useSearchParams para mantener el estado de pestañas tras recargas.",
+          description:
+            "Implementación de useSearchParams para mantener el estado de pestañas tras recargas.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
       ],
@@ -323,19 +354,22 @@ export default function DevNotesPage() {
       version: "v1.8.0-dev",
       date: "28 de Abril, 2026",
       title: "Seguridad de Formularios y UX",
-      description: "Optimización de la experiencia de usuario en campos de contraseña y limpieza de estilos Chromium.",
+      description:
+        "Optimización de la experiencia de usuario en campos de contraseña y limpieza de estilos Chromium.",
       type: "fix",
       logs: [
         {
           category: "fix",
           title: "CSS: Botón Nativo de Password",
-          description: "Ocultación de botones de revelación nativos (::-ms-reveal) para evitar duplicidad con PasswordInput.",
+          description:
+            "Ocultación de botones de revelación nativos (::-ms-reveal) para evitar duplicidad con PasswordInput.",
           icon: <Bug size={18} className="text-red-500" />,
         },
         {
           category: "improvement",
           title: "Hydration Warning Suppression",
-          description: "Ajuste en layout.tsx para asegurar compatibilidad con next-themes y evitar errores de hidratación.",
+          description:
+            "Ajuste en layout.tsx para asegurar compatibilidad con next-themes y evitar errores de hidratación.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
       ],
@@ -344,19 +378,22 @@ export default function DevNotesPage() {
       version: "v1.7.1-dev",
       date: "24 de Abril, 2026",
       title: "Optimización Administrativa",
-      description: "Mejoras en la reactividad del panel administrativo y consistencia de datos on-demand.",
+      description:
+        "Mejoras en la reactividad del panel administrativo y consistencia de datos on-demand.",
       type: "improvement",
       logs: [
         {
           category: "improvement",
           title: "Revalidación On-Demand",
-          description: "Uso de revalidatePath en bloqueo de usuarios para sincronización inmediata de la UI sin recarga manual.",
+          description:
+            "Uso de revalidatePath en bloqueo de usuarios para sincronización inmediata de la UI sin recarga manual.",
           icon: <Zap size={18} className="text-amber-500" />,
         },
         {
           category: "improvement",
           title: "Cloudinary: Build-Time Config",
-          description: "Configuración condicional del servicio de imágenes para evitar fallos durante el proceso de next build.",
+          description:
+            "Configuración condicional del servicio de imágenes para evitar fallos durante el proceso de next build.",
           icon: <Cpu size={18} className="text-emerald-500" />,
         },
       ],
@@ -365,19 +402,22 @@ export default function DevNotesPage() {
       version: "v1.7.0-dev",
       date: "24 de Abril, 2026",
       title: "Sistema de Notificaciones y Email",
-      description: "Implementación robusta del sistema de correos y seguridad de tokens de recuperación.",
+      description:
+        "Implementación robusta del sistema de correos y seguridad de tokens de recuperación.",
       type: "feat",
       logs: [
         {
           category: "feat",
           title: "Email: Envíos No Bloqueantes",
-          description: "Implementación de flujos asíncronos para evitar que fallos en el servicio de email afecten la respuesta de la API.",
+          description:
+            "Implementación de flujos asíncronos para evitar que fallos en el servicio de email afecten la respuesta de la API.",
           icon: <Cpu size={18} className="text-emerald-500" />,
         },
         {
           category: "feat",
           title: "Esquema Prisma: PasswordResetToken",
-          description: "Nuevo modelo para gestión segura de recuperación de cuenta con expiración de 1 hora.",
+          description:
+            "Nuevo modelo para gestión segura de recuperación de cuenta con expiración de 1 hora.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
       ],
@@ -386,19 +426,22 @@ export default function DevNotesPage() {
       version: "v1.5.0-dev",
       date: "20 de Febrero, 2026",
       title: "Estabilidad del Entorno de Pruebas",
-      description: "Resolución de conflictos entre librerías de UI y el entorno de ejecución de tests unitarios.",
+      description:
+        "Resolución de conflictos entre librerías de UI y el entorno de ejecución de tests unitarios.",
       type: "fix",
       logs: [
         {
           category: "fix",
           title: "Vitest + Radix UI",
-          description: "Polyfills para PointerEvent y ResizeObserver para soportar componentes Radix en JSDOM.",
+          description:
+            "Polyfills para PointerEvent y ResizeObserver para soportar componentes Radix en JSDOM.",
           icon: <Wrench size={18} className="text-slate-500" />,
         },
         {
           category: "refactor",
           title: "Test de Usuario Administrativo",
-          description: "Refactorización de user-view.spec.tsx para soportar la lógica de componentes Radix Select.",
+          description:
+            "Refactorización de user-view.spec.tsx para soportar la lógica de componentes Radix Select.",
           icon: <FileCode size={18} className="text-blue-500" />,
         },
       ],
@@ -407,19 +450,22 @@ export default function DevNotesPage() {
       version: "v1.1.0-dev",
       date: "30 de Diciembre, 2025",
       title: "Calidad de Datos y Testing Base",
-      description: "Estandarización de filtros de búsqueda y configuración inicial de Vitest.",
+      description:
+        "Estandarización de filtros de búsqueda y configuración inicial de Vitest.",
       type: "chore",
       logs: [
         {
           category: "fix",
           title: "Consistencia de Filtro de Sexo",
-          description: "Sincronización de valores 'M/F' a 'Macho/Hembra' para coincidir con el Enum de la base de datos.",
+          description:
+            "Sincronización de valores 'M/F' a 'Macho/Hembra' para coincidir con el Enum de la base de datos.",
           icon: <Bug size={18} className="text-red-500" />,
         },
         {
           category: "chore",
           title: "Setup de Vitest",
-          description: "Instalación de testing-library y configuración de vitest.config.ts para el proyecto.",
+          description:
+            "Instalación de testing-library y configuración de vitest.config.ts para el proyecto.",
           icon: <FileCode size={18} className="text-blue-500" />,
         },
       ],
@@ -428,25 +474,29 @@ export default function DevNotesPage() {
       version: "v1.0.1-dev",
       date: "28 de Noviembre, 2025",
       title: "Arquitectura y Mantenimiento",
-      description: "Reorganización de la arquitectura de API y limpieza de documentación obsoleta.",
+      description:
+        "Reorganización de la arquitectura de API y limpieza de documentación obsoleta.",
       type: "refactor",
       logs: [
         {
           category: "refactor",
           title: "Rutas de API Adopter",
-          description: "Migración de endpoints de /api/adopter a /api/user para mayor consistencia semántica.",
+          description:
+            "Migración de endpoints de /api/adopter a /api/user para mayor consistencia semántica.",
           icon: <GitBranch size={18} className="text-slate-500" />,
         },
         {
           category: "feat",
           title: "Validación de Rol Adopter",
-          description: "Restricción de solicitudes de adopción únicamente a usuarios con el rol ADOPTER en el servidor.",
+          description:
+            "Restricción de solicitudes de adopción únicamente a usuarios con el rol ADOPTER en el servidor.",
           icon: <Layers size={18} className="text-indigo-500" />,
         },
         {
           category: "chore",
           title: "Cleanup de Repositorio",
-          description: "Eliminación de documentación de PRs y configuración de exclusión para agentes IA en .gitignore.",
+          description:
+            "Eliminación de documentación de PRs y configuración de exclusión para agentes IA en .gitignore.",
           icon: <Wrench size={18} className="text-slate-500" />,
         },
       ],
@@ -456,28 +506,27 @@ export default function DevNotesPage() {
   return (
     <main className="min-h-screen bg-white pb-20 text-slate-900 font-sans">
       {/* Top Navigation */}
-      <div className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-sm border-b border-slate-100">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link
-            href="/changelog"
-            className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={16} />
-            <span>Volver al Changelog Público</span>
-          </Link>
-          <div className="pointer-events-none flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            LAST_SYNC: {lastDevUpdate}
-          </div>
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <Link
+          href="/admin/dev"
+          className="inline-flex items-center gap-2 text-primary hover:brightness-75 transition-all font-semibold"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver al Dev Dashboard
+        </Link>
+        <div className="pointer-events-none flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span className="font-medium">Última actualización:</span>{" "}
+          {lastDevUpdate}
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header Section */}
-        <header className="mb-16">
+        <header className="mb-8">
           <div className="pointer-events-none inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest mb-4">
             <Terminal size={12} />
             <span>Internal Dev Logs</span>
@@ -486,7 +535,8 @@ export default function DevNotesPage() {
             Notas de Desarrollo
           </h1>
           <p className="text-lg text-slate-500 max-w-2xl leading-relaxed">
-            Un registro técnico y detallado de la arquitectura, optimizaciones y el detrás de escena del desarrollo de PawLig.
+            Un registro técnico y detallado de la arquitectura, optimizaciones y
+            el detrás de escena del desarrollo de PawLig.
           </p>
         </header>
 
