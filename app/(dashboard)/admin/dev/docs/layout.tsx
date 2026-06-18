@@ -1,5 +1,4 @@
 import { requireAdmin } from "@/lib/auth/require-role";
-import { getAllDocsMetadata } from "@/lib/services/docs.service";
 
 /**
  * Descripción: Layout del módulo de documentación técnica de PawLig.
