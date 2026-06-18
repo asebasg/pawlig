@@ -30,9 +30,9 @@ export default async function AdminMetricsPage() {
 
     return (
         <div className="container mx-auto py-8 px-4 space-y-6">
-            <Link href="/admin" className="inline-flex items-center gap-2 mb-2 text-primary hover:text-purple-700 text-base font-semibold">
+            <Link href="/admin" className="inline-flex items-center gap-2 mb-2 text-primary hover:brightness-75 transition-all text-base font-semibold">
                 <ArrowLeft className="w-4 h-4" />
-                Volver al Panel Administrativo
+                Volver al Dashboard
             </Link>
             
             <div>
