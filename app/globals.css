@@ -9,6 +9,8 @@
   --foreground: #171717;
   --primary: #7c3aed;
   --primary-foreground: #ffffff;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
 }
 
 body {

@@ -13,6 +13,8 @@ import { requireRole } from "@/lib/auth/require-role";
 import { getDocBySlug, getAllDocsMetadata } from "@/lib/services/docs.service";
 import DocsSidebar from "@/components/admin/docs/docs-sidebar";
 import DocViewer from "@/components/admin/docs/doc-viewer";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface DocPageProps {
   params: Promise<{ slug: string }>;
@@ -23,7 +25,7 @@ export async function generateMetadata({ params }: DocPageProps) {
   try {
     const doc = await getDocBySlug(slug);
     return {
-      title: `${doc.title} | Docs — PawLig Admin`,
+      title: `${doc.title}`,
       description: `Documentación técnica: ${doc.title}`,
     };
   } catch {
@@ -68,11 +70,22 @@ export default async function DocPage({ params }: DocPageProps) {
         </header>
 
         {/* Contenido del documento */}
-        <main
-          id="doc-content-main"
-          className="flex-1 px-6 py-8 lg:px-12 lg:py-10 max-w-4xl w-full mx-auto"
-        >
-          <DocViewer htmlContent={doc.htmlContent} />
+        <main className="flex-1 overflow-y-auto">
+          <div className="lg:px-8 lg:py-4 mt-4">
+            <Link
+              href="/admin/dev/docs"
+              className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Volver a la lista de documentos
+            </Link>
+          </div>
+          <div
+            id="doc-content-main"
+            className="lg:py-4 pb-8 max-w-4xl w-full mx-auto"
+          >
+            <DocViewer htmlContent={doc.htmlContent} />
+          </div>
         </main>
       </div>
     </div>
