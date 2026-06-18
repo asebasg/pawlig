@@ -13,9 +13,10 @@ import { BookOpen, FileText, FlaskConical, ScrollText } from "lucide-react";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAllDocsMetadata } from "@/lib/services/docs.service";
 import { DocCategory } from "@/types/docs.types";
+import { ArrowRight } from "lucide-react";
 
 export const metadata = {
-  title: "Documentación del Proyecto | PawLig Admin",
+  title: "[DEV] Documentación del Proyecto",
   description:
     "Centro de documentación técnica interna de PawLig: análisis, diseño, pruebas y entregables finales.",
 };
@@ -58,7 +59,12 @@ const CATEGORY_CONFIG: Record<DocCategory, CategoryConfig> = {
   },
 };
 
-const CATEGORY_ORDER: DocCategory[] = ["analysis", "design", "testing", "final"];
+const CATEGORY_ORDER: DocCategory[] = [
+  "analysis",
+  "design",
+  "testing",
+  "final",
+];
 
 // ---------------------------------------------------------------------------
 // Página
@@ -179,9 +185,10 @@ export default async function DocsIndexPage() {
                       </p>
 
                       {/* Indicador de navegación */}
-                      <p className="mt-auto text-xs text-muted-foreground group-hover:text-primary/70 transition-colors">
-                        Ver documento →
-                      </p>
+                      <div className="mt-auto flex items-center gap-1 text-xs text-muted-foreground group-hover:text-primary/70 transition-colors">
+                        <span>Ver documento</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
                     </Link>
                   </li>
                 ))}

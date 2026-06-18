@@ -17,30 +17,9 @@ interface DocViewerProps {
  */
 function DocViewer({ htmlContent }: DocViewerProps) {
   return (
-    <article
-      id="doc-viewer"
-      className="
-        prose prose-slate max-w-none
-        prose-headings:font-poppins prose-headings:font-semibold prose-headings:text-foreground
-        prose-h1:text-3xl prose-h1:mb-6 prose-h1:pb-3 prose-h1:border-b prose-h1:border-border
-        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-        prose-p:text-foreground/80 prose-p:leading-7
-        prose-strong:text-foreground prose-strong:font-semibold
-        prose-code:bg-primary/10 prose-code:px-1.5
-        prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono
-        prose-code:before:content-none prose-code:after:content-none
-        prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-xl
-        prose-blockquote:text-muted-foreground
-        prose-table:text-sm
-        prose-thead:bg-muted prose-th:text-foreground prose-th:font-semibold
-        prose-td:border-border prose-tr:border-border
-        prose-img:rounded-xl prose-img:shadow-md
-        prose-ul:text-foreground/80 prose-ol:text-foreground/80
-        dark:prose-invert
-      "
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
-    />
+    <article className="prose max-w-none">
+      <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+    </article>
   );
 }
 
