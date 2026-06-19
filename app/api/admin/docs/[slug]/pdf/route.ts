@@ -297,10 +297,8 @@ export async function GET(
 
   const { slug } = await params;
 
-  let doc: Awaited<ReturnType<typeof getDocBySlug>>;
-  try {
-    doc = await getDocBySlug(slug);
-  } catch {
+  const doc = await getDocBySlug(slug);
+  if (!doc) {
     return NextResponse.json(
       { error: `Documento no encontrado: "${slug}".` },
       { status: 404 },

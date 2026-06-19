@@ -2,22 +2,23 @@
 
 /**
  * Descripción: Servicio de acceso a los documentos del proyecto.
- *              Lee archivos Markdown desde el sistema de archivos del servidor,
+ *              Obtiene archivos Markdown del servidor a través de peticiones HTTP,
  *              los convierte a HTML y retorna los datos necesarios para renderizarlos.
- * Requiere:    Ejecución server-side (Node.js). Los archivos deben existir en process.cwd().
+ * Requiere:    Ejecución server-side (Next.js Server Actions / Server Components).
  * Implementa:  Sección de documentación interna de PawLig.
  *
  * SEGURIDAD:   filePath NUNCA debe provenir de la request del usuario. Solo se usan
  *              las rutas definidas en la whitelist AVAILABLE_DOCS (constants.ts)
- *              para prevenir ataques de path traversal.
+ *              para evitar peticiones a recursos no autorizados.
  */
 
-import fs from "fs/promises";
-import path from "path";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkHtml from "remark-html";
 import { AVAILABLE_DOCS } from "@/lib/constants";
+import { visit } from "unist-util-visit";
+import type { Plugin } from "unified";
+import type { Image } from "mdast";
 
 // ---------------------------------------------------------------------------
 // Tipos de retorno
@@ -34,38 +35,59 @@ export interface DocContent {
 // ---------------------------------------------------------------------------
 
 /**
- * Busca un documento por su slug, lee su archivo Markdown y retorna el HTML procesado.
+ * Plugin remark personalizado: reescribe rutas relativas de imágenes
+ * (./images/x.png, ../images/x.png) a la ruta absoluta pública real
+ * (/images/x.png), ya que las imágenes se sirven desde public/images
+ * independientemente de dónde viva el .md de origen.
+ */
+const remarkRewriteImagePaths: Plugin = () => {
+  return (tree) => {
+    visit(tree, "image", (node: Image) => {
+      const filename = node.url.split("/").pop();
+      if (filename) {
+        node.url = `/images/${filename}`;
+      }
+    });
+  };
+};
+
+/**
+ * Obtiene la URL base de la aplicación.
+ *
+ * @returns La URL base como cadena de texto.
+ */
+function getBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL || "";
+}
+
+/**
+ * Busca un documento por su slug, obtiene su contenido Markdown vía HTTP y retorna el HTML procesado.
  *
  * @param slug - Identificador único del documento (ej: "arquitectura-software").
- * @returns Objeto con el slug, título y contenido HTML del documento.
- * @throws Error si el slug no existe en AVAILABLE_DOCS o si el archivo no se puede leer.
+ * @returns Objeto con el slug, título y contenido HTML del documento, o null si no se encuentra.
  */
-export async function getDocBySlug(slug: string): Promise<DocContent> {
-  const docMeta = AVAILABLE_DOCS.find((doc) => doc.slug === slug);
+export async function getDocBySlug(slug: string): Promise<DocContent | null> {
+  const doc = AVAILABLE_DOCS.find((d) => d.slug === slug);
+  if (!doc) return null;
 
-  if (!docMeta) {
-    throw new Error(`Documento no encontrado para el slug: "${slug}".`);
-  }
+  const baseUrl = getBaseUrl();
+  const response = await fetch(`${baseUrl}/docs/${doc.filePath}`, {
+    cache: "force-cache",
+  });
 
-  const absolutePath = path.join(process.cwd(), docMeta.filePath);
+  if (!response.ok) return null;
 
-  let rawContent: string;
-  try {
-    rawContent = await fs.readFile(absolutePath, "utf-8");
-  } catch {
-    throw new Error(
-      `No se pudo leer el archivo "${docMeta.filePath}". Verifique que existe en el repositorio.`,
-    );
-  }
+  const content = await response.text();
 
   const processedFile = await remark()
     .use(remarkGfm)
+    .use(remarkRewriteImagePaths)
     .use(remarkHtml, { sanitize: false })
-    .process(rawContent);
+    .process(content);
 
   return {
-    slug: docMeta.slug,
-    title: docMeta.title,
+    slug: doc.slug,
+    title: doc.title,
     htmlContent: processedFile.toString(),
   };
 }
@@ -91,31 +113,29 @@ export async function getAllDocsMetadata() {
  *
  * Descripción General:
  * Este servicio actúa como la capa de acceso a datos para la sección de
- * documentación. Lee archivos Markdown desde el sistema de archivos del
- * servidor (nunca del cliente) y los transforma a HTML listo para renderizar.
+ * documentación. Obtiene archivos Markdown vía HTTP usando la URL base de la
+ * aplicación y los transforma a HTML listo para renderizar.
  *
  * Lógica Clave:
- * - getDocBySlug: Valida el slug contra AVAILABLE_DOCS antes de construir
- *   cualquier ruta de archivo. El filePath resultante proviene siempre de la
- *   whitelist, nunca de la entrada del usuario, previniendo path traversal.
+ * - getDocBySlug: Valida el slug contra AVAILABLE_DOCS, obtiene el contenido
+ *   del archivo Markdown desde el servidor web local o remoto usando fetch,
+ *   y procesa el Markdown a HTML.
+ * - getBaseUrl: Obtiene la URL base de la aplicación a partir de la variable
+ *   de entorno NEXT_PUBLIC_APP_URL.
  * - getAllDocsMetadata: Retorna AVAILABLE_DOCS directamente. No realiza I/O.
  *   Ideal para Server Components que renderizan el sidebar o listados.
  * - Búsqueda por slug: Se usa Array.find sobre AVAILABLE_DOCS (fuente única
- *   de verdad). Si no existe, lanza un Error descriptivo para que el page
- *   handler pueda llamar notFound().
- * - Lectura de archivo: path.join(process.cwd(), filePath) construye la ruta
- *   absoluta desde la raíz del proyecto. El try/catch independiente permite
- *   distinguir entre "slug inválido" y "archivo faltante en disco".
+ *   de verdad). Si no existe o falla la petición fetch, retorna null.
  * - Procesado Markdown: remark + remarkGfm habilita tablas, listas de tareas
  *   y otros elementos GFM. remarkHtml con sanitize: false preserva el HTML
  *   embebido en los Markdown (diagramas, badges, etc.).
- * - La directiva "use server" garantiza que fs y path nunca se incluyan
- *   en el bundle del cliente.
+ * - La directiva "use server" garantiza que esta lógica solo se ejecute
+ *   en el servidor.
  *
  * Seguridad:
  * - Los filePath son una whitelist estática definida en constants.ts.
- * - Nunca construir rutas de archivo a partir de req.params, req.query
- *   ni ningún otro dato proveniente de la request del usuario.
+ * - Las peticiones fetch se dirigen únicamente a rutas relativas a la URL base
+ *   de la propia aplicación resuelta de manera segura.
  *
  * Dependencias Externas:
  * - remark (^15.0.1): Motor de procesado de Markdown.

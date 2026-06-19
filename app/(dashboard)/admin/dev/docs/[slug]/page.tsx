@@ -24,6 +24,9 @@ export async function generateMetadata({ params }: DocPageProps) {
   const { slug } = await params;
   try {
     const doc = await getDocBySlug(slug);
+    if (!doc) {
+      return { title: "Documento no encontrado" };
+    }
     return {
       title: `${doc.title}`,
       description: `Documentación técnica: ${doc.title}`,
@@ -40,15 +43,13 @@ export default async function DocPage({ params }: DocPageProps) {
 
   const allDocs = await getAllDocsMetadata();
 
-  let doc: Awaited<ReturnType<typeof getDocBySlug>>;
-  try {
-    doc = await getDocBySlug(slug);
-  } catch {
+  const doc = await getDocBySlug(slug);
+  if (!doc) {
     notFound();
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-background">
       {/* Sidebar de navegación */}
       <DocsSidebar docs={allDocs} activeSlug={slug} />
 
@@ -57,7 +58,7 @@ export default async function DocPage({ params }: DocPageProps) {
         {/* Barra superior */}
         <header
           className="sticky top-0 z-10 flex items-center justify-between gap-4
-                           px-6 py-4 border-b border-border bg-background/80 backdrop-blur-sm"
+                           px-4 py-3.5 lg:px-6 lg:py-4 border-b border-border bg-background/80 backdrop-blur-sm"
         >
           <div className="min-w-0">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-0.5">
@@ -71,7 +72,7 @@ export default async function DocPage({ params }: DocPageProps) {
 
         {/* Contenido del documento */}
         <main className="flex-1 overflow-y-auto">
-          <div className="lg:px-8 lg:py-4 mt-4">
+          <div className="px-4 py-2 lg:px-8 lg:py-4 mt-4">
             <Link
               href="/admin/dev/docs"
               className="inline-flex items-center gap-2 mb-4 text-purple-600 hover:text-purple-700 text-base font-semibold"
@@ -82,7 +83,7 @@ export default async function DocPage({ params }: DocPageProps) {
           </div>
           <div
             id="doc-content-main"
-            className="lg:py-4 pb-8 max-w-4xl w-full mx-auto"
+            className="px-4 lg:px-0 lg:py-4 pb-8 max-w-4xl w-full mx-auto"
           >
             <DocViewer htmlContent={doc.htmlContent} />
           </div>
@@ -105,9 +106,9 @@ export default async function DocPage({ params }: DocPageProps) {
  * Lógica Clave:
  * - params como Promise: A partir de Next.js 15, los params de rutas dinámicas
  *   son asíncronos. Se usa await params para compatibilidad futura.
- * - Manejo de errores: getDocBySlug lanza Error si el slug es inválido o el
- *   archivo no existe. El try/catch convierte ambos casos en un 404 limpio
- *   mediante notFound(), sin exponer detalles del sistema de archivos.
+ * - Manejo de errores: getDocBySlug retorna null si el slug es inválido o el
+ *   archivo no se puede obtener. El chequeo condicional convierte ambos casos
+ *   en un 404 limpio mediante notFound(), sin exponer detalles internos.
  * - generateMetadata: Comparte la misma lógica de resolución de slug para
  *   generar metadatos SEO sin una segunda llamada al servicio en el render.
  * - Layout: Usa flex de dos columnas (sidebar fijo + área scrolleable) para

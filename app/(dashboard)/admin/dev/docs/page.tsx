@@ -98,10 +98,10 @@ export default async function DocsIndexPage() {
 
       {/* Encabezado */}
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-foreground mb-3">
+        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
           Documentación del Proyecto
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl">
+        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
           Accede a todos los documentos técnicos del ciclo de vida del proyecto: análisis, diseño, pruebas y entregables finales.
         </p>
       </div>
