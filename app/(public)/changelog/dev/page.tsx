@@ -512,7 +512,7 @@ export default function DevNotesPage() {
           className="inline-flex items-center gap-2 text-primary hover:brightness-75 transition-all font-semibold"
         >
           <ArrowLeft className="w-4 h-4" />
-          Volver al Dev Dashboard
+          Volver al Dev Hub
         </Link>
         <div className="pointer-events-none flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
           <span className="relative flex h-2 w-2">

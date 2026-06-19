@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: DocPageProps) {
       description: `Documentación técnica: ${doc.title}`,
     };
   } catch {
-    return { title: "Documento no encontrado | PawLig Admin" };
+    return { title: "Documento no encontrado" };
   }
 }
 

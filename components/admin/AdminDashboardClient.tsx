@@ -41,7 +41,7 @@ export default function AdminDashboardClient({ userSession }: AdminDashboardClie
             bgColor: 'bg-orange-50',
         },
         {
-            title: 'Dev Dashboard',
+            title: 'Dev Hub',
             description: 'Accede a logs, notas técnicas y actualizaciones de desarrollo para seguir de cerca las implementaciones recientes y cambios en la plataforma.',
             icon: CodeXml,
             href: '/admin/dev',
