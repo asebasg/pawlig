@@ -92,7 +92,7 @@ export default async function DocsIndexPage() {
           className="inline-flex items-center gap-2 text-primary hover:brightness-75 transition-all font-semibold"
         >
           <ArrowLeft className="w-4 h-4" />
-          Volver al Dev Dashboard
+          Volver al Dev Hub
         </Link>
       </div>
 

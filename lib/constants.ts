@@ -1,6 +1,3 @@
-// ! Todas las rutas que coincidan exactamente con "" corresponden a páginas no utilizadas
-// ! La ruta que no aparece aquí es /forgot-password. Para cambiarla, buscar en el code search "" y reemplazar por "forgot-password"
-
 import { UserRole, ProductCategory } from "@prisma/client";
 import { DocMetadata } from "@/types/docs.types";
 
@@ -90,6 +87,7 @@ export const USER_MENU_OPTIONS = {
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
+    { label: "Integrated Developer Hub", href: "/admin/dev", icon: "CodeXml" },
   ],
 } as const;
 
