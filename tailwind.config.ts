@@ -20,6 +20,12 @@ const config: Config = {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)",
         },
+        role: {
+          admin: "var(--role-admin)",
+          shelter: "var(--role-shelter)",
+          vendor: "var(--role-vendor)",
+          adopter: "var(--role-adopter)",
+        },
         purple: {
           50: "#faf5ff",
           100: "#f3e8ff",

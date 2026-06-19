@@ -11,6 +11,12 @@
   --primary-foreground: #ffffff;
   --muted: #f4f4f5;
   --muted-foreground: #71717a;
+
+  /* Colores de roles */
+  --role-admin: #7c3aed;
+  --role-shelter: #0d9488;
+  --role-vendor: #ea580c;
+  --role-adopter: #2563eb;
 }
 
 body {

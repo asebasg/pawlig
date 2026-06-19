@@ -23,6 +23,7 @@ import {
   ShoppingCart,
   Plus,
   ShieldPlus,
+  CodeXml,
 } from "lucide-react";
 import { USER_MENU_OPTIONS, COMMON_MENU_OPTIONS } from "@/lib/constants";
 
@@ -58,6 +59,7 @@ const iconMap = {
   ShoppingCart,
   Plus,
   ShieldPlus,
+  CodeXml,
 };
 
 const roleLabels = {
@@ -67,8 +69,32 @@ const roleLabels = {
   ADOPTER: "Adoptante"
 };
 
+const roleStyles = {
+  ADMIN: {
+    avatar: "bg-purple-100",
+    icon: "text-role-admin",
+    badge: "bg-purple-100 text-role-admin",
+  },
+  VENDOR: {
+    avatar: "bg-orange-100",
+    icon: "text-role-vendor",
+    badge: "bg-orange-100 text-role-vendor",
+  },
+  SHELTER: {
+    avatar: "bg-teal-100",
+    icon: "text-role-shelter",
+    badge: "bg-teal-100 text-role-shelter",
+  },
+  ADOPTER: {
+    avatar: "bg-blue-100",
+    icon: "text-role-adopter",
+    badge: "bg-blue-100 text-role-adopter",
+  },
+};
+
 export function UserMenu({ user }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const styles = roleStyles[user.role as keyof typeof roleStyles] ?? roleStyles.ADOPTER;
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -95,7 +121,7 @@ export function UserMenu({ user }: UserMenuProps) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+        <div className={`relative w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center overflow-hidden ${styles.avatar}`}>
           {user.image ? (
             <Image
               src={user.image}
@@ -105,7 +131,7 @@ export function UserMenu({ user }: UserMenuProps) {
               sizes="(max-width: 640px) 32px, 40px"
             />
           ) : (
-            <User size={18} className="text-purple-600 sm:w-5 sm:h-5" />
+            <User size={18} className={`sm:w-5 sm:h-5 ${styles.icon}`} />
           )}
         </div>
         <span className="hidden sm:block font-semibold text-gray-700 max-w-[100px] lg:max-w-[120px] truncate">
@@ -119,7 +145,7 @@ export function UserMenu({ user }: UserMenuProps) {
           {/* User Info */}
           <div className="px-4 py-3 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+              <div className={`relative w-12 h-12 rounded-full flex items-center justify-center overflow-hidden ${styles.avatar}`}>
                 {user.image ? (
                   <Image
                     src={user.image}
@@ -129,16 +155,16 @@ export function UserMenu({ user }: UserMenuProps) {
                     sizes="48px"
                   />
                 ) : (
-                  <User size={24} className="text-purple-600" />
+                  <User size={24} className={styles.icon} />
                 )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-gray-900 truncate">{user.name}</p>
-                <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                <p className="text-sm text-muted-foreground truncate">{user.email}</p>
               </div>
             </div>
             <div className="mt-2">
-              <span className="inline-block px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded pointer-events-none">
+              <span className={`inline-block px-2 py-1 text-xs font-semibold rounded pointer-events-none ${styles.badge}`}>
                 {roleLabels[user.role as keyof typeof roleLabels]}
               </span>
             </div>
