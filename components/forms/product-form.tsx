@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import { useForm, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProductSchema, type CreateProductInput } from "@/lib/validations/product.schema";
-import { Upload, X, Sparkles } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { AiRefineButton } from "@/components/ui/ai-refine-button";
 
@@ -325,7 +324,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                             className="text-black w-full px-4 py-2 pb-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
                         />
                         <AiRefineButton
-                            currentText={getValues("description")}
+                            currentText={getValues("description") ?? ""}
                             onRefined={(text) => setValue("description", text, { shouldValidate: true })}
                             type="product"
                             minLength={20}

@@ -356,7 +356,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                             className="text-black w-full px-4 py-2 pb-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
                         />
                         <AiRefineButton
-                            currentText={getValues("description")}
+                            currentText={getValues("description") ?? ""}
                             onRefined={(text) => setValue("description", text, { shouldValidate: true })}
                             type="pet"
                             minLength={20}
