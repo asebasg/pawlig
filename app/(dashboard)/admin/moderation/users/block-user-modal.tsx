@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { AiRefineButton } from "@/components/ui/ai-refine-button";
 
 /**
  * Descripción: Modal interactivo para capturar la razón del bloqueo/desbloqueo de un usuario.
@@ -105,21 +106,29 @@ export default function BlockUserModal({ user, onClose, onSuccess }: BlockUserMo
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Motivo del {user.isActive ? "bloqueo" : "desbloqueo"} <span className="text-red-500 font-bold">*</span>
             </label>
-            <textarea
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder={
-                user.isActive
-                  ? "Ejemplo: Publicación de contenido inapropiado..."
-                  : "Ejemplo: Se resolvió el problema reportado..."
-              }
-              rows={3}
-              className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-              disabled={loading}
-              required
-              minLength={10}
-              maxLength={500}
-            />
+            <div className="relative">
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder={
+                  user.isActive
+                    ? "Ejemplo: Publicación de contenido inapropiado..."
+                    : "Ejemplo: Se resolvió el problema reportado..."
+                }
+                rows={4}
+                className="text-black w-full px-4 py-2 pb-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                disabled={loading}
+                required
+                minLength={10}
+                maxLength={500}
+              />
+              <AiRefineButton
+                currentText={reason}
+                onRefined={setReason}
+                type="moderation"
+                disabled={loading}
+              />
+            </div>
             <p className="mt-1 text-sm text-gray-500">
               Mínimo 10 caracteres ({reason.length}/500)
             </p>

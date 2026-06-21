@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RoleChangeModal } from "./RoleChangeModal";
+import { AiRefineButton } from "@/components/ui/ai-refine-button";
 import { Shield, Save } from "lucide-react";
 import Loader from '@/components/ui/loader';
 
@@ -147,14 +148,25 @@ export default function UserViewClient({ user }: UserViewClientProps) {
               name="reason"
               control={control}
               render={({ field }) => (
-                <Input
-                  label="Razón del cambio (requerido)"
-                  id="reason"
-                  placeholder="Especifique por qué se cambia el rol..."
-                  {...field}
-                  disabled={isLoading}
-                  className={errors.reason ? "border-pink-600" : ""}
-                />
+                <div className="space-y-1">
+                  <Label htmlFor="reason">Razón del cambio (requerido)</Label>
+                  <div className="relative">
+                    <textarea
+                      id="reason"
+                      placeholder="Especifique por qué se cambia el rol..."
+                      {...field}
+                      disabled={isLoading}
+                      rows={4}
+                      className={`text-black w-full px-4 py-2 pb-12 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none ${errors.reason ? "border-pink-600" : "border-gray-300"}`}
+                    />
+                    <AiRefineButton
+                      currentText={field.value || ""}
+                      onRefined={(text) => field.onChange(text)}
+                      type="moderation"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
               )}
             />
             {errors.reason && <p className="text-sm text-pink-600">{errors.reason.message}</p>}
