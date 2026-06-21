@@ -360,16 +360,14 @@ export default function PetDetailClient({
             </div>
 
             {/* Requisitos */}
-            {pet.requirements && (
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                  Requisitos de Adopción
-                </h3>
-                <p className="text-blue-800 whitespace-pre-wrap">
-                  {pet.requirements}
-                </p>
-              </div>
-            )}
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                Requisitos de Adopción
+              </h3>
+              <p className="text-blue-800 whitespace-pre-wrap">
+                {pet.requirements || "No existen requisitos de adopción para esta mascota."}
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
