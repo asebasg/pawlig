@@ -23,6 +23,7 @@ import {
   X,
   Search,
   Calendar,
+  MessageSquare,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -359,6 +360,12 @@ export function AuditLogViewer() {
                         Recurso
                       </div>
                     </th>
+                    <th className="px-6 py-4 font-medium tracking-wider">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-gray-400" />
+                        Razón
+                      </div>
+                    </th>
                     <th className="px-6 py-4 font-medium tracking-wider text-center">
                       <div className="flex items-center justify-center gap-2">
                         <FileText className="w-4 h-4 text-gray-400" />
@@ -371,7 +378,7 @@ export function AuditLogViewer() {
                   {filteredLogs.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={5}
+                        colSpan={6}
                         className="px-6 py-12 text-center text-gray-500"
                       >
                         No se encontraron registros de auditoría que coincidan
@@ -405,6 +412,9 @@ export function AuditLogViewer() {
                           <p className="text-xs text-gray-400 font-mono mt-0.5">
                             {log.resourceId.split("-")[0]}...
                           </p>
+                        </td>
+                        <td className="px-6 py-4 max-w-xs truncate text-gray-600" title={log.reason}>
+                          {log.reason}
                         </td>
                         <td className="px-6 py-4 text-center">
                           <Button
