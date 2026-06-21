@@ -75,8 +75,6 @@ export const createPetSchema = z.object({
 
     requirements: z
         .string()
-        .min(10, "Los requisitos para adoptar no pueden tener menos de 10 caracteres")
-        .max(500, "Los requisitos para adoptar no pueden superar los 500 caracteres")
         .trim()
         .optional(),
 
