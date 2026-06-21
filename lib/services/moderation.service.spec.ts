@@ -63,7 +63,8 @@ describe("Moderation Service", () => {
         return await callback(tx);
       });
 
-      const result = await moderationService.approveShelter(shelterId, adminId, adminEmail);
+      const reason = "Aprobado para pruebas";
+      const result = await moderationService.approveShelter(shelterId, adminId, adminEmail, reason);
 
       expect(prisma.shelter.findUnique).toHaveBeenCalledWith({
         where: { id: shelterId },
@@ -85,7 +86,7 @@ describe("Moderation Service", () => {
       (prisma.shelter.findUnique as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockShelter);
 
       await expect(
-        moderationService.approveShelter("123", "admin", "admin@test.com")
+        moderationService.approveShelter("123", "admin", "admin@test.com", "Aprobado para pruebas")
       ).rejects.toThrow("El shelter ya está verificado.");
     });
   });

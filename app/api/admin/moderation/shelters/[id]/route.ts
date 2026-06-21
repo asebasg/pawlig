@@ -7,7 +7,7 @@ import { z } from "zod";
 
 const moderationSchema = z.object({
   action: z.enum(["APPROVE", "REJECT"]),
-  reason: z.string().optional(),
+  reason: z.string().min(10, "El motivo debe tener al menos 10 caracteres.").max(500).trim(),
 });
 
 /**
@@ -44,15 +44,10 @@ export async function PATCH(
       result = await moderationService.approveShelter(
         params.id,
         session.user.id,
-        session.user.email!
+        session.user.email!,
+        reason
       );
     } else {
-      if (!reason || reason.trim() === "") {
-        return NextResponse.json(
-          { error: "El motivo de rechazo es obligatorio." },
-          { status: 400 }
-        );
-      }
       result = await moderationService.rejectShelter(
         params.id,
         session.user.id,

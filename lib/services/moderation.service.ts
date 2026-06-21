@@ -82,7 +82,8 @@ export const moderationService = {
     });
   },
 
-  async approveShelter(shelterId: string, adminId: string, adminEmail: string) {
+  async approveShelter(shelterId: string, adminId: string, adminEmail: string, reason: string) {
+    if (!reason || reason.trim() === "") throw new Error("El motivo de aprobación es obligatorio.");
     const requestId = crypto.randomUUID();
     const shelter = await prisma.shelter.findUnique({
       where: { id: shelterId },
@@ -113,7 +114,7 @@ export const moderationService = {
           resourceId: shelterId,
           before: JSON.stringify({ verified: shelter.verified, role: shelter.user.role }),
           after: JSON.stringify({ verified: true, role: UserRole.SHELTER }),
-          reason: "Aprobación de albergue",
+          reason: reason,
           requestId,
         },
       });
@@ -181,7 +182,8 @@ export const moderationService = {
     return result;
   },
 
-  async approveVendor(vendorId: string, adminId: string, adminEmail: string) {
+  async approveVendor(vendorId: string, adminId: string, adminEmail: string, reason: string) {
+    if (!reason || reason.trim() === "") throw new Error("El motivo de aprobación es obligatorio.");
     const requestId = crypto.randomUUID();
     const vendor = await prisma.vendor.findUnique({
       where: { id: vendorId },
@@ -212,7 +214,7 @@ export const moderationService = {
           resourceId: vendorId,
           before: JSON.stringify({ verified: vendor.verified, role: vendor.user.role }),
           after: JSON.stringify({ verified: true, role: UserRole.VENDOR }),
-          reason: "Aprobación de negocio",
+          reason: reason,
           requestId,
         },
       });
