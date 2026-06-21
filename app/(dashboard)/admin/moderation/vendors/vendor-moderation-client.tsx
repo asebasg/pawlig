@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Check, X, MapPin, Mail, Phone, User, CheckCircle, Briefcase, Search } from "lucide-react";
 import { RejectRequestModal } from "@/components/admin/reject-request-modal";
+import { ApproveRequestModal } from "@/components/admin/approve-request-modal";
 
 /**
  * /app/(dashboard)/admin/moderation/vendors/vendor-moderation-client.tsx
@@ -37,6 +38,7 @@ export function VendorModerationClient() {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [rejectModalData, setRejectModalData] = useState<{ id: string; name: string } | null>(null);
+  const [approveModalData, setApproveModalData] = useState<{ id: string; name: string } | null>(null);
 
   const [activeTab, setActiveTab] = useState<"pending" | "approved" | "rejected">("pending");
   const [search, setSearch] = useState("");
@@ -62,13 +64,16 @@ export function VendorModerationClient() {
     fetchVendors(activeTab);
   }, [activeTab]);
 
-  const handleApprove = async (id: string) => {
+  const handleApproveConfirm = async (reason: string) => {
+    if (!approveModalData) return;
+    const { id } = approveModalData;
+
     setProcessingId(id);
     try {
       const res = await fetch(`/api/admin/moderation/vendors/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "APPROVE" }),
+        body: JSON.stringify({ action: "APPROVE", reason }),
       });
 
       if (!res.ok) {
@@ -79,7 +84,7 @@ export function VendorModerationClient() {
       toast.success("Negocio aprobado exitosamente.");
       setVendors((prev) => prev.filter((v) => v.id !== id));
     } catch (error: unknown) {
-      if (error instanceof Error) toast.error(error.message);
+      if (error instanceof Error) throw error;
     } finally {
       setProcessingId(null);
     }
@@ -268,9 +273,9 @@ export function VendorModerationClient() {
                     <X className="h-4 w-4 mr-2" />
                     Rechazar
                   </Button>
-                  <Button 
+                  <Button
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white transition"
-                    onClick={() => handleApprove(vendor.id)}
+                    onClick={() => setApproveModalData({ id: vendor.id, name: vendor.businessName })}
                     disabled={processingId === vendor.id}
                   >
                     {processingId === vendor.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Check className="h-4 w-4 mr-2" />}
@@ -307,6 +312,16 @@ export function VendorModerationClient() {
           onConfirm={handleRejectConfirm}
           title="Rechazar Solicitud de Negocio"
           targetName={rejectModalData.name}
+        />
+      )}
+
+      {approveModalData && (
+        <ApproveRequestModal
+          isOpen={!!approveModalData}
+          onClose={() => setApproveModalData(null)}
+          onConfirm={handleApproveConfirm}
+          title="Aprobar Solicitud de Negocio"
+          targetName={approveModalData.name}
         />
       )}
     </div>
