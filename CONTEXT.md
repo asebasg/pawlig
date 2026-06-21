@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 15 de junio de 2026.
+> **Última actualización**: 20 de junio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -391,6 +391,13 @@ model SystemAuditLog {
 │   │       └── page.tsx
 │   ├── (dashboard)
 │   │   ├── admin
+│   │   │   ├── dev
+│   │   │   │   ├── docs
+│   │   │   │   │   ├── [slug]
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── layout.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
 │   │   │   ├── metrics
 │   │   │   │   └── page.tsx
 │   │   │   ├── moderation
@@ -417,44 +424,44 @@ model SystemAuditLog {
 │   │   │   ├── page.tsx
 │   │   │   └── profile
 │   │   │       └── page.tsx
-│   ├── (shelter)
-│   │   ├── adoptions
-│   │   │   └── page.tsx
-│   │   ├── metrics
-│   │   │   └── page.tsx
-│   │   ├── page.tsx
-│   │   ├── pets
-│   │   │   ├── [id]
-│   │   │   │   └── edit
-│   │   │   │       └── page.tsx
-│   │   │   ├── new
+│   │   ├── shelter
+│   │   │   ├── adoptions
 │   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   └── profile
-│   │       └── page.tsx
-│   ├── (user)
-│   │   ├── page.tsx
-│   │   ├── profile
-│   │   │   └── page.tsx
-│   │   ├── request-shelter
-│   │   │   └── page.tsx
-│   │   └── request-vendor
-│   │       └── page.tsx
-│   ├── (vendor)
-│   │   ├── metrics
-│   │       └── page.tsx
-│   │   ├── orders
-│   │   │   └── page.tsx
-│   │   ├── page.tsx
-│   │   ├── products
-│   │   │   ├── [id]
-│   │   │   │   └── edit
-│   │   │   │       └── page.tsx
-│   │   │   ├── new
+│   │   │   ├── metrics
 │   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   └── profile
-│   │       └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── pets
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── edit
+│   │   │   │   │       └── page.tsx
+│   │   │   │   ├── new
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   └── profile
+│   │   │       └── page.tsx
+│   │   ├── user
+│   │   │   ├── page.tsx
+│   │   │   ├── profile
+│   │   │   │   └── page.tsx
+│   │   │   ├── request-shelter
+│   │   │   │   └── page.tsx
+│   │   │   └── request-vendor
+│   │   │       └── page.tsx
+│   │   └── vendor
+│   │       ├── metrics
+│   │       │   └── page.tsx
+│   │       ├── orders
+│   │       │   └── page.tsx
+│   │       ├── page.tsx
+│   │       ├── products
+│   │       │   ├── [id]
+│   │       │   │   └── edit
+│   │       │   │       └── page.tsx
+│   │       │   ├── new
+│   │       │   │   └── page.tsx
+│   │       │   └── page.tsx
+│   │       └── profile
+│   │           └── page.tsx
 │   ├── (public)
 │   │   ├── adopciones
 │   │   │   ├── [id]
@@ -484,6 +491,10 @@ model SystemAuditLog {
 │   │       └── page.tsx
 │   ├── api
 │   │   ├── admin
+│   │   │   ├── docs
+│   │   │   │   └── [slug]
+│   │   │   │       └── pdf
+│   │   │   │           └── route.ts
 │   │   │   ├── metrics
 │   │   │   │   ├── adoptions
 │   │   │   │   │   ├── export
@@ -495,7 +506,7 @@ model SystemAuditLog {
 │   │   │   │       ├── orders
 │   │   │   │       │   └── route.ts
 │   │   │   │       ├── products
-│   │   │   │       │   └── route.ts
+│   │   │  │       │   └── route.ts
 │   │   │   │       ├── route.ts
 │   │   │   │       └── trends
 │   │   │   │           └── route.ts
@@ -576,7 +587,7 @@ model SystemAuditLog {
 │   │   │   │   └── route.ts
 │   │   │   └── search
 │   │   │       └── route.ts
-│   │  ├── upload
+│   │   ├── upload
 │   │   │   └── route.ts
 │   │   ├── user
 │   │   │   ├── favorites
@@ -587,7 +598,7 @@ model SystemAuditLog {
 │   │   │   │   └── route.ts
 │   │   │   ├── request-shelter-account
 │   │   │   │   └── route.ts
-│   │   │   ├── request-vendor-account
+│   │   │   └── request-vendor-account
 │   │   │       └── route.ts
 │   │   └── vendor
 │   │       ├── metrics
@@ -599,7 +610,7 @@ model SystemAuditLog {
 │   │       │   │   └── route.ts
 │   │       │   ├── route.ts
 │   │       │   └── trends
-│   │      │       └── route.ts
+│   │       │       └── route.ts
 │   │       └── profile
 │   │           └── route.ts
 │   ├── fonts
@@ -619,10 +630,14 @@ model SystemAuditLog {
 │   │   ├── AdminDashboardClient.tsx
 │   │   ├── AuditHistoryCard.tsx
 │   │   ├── BlockUserButton.tsx
+│   │   ├── DevDashboardClient.tsx
 │   │   ├── EditUserButton.tsx
 │   │   ├── RoleChangeModal.tsx
 │   │   ├── UserActionsClient.tsx
 │   │   ├── UserViewClient.tsx
+│   │   ├── docs
+│   │   │   ├── doc-viewer.tsx
+│   │   │   └── docs-sidebar.tsx
 │   │   ├── metrics
 │   │   │   ├── admin-dashboard-tabs.tsx
 │   │   │   └── admin-metrics-client.tsx
@@ -656,7 +671,7 @@ model SystemAuditLog {
 │   │   └── accordion-section.tsx
 │   ├── layout
 │   │   ├── cart-button.tsx
-│   │   ├── floating-cart-button.tsx
+│   │  ├── floating-cart-button.tsx
 │   │   ├── footer.tsx
 │   │   ├── index.ts
 │   │   ├── navbar-auth.tsx
@@ -726,31 +741,6 @@ model SystemAuditLog {
 │           ├── top-products-table.tsx
 │           └── vendor-metrics-client.tsx
 ├── credentials-seed.txt
-├── docs
-│   ├── 01_Acta_de_Constitucion.md
-│   ├── 02_Stakeholders.md
-│   ├── 03_Alcance_del_Proyecto.md
-│   ├── 04_Requerimientos.md
-│   ├── 05_Historias_de_Usuario.md
-│   ├── 06_Mapa_de_Procesos.md
-│   ├── 07_Casos_de_Uso.md
-│   ├── 08_Arquitectura_Software.md
-│   ├── 09_Modelo_Entidad_Relacion.md
-│   ├── 10_Diagramas_UML.md
-│   ├── 11_Manual_Diseño.md
-│   ├── 12_Plan_de_Pruebas.md
-│   ├── 13_Casos_de_Prueba.md
-│   ├── 14_Manual_del_Usuario.md
-│   └── images
-│       ├── adopcion.png
-│       ├── diagrama_clases.png
-│       ├── diagrama_flujo_general.png
-│       ├── diagrama_uml.png
-│       ├── gestionar_citas.png
-│       ├── pet.png
-│       ├── postular_adopcion.png
-│       ├── publicar_mascota.png
-│       └── simular_compra.png
 ├── lib
 │   ├── auth
 │   │   ├── auth-options.ts
@@ -781,6 +771,7 @@ model SystemAuditLog {
 │   │   ├── adoption-report.service.ts
 │   │   ├── adoption.service.ts
 │   │   ├── cart.service.ts
+│   │   ├── docs.service.ts
 │   │   ├── email.service.test.ts
 │   │   ├── email.service.ts
 │   │   ├── geocoding.service.ts
@@ -818,13 +809,37 @@ model SystemAuditLog {
 │   ├── schema.prisma
 │   └── seed.ts
 ├── public
+│   ├── docs
+│   │   ├── 01_Acta_de_Constitucion.md
+│   │   ├── 02_Stakeholders.md
+│   │   ├── 03_Alcance_del_Proyecto.md
+│   │   ├── 04_Requerimientos.md
+│   │   ├── 05_Historias_de_Usuario.md
+│   │   ├── 06_Mapa_de_Procesos.md
+│   │   ├── 07_Casos_de_Uso.md
+│   │   ├── 08_Arquitectura_Software.md
+│   │   ├── 09_Modelo_Entidad_Relacion.md
+│   │   ├── 10_Diagramas_UML.md
+│   │   ├── 11_Manual_Diseño.md
+│   │   ├── 12_Plan_de_Pruebas.md
+│   │   ├── 13_Casos_de_Prueba.md
+│   │   └── 14_Manual_del_Usuario.md
 │   └── images
 │       ├── 404-page.png
+│       ├── adopcion.png
+│       ├── diagrama_clases.png
+│       ├── diagrama_flujo_general.png
+│       ├── diagrama_uml.png
+│       ├── gestionar_citas.png
 │       ├── medellin-map.png
 │       ├── nosotros_hero_image_1778473832814.png
 │       ├── pet-adopted.png
 │       ├── pet-community.png
 │       ├── pet-home.png
+│       ├── pet.png
+│       ├── postular_adopcion.png
+│       ├── publicar_mascota.png
+│       ├── simular_compra.png
 │       └── under_construction.png
 ├── scripts
 │   ├── create-pr.ps1
@@ -836,6 +851,7 @@ model SystemAuditLog {
 ├── types
 │   ├── adoption.ts
 │   ├── api.types.ts
+│   ├── docs.types.ts
 │   ├── email.types.ts
 │   ├── next-auth.d.ts
 │   ├── report.types.ts
@@ -878,14 +894,19 @@ model SystemAuditLog {
 - `react-hook-form`: `^7.66.1`
 - `react-leaflet`: `^4.2.1`
 - `recharts`: `^3.8.1`
+- `remark`: `^15.0.1`
+- `remark-gfm`: `^4.0.1`
+- `remark-html`: `^16.0.1`
 - `resend`: `^6.12.2`
 - `sonner`: `^2.0.7`
 - `swr`: `^2.4.1`
 - `tailwind-merge`: `^3.4.0`
+- `unist-util-visit`: `^5.1.0`
 - `zod`: `^4.1.12`
 
 ### Dependencias de Desarrollo
 
+- `@tailwindcss/typography`: `^0.5.20`
 - `@testing-library/jest-dom`: `^6.9.1`
 - `@testing-library/react`: `^16.3.1`
 - `@types/bcryptjs`: `^2.4.6`
