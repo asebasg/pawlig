@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 20 de junio de 2026.
+> **Última actualización**: 22 de junio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -365,22 +365,6 @@ model SystemAuditLog {
 
 ```text
 .
-├── .eslintrc.json
-├── .github
-│   ├── ISSUE_TEMPLATE
-│   │   ├── bug-report.md
-│   │   ├── documentation.md
-│   │   ├── feature-request.md
-│   │   ├── performance.md
-│   │   ├── question.md
-│   │   └── refactor.md
-│   └── pull_request_template.md
-├── .gitignore
-├── .rules.md
-├── CHANGELOG.md
-├── CONTEXT.md
-├── DEV_NOTES.md
-├── README.md
 ├── app
 │   ├── (auth)
 │   │   ├── login
@@ -392,88 +376,36 @@ model SystemAuditLog {
 │   ├── (dashboard)
 │   │   ├── admin
 │   │   │   ├── dev
-│   │   │   │   ├── docs
-│   │   │   │   │   ├── [slug]
-│   │   │   │   │   │   └── page.tsx
-│   │   │   │   │   ├── layout.tsx
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
 │   │   │   ├── metrics
-│   │   │   │   └── page.tsx
 │   │   │   ├── moderation
-│   │   │   │   ├── audit
-│   │   │   │   │   ├── audit-log-viewer.tsx
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── layout.tsx
-│   │   │   │   ├── page.tsx
-│   │   │   │   ├── shelters
-│   │   │   │   │   ├── page.tsx
-│   │   │   │   │   └── shelter-moderation-client.tsx
-│   │   │   │   ├── users
-│   │   │   │   │   ├── [id]
-│   │   │   │   │   │   └── view
-│   │   │   │   │   │       ├── __tests__
-│   │   │   │   │   │       │   └── user-view.spec.tsx
-│   │   │   │   │   │       └── page.tsx
-│   │   │   │   │   ├── block-user-modal.tsx
-│   │   │   │   │   ├── page.tsx
-│   │   │   │   │   └── users-management-client.tsx
-│   │   │   │   └── vendors
-│   │   │   │       ├── page.tsx
-│   │   │   │       └── vendor-moderation-client.tsx
 │   │   │   ├── page.tsx
 │   │   │   └── profile
-│   │   │       └── page.tsx
 │   │   ├── shelter
 │   │   │   ├── adoptions
-│   │   │   │   └── page.tsx
 │   │   │   ├── metrics
-│   │   │   │   └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── pets
-│   │   │   │   ├── [id]
-│   │   │   │   │   └── edit
-│   │   │   │   │       └── page.tsx
-│   │   │   │   ├── new
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
 │   │   │   └── profile
-│   │   │       └── page.tsx
 │   │   ├── user
 │   │   │   ├── page.tsx
 │   │   │   ├── profile
-│   │   │   │   └── page.tsx
 │   │   │   ├── request-shelter
-│   │   │   │   └── page.tsx
 │   │   │   └── request-vendor
-│   │   │       └── page.tsx
 │   │   └── vendor
 │   │       ├── metrics
-│   │       │   └── page.tsx
 │   │       ├── orders
-│   │       │   └── page.tsx
 │   │       ├── page.tsx
 │   │       ├── products
-│   │       │   ├── [id]
-│   │       │   │   └── edit
-│   │       │   │       └── page.tsx
-│   │       │   ├── new
-│   │       │   │   └── page.tsx
-│   │       │   └── page.tsx
 │   │       └── profile
-│   │           └── page.tsx
 │   ├── (public)
 │   │   ├── adopciones
 │   │   │   ├── [id]
-│   │   │   │   └── page.tsx
 │   │   │   └── page.tsx
 │   │   ├── albergues
 │   │   │   └── page.tsx
 │   │   ├── changelog
 │   │   │   ├── changelog-client.tsx
 │   │   │   ├── dev
-│   │   │   │   ├── dev-notes-client.tsx
-│   │   │   │   └── page.tsx
 │   │   │   └── page.tsx
 │   │   ├── faq
 │   │   │   └── page.tsx
@@ -485,447 +417,190 @@ model SystemAuditLog {
 │   │   │   └── page.tsx
 │   │   ├── productos
 │   │   │   ├── [id]
-│   │   │   │   └── page.tsx
 │   │   │   └── page.tsx
 │   │   └── terms
 │   │       └── page.tsx
 │   ├── api
 │   │   ├── admin
 │   │   │   ├── docs
-│   │   │   │   └── [slug]
-│   │   │   │       └── pdf
-│   │   │   │           └── route.ts
 │   │   │   ├── metrics
-│   │   │   │   ├── adoptions
-│   │   │   │   │   ├── export
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── sales
-│   │   │   │       ├── export
-│   │   │   │       │   └── route.ts
-│   │   │   │       ├── orders
-│   │   │   │       │   └── route.ts
-│   │   │   │       ├── products
-│   │   │  │       │   └── route.ts
-│   │   │   │       ├── route.ts
-│   │   │   │       └── trends
-│   │   │   │           └── route.ts
 │   │   │   ├── moderation
-│   │   │   │   ├── audit
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── shelters
-│   │   │   │   │   ├── [id]
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── vendors
-│   │   │   │       ├── [id]
-│   │   │   │       │   └── route.ts
-│   │   │   │       └── route.ts
 │   │   │   ├── shelter-requests
-│   │   │   │   └── route.ts
 │   │   │   ├── shelters
-│   │   │   │   └── [shelterId]
-│   │   │   │       └── route.ts
 │   │   │   └── users
-│   │   │       ├── [id]
-│   │   │       │   ├── block
-│   │   │       │   │   └── route.ts
-│   │   │       │   └── role
-│   │   │       │       └── route.ts
-│   │   │       └── route.ts
 │   │   ├── adoptions
 │   │   │   ├── [id]
-│   │   │   │   └── route.ts
 │   │   │   └── route.ts
 │   │   ├── ai
 │   │   │   └── refine
-│   │   │       └── route.ts
 │   │   ├── auth
 │   │   │   ├── [...nextauth]
-│   │   │   │   └── route.ts
 │   │   │   ├── forgot-password
-│   │   │   │   └── route.ts
 │   │   │   └── register
-│   │   │       └── route.ts
 │   │   ├── cart
 │   │   │   ├── [id]
-│   │   │   │   └── route.ts
 │   │   │   └── route.ts
 │   │   ├── cloudinary
 │   │   │   ├── delete
-│   │   │   │   └── route.ts
 │   │   │   └── sign
-│   │   │       └── route.ts
 │   │   ├── pets
 │   │   │   ├── [id]
-│   │   │   │   ├── favorite
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── route.ts
-│   │   │   │   └── status
-│   │   │   │       └── route.ts
 │   │   │   ├── route.ts
 │   │   │   └── search
-│   │   │       └── route.ts
 │   │   ├── products
 │   │   │   ├── [id]
-│   │   │   │   ├── route.ts
-│   │   │   │   └── stock
-│   │   │   │       └── route.ts
 │   │   │   └── route.ts
 │   │   ├── shelter
 │   │   │   ├── adoptions
-│   │   │   │   └── route.ts
 │   │   │   └── reports
-│   │   │       └── adoptions
-│   │   │           ├── export
-│   │   │           │   └── route.ts
-│   │   │           └── route.ts
 │   │   ├── shelters
 │   │   │   ├── [id]
-│   │   │   │   └── route.ts
 │   │   │   ├── map
-│   │   │   │   └── route.ts
 │   │   │   └── search
-│   │   │       └── route.ts
 │   │   ├── upload
 │   │   │   └── route.ts
 │   │   ├── user
 │   │   │   ├── favorites
-│   │   │   │   ├── check
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
 │   │   │   ├── profile
-│   │   │   │   └── route.ts
 │   │   │   ├── request-shelter-account
-│   │   │   │   └── route.ts
 │   │   │   └── request-vendor-account
-│   │   │       └── route.ts
 │   │   └── vendor
 │   │       ├── metrics
-│   │       │   ├── export
-│   │       │   │   └── route.ts
-│   │       │   ├── orders
-│   │       │   │   └── route.ts
-│   │       │   ├── products
-│   │       │   │   └── route.ts
-│   │       │   ├── route.ts
-│   │       │   └── trends
-│   │       │       └── route.ts
 │   │       └── profile
-│   │           └── route.ts
-│   ├── fonts
-│   │   ├── GeistMonoVF.woff
-│   │   └── GeistVF.woff
-│   ├── globals.css
-│   ├── icon.png
 │   ├── layout.tsx
 │   ├── not-found.tsx
 │   └── page.tsx
 ├── components
-│   ├── PetDetailClient.tsx
-│   ├── PetGalleryClient.tsx
-│   ├── ProductDetailClient.tsx
-│   ├── ProductGalleryClient.tsx
 │   ├── admin
-│   │   ├── AdminDashboardClient.tsx
-│   │   ├── AuditHistoryCard.tsx
-│   │   ├── BlockUserButton.tsx
-│   │   ├── DevDashboardClient.tsx
-│   │   ├── EditUserButton.tsx
-│   │   ├── RoleChangeModal.tsx
-│   │   ├── UserActionsClient.tsx
-│   │   ├── UserViewClient.tsx
 │   │   ├── docs
-│   │   │   ├── doc-viewer.tsx
-│   │   │   └── docs-sidebar.tsx
 │   │   ├── metrics
-│   │   │   ├── admin-dashboard-tabs.tsx
-│   │   │   └── admin-metrics-client.tsx
-│   │   ├── moderation-tabs.tsx
-│   │   └── reject-request-modal.tsx
+│   │   └── AdminDashboardClient.tsx
 │   ├── adopter
-│   │   ├── adopter-dashboard-client.tsx
-│   │   ├── adoptions-section.tsx
-│   │   ├── cart-section.tsx
-│   │   └── favorites-section.tsx
+│   │   └── adopter-dashboard-client.tsx
 │   ├── cards
 │   │   ├── pet-card.tsx
 │   │   ├── product-card.tsx
 │   │   └── shelter-pet-card.tsx
-│   ├── cart
-│   │   ├── cart-item.tsx
-│   │   └── cart-summary.tsx
-│   ├── filters
-│   │   ├── pet-filter.tsx
-│   │   └── product-filter.tsx
 │   ├── forms
-│   │   ├── login-form.tsx
 │   │   ├── pet-form.tsx
 │   │   ├── product-form.tsx
-│   │   ├── register-form.tsx
-│   │   ├── shelter-request-form.tsx
-│   │   ├── user-profile-form.tsx
-│   │   ├── vendor-profile-form.tsx
-│   │   └── vendor-request-form.tsx
-│   ├── help
-│   │   └── accordion-section.tsx
+│   │   └── register-form.tsx
 │   ├── layout
-│   │   ├── cart-button.tsx
-│   │  ├── floating-cart-button.tsx
-│   │   ├── footer.tsx
-│   │   ├── index.ts
-│   │   ├── navbar-auth.tsx
-│   │   ├── navbar-mobile.tsx
-│   │   ├── navbar-public.tsx
 │   │   ├── navbar.tsx
-│   │   ├── under-construction.tsx
-│   │   └── user-menu.tsx
+│   │   └── footer.tsx
 │   ├── map
 │   │   ├── interactive-map.tsx
-│   │   ├── legal-info-modal.tsx
-│   │   ├── shelter-card.tsx
 │   │   └── shelters-map-client.tsx
-│   ├── modals
-│   │   └── adoption-confirm-modal.tsx
-│   ├── products
-│   │   └── PaymentModal.tsx
-│   ├── shelter
-│   │   ├── AdoptionStats.tsx
-│   │   ├── ShelterDashboardClient.tsx
-│   │   ├── adoptions
-│   │   │   ├── adoptions-client.tsx
-│   │   │   ├── adoptions-table.tsx
-│   │   │   ├── application-card.tsx
-│   │   │   ├── applications-list.tsx
-│   │   │   └── approval-modal.tsx
-│   │   └── metrics
-│   │       ├── adoption-charts.tsx
-│   │       ├── adoption-filters.tsx
-│   │       ├── adoption-metrics-client.tsx
-│   │       ├── adoption-table.tsx
-│   │       └── export-buttons.tsx
-│   ├── shelters
-│   │   ├── municipality-filter.tsx
-│   │   └── shelter-search.tsx
 │   ├── ui
-│   │   ├── address-input.tsx
-│   │   ├── alert-dialog.tsx
-│   │   ├── badge.tsx
-│   │   ├── button-variants.ts
 │   │   ├── button.tsx
 │   │   ├── card.tsx
-│   │   ├── checkbox.tsx
-│   │   ├── confetti-button.tsx
-│   │   ├── dialog.tsx
-│   │   ├── favorite-button.tsx
 │   │   ├── input.tsx
-│   │   ├── label.tsx
-│   │   ├── loader.tsx
-│   │   ├── logo.tsx
-│   │   ├── pagination-system.tsx
-│   │   ├── password-input.tsx
-│   │   ├── radio-group.tsx
-│   │   ├── select.tsx
 │   │   └── table.tsx
 │   └── vendor
-│       ├── ProductTable.tsx
-│       ├── ProductsClient.tsx
-│       ├── StockUpdateModal.tsx
-│       ├── VendorDashboardClient.tsx
-│       ├── VendorStats.tsx
-│       └── metrics
-│           ├── metrics-cards.tsx
-│           ├── metrics-filters.tsx
-│           ├── orders-by-status-chart.tsx
-│           ├── sales-chart.tsx
-│           ├── top-products-table.tsx
-│           └── vendor-metrics-client.tsx
-├── credentials-seed.txt
+│       ├── metrics
+│       └── VendorDashboardClient.tsx
 ├── lib
 │   ├── auth
 │   │   ├── auth-options.ts
-│   │   ├── password.ts
-│   │   ├── require-role.ts
-│   │   └── session.ts
-│   ├── cloudinary.ts
-│   ├── constants.ts
+│   │   └── require-role.ts
 │   ├── email
 │   │   ├── components
-│   │   │   └── EmailLayout.tsx
 │   │   └── templates
-│   │       ├── account-blocked.tsx
-│   │       ├── adoption-status.tsx
-│   │       ├── new-adoption.tsx
-│   │       ├── new-order-vendor.tsx
-│   │       ├── order-confirmation.tsx
-│   │       ├── order-status.tsx
-│   │       ├── password-reset.tsx
-│   │       ├── shelter-approved.tsx
-│   │       ├── shelter-rejected.tsx
-│   │       ├── vendor-approved.tsx
-│   │       └── vendor-rejected.tsx
-│   ├── hooks
-│   │   ├── use-cart-sync.ts
-│   │   └── use-cart.ts
 │   ├── services
-│   │   ├── adoption-report.service.ts
-│   │   ├── adoption.service.ts
-│   │   ├── cart.service.ts
-│   │   ├── docs.service.ts
-│   │   ├── email.service.test.ts
-│   │   ├── email.service.ts
-│   │   ├── geocoding.service.ts
-│   │   ├── moderation.service.spec.ts
-│   │   ├── moderation.service.ts
-│   │   ├── pet.service.spec.ts
 │   │   ├── pet.service.ts
 │   │   ├── product.service.ts
-│   │   ├── user.service.ts
-│   │   └── vendor-metrics.service.ts
+│   │   └── user.service.ts
 │   ├── utils
-│   │   ├── age-formatter.test.ts
-│   │   ├── age-formatter.ts
 │   │   ├── db.ts
-│   │   ├── export-csv.ts
-│   │   ├── export-excel.ts
-│   │   ├── export-pdf.ts
 │   │   └── logger.ts
-│   ├── utils.ts
 │   └── validations
-│       ├── adoption.schema.ts
-│       ├── cart.schema.ts
-│       ├── cloudinary.schema.ts
-│       ├── pet-search.schema.ts
-│       ├── pet.schema.ts
-│       ├── product.schema.ts
-│       └── user.schema.ts
-├── middleware.ts
-├── monthly-updates.md
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── postcss.config.mjs
 ├── prisma
 │   ├── schema.prisma
 │   └── seed.ts
 ├── public
 │   ├── docs
-│   │   ├── 01_Acta_de_Constitucion.md
-│   │   ├── 02_Stakeholders.md
-│   │   ├── 03_Alcance_del_Proyecto.md
-│   │   ├── 04_Requerimientos.md
-│   │   ├── 05_Historias_de_Usuario.md
-│   │   ├── 06_Mapa_de_Procesos.md
-│   │   ├── 07_Casos_de_Uso.md
-│   │   ├── 08_Arquitectura_Software.md
-│   │   ├── 09_Modelo_Entidad_Relacion.md
-│   │   ├── 10_Diagramas_UML.md
-│   │   ├── 11_Manual_Diseño.md
-│   │   ├── 12_Plan_de_Pruebas.md
-│   │   ├── 13_Casos_de_Prueba.md
-│   │   └── 14_Manual_del_Usuario.md
 │   └── images
-│       ├── 404-page.png
-│       ├── adopcion.png
-│       ├── diagrama_clases.png
-│       ├── diagrama_flujo_general.png
-│       ├── diagrama_uml.png
-│       ├── gestionar_citas.png
-│       ├── medellin-map.png
-│       ├── nosotros_hero_image_1778473832814.png
-│       ├── pet-adopted.png
-│       ├── pet-community.png
-│       ├── pet-home.png
-│       ├── pet.png
-│       ├── postular_adopcion.png
-│       ├── publicar_mascota.png
-│       ├── simular_compra.png
-│       └── under_construction.png
 ├── scripts
-│   ├── create-pr.ps1
-│   ├── create-pr.sh
-│   ├── geocode-shelters.ts
-│   └── test-live-emails.ts
-├── tailwind.config.ts
-├── tsconfig.json
 ├── types
-│   ├── adoption.ts
-│   ├── api.types.ts
-│   ├── docs.types.ts
-│   ├── email.types.ts
-│   ├── next-auth.d.ts
-│   ├── report.types.ts
-│   └── shelter.ts
-├── vitest.config.ts
-└── vitest.setup.ts
+└── vitest.config.ts
 ```
 
 ## 3. Dependencias del Proyecto
 
 ### Dependencias de Producción
 
-- `@google/generative-ai`: `^0.24.1`
-- `@hookform/resolvers`: `^5.2.2`
-- `@prisma/client`: `^6.2.1`
-- `@radix-ui/react-checkbox`: `^1.3.3`
-- `@radix-ui/react-label`: `^2.1.8`
-- `@radix-ui/react-radio-group`: `^1.3.8`
-- `@radix-ui/react-select`: `^2.2.6`
-- `@radix-ui/react-slot`: `^1.2.4`
-- `@react-email/components`: `^1.0.12`
-- `@react-email/render`: `^2.0.7`
-- `@testing-library/user-event`: `^14.6.1`
-- `axios`: `^1.13.2`
-- `bcryptjs`: `^3.0.3`
-- `class-variance-authority`: `^0.7.1`
-- `cloudinary`: `^2.8.0`
-- `clsx`: `^2.1.1`
-- `date-fns`: `^4.1.0`
-- `exceljs`: `^4.4.0`
-- `jspdf`: `^4.2.1`
-- `jspdf-autotable`: `^5.0.7`
-- `leaflet`: `^1.9.4`
-- `lucide-react`: `^0.554.0`
-- `next`: `14.2.33`
-- `next-auth`: `^4.24.7`
-- `react`: `^18`
-- `react-day-picker`: `^10.0.0`
-- `react-dom`: `^18`
-- `react-hook-form`: `^7.66.1`
-- `react-leaflet`: `^4.2.1`
-- `recharts`: `^3.8.1`
-- `remark`: `^15.0.1`
-- `remark-gfm`: `^4.0.1`
-- `remark-html`: `^16.0.1`
-- `resend`: `^6.12.2`
-- `sonner`: `^2.0.7`
-- `swr`: `^2.4.1`
-- `tailwind-merge`: `^3.4.0`
-- `unist-util-visit`: `^5.1.0`
-- `zod`: `^4.1.12`
+- **Frontend/Framework**:
+  - `next`: `14.2.33`
+  - `react`: `^18`
+  - `react-dom`: `^18`
+  - `swr`: `^2.4.1`
+- **UI/Componentes**:
+  - `@radix-ui/react-checkbox`: `^1.3.3`
+  - `@radix-ui/react-label`: `^2.1.8`
+  - `@radix-ui/react-radio-group`: `^1.3.8`
+  - `@radix-ui/react-select`: `^2.2.6`
+  - `@radix-ui/react-slot`: `^1.2.4`
+  - `lucide-react`: `^0.554.0`
+  - `sonner`: `^2.0.7`
+  - `class-variance-authority`: `^0.7.1`
+  - `clsx`: `^2.1.1`
+  - `tailwind-merge`: `^3.4.0`
+  - `react-day-picker`: `^10.0.0`
+  - `recharts`: `^3.8.1`
+- **Formularios y Validación**:
+  - `react-hook-form`: `^7.66.1`
+  - `@hookform/resolvers`: `^5.2.2`
+  - `zod`: `^4.1.12`
+- **Base de Datos y ORM**:
+  - `@prisma/client`: `^6.2.1`
+- **Autenticación y Seguridad**:
+  - `next-auth`: `^4.24.7`
+  - `bcryptjs`: `^3.0.3`
+- **Servicios Externos**:
+  - `cloudinary`: `^2.8.0`
+  - `@google/generative-ai`: `^0.24.1`
+  - `resend`: `^6.12.2`
+  - `@react-email/components`: `^1.0.12`
+  - `@react-email/render`: `^2.0.7`
+- **Utilidades**:
+  - `axios`: `^1.13.2`
+  - `date-fns`: `^4.1.0`
+  - `exceljs`: `^4.4.0`
+  - `jspdf`: `^4.2.1`
+  - `jspdf-autotable`: `^5.0.7`
+  - `leaflet`: `^1.9.4`
+  - `react-leaflet`: `^4.2.1`
+  - `remark`: `^15.0.1`
+  - `remark-gfm`: `^4.0.1`
+  - `remark-html`: `^16.0.1`
+  - `unist-util-visit`: `^5.1.0`
 
 ### Dependencias de Desarrollo
 
-- `@tailwindcss/typography`: `^0.5.20`
-- `@testing-library/jest-dom`: `^6.9.1`
-- `@testing-library/react`: `^16.3.1`
-- `@types/bcryptjs`: `^2.4.6`
-- `@types/exceljs`: `^0.5.3`
-- `@types/jspdf`: `^1.3.3`
-- `@types/leaflet`: `^1.9.21`
-- `@types/node`: `^20`
-- `@types/react`: `^18`
-- `@types/react-dom`: `^18`
-- `@vitejs/plugin-react`: `^5.1.2`
-- `@vitest/coverage-v8`: `^4.0.16`
-- `dotenv`: `^17.2.3`
-- `eslint`: `^8`
-- `eslint-config-next`: `14.2.33`
-- `jsdom`: `^27.4.0`
-- `postcss`: `^8`
-- `prisma`: `^6.2.1`
-- `tailwindcss`: `^3.4.1`
-- `ts-node`: `^10.9.2`
-- `typescript`: `^5`
-- `vite-tsconfig-paths`: `^6.0.3`
-- `vitest`: `^4.0.16`
+- **Testing**:
+  - `vitest`: `^4.0.16`
+  - `@testing-library/react`: `^16.3.1`
+  - `@testing-library/jest-dom`: `^6.9.1`
+  - `@testing-library/user-event`: `^14.6.1`
+  - `jsdom`: `^27.4.0`
+  - `@vitejs/plugin-react`: `^5.1.2`
+  - `vite-tsconfig-paths`: `^6.0.3`
+  - `@vitest/coverage-v8`: `^4.0.16`
+- **Estilos y Linting**:
+  - `tailwindcss`: `^3.4.1`
+  - `postcss`: `^8`
+  - `eslint`: `^8`
+  - `eslint-config-next`: `14.2.33`
+  - `@tailwindcss/typography`: `^0.5.20`
+- **Herramientas de Tipado y DB**:
+  - `typescript`: `^5`
+  - `@types/node`: `^20`
+  - `@types/react`: `^18`
+  - `@types/react-dom`: `^18`
+  - `@types/bcryptjs`: `^2.4.6`
+  - `@types/exceljs`: `^0.5.3`
+  - `@types/jspdf`: `^1.3.3`
+  - `@types/leaflet`: `^1.9.21`
+  - `prisma`: `^6.2.1`
+  - `ts-node`: `^10.9.2`
+  - `dotenv`: `^17.2.3`
