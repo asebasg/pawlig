@@ -202,7 +202,7 @@ export function AuditLogViewer() {
 
             {/* Búsqueda por texto */}
             <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 id="audit-search"
                 type="text"
@@ -286,7 +286,7 @@ export function AuditLogViewer() {
             {/* Inputs de fecha nativos del navegador */}
             <div className="flex items-center gap-3 w-full md:w-auto">
               <div className="relative flex-1 sm:w-40">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <Input
                   id="audit-start-date"
                   type="date"
@@ -296,9 +296,9 @@ export function AuditLogViewer() {
                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
-              <span className="text-gray-400 text-sm">-</span>
+              <span className="text-muted-foreground text-sm">-</span>
               <div className="relative flex-1 sm:w-40">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <Input
                   id="audit-end-date"
                   type="date"
@@ -332,43 +332,43 @@ export function AuditLogViewer() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
+            <div className="w-full">
+              <table className="w-full text-sm text-left table-fixed">
+                <thead className="text-xs text-muted-foreground uppercase bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 font-medium tracking-wider">
+                    <th className="w-[18%] px-6 py-4 font-medium tracking-wider">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-gray-400" />
+                        <Clock className="w-4 h-4 text-muted-foreground" />
                         Fecha
                       </div>
                     </th>
-                    <th className="px-6 py-4 font-medium tracking-wider">
+                    <th className="w-[20%] px-6 py-4 font-medium tracking-wider">
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-gray-400" />
+                        <User className="w-4 h-4 text-muted-foreground" />
                         Actor
                       </div>
                     </th>
-                    <th className="px-6 py-4 font-medium tracking-wider">
+                    <th className="w-[17%] px-6 py-4 font-medium tracking-wider">
                       <div className="flex items-center gap-2">
-                        <ShieldAlert className="w-4 h-4 text-gray-400" />
+                        <ShieldAlert className="w-4 h-4 text-muted-foreground" />
                         Acción
                       </div>
                     </th>
-                    <th className="px-6 py-4 font-medium tracking-wider">
+                    <th className="w-[15%] px-6 py-4 font-medium tracking-wider">
                       <div className="flex items-center gap-2">
-                        <Database className="w-4 h-4 text-gray-400" />
+                        <Database className="w-4 h-4 text-muted-foreground" />
                         Recurso
                       </div>
                     </th>
-                    <th className="px-6 py-4 font-medium tracking-wider">
+                    <th className="w-[20%] px-6 py-4 font-medium tracking-wider">
                       <div className="flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-gray-400" />
+                        <MessageSquare className="w-4 h-4 text-muted-foreground" />
                         Razón
                       </div>
                     </th>
-                    <th className="px-6 py-4 font-medium tracking-wider text-center">
+                    <th className="w-[10%] px-6 py-4 font-medium tracking-wider text-center">
                       <div className="flex items-center justify-center gap-2">
-                        <FileText className="w-4 h-4 text-gray-400" />
+                        <FileText className="w-4 h-4 text-muted-foreground" />
                         Detalles
                       </div>
                     </th>
@@ -391,40 +391,41 @@ export function AuditLogViewer() {
                         key={log.id}
                         className="hover:bg-gray-50 transition-colors"
                       >
-                        <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                        <td className="px-6 py-5 whitespace-nowrap text-gray-600 truncate" title={new Date(log.createdAt).toLocaleString("es-CO")}>
                           {new Date(log.createdAt).toLocaleString("es-CO")}
                         </td>
-                        <td className="px-6 py-4 text-gray-900 font-medium">
+                        <td className="px-6 py-5 text-gray-900 font-medium truncate" title={log.actorEmail}>
                           {log.actorEmail}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-5 whitespace-nowrap">
                           <Badge
-                             variant={getActionVariant(log.action)}
-                            className="font-medium"
+                            variant={getActionVariant(log.action)}
+                            className="font-medium whitespace-nowrap"
                           >
                             {ACTION_LABELS[log.action] ?? log.action}
                           </Badge>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-5 whitespace-nowrap truncate">
                           <span className="font-semibold text-gray-900">
                             {log.resourceType}
                           </span>
-                          <p className="text-xs text-gray-400 font-mono mt-0.5">
+                          <p className="text-xs text-muted-foreground font-mono mt-0.5">
                             {log.resourceId.split("-")[0]}...
                           </p>
                         </td>
-                        <td className="px-6 py-4 max-w-xs truncate text-gray-600" title={log.reason}>
-                          {log.reason}
+                        <td className="px-6 py-5 text-gray-600" title={log.reason}>
+                          <div className="line-clamp-2 whitespace-normal break-words text-xs">
+                            {log.reason}
+                          </div>
                         </td>
-                        <td className="px-6 py-4 text-center">
+                        <td className="px-6 py-5 text-center">
                           <Button
                             variant="ghost"
                             size="sm"
                             className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
                             onClick={() => setSelectedLog(log)}
                           >
-                            <Eye className="w-4 h-4 mr-2" />
-                            Ver más
+                            <Eye className="w-5 h-5" />
                           </Button>
                         </td>
                       </tr>
