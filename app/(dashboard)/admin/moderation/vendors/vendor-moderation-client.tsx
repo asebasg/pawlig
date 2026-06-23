@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Check, X, MapPin, Mail, Phone, User, CheckCircle, Briefcase, Search } from "lucide-react";
 import { RejectRequestModal } from "@/components/admin/reject-request-modal";
 import { ApproveRequestModal } from "@/components/admin/approve-request-modal";
+import Link from "next/link";
 
 /**
  * /app/(dashboard)/admin/moderation/vendors/vendor-moderation-client.tsx
@@ -16,6 +17,7 @@ import { ApproveRequestModal } from "@/components/admin/approve-request-modal";
  */
 
 interface VendorUser {
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -221,7 +223,7 @@ export function VendorModerationClient() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredVendors.map((vendor) => (
             <div key={vendor.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-              <div className="p-6 border-b border-gray-50 flex-1">
+              <div className="p-6 flex-1">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1">{vendor.businessName}</h3>
@@ -262,44 +264,56 @@ export function VendorModerationClient() {
                 )}
               </div>
               
-              {activeTab === "pending" ? (
-                <div className="p-4 bg-gray-50 flex gap-3">
-                  <Button 
-                    className="flex-1 bg-white border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 transition" 
-                    variant="outline"
-                    onClick={() => setRejectModalData({ id: vendor.id, name: vendor.businessName })}
-                    disabled={processingId === vendor.id}
-                  >
-                    <X className="h-4 w-4 mr-2" />
-                    Rechazar
-                  </Button>
-                  <Button
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white transition"
-                    onClick={() => setApproveModalData({ id: vendor.id, name: vendor.businessName })}
-                    disabled={processingId === vendor.id}
-                  >
-                    {processingId === vendor.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Check className="h-4 w-4 mr-2" />}
-                    Aprobar
-                  </Button>
-                </div>
-              ) : activeTab === "approved" ? (
-                <div className="p-4 bg-green-50 flex items-center justify-center text-green-700 font-medium border-t border-green-100">
-                  <CheckCircle className="h-5 w-5 mr-2" />
-                  Negocio Verificado
-                </div>
-              ) : (
-                <div className="p-4 bg-red-50 flex flex-col justify-center text-red-700 font-medium border-t border-red-100 text-sm">
-                  <div className="flex items-center mb-1">
-                    <X className="h-5 w-5 mr-2" />
-                    <span>Solicitud Rechazada</span>
+              <div className="p-4 bg-gray-50 border-t border-gray-100 flex flex-col gap-3">
+                {activeTab === "pending" ? (
+                  <div className="flex gap-3">
+                    <Button 
+                      className="flex-1 bg-white border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 transition" 
+                      variant="outline"
+                      onClick={() => setRejectModalData({ id: vendor.id, name: vendor.businessName })}
+                      disabled={processingId === vendor.id}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Rechazar
+                    </Button>
+                    <Button 
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white transition"
+                      onClick={() => setApproveModalData({ id: vendor.id, name: vendor.businessName })}
+                      disabled={processingId === vendor.id}
+                    >
+                      {processingId === vendor.id ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Check className="h-4 w-4 mr-2" />}
+                      Aprobar
+                    </Button>
                   </div>
-                  {vendor.rejectionReason && (
-                    <p className="text-xs text-red-600 mt-1 italic">
-                      Motivo: {vendor.rejectionReason}
-                    </p>
-                  )}
-                </div>
-              )}
+                ) : activeTab === "approved" ? (
+                  <div className="flex items-center justify-center text-green-700 font-medium py-2 bg-green-50 rounded-lg border border-green-100 text-sm">
+                    <CheckCircle className="h-4 w-4 mr-2 text-green-600 shrink-0" />
+                    <span>Negocio Verificado</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col justify-center text-red-700 font-medium text-sm p-3 bg-red-50 rounded-lg border border-red-100">
+                    <div className="flex items-center">
+                      <X className="h-4 w-4 mr-2 text-red-600 shrink-0" />
+                      <span>Solicitud Rechazada</span>
+                    </div>
+                    {vendor.rejectionReason && (
+                      <p className="text-xs text-red-600 mt-1 italic pl-6 font-normal">
+                        Motivo: {vendor.rejectionReason}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <Link href={`/admin/moderation/users/${vendor.user.id}/view`} passHref className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-2"
+                  >
+                    <User className="w-4 h-4 text-purple-600" />
+                    Ver Perfil de Usuario
+                  </Button>
+                </Link>
+              </div>
             </div>
           ))}
         </div>
@@ -337,7 +351,15 @@ export function VendorModerationClient() {
  * Componente interactivo estilizado para moderar solicitudes de negocios.
  *
  * Lógica Clave:
- * - Diseño alineado con el layout general (border-radius, sombras, tipografía).
+ * - Diseño alinado con el layout de la plataforma (border-radius, sombras, colores slate/purple).
  * - Incorpora el componente RejectRequestModal para capturar el motivo de rechazo 
- *   de forma modal y limpia.
+ *   en lugar de la API prompt() nativa del navegador.
+ * - Unificación estética de las tarjetas de moderación (pendiente, aprobado y rechazado) 
+ *   compartiendo el mismo diseño de pie de página (footer) y fondo gris consistente.
+ * - Botón de acceso directo para visualizar el perfil de usuario asociado en /admin/moderation/users/[id]/view.
+ *
+ * Dependencias Externas:
+ * - next/link: Para navegación entre rutas del dashboard.
+ * - lucide-react: Iconografía unificada (User, Check, X, etc.).
+ *
  */
