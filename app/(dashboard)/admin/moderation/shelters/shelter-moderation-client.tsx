@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Check, X, MapPin, Mail, Phone, User, CheckCircle, Search, Eye } from "lucide-react";
+import { Loader2, Check, X, MapPin, Mail, Phone, User, CheckCircle, Search } from "lucide-react";
 import { RejectRequestModal } from "@/components/admin/reject-request-modal";
 import { ApproveRequestModal } from "@/components/admin/approve-request-modal";
 import Link from "next/link";
@@ -305,7 +305,7 @@ export function ShelterModerationClient() {
                     variant="outline" 
                     className="w-full bg-white border-gray-200 text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-2"
                   >
-                    <Eye className="w-4 h-4 text-purple-600" />
+                    <User className="w-4 h-4 text-purple-600" />
                     Ver Perfil de Usuario
                   </Button>
                 </Link>
