@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 23 de junio de 2026.
+> **Última actualización**: 24 de junio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -409,7 +409,7 @@ model SystemAuditLog {
 │   │   │   │   └── vendors
 │   │   │   │       ├── page.tsx
 │   │   │   │       └── vendor-moderation-client.tsx
-│   │   │   └── page.tsx
+│   │   │   ├── page.tsx
 │   │   │   └── profile
 │   │   │       └── page.tsx
 │   │   ├── shelter
@@ -846,7 +846,8 @@ model SystemAuditLog {
 │   └── shelter.ts
 ├── vitest.config.ts
 └── vitest.setup.ts
-```
+
+---
 
 ## 3. Dependencias del Proyecto
 
@@ -858,11 +859,11 @@ model SystemAuditLog {
   - `react-dom`: `^18` - Renderizado DOM para React.
   - `swr`: `^2.4.1` - Estrategia de fetching de datos.
 - **UI & Componentes (Radix UI & Shadcn)**:
-  - `@radix-ui/react-checkbox`: `^1.3.3`
-  - `@radix-ui/react-label`: `^2.1.8`
-  - `@radix-ui/react-radio-group`: `^1.3.8`
-  - `@radix-ui/react-select`: `^2.2.6`
-  - `@radix-ui/react-slot`: `^1.2.4`
+  - `@radix-ui/react-checkbox`: `^1.3.3` - Componente de checkbox accesible.
+  - `@radix-ui/react-label`: `^2.1.8` - Componente de etiqueta accesible.
+  - `@radix-ui/react-radio-group`: `^1.3.8` - Componente de grupo de radio accesible.
+  - `@radix-ui/react-select`: `^2.2.6` - Componente de selección accesible.
+  - `@radix-ui/react-slot`: `^1.2.4` - Utilidad para composición de componentes.
   - `lucide-react`: `^0.554.0` - Iconografía.
   - `sonner`: `^2.0.7` - Notificaciones toast.
   - `class-variance-authority`: `^0.7.1` - Gestión de variantes de CSS.
@@ -914,3 +915,5 @@ model SystemAuditLog {
   - `prisma`: `^6.2.1` - CLI de Prisma ORM.
   - `ts-node`: `^10.9.2` - Ejecución de TypeScript en Node.
   - `dotenv`: `^17.2.3` - Gestión de variables de entorno.
+  - `vite-tsconfig-paths`: `^6.0.3` - Soporte de paths de TS en Vite.
+  - `@vitejs/plugin-react`: `^5.1.2` - Plugin de React para Vite.
