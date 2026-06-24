@@ -19,7 +19,7 @@ export function AiRefineButton({
   onRefined,
   type = "pet",
   disabled = false,
-  className = "absolute bottom-2 right-2 h-8 text-purple-700 hover:text-purple-800 transition-colors",
+  className = "absolute bottom-2 right-2 h-8 text-primary hover:brightness-75 transition-all",
   minLength = 10,
 }: AiRefineButtonProps) {
   const [isRefining, setIsRefining] = useState(false);
