@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 24 de junio de 2026.
+> **Última actualización**: 25 de junio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -359,12 +359,17 @@ model SystemAuditLog {
   @@index([resourceType, resourceId])
   @@index([createdAt])
 }
+
 ```
 
 ## 2. Estructura del Proyecto
 
 ```text
 .
+├── .env.local.example
+├── .eslintrc.json
+├── .gitignore
+├── .rules.md
 ├── CHANGELOG.md
 ├── CONTEXT.md
 ├── DEV_NOTES.md
@@ -796,6 +801,7 @@ model SystemAuditLog {
 ├── prisma
 │   ├── schema.prisma
 │   └── seed.ts
+├── project_tree.txt
 ├── public
 │   ├── docs
 │   │   ├── 01_Acta_de_Constitucion.md
@@ -846,6 +852,7 @@ model SystemAuditLog {
 │   └── shelter.ts
 ├── vitest.config.ts
 └── vitest.setup.ts
+```
 
 ---
 
@@ -894,21 +901,21 @@ model SystemAuditLog {
   - `jspdf-autotable`: `^5.0.7` - Tablas para PDF.
   - `leaflet`: `^1.9.4` - Mapas interactivos.
   - `react-leaflet`: `^4.2.1` - Integración de Leaflet con React.
-  - `remark`, `remark-gfm`, `remark-html`: Procesamiento de Markdown.
-  - `unist-util-visit`: Utilidad para árboles de sintaxis.
+  - `remark`: `^15.0.1`, `remark-gfm`: `^4.0.1`, `remark-html`: `^16.0.1`: Procesamiento de Markdown.
+  - `unist-util-visit`: `^5.1.0`: Utilidad para árboles de sintaxis.
 
 ### Dependencias de Desarrollo
 
 - **Testing**:
   - `vitest`: `^4.0.16` - Framework de pruebas unitarias.
-  - `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`: Pruebas de componentes.
+  - `@testing-library/react`: `^16.3.1`, `@testing-library/jest-dom`: `^6.9.1`, `@testing-library/user-event`: `^14.6.1`: Pruebas de componentes.
   - `jsdom`: `^27.4.0` - Simulación de entorno DOM.
   - `@vitest/coverage-v8`: `^4.0.16` - Reportes de cobertura.
 - **Estilos & Linting**:
   - `tailwindcss`: `^3.4.1` - Framework CSS.
   - `postcss`: `^8` - Transformación de CSS.
-  - `eslint`, `eslint-config-next`: Linter y reglas para Next.js.
-  - `@tailwindcss/typography`: Plugin para contenido rico.
+  - `eslint`: `^8`, `eslint-config-next`: `14.2.33`: Linter y reglas para Next.js.
+  - `@tailwindcss/typography`: `^0.5.20`: Plugin para contenido rico.
 - **Herramientas de Tipado & DB**:
   - `typescript`: `^5` - Lenguaje de programación.
   - `@types/*`: Definiciones de tipos para Node, React, Leaflet, etc.
