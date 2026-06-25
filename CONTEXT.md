@@ -801,7 +801,6 @@ model SystemAuditLog {
 ├── prisma
 │   ├── schema.prisma
 │   └── seed.ts
-├── project_tree.txt
 ├── public
 │   ├── docs
 │   │   ├── 01_Acta_de_Constitucion.md
