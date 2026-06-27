@@ -14,7 +14,7 @@
 **Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.8.0 | Última actualización: 15 de junio de 2026_
+_Versión v1.14.0 | Última actualización: 26 de junio de 2026_
 
 </div>
 
@@ -41,45 +41,41 @@ A través de la integración de **IA Generativa**, **Geolocalización** y un **M
 ## ✨ Características Principales
 
 ### 🧠 Asistente de IA (Google Gemini 2.5-flash)
-- **Refinamiento Automático:** Endpoint `/api/ai/refine` que transforma descripciones originales en textos persuasivos y optimizados.
-- **Contextualización:** Prompting dinámico especializado para perfiles de mascotas (emocional) y productos (comercial).
+- **Refinamiento Automático:** Endpoint `/api/ai/refine` que transforma descripciones originales en textos persuasivos y optimizados para perfiles de mascotas y productos.
+
+### 🛡️ Moderation Hub & Seguridad RBAC
+- **Centro de Control:** Panel administrativo unificado para la supervisión de usuarios, albergues y vendedores con flujos de aprobación transaccionales.
+- **Seguridad Multimedia:** Sistema centralizado en `/api/cloudinary/delete` con verificación de propiedad (RBAC) para la eliminación segura de recursos.
+- **Auditoría Polimórfica:** Bitácora `SystemAuditLog` para el rastreo atómico de acciones administrativas con justificación obligatoria.
 
 ### 🌌 404 Orbital Engine
-- **Simulación Física:** Motor en Canvas 2D basado en las Leyes de Kepler para una experiencia visual inmersiva en páginas no encontradas.
-- **Proyección Isométrica:** Simulación de profundidad 3D con oclusión dinámica de elementos de marca.
-
-### 🛡️ Moderation Hub & Seguridad
-- **Gestión Centralizada:** Panel administrativo unificado para la supervisión de usuarios, albergues y vendedores.
-- **Auditoría Polimórfica:** Sistema `SystemAuditLog` para el rastreo atómico de acciones administrativas con justificación obligatoria.
-- **Protección de Datos:** Implementación de `PasswordInput` con toggle de visibilidad y validaciones estrictas vía Zod.
+- **Simulación Física:** Motor en Canvas 2D basado en las Leyes de Kepler y proyección isométrica para una experiencia inmersiva en páginas no encontradas.
 
 ### 🗺️ Visualización Geoespacial
-- **Mapa Interactivo:** Integración con Leaflet para la localización de refugios en el Valle de Aburrá mediante geocodificación proactiva.
+- **Mapa Interactivo:** Integración con Leaflet para la localización de refugios en el Valle de Aburrá mediante geocodificación proactiva y búsqueda por municipio.
 
 ### 📧 Sistema de Notificaciones
-- **Email Engine:** Integración con Resend y React Email para el envío de notificaciones transaccionales (adopciones, pedidos, seguridad) con 11 plantillas personalizadas.
+- **Email Engine:** Integración con Resend y React Email para el envío de notificaciones transaccionales con 11 plantillas personalizadas (adopciones, pedidos, seguridad).
 
 ### 📊 Analítica y Reportes
-- **Dashboard de Métricas:** Visualización de tendencias mediante Recharts.
-- **Motores de Exportación:** Generación de reportes profesionales en formatos Excel, PDF (con autotable) y CSV.
+- **Dashboard de Métricas:** Visualización de tendencias mediante Recharts y exportación de reportes profesionales en formatos Excel, PDF y CSV.
 
 ---
 
 ## 🛠️ Tecnologías y Herramientas
 
-| Capa | Tecnología | Versión |
+| Capa | Tecnología | Propósito |
 | :--- | :--- | :--- |
-| **Framework** | Next.js (App Router) | 14.2.33 |
-| **Lenguaje** | TypeScript | 5.0 |
-| **Base de Datos** | MongoDB Atlas | Cloud |
-| **ORM** | Prisma | 6.2.1 |
-| **Autenticación** | NextAuth.js | 4.24.7 |
-| **Estilos** | Tailwind CSS | 3.4.1 |
-| **IA** | Google Generative AI | 0.24.1 |
-| **Emails** | Resend / React Email | 6.12.2 / 1.0.12 |
-| **Mapas** | Leaflet / React Leaflet | 1.9.4 / 4.2.1 |
-| **Analítica** | Recharts | 3.8.1 |
-| **Testing** | Vitest / JSDOM | 4.0.16 / 27.4.0 |
+| **Framework** | Next.js 14.2.33 (App Router) | Core de la aplicación y SSR |
+| **Lenguaje** | TypeScript 5.0 | Tipado estricto y seguridad |
+| **Base de Datos** | MongoDB Atlas | Persistencia de datos NoSQL |
+| **ORM** | Prisma 6.2.1 | Modelado y transacciones atómicas |
+| **Autenticación** | NextAuth.js 4.24.7 | Gestión de sesiones y roles |
+| **Estilos** | Tailwind CSS 3.4.1 | Diseño responsive y componentes UI |
+| **IA** | Google Generative AI | Refinamiento de contenido |
+| **Emails** | Resend / React Email | Motor de notificaciones |
+| **Analítica** | Recharts / ExcelJS / jsPDF | Visualización y exportación de datos |
+| **Testing** | Vitest / JSDOM | Suite de pruebas unitarias y de UI |
 
 ---
 
@@ -88,10 +84,9 @@ A través de la integración de **IA Generativa**, **Geolocalización** y un **M
 ```text
 ├── app/                # Rutas, APIs y Layouts (App Router)
 ├── components/         # Componentes React (UI, Forms, Layout, etc.)
-├── docs/               # Documentación técnica y legal del proyecto
 ├── lib/                # Servicios, utilidades, hooks y validaciones
 ├── prisma/             # Esquema de base de datos y scripts de seed
-├── public/             # Assets estáticos (imágenes, fuentes)
+├── public/             # Assets estáticos y documentación (public/docs)
 ├── scripts/            # Scripts de automatización y mantenimiento
 ├── types/              # Definiciones de tipos TypeScript globales
 └── tests/              # Suite de pruebas unitarias y de integración
@@ -116,14 +111,14 @@ A través de la integración de **IA Generativa**, **Geolocalización** y un **M
     ```bash
     npm install
     ```
-3.  **Configurar Variables de Entorno:**
-    Cree un archivo `.env` en la raíz basado en el estándar del proyecto:
+3.  **Configurar Variables de Envío:**
+    Cree un archivo `.env` basado en `.env.local.example`:
     ```env
     DATABASE_URL="mongodb+srv://..."
     NEXTAUTH_SECRET="su_secreto"
     GEMINI_API_KEY="su_api_key"
     RESEND_API_KEY="su_api_key"
-    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="su_cloud_name"
+    EMAIL_FROM="onboarding@resend.dev"
     ```
 4.  **Inicializar Base de Datos:**
     ```bash
@@ -137,7 +132,7 @@ A través de la integración de **IA Generativa**, **Geolocalización** y un **M
 
 - **Desarrollo:** `npm run dev` (Inicia en `localhost:3000`)
 - **Producción:** `npm run build` seguido de `npm run start`
-- **Pruebas:** `npm run test` (Ejecuta Vitest)
+- **Pruebas:** `npm run test` (Ejecuta la suite de Vitest)
 - **Linting:** `npm run lint` (Verifica estándares de código)
 
 ---
