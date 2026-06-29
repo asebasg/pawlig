@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 28 de junio de 2026.
+> **Última actualización**: 29 de junio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -367,6 +367,7 @@ model SystemAuditLog {
 
 ```text
 .
+├── .eslintrc.json
 ├── .github
 │   ├── ISSUE_TEMPLATE
 │   │   ├── bug-report.md
@@ -376,6 +377,12 @@ model SystemAuditLog {
 │   │   ├── question.md
 │   │   └── refactor.md
 │   └── pull_request_template.md
+├── .gitignore
+├── .rules.md
+├── CHANGELOG.md
+├── CONTEXT.md
+├── DEV_NOTES.md
+├── README.md
 ├── app
 │   ├── (auth)
 │   │   ├── login
@@ -399,6 +406,8 @@ model SystemAuditLog {
 │   │   │   │   ├── audit
 │   │   │   │   │   ├── audit-log-viewer.tsx
 │   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── page.tsx
 │   │   │   │   ├── shelters
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── shelter-moderation-client.tsx
@@ -411,19 +420,18 @@ model SystemAuditLog {
 │   │   │   │   │   ├── block-user-modal.tsx
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── users-management-client.tsx
-│   │   │   │   ├── vendors
-│   │   │   │   │   ├── page.tsx
-│   │   │   │   │   └── vendor-moderation-client.tsx
-│   │   │   │   ├── layout.tsx
-│   │   │   │   └── page.tsx
-│   │   │   ├── profile
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
+│   │   │   │   └── vendors
+│   │   │   │       ├── page.tsx
+│   │   │   │       └── vendor-moderation-client.tsx
+│   │   │   ├── page.tsx
+│   │   │   └── profile
+│   │   │       └── page.tsx
 │   │   ├── shelter
 │   │   │   ├── adoptions
 │   │   │   │   └── page.tsx
 │   │   │   ├── metrics
 │   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
 │   │   │   ├── pets
 │   │   │   │   ├── [id]
 │   │   │   │   │   └── edit
@@ -431,22 +439,22 @@ model SystemAuditLog {
 │   │   │   │   ├── new
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
-│   │   │   ├── profile
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
+│   │   │   └── profile
+│   │   │       └── page.tsx
 │   │   ├── user
+│   │   │   ├── page.tsx
 │   │   │   ├── profile
 │   │   │   │   └── page.tsx
 │   │   │   ├── request-shelter
 │   │   │   │   └── page.tsx
-│   │   │   ├── request-vendor
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
+│   │   │   └── request-vendor
+│   │   │       └── page.tsx
 │   │   └── vendor
 │   │       ├── metrics
 │   │       │   └── page.tsx
 │   │       ├── orders
 │   │       │   └── page.tsx
+│   │       ├── page.tsx
 │   │       ├── products
 │   │       │   ├── [id]
 │   │       │   │   └── edit
@@ -454,9 +462,8 @@ model SystemAuditLog {
 │   │       │   ├── new
 │   │       │   │   └── page.tsx
 │   │       │   └── page.tsx
-│   │       ├── profile
-│   │       │   └── page.tsx
-│   │       └── page.tsx
+│   │       └── profile
+│   │           └── page.tsx
 │   ├── (public)
 │   │   ├── adopciones
 │   │   │   ├── [id]
@@ -465,10 +472,10 @@ model SystemAuditLog {
 │   │   ├── albergues
 │   │   │   └── page.tsx
 │   │   ├── changelog
+│   │   │   ├── changelog-client.tsx
 │   │   │   ├── dev
 │   │   │   │   ├── dev-notes-client.tsx
 │   │   │   │   └── page.tsx
-│   │   │   ├── changelog-client.tsx
 │   │   │   └── page.tsx
 │   │   ├── faq
 │   │   │   └── page.tsx
@@ -495,16 +502,16 @@ model SystemAuditLog {
 │   │   │   │   │   ├── export
 │   │   │   │   │   │   └── route.ts
 │   │   │   │   │   └── route.ts
-│   │   │   │   ├── sales
-│   │   │   │   │   ├── export
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   ├── orders
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   ├── products
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   ├── trends
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   └── route.ts
+│   │   │   │   └── sales
+│   │   │   │       ├── export
+│   │   │   │       │   └── route.ts
+│   │   │   │       ├── orders
+│   │   │   │       │   └── route.ts
+│   │   │   │       ├── products
+│   │   │   │       │   └── route.ts
+│   │   │   │       ├── route.ts
+│   │   │   │       └── trends
+│   │   │   │           └── route.ts
 │   │   │   ├── moderation
 │   │   │   │   ├── audit
 │   │   │   │   │   └── route.ts
@@ -541,7 +548,7 @@ model SystemAuditLog {
 │   │   │   ├── forgot-password
 │   │   │   │   └── route.ts
 │   │   │   └── register
-│   │   │      └── route.ts
+│   │   │       └── route.ts
 │   │   ├── cart
 │   │   │   ├── [id]
 │   │   │   │   └── route.ts
@@ -554,18 +561,18 @@ model SystemAuditLog {
 │   │   ├── pets
 │   │   │   ├── [id]
 │   │   │   │   ├── favorite
-│   │  │   │   │   └── route.ts
-│   │   │   │   ├── status
 │   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
-│   │   │   ├── search
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
+│   │   │   │   ├── route.ts
+│   │   │   │   └── status
+│   │   │   │       └── route.ts
+│   │   │   ├── route.ts
+│   │   │   └── search
+│   │   │       └── route.ts
 │   │   ├── products
 │   │   │   ├── [id]
-│   │   │   │   ├── stock
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
+│   │   │   │   ├── route.ts
+│   │   │   │   └── stock
+│   │   │   │       └── route.ts
 │   │   │   └── route.ts
 │   │   ├── shelter
 │   │   │   ├── adoptions
@@ -580,7 +587,7 @@ model SystemAuditLog {
 │   │   │   │   └── route.ts
 │   │   │   ├── map
 │   │   │   │   └── route.ts
-│   │   │  └── search
+│   │   │   └── search
 │   │   │       └── route.ts
 │   │   ├── upload
 │   │   │   └── route.ts
@@ -603,9 +610,9 @@ model SystemAuditLog {
 │   │       │   │   └── route.ts
 │   │       │   ├── products
 │   │       │   │   └── route.ts
-│   │       │   ├── trends
-│   │       │   │   └── route.ts
-│   │       │   └── route.ts
+│   │       │   ├── route.ts
+│   │       │   └── trends
+│   │       │       └── route.ts
 │   │       └── profile
 │   │           └── route.ts
 │   ├── fonts
@@ -617,13 +624,11 @@ model SystemAuditLog {
 │   ├── not-found.tsx
 │   └── page.tsx
 ├── components
+│   ├── PetDetailClient.tsx
+│   ├── PetGalleryClient.tsx
+│   ├── ProductDetailClient.tsx
+│   ├── ProductGalleryClient.tsx
 │   ├── admin
-│   │   ├── docs
-│   │   │   ├── doc-viewer.tsx
-│   │   │   └── docs-sidebar.tsx
-│   │   ├── metrics
-│   │   │   ├── admin-dashboard-tabs.tsx
-│   │   │   └── admin-metrics-client.tsx
 │   │   ├── AdminDashboardClient.tsx
 │   │   ├── AuditHistoryCard.tsx
 │   │   ├── BlockUserButton.tsx
@@ -632,6 +637,12 @@ model SystemAuditLog {
 │   │   ├── RoleChangeModal.tsx
 │   │   ├── UserActionsClient.tsx
 │   │   ├── UserViewClient.tsx
+│   │   ├── docs
+│   │   │   ├── doc-viewer.tsx
+│   │   │   └── docs-sidebar.tsx
+│   │   ├── metrics
+│   │   │   ├── admin-dashboard-tabs.tsx
+│   │   │   └── admin-metrics-client.tsx
 │   │   ├── moderation-tabs.tsx
 │   │   └── reject-request-modal.tsx
 │   ├── adopter
@@ -681,20 +692,20 @@ model SystemAuditLog {
 │   ├── products
 │   │   └── PaymentModal.tsx
 │   ├── shelter
+│   │   ├── AdoptionStats.tsx
+│   │   ├── ShelterDashboardClient.tsx
 │   │   ├── adoptions
 │   │   │   ├── adoptions-client.tsx
 │   │   │   ├── adoptions-table.tsx
 │   │   │   ├── application-card.tsx
 │   │   │   ├── applications-list.tsx
 │   │   │   └── approval-modal.tsx
-│   │   ├── metrics
-│   │   │   ├── adoption-charts.tsx
-│   │   │   ├── adoption-filters.tsx
-│   │   │   ├── adoption-metrics-client.tsx
-│   │   │   ├── adoption-table.tsx
-│   │   │   └── export-buttons.tsx
-│   │   ├── AdoptionStats.tsx
-│   │   └── ShelterDashboardClient.tsx
+│   │   └── metrics
+│   │       ├── adoption-charts.tsx
+│   │       ├── adoption-filters.tsx
+│   │       ├── adoption-metrics-client.tsx
+│   │       ├── adoption-table.tsx
+│   │       └── export-buttons.tsx
 │   ├── shelters
 │   │   ├── municipality-filter.tsx
 │   │   └── shelter-search.tsx
@@ -718,29 +729,29 @@ model SystemAuditLog {
 │   │   ├── radio-group.tsx
 │   │   ├── select.tsx
 │   │   └── table.tsx
-│   ├── vendor
-│   │   ├── metrics
-│   │   │   ├── metrics-cards.tsx
-│   │   │   ├── metrics-filters.tsx
-│   │   │   ├── orders-by-status-chart.tsx
-│   │   │   ├── sales-chart.tsx
-│   │   │   ├── top-products-table.tsx
-│   │   │   └── vendor-metrics-client.tsx
-│   │   ├── ProductTable.tsx
-│   │   ├── ProductsClient.tsx
-│   │   ├── StockUpdateModal.tsx
-│   │   ├── VendorDashboardClient.tsx
-│   │   └── VendorStats.tsx
-│   ├── PetDetailClient.tsx
-│   ├── PetGalleryClient.tsx
-│   ├── ProductDetailClient.tsx
-│   └── ProductGalleryClient.tsx
+│   └── vendor
+│       ├── ProductTable.tsx
+│       ├── ProductsClient.tsx
+│       ├── StockUpdateModal.tsx
+│       ├── VendorDashboardClient.tsx
+│       ├── VendorStats.tsx
+│       └── metrics
+│           ├── metrics-cards.tsx
+│           ├── metrics-filters.tsx
+│           ├── orders-by-status-chart.tsx
+│           ├── sales-chart.tsx
+│           ├── top-products-table.tsx
+│           └── vendor-metrics-client.tsx
+├── credentials-seed.txt
+├── full_tree.txt
 ├── lib
 │   ├── auth
 │   │   ├── auth-options.ts
 │   │   ├── password.ts
 │   │   ├── require-role.ts
 │   │   └── session.ts
+│   ├── cloudinary.ts
+│   ├── constants.ts
 │   ├── email
 │   │   ├── components
 │   │   │   └── EmailLayout.tsx
@@ -782,17 +793,21 @@ model SystemAuditLog {
 │   │   ├── export-excel.ts
 │   │   ├── export-pdf.ts
 │   │   └── logger.ts
-│   ├── validations
-│   │   ├── adoption.schema.ts
-│   │   ├── cart.schema.ts
-│   │   ├── cloudinary.schema.ts
-│   │   ├── pet-search.schema.ts
-│   │   ├── pet.schema.ts
-│   │   ├── product.schema.ts
-│   │   └── user.schema.ts
-│   ├── cloudinary.ts
-│   ├── constants.ts
-│   └── utils.ts
+│   ├── utils.ts
+│   └── validations
+│       ├── adoption.schema.ts
+│       ├── cart.schema.ts
+│       ├── cloudinary.schema.ts
+│       ├── pet-search.schema.ts
+│       ├── pet.schema.ts
+│       ├── product.schema.ts
+│       └── user.schema.ts
+├── middleware.ts
+├── monthly-updates.md
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
 ├── prisma
 │   ├── schema.prisma
 │   └── seed.ts
@@ -808,7 +823,7 @@ model SystemAuditLog {
 │   │   ├── 08_Arquitectura_Software.md
 │   │   ├── 09_Modelo_Entidad_Relacion.md
 │   │   ├── 10_Diagramas_UML.md
-│   │  ├── 11_Manual_Diseño.md
+│   │   ├── 11_Manual_Diseño.md
 │   │   ├── 12_Plan_de_Pruebas.md
 │   │   ├── 13_Casos_de_Prueba.md
 │   │   └── 14_Manual_del_Usuario.md
@@ -834,6 +849,8 @@ model SystemAuditLog {
 │   ├── create-pr.sh
 │   ├── geocode-shelters.ts
 │   └── test-live-emails.ts
+├── tailwind.config.ts
+├── tsconfig.json
 ├── types
 │   ├── adoption.ts
 │   ├── api.types.ts
@@ -842,25 +859,11 @@ model SystemAuditLog {
 │   ├── next-auth.d.ts
 │   ├── report.types.ts
 │   └── shelter.ts
-├── .env.local.example
-├── .eslintrc.json
-├── .gitignore
-├── .rules.md
-├── CHANGELOG.md
-├── CONTEXT.md
-├── DEV_NOTES.md
-├── README.md
-├── credentials-seed.txt
-├── middleware.ts
-├── monthly-updates.md
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.ts
-├── tsconfig.json
 ├── vitest.config.ts
 └── vitest.setup.ts
+
+163 directories, 332 files
+```
 
 ---
 
@@ -918,7 +921,7 @@ model SystemAuditLog {
   - `@tailwindcss/typography`: `^0.5.20`: Estilos tipográficos.
 - **TypeScript & Typing**:
   - `typescript`: `^5` - Lenguaje principal.
-  - `@types/node`, `@types/react`, `@types/react-dom`, `@types/bcryptjs`, `@types/exceljs`, `@types/jspdf`, `@types/leaflet`: Definiciones de tipos estáticos.
+  - `@types/node`: `^20`, `@types/react`: `^18`, `@types/react-dom`: `^18`, `@types/bcryptjs`: `^2.4.6`, `@types/exceljs`: `^0.5.3`, `@types/jspdf`: `^1.3.3`, `@types/leaflet`: `^1.9.21`: Definiciones de tipos estáticos.
 - **Runtime & Helpers**:
   - `ts-node`: `^10.9.2` - Ejecución de TypeScript.
   - `dotenv`: `^17.2.3` - Gestión de variables de entorno.
