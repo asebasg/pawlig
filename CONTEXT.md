@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 29 de junio de 2026.
+> **Última actualización**: 30 de junio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -637,6 +637,7 @@ model SystemAuditLog {
 │   │   ├── RoleChangeModal.tsx
 │   │   ├── UserActionsClient.tsx
 │   │   ├── UserViewClient.tsx
+│   │   ├── approve-request-modal.tsx
 │   │   ├── docs
 │   │   │   ├── doc-viewer.tsx
 │   │   │   └── docs-sidebar.tsx
@@ -711,6 +712,7 @@ model SystemAuditLog {
 │   │   └── shelter-search.tsx
 │   ├── ui
 │   │   ├── address-input.tsx
+│   │   ├── ai-refine-button.tsx
 │   │   ├── alert-dialog.tsx
 │   │   ├── badge.tsx
 │   │   ├── button-variants.ts
@@ -743,7 +745,6 @@ model SystemAuditLog {
 │           ├── top-products-table.tsx
 │           └── vendor-metrics-client.tsx
 ├── credentials-seed.txt
-├── full_tree.txt
 ├── lib
 │   ├── auth
 │   │   ├── auth-options.ts
@@ -805,7 +806,6 @@ model SystemAuditLog {
 ├── middleware.ts
 ├── monthly-updates.md
 ├── next.config.mjs
-├── package-lock.json
 ├── package.json
 ├── postcss.config.mjs
 ├── prisma
@@ -861,8 +861,6 @@ model SystemAuditLog {
 │   └── shelter.ts
 ├── vitest.config.ts
 └── vitest.setup.ts
-
-163 directories, 332 files
 ```
 
 ---
