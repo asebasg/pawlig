@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 30 de junio de 2026.
+> **Última actualización**: 02 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -367,6 +367,7 @@ model SystemAuditLog {
 
 ```text
 .
+├── .env.local.example
 ├── .eslintrc.json
 ├── .github
 │   ├── ISSUE_TEMPLATE
@@ -806,6 +807,7 @@ model SystemAuditLog {
 ├── middleware.ts
 ├── monthly-updates.md
 ├── next.config.mjs
+├── package-lock.json
 ├── package.json
 ├── postcss.config.mjs
 ├── prisma
@@ -875,10 +877,16 @@ model SystemAuditLog {
   - `react-dom`: `^18` - Renderizado DOM para React.
   - `swr`: `^2.4.1` - Estrategia de fetching de datos.
 - **UI & Components (Radix UI & Shadcn)**:
-  - `@radix-ui/react-checkbox`: `^1.3.3`, `@radix-ui/react-label`: `^2.1.8`, `@radix-ui/react-radio-group`: `^1.3.8`, `@radix-ui/react-select`: `^2.2.6`, `@radix-ui/react-slot`: `^1.2.4`: Primitivos de componentes accesibles.
+  - `@radix-ui/react-checkbox`: `^1.3.3` - Primitivo de componente de checkbox accesible.
+  - `@radix-ui/react-label`: `^2.1.8` - Primitivo de componente de etiqueta accesible.
+  - `@radix-ui/react-radio-group`: `^1.3.8` - Primitivo de componente de grupo de radio accesible.
+  - `@radix-ui/react-select`: `^2.2.6` - Primitivo de componente de selección accesible.
+  - `@radix-ui/react-slot`: `^1.2.4` - Primitivo para composición de componentes.
   - `lucide-react`: `^0.554.0` - Iconografía.
   - `sonner`: `^2.0.7` - Notificaciones toast.
-  - `class-variance-authority`: `^0.7.1`, `clsx`: `^2.1.1`, `tailwind-merge`: `^3.4.0`: Utilidades para gestión de clases CSS.
+  - `class-variance-authority`: `^0.7.1` - Utilidad para gestión de variantes de componentes.
+  - `clsx`: `^2.1.1` - Utilidad para condicionales de clases CSS.
+  - `tailwind-merge`: `^3.4.0` - Utilidad para fusionar clases de Tailwind CSS.
   - `react-day-picker`: `^10.0.0` - Selector de fechas.
   - `recharts`: `^3.8.1` - Visualización de datos y gráficos.
 - **Formularios & Validación**:
@@ -895,33 +903,49 @@ model SystemAuditLog {
   - `@google/generative-ai`: `^0.24.1` - Integración con Google Gemini AI.
 - **Emailing System**:
   - `resend`: `^6.12.2` - Servicio de envío de correos electrónicos.
-  - `@react-email/components`: `^1.0.12`, `@react-email/render`: `^2.0.7`: Motor de plantillas de email.
+  - `@react-email/components`: `^1.0.12` - Componentes de React para emails.
+  - `@react-email/render`: `^2.0.7` - Motor de renderizado para plantillas de email.
 - **Geolocalización & Mapas**:
-  - `leaflet`: `^1.9.4`, `react-leaflet`: `^4.2.1`: Visualización geoespacial.
+  - `leaflet`: `^1.9.4` - Biblioteca para mapas interactivos.
+  - `react-leaflet`: `^4.2.1` - Integración de Leaflet con React.
 - **Reportes & Utilidades**:
   - `exceljs`: `^4.4.0` - Generación de archivos Excel.
-  - `jspdf`: `^4.2.1`, `jspdf-autotable`: `^5.0.7`: Generación de PDFs.
+  - `jspdf`: `^4.2.1` - Generación de PDFs.
+  - `jspdf-autotable`: `^5.0.7` - Plugin para tablas en jspdf.
   - `axios`: `^1.13.2` - Cliente HTTP.
   - `date-fns`: `^4.1.0` - Manipulación de fechas.
-  - `remark` (ecosistema): `remark`: `^15.0.1`, `remark-gfm`: `^4.0.1`, `remark-html`: `^16.0.1`: Procesamiento de Markdown.
+  - `remark`: `^15.0.1` - Procesamiento de Markdown.
+  - `remark-gfm`: `^4.0.1` - Soporte para GitHub Flavored Markdown.
+  - `remark-html`: `^16.0.1` - Conversión de Markdown a HTML.
   - `unist-util-visit`: `^5.1.0` - Utilidad para visitar nodos en árboles syntax.
 
 ### Dependencias de Desarrollo & Testing
 
 - **Testing Framework**:
   - `vitest`: `^4.0.16` - Framework de pruebas.
-  - `@testing-library/react`: `^16.3.1`, `@testing-library/jest-dom`: `^6.9.1`, `@testing-library/user-event`: `^14.6.1`: Pruebas de integración de UI.
+  - `@testing-library/react`: `^16.3.1` - Utilidades para pruebas de componentes React.
+  - `@testing-library/jest-dom`: `^6.9.1` - Matchers de Jest para el DOM.
+  - `@testing-library/user-event`: `^14.6.1` - Simulación de eventos de usuario (presente en dependencies por requisitos de entorno).
   - `jsdom`: `^27.4.0` - Simulación de entorno DOM.
   - `@vitest/coverage-v8`: `^4.0.16` - Reportes de cobertura.
 - **Estilos & Build Tools**:
-  - `tailwindcss`: `^3.4.1`, `postcss`: `^8`: Procesamiento de estilos.
-  - `eslint`: `^8`, `eslint-config-next`: `14.2.33`: Linter de código.
-  - `@tailwindcss/typography`: `^0.5.20`: Estilos tipográficos.
+  - `tailwindcss`: `^3.4.1` - Framework CSS basado en utilidades.
+  - `postcss`: `^8` - Procesador de estilos CSS.
+  - `eslint`: `^8` - Herramienta de linting.
+  - `eslint-config-next`: `14.2.33` - Configuración de ESLint para Next.js.
+  - `@tailwindcss/typography`: `^0.5.20` - Plugin de tipografía para Tailwind CSS.
 - **TypeScript & Typing**:
   - `typescript`: `^5` - Lenguaje principal.
-  - `@types/node`: `^20`, `@types/react`: `^18`, `@types/react-dom`: `^18`, `@types/bcryptjs`: `^2.4.6`, `@types/exceljs`: `^0.5.3`, `@types/jspdf`: `^1.3.3`, `@types/leaflet`: `^1.9.21`: Definiciones de tipos estáticos.
+  - `@types/node`: `^20` - Tipos para Node.js.
+  - `@types/react`: `^18` - Tipos para React.
+  - `@types/react-dom`: `^18` - Tipos para React DOM.
+  - `@types/bcryptjs`: `^2.4.6` - Tipos para bcryptjs.
+  - `@types/exceljs`: `^0.5.3` - Tipos para exceljs.
+  - `@types/jspdf`: `^1.3.3` - Tipos para jspdf.
+  - `@types/leaflet`: `^1.9.21` - Tipos para Leaflet.
 - **Runtime & Helpers**:
-  - `ts-node`: `^10.9.2` - Ejecución de TypeScript.
+  - `ts-node`: `^10.9.2` - Ejecución de TypeScript en Node.js.
   - `dotenv`: `^17.2.3` - Gestión de variables de entorno.
-  - `vite-tsconfig-paths`: `^6.0.3`, `@vitejs/plugin-react`: `^5.1.2`: Configuración de entorno de Vite.
+  - `vite-tsconfig-paths`: `^6.0.3` - Resolución de paths de tsconfig en Vite.
+  - `@vitejs/plugin-react`: `^5.1.2` - Plugin de React para Vite.
   - `prisma`: `^6.2.1` - CLI de Prisma ORM.
