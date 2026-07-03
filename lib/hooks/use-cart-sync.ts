@@ -1,12 +1,16 @@
 /**
- * Descripción: Hook especializado para la sincronización en tiempo real del carrito (Polling).
- * Requiere: Hook principal `useCart` (este archivo lo complementa).
+ * Descripcion: Hook especializado para la sincronizacion en tiempo real del carrito (Polling).
+ *   Incorpora verificacion de sesion para suspender el polling automaticamente
+ *   cuando el usuario no esta autenticado: la key de SWR se fija en null,
+ *   deteniendo tanto el fetch inicial como el intervalo de 30 s.
+ * Requiere: Sesion activa de NextAuth (status === "authenticated") y hook useCart.
  * Implementa: HU-009 (Notificaciones de cambios en tiempo real del carrito)
  */
 
 import { useEffect, useRef } from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 import { CartData, CartItemType } from "./use-cart";
 
 const fetcher = async (url: string) => {
@@ -17,11 +21,12 @@ const fetcher = async (url: string) => {
 };
 
 export function useCartSync() {
+  const { status } = useSession();
   const previousItemsRef = useRef<Record<string, number>>({});
 
   // Polling configurado para ejecutarse cada 30 segundos
   const { data, error, mutate, isLoading } = useSWR<CartData>(
-    "/api/cart",
+    status === "authenticated" ? "/api/cart" : null,
     fetcher,
     {
       refreshInterval: 30000,
@@ -81,20 +86,34 @@ export function useCartSync() {
 
 /*
  * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
+ * NOTAS DE IMPLEMENTACION
  * ---------------------------------------------------------------------------
  *
- * Descripción General:
- * Mantiene el carrito actualizado automáticamente. Implementa polling mediante SWR
- * para consultar el servidor cada 30 segundos y notifica al usuario si ocurren
- * cambios inesperados (como que el middleware de Prisma elimine un item agotado).
+ * Descripcion General:
+ * Mantiene el carrito actualizado automaticamente. Implementa polling mediante
+ * SWR para consultar el servidor cada 30 segundos y notifica al usuario si
+ * ocurren cambios inesperados (por ejemplo, cuando el middleware de Prisma
+ * elimina un item agotado o el vendedor actualiza un precio).
  *
- * Lógica Clave:
- * - Detección de Deltas: Se utiliza `useRef` para almacenar un diccionario de los
- *   ítems (ID -> Precio) obtenidos en la última consulta exitosa. Luego se compara
- *   contra la consulta actual.
- * - Experiencia de Usuario: Si un producto desaparece misteriosamente de la lista
- *   (porque su stock llegó a 0 y el backend lo eliminó), se lanza un toast tipo
- *   warning para que el usuario no crea que es un bug visual.
+ * Logica Clave:
+ * - Verificacion de Sesion (Performance): Se obtiene el estado de autenticacion
+ *   con useSession(). La key del useSWR se evalua como:
+ *   status === "authenticated" ? "/api/cart" : null
+ *   Con key null, SWR suspende el fetch inicial y deja de programar el
+ *   intervalo de refreshInterval (30 s), eliminando por completo el polling
+ *   para usuarios anonimos sin necesidad de condiciones adicionales.
+ * - Deteccion de Deltas: Se utiliza useRef para almacenar un diccionario de los
+ *   items (ID -> Precio) obtenidos en la ultima consulta exitosa. Luego se
+ *   compara contra la consulta actual para detectar eliminaciones y cambios de
+ *   precio entre ciclos de polling.
+ * - Experiencia de Usuario: Si un producto desaparece de la lista (stock a 0
+ *   y el backend lo elimino), se lanza un toast tipo warning. Si el precio
+ *   cambia, se lanza un toast tipo info. Ambos tienen duracion extendida (6 s)
+ *   para asegurar que el usuario los vea.
+ *
+ * Dependencias Externas:
+ * - next-auth/react: useSession para leer el estado de autenticacion.
+ * - swr: Polling automatico con cache compartida con useCart.
+ * - sonner: Notificaciones de feedback al usuario.
  *
  */
