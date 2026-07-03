@@ -1,11 +1,15 @@
 /**
  * Descripción: Hook principal para gestionar el carrito de compras usando SWR.
- * Requiere: Usuario autenticado (NextAuth).
- * Implementa: HU-009 (Gestión del carrito)
+ *   Incluye verificacion de sesion (NextAuth) para evitar peticiones al API
+ *   cuando el usuario no esta autenticado: la key de SWR se establece en null
+ *   en ese caso, suprimiendo fetch y revalidaciones de forma nativa.
+ * Requiere: Sesion activa de NextAuth (status === "authenticated").
+ * Implementa: HU-009 (Gestion del carrito)
  */
 
 import useSWR from "swr";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 // Interfaces para el tipado
 export interface CartProduct {
@@ -46,9 +50,10 @@ const fetcher = async (url: string) => {
   return data;
 };
 
-export function useCart() {
+export function useCart(enabled: boolean = true) {
+  const { status } = useSession();
   const { data, error, isLoading, mutate } = useSWR<CartData>(
-    "/api/cart",
+    status === "authenticated" && enabled ? "/api/cart" : null,
     fetcher,
   );
 
@@ -195,19 +200,31 @@ export function useCart() {
 
 /*
  * ---------------------------------------------------------------------------
- * NOTAS DE IMPLEMENTACIÓN
+ * NOTAS DE IMPLEMENTACION
  * ---------------------------------------------------------------------------
  *
- * Descripción General:
+ * Descripcion General:
  * Proporciona todas las operaciones necesarias para interactuar con el carrito
  * desde el cliente, manteniendo el estado sincronizado con el backend usando SWR.
  *
- * Lógica Clave:
- * - Actualización Optimista: 'updateQuantity' y 'removeItem' modifican el estado local
- *   inmediatamente usando 'mutate(newData, false)' antes de hacer la petición HTTP.
- *   Esto hace que la UI se sienta instantánea (UX premium). Si la petición falla,
- *   se llama a 'mutate()' sin argumentos para revertir a los datos reales de la BD.
- * - Tipado: Se exportan interfaces como 'CartItemType' para que los componentes UI
- *   puedan tipar correctamente sus props.
+ * Logica Clave:
+ * - Verificacion de Sesion (Performance): Se obtiene el estado de autenticacion
+ *   con useSession(). La key del useSWR se evalua como:
+ *   status === "authenticated" ? "/api/cart" : null
+ *   Cuando es null, SWR no ejecuta ningun fetch ni programa revalidaciones,
+ *   eliminando peticiones 401 innecesarias para usuarios anonimos o en estado
+ *   "loading". Esto reduce trafico de red y errores en consola.
+ * - Actualizacion Optimista: 'updateQuantity' y 'removeItem' modifican el estado
+ *   local inmediatamente usando 'mutate(newData, false)' antes de hacer la
+ *   peticion HTTP. Esto hace que la UI se sienta instantanea (UX premium).
+ *   Si la peticion falla, se llama a 'mutate()' sin argumentos para revertir
+ *   a los datos reales de la base de datos.
+ * - Tipado: Se exportan interfaces como 'CartItemType' para que los componentes
+ *   UI puedan tipar correctamente sus props.
+ *
+ * Dependencias Externas:
+ * - next-auth/react: useSession para leer el estado de autenticacion.
+ * - swr: Gestion de estado asincrono con cache y revalidacion.
+ * - sonner: Notificaciones de feedback al usuario.
  *
  */
