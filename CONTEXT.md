@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 04 de julio de 2026.
+> **Última actualización**: 05 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -442,29 +442,29 @@ model SystemAuditLog {
 │   │   │   │   └── page.tsx
 │   │   │   └── profile
 │   │   │       └── page.tsx
-│   │   ├── user
-│   │   │   ├── page.tsx
-│   │   │   ├── profile
+│   ├── (user)
+│   │   ├── page.tsx
+│   │   ├── profile
+│   │   │   └── page.tsx
+│   │   ├── request-shelter
+│   │   │   └── page.tsx
+│   │   └── request-vendor
+│   │       └── page.tsx
+│   ├── (vendor)
+│   │   ├── metrics
+│   │   │   └── page.tsx
+│   │   ├── orders
+│   │   │   └── page.tsx
+│   │   ├── page.tsx
+│   │   ├── products
+│   │   │   ├── [id]
+│   │   │   │   └── edit
+│   │   │   │       └── page.tsx
+│   │   │   ├── new
 │   │   │   │   └── page.tsx
-│   │   │   ├── request-shelter
-│   │   │   │   └── page.tsx
-│   │   │   └── request-vendor
-│   │   │       └── page.tsx
-│   │   └── vendor
-│   │       ├── metrics
-│   │       │   └── page.tsx
-│   │       ├── orders
-│   │       │   └── page.tsx
-│   │       ├── page.tsx
-│   │       ├── products
-│   │       │   ├── [id]
-│   │       │   │   └── edit
-│   │       │   │       └── page.tsx
-│   │       │   ├── new
-│   │       │   │   └── page.tsx
-│   │       │   └── page.tsx
-│   │       └── profile
-│   │           └── page.tsx
+│   │   │   └── page.tsx
+│   │   └── profile
+│   │       └── page.tsx
 │   ├── (public)
 │   │   ├── adopciones
 │   │   │   ├── [id]
@@ -546,6 +546,7 @@ model SystemAuditLog {
 │   │   ├── auth
 │   │   │   ├── [...nextauth]
 │   │   │   │   └── route.ts
+│   │   ├── auth
 │   │   │   ├── forgot-password
 │   │   │   │   └── route.ts
 │   │   │   └── register
@@ -561,8 +562,8 @@ model SystemAuditLog {
 │   │   │       └── route.ts
 │   │   ├── pets
 │   │   │   ├── [id]
-│   │  │   │   ├── favorite
-│   │  │   │   │   └── route.ts
+│   │   │   │   ├── favorite
+│   │   │   │   │   └── route.ts
 │   │   │   │   ├── route.ts
 │   │   │   │   └── status
 │   │   │   │       └── route.ts
@@ -576,19 +577,19 @@ model SystemAuditLog {
 │   │   │   │       └── route.ts
 │   │   │   └── route.ts
 │   │   ├── shelter
-│   │  │   ├── adoptions
+│   │   │   ├── adoptions
 │   │   │   │   └── route.ts
-│   │  │   └── reports
-│   │  │       └── adoptions
+│   │   │   └── reports
+│   │   │       └── adoptions
 │   │   │           ├── export
 │   │   │           │   └── route.ts
 │   │   │           └── route.ts
 │   │   ├── shelters
 │   │   │   ├── [id]
 │   │   │   │   └── route.ts
-│   │   │   ├── map
+│   │   ├── map
 │   │   │   │   └── route.ts
-│   │   │   └── search
+│   │   ├── search
 │   │   │       └── route.ts
 │   │   ├── upload
 │   │   │   └── route.ts
@@ -597,11 +598,11 @@ model SystemAuditLog {
 │   │   │   │   ├── check
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── route.ts
-│   │   │   ├── profile
+│   │   ├── profile
 │   │   │   │   └── route.ts
-│   │   │   ├── request-shelter-account
+│   │   ├── request-shelter-account
 │   │   │   │   └── route.ts
-│   │   │   └── request-vendor-account
+│   │   ├── request-vendor-account
 │   │   │       └── route.ts
 │   │   └── vendor
 │   │       ├── metrics
@@ -876,7 +877,7 @@ model SystemAuditLog {
   - `react`: `^18` - Biblioteca para interfaces de usuario.
   - `react-dom`: `^18` - Renderizado DOM para React.
   - `swr`: `^2.4.1` - Estrategia de fetching de datos.
-- **UI & Components (Radix UI & Shadcn)**:
+- **UI & Components**:
   - `@radix-ui/react-checkbox`: `^1.3.3` - Primitivo de componente de checkbox accesible.
   - `@radix-ui/react-label`: `^2.1.8` - Primitivo de componente de etiqueta accesible.
   - `@radix-ui/react-radio-group`: `^1.3.8` - Primitivo de componente de grupo de radio accesible.
@@ -889,15 +890,20 @@ model SystemAuditLog {
   - `tailwind-merge`: `^3.4.0` - Utilidad para fusionar clases de Tailwind CSS.
   - `react-day-picker`: `^10.0.0` - Selector de fechas.
   - `recharts`: `^3.8.1` - Visualización de datos y gráficos.
+  - `tailwindcss`: `^3.4.1` - Framework CSS basado en utilidades.
+  - `postcss`: `^8` - Procesador de estilos CSS.
+  - `@tailwindcss/typography`: `^0.5.20` - Plugin de tipografía para Tailwind CSS.
 - **Formularios & Validación**:
   - `react-hook-form`: `^7.66.1` - Gestión de formularios.
   - `@hookform/resolvers`: `^5.2.2` - Integración con validadores.
   - `zod`: `^4.1.12` - Esquemas de validación de tipos.
 - **Database & ORM**:
   - `@prisma/client`: `^6.2.1` - Cliente autogenerado de Prisma.
+  - `prisma`: `^6.2.1` - CLI de Prisma ORM.
 - **Autenticación & Seguridad**:
   - `next-auth`: `^4.24.7` - Autenticación para Next.js.
   - `bcryptjs`: `^3.0.3` - Hash de contraseñas.
+  - `@types/bcryptjs`: `^2.4.6` - Tipos para bcryptjs.
 - **Servicios Externos & IA**:
   - `cloudinary`: `^2.8.0` - Gestión de imágenes en la nube.
   - `@google/generative-ai`: `^0.24.1` - Integración con Google Gemini AI.
@@ -908,9 +914,12 @@ model SystemAuditLog {
 - **Geolocalización & Mapas**:
   - `leaflet`: `^1.9.4` - Biblioteca para mapas interactivos.
   - `react-leaflet`: `^4.2.1` - Integración de Leaflet con React.
+  - `@types/leaflet`: `^1.9.21` - Tipos para Leaflet.
 - **Reportes & Utilidades**:
   - `exceljs`: `^4.4.0` - Generación de archivos Excel.
+  - `@types/exceljs`: `^0.5.3` - Tipos para exceljs.
   - `jspdf`: `^4.2.1` - Generación de PDFs.
+  - `@types/jspdf`: `^1.3.3` - Tipos para jspdf.
   - `jspdf-autotable`: `^5.0.7` - Plugin para tablas en jspdf.
   - `axios`: `^1.13.2` - Cliente HTTP.
   - `date-fns`: `^4.1.0` - Manipulación de fechas.
@@ -918,34 +927,23 @@ model SystemAuditLog {
   - `remark-gfm`: `^4.0.1` - Soporte para GitHub Flavored Markdown.
   - `remark-html`: `^16.0.1` - Conversión de Markdown a HTML.
   - `unist-util-visit`: `^5.1.0` - Utilidad para visitar nodos en árboles syntax.
-
-### Dependencias de Desarrollo & Testing
-
-- **Testing Framework**:
-  - `vitest`: `^4.0.16` - Framework de pruebas.
-  - `@testing-library/react`: `^16.3.1` - Utilidades para pruebas de componentes React.
-  - `@testing-library/jest-dom`: `^6.9.1` - Matchers de Jest para el DOM.
-  - `@testing-library/user-event`: `^14.6.1` - Simulación de eventos de usuario (presente en dependencies por requisitos de entorno).
-  - `jsdom`: `^27.4.0` - Simulación de entorno DOM.
-  - `@vitest/coverage-v8`: `^4.0.16` - Reportes de cobertura.
-- **Estilos & Build Tools**:
-  - `tailwindcss`: `^3.4.1` - Framework CSS basado en utilidades.
-  - `postcss`: `^8` - Procesador de estilos CSS.
-  - `eslint`: `^8` - Herramienta de linting.
-  - `eslint-config-next`: `14.2.33` - Configuración de ESLint para Next.js.
-  - `@tailwindcss/typography`: `^0.5.20` - Plugin de tipografía para Tailwind CSS.
-- **TypeScript & Typing**:
+  - `dotenv`: `^17.2.3` - Gestión de variables de entorno.
+  - `ts-node`: `^10.9.2` - Ejecución de TypeScript en Node.js.
   - `typescript`: `^5` - Lenguaje principal.
   - `@types/node`: `^20` - Tipos para Node.js.
   - `@types/react`: `^18` - Tipos para React.
   - `@types/react-dom`: `^18` - Tipos para React DOM.
-  - `@types/bcryptjs`: `^2.4.6` - Tipos para bcryptjs.
-  - `@types/exceljs`: `^0.5.3` - Tipos para exceljs.
-  - `@types/jspdf`: `^1.3.3` - Tipos para jspdf.
-  - `@types/leaflet`: `^1.9.21` - Tipos para Leaflet.
-- **Runtime & Helpers**:
-  - `ts-node`: `^10.9.2` - Ejecución de TypeScript en Node.js.
-  - `dotenv`: `^17.2.3` - Gestión de variables de entorno.
+
+### Dependencias de Desarrollo & Testing
+
+- **Desarrollo/Testing**:
+  - `vitest`: `^4.0.16` - Framework de pruebas.
+  - `@testing-library/react`: `^16.3.1` - Utilidades para pruebas de componentes React.
+  - `@testing-library/jest-dom`: `^6.9.1` - Matchers de Jest para el DOM.
+  - `@testing-library/user-event`: `^14.6.1` - Simulación de eventos de usuario.
+  - `jsdom`: `^27.4.0` - Simulación de entorno DOM.
+  - `@vitest/coverage-v8`: `^4.0.16` - Reportes de cobertura.
+  - `eslint`: `^8` - Herramienta de linting.
+  - `eslint-config-next`: `14.2.33` - Configuración de ESLint para Next.js.
   - `vite-tsconfig-paths`: `^6.0.3` - Resolución de paths de tsconfig en Vite.
   - `@vitejs/plugin-react`: `^5.1.2` - Plugin de React para Vite.
-  - `prisma`: `^6.2.1` - CLI de Prisma ORM.
