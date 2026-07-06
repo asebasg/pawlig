@@ -342,10 +342,10 @@ model SystemAuditLog {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   category     AuditCategory
   action       String        // Ej: "APPROVE", "REJECT", "BLOCK", "CHANGE_ROLE"
-  actorId      String        @db.ObjectId 
+  actorId      String        @db.ObjectId
   actorEmail   String
   resourceType String        // Ej: "SHELTER", "VENDOR", "USER"
-  resourceId   String        @db.ObjectId 
+  resourceId   String        @db.ObjectId
   before       String?       // JSON String
   after        String?       // JSON String
   reason       String
@@ -864,8 +864,6 @@ model SystemAuditLog {
 ├── vitest.config.ts
 └── vitest.setup.ts
 ```
-
----
 
 ## 3. Dependencias del Proyecto
 
