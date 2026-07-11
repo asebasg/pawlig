@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 10 de julio de 2026.
+> **Última actualización**: 12 de febrero de 2025.
 > **Versión**: v1.8.0
 
 ---
@@ -359,6 +359,7 @@ model SystemAuditLog {
   @@index([resourceType, resourceId])
   @@index([createdAt])
 }
+
 ```
 
 ---
@@ -427,44 +428,44 @@ model SystemAuditLog {
 │   │   │   ├── page.tsx
 │   │   │   └── profile/
 │   │   │       └── page.tsx
-│   ├── shelter/
-│   │   ├── adoptions/
-│   │   │   └── page.tsx
-│   │   ├── metrics/
-│   │   │   └── page.tsx
-│   │   ├── page.tsx
-│   │   ├── pets/
-│   │   │   ├── [id]/
-│   │   │   │   ├── edit/
-│   │   │   │   │   └── page.tsx
+│   │   ├── shelter/
+│   │   │   ├── adoptions/
+│   │   │   │   └── page.tsx
+│   │   │   ├── metrics/
+│   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── pets/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── edit/
+│   │   │   │   │       └── page.tsx
 │   │   │   │   ├── new/
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
-│   │   └── profile/
-│   │       └── page.tsx
-│   ├── user/
-│   │   ├── page.tsx
-│   │   ├── profile/
-│   │   │   └── page.tsx
-│   │   ├── request-shelter/
-│   │   │   └── page.tsx
-│   │   └── request-vendor/
-│   │       └── page.tsx
-│   ├── vendor/
-│   │   ├── metrics/
-│   │       └── page.tsx
-│   │   ├── orders/
-│   │       └── page.tsx
-│   │   ├── page.tsx
-│   │   ├── products/
-│   │   │   ├── [id]/
-│   │   │   │   └── edit/
-│   │   │   │       └── page.tsx
-│   │   │   ├── new/
+│   │   │   └── profile/
+│   │   │       └── page.tsx
+│   │   ├── user/
+│   │   │   ├── page.tsx
+│   │   │   ├── profile/
 │   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   └── profile/
-│   │       └── page.tsx
+│   │   │   ├── request-shelter/
+│   │   │   │   └── page.tsx
+│   │   │   └── request-vendor/
+│   │   │       └── page.tsx
+│   │   └── vendor/
+│   │       ├── metrics/
+│   │       │   └── page.tsx
+│   │       ├── orders/
+│   │       │   └── page.tsx
+│   │       ├── page.tsx
+│   │       ├── products/
+│   │       │   ├── [id]/
+│   │       │   │   └── edit/
+│   │       │   │       └── page.tsx
+│   │       │   ├── new/
+│   │       │   │   └── page.tsx
+│   │       │   └── page.tsx
+│   │       └── profile/
+│   │           └── page.tsx
 │   ├── (public)/
 │   │   ├── adopciones/
 │   │   │   ├── [id]/
@@ -513,7 +514,7 @@ model SystemAuditLog {
 │   │   │   │       ├── route.ts
 │   │   │   │       └── trends/
 │   │   │   │           └── route.ts
-│   │   ├── moderation/
+│   │   │   ├── moderation/
 │   │   │   │   ├── audit/
 │   │   │   │   │   └── route.ts
 │   │   │   │   ├── shelters/
@@ -524,18 +525,18 @@ model SystemAuditLog {
 │   │   │   │       ├── [id]/
 │   │   │   │       │   └── route.ts
 │   │   │   │       └── route.ts
-│   │   ├── shelter-requests/
+│   │   │   ├── shelter-requests/
 │   │   │   │   └── route.ts
-│   │   ├── shelters/
+│   │   │   ├── shelters/
 │   │   │   │   └── [shelterId]/
 │   │   │   │       └── route.ts
-│   │   └── users/
-│   │       ├── [id]/
-│   │       │   ├── block/
-│   │       │   │   └── route.ts
-│   │       │   └── role/
-│   │       │       └── route.ts
-│   │       └── route.ts
+│   │   │   └── users/
+│   │   │       ├── [id]/
+│   │   │       │   ├── block/
+│   │   │       │   │   └── route.ts
+│   │   │       │   └── role/
+│   │   │       │       └── route.ts
+│   │   │       └── route.ts
 │   │   ├── adoptions/
 │   │   │   ├── [id]/
 │   │   │   │   └── route.ts
@@ -566,8 +567,8 @@ model SystemAuditLog {
 │   │   │   │   ├── route.ts
 │   │   │   │   └── status/
 │   │   │   │       └── route.ts
-│   │   ├── route.ts
-│   │   ├── search/
+│   │   │   ├── route.ts
+│   │   │   └── search/
 │   │   │       └── route.ts
 │   │   ├── products/
 │   │   │   ├── [id]/
@@ -864,7 +865,6 @@ model SystemAuditLog {
 ├── vitest.config.ts
 └── vitest.setup.ts
 
-163 directories, 332 files
 ```
 
 ---
@@ -924,27 +924,27 @@ model SystemAuditLog {
 ### Dependencias de Desarrollo & Testing
 
 - **Desarrollo/Testing**:
-  - `vitest`: `^4.0.16` - Runner de pruebas unitarias extremadamente rápido basado en Vite.
-  - `@testing-library/react`: `^16.3.1` - Utilidades para el testing de componentes React centrado en el usuario.
-  - `@testing-library/jest-dom`: `^6.9.1` - Matchers personalizados de Jest para validar el estado del DOM.
-  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada de interacciones de usuario en el entorno de pruebas.
-  - `jsdom`: `^27.4.0` - Implementación de estándares web (DOM, HTML) para entornos Node.js.
-  - `@vitest/coverage-v8`: `^4.0.16` - Motor de generación de informes de cobertura de código V8 para Vitest.
-  - `eslint`: `^8` - Herramienta de análisis estático para identificar y reportar patrones en código JavaScript/TS.
-  - `eslint-config-next`: `14.2.33` - Configuración base de ESLint recomendada para proyectos Next.js.
-  - `vite-tsconfig-paths`: `^6.0.3` - Soporte para la resolución de rutas de tsconfig en entornos de Vite.
-  - `@vitejs/plugin-react`: `^5.1.2` - Plugin oficial para el soporte de React en el empaquetador Vite.
-  - `prisma`: `^6.2.1` - Interfaz de línea de comandos para la gestión de migraciones y esquemas de Prisma.
-  - `tailwindcss`: `^3.4.1` - Framework CSS basado en utilidades para un diseño rápido y flexible.
-  - `postcss`: `^8` - Herramienta para transformar estilos CSS con plugins de JavaScript.
   - `@tailwindcss/typography`: `^0.5.20` - Plugin oficial para aplicar estilos tipográficos automáticos a contenido HTML.
-  - `dotenv`: `^17.2.3` - Módulo para cargar variables de entorno desde archivos .env.
-  - `ts-node`: `^10.9.2` - Motor de ejecución de TypeScript y REPL para Node.js.
-  - `typescript`: `^5` - Lenguaje de programación superconjunto de JavaScript con tipado estático.
-  - `@types/node`: `^20` - Definiciones de tipos de TypeScript para el entorno de ejecución Node.js.
-  - `@types/react`: `^18` - Definiciones de tipos de TypeScript para la biblioteca React.
-  - `@types/react-dom`: `^18` - Definiciones de tipos de TypeScript para React DOM.
+  - `@testing-library/jest-dom`: `^6.9.1` - Matchers personalizados de Jest para validar el estado del DOM.
+  - `@testing-library/react`: `^16.3.1` - Utilidades para el testing de componentes React centrado en el usuario.
+  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada de interacciones de usuario en el entorno de pruebas.
   - `@types/bcryptjs`: `^2.4.6` - Definiciones de tipos de TypeScript para la biblioteca bcryptjs.
   - `@types/exceljs`: `^0.5.3` - Definiciones de tipos de TypeScript para la biblioteca exceljs.
   - `@types/jspdf`: `^1.3.3` - Definiciones de tipos de TypeScript para la biblioteca jspdf.
   - `@types/leaflet`: `^1.9.21` - Definiciones de tipos de TypeScript para la biblioteca Leaflet.
+  - `@types/node`: `^20` - Definiciones de tipos de TypeScript para el entorno de ejecución Node.js.
+  - `@types/react`: `^18` - Definiciones de tipos de TypeScript para la biblioteca React.
+  - `@types/react-dom`: `^18` - Definiciones de tipos de TypeScript para React DOM.
+  - `@vitejs/plugin-react`: `^5.1.2` - Plugin oficial para el soporte de React en el empaquetador Vite.
+  - `@vitest/coverage-v8`: `^4.0.16` - Motor de generación de informes de cobertura de código V8 para Vitest.
+  - `dotenv`: `^17.2.3` - Módulo para cargar variables de entorno desde archivos .env.
+  - `eslint`: `^8` - Herramienta de análisis estático para identificar y reportar patrones en código JavaScript/TS.
+  - `eslint-config-next`: `14.2.33` - Configuración base de ESLint recomendada para proyectos Next.js.
+  - `jsdom`: `^27.4.0` - Implementación de estándares web (DOM, HTML) para entornos Node.js.
+  - `postcss`: `^8` - Herramienta para transformar estilos CSS con plugins de JavaScript.
+  - `prisma`: `^6.2.1` - Interfaz de línea de comandos para la gestión de migraciones y esquemas de Prisma.
+  - `tailwindcss`: `^3.4.1` - Framework CSS basado en utilidades para un diseño rápido y flexible.
+  - `ts-node`: `^10.9.2` - Motor de ejecución de TypeScript y REPL para Node.js.
+  - `typescript`: `^5` - Lenguaje de programación superconjunto de JavaScript con tipado estático.
+  - `vite-tsconfig-paths`: `^6.0.3` - Soporte para la resolución de rutas de tsconfig en entornos de Vite.
+  - `vitest`: `^4.0.16` - Runner de pruebas unitarias extremadamente rápido basado en Vite.
