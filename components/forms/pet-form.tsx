@@ -10,6 +10,7 @@ import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { AiRefineButton } from "@/components/ui/ai-refine-button";
+import { MAX_FILE_SIZE, MAX_IMAGES, ACCEPTED_IMAGE_TYPES_PETS, CLOUDINARY_FOLDERS } from "@/lib/constants";
 
 /**
  * POST /api/pets
@@ -25,9 +26,7 @@ interface PetFormProps {
     shelterId: string;
 }
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
-const MAX_IMAGES = 5;
+
 
 export default function PetForm({ mode = "create", initialData, shelterId }: PetFormProps) {
     const router = useRouter();
@@ -62,66 +61,94 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
 
     /**
      * FUNCIÓN: handleImageUpload
-     * Upload de imágenes a Cloudinary
+     * Valida archivos localmente ANTES de subir a Cloudinary (Fix Issue #161 - Fase 1).
+     * Separa en validFiles y rejectedFiles para que los errores parciales no bloqueen
+     * las imágenes correctas. Usa Promise.allSettled para mantener uploads exitosos
+     * aunque alguno falle en Cloudinary.
      */
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (!files || files.length === 0) return;
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
 
-        // Validar límite de imágenes
-        if (images.length + files.length > MAX_IMAGES) {
-            toast.error(`Máximo ${MAX_IMAGES} fotos permitidas`);
-            return;
+      // FASE 1: Validación síncrona previa — ningún archivo sube sin pasar este filtro
+      const validFiles: File[] = [];
+      const rejectedFiles: { file: File; reason: string }[] = [];
+
+      for (const file of Array.from(files)) {
+        if (file.size > MAX_FILE_SIZE) {
+          rejectedFiles.push({ file, reason: "excede el tamaño máximo de 5MB" });
+        } else if (!(ACCEPTED_IMAGE_TYPES_PETS as readonly string[]).includes(file.type)) {
+          rejectedFiles.push({ file, reason: "formato no permitido (solo JPEG y PNG)" });
+        } else {
+          validFiles.push(file);
+        }
+      }
+
+      // Notificar rechazos inmediatamente, antes de cualquier llamada a la red
+      for (const { file, reason } of rejectedFiles) {
+        toast.error(`"${file.name}" ${reason}`);
+      }
+
+      // Validar límite usando solo los archivos válidos
+      const availableSlots = MAX_IMAGES - images.length;
+      if (validFiles.length > availableSlots) {
+        toast.error(`Solo puedes agregar ${availableSlots} foto${availableSlots !== 1 ? "s" : ""} más (máximo ${MAX_IMAGES})`);
+        validFiles.splice(availableSlots);
+      }
+
+      if (validFiles.length === 0) return;
+
+      setUploadingImages(true);
+
+      try {
+        const uploadPromises = validFiles.map(async (file) => {
+          const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error("Error al leer archivo"));
+            reader.readAsDataURL(file);
+          });
+
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64, folder: CLOUDINARY_FOLDERS.PETS }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Error al subir imagen");
+          }
+
+          const data = await response.json();
+          return data.url as string;
+        });
+
+        // Promise.allSettled: un fallo en Cloudinary no cancela las demás subidas
+        const results = await Promise.allSettled(uploadPromises);
+
+        const uploadedUrls: string[] = [];
+        for (const result of results) {
+          if (result.status === "fulfilled") {
+            uploadedUrls.push(result.value);
+          } else {
+            const reason = result.reason instanceof Error ? result.reason.message : "Error desconocido";
+            toast.error(`Error al subir una imagen en el servidor: ${reason}`);
+          }
         }
 
-        setUploadingImages(true);
-
-        try {
-            const uploadPromises = Array.from(files).map(async (file) => {
-                // Validar tamaño
-                if (file.size > MAX_FILE_SIZE) {
-                    throw new Error(`${file.name} excede 5MB`);
-                }
-
-                // Validar formato
-                if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-                    throw new Error(`${file.name} debe ser JPEG o PNG`);
-                }
-
-                // Convertir a base64
-                const base64 = await new Promise<string>((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result as string);
-                    reader.onerror = () => reject(new Error("Error al leer archivo"));
-                    reader.readAsDataURL(file);
-                });
-
-                // Upload a Cloudinary via API
-                const response = await fetch("/api/upload", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ image: base64, folder: "pets" }),
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || "Error al subir imagen");
-                }
-
-                const data = await response.json();
-                return data.url;
-            });
-
-            const uploadedUrls = await Promise.all(uploadPromises);
-            const newImages = [...images, ...uploadedUrls];
-            setImages(newImages);
-            setValue("images", newImages, { shouldValidate: true });
-        } catch (error) {
-            console.error("Error uploading images:", error);
-            toast.error(error instanceof Error ? error.message : "Error al subir imágenes");
-        } finally {
-            setUploadingImages(false);
+        if (uploadedUrls.length > 0) {
+          const newImages = [...images, ...uploadedUrls];
+          setImages(newImages);
+          setValue("images", newImages, { shouldValidate: true });
         }
+      } catch (error) {
+        console.error("Error uploading images:", error);
+        toast.error(error instanceof Error ? error.message : "Error al subir imágenes");
+      } finally {
+        setUploadingImages(false);
+        e.target.value = "";
+      }
     };
 
     /**
@@ -442,7 +469,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                         <input
                             id="image-upload"
                             type="file"
-                            accept={ACCEPTED_IMAGE_TYPES.join(",")}
+                            accept={ACCEPTED_IMAGE_TYPES_PETS.join(",")}
                             multiple
                             onChange={handleImageUpload}
                             disabled={uploadingImages}
@@ -492,9 +519,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
  * asíncrona de imágenes y validaciones robustas mediante esquemas de Zod.
  *
  * Lógica Clave:
- * - handleImageUpload: Gestiona la subida de hasta 5 imágenes a Cloudinary mediante 
- *   un endpoint de API intermedio, asegurando validaciones de tamaño y tipo.
- * - Modo Dual: Soporta creación y edición mediante lógicas condicionadas por el 'mode'.
+ * - handleImageUpload (Fix Issue #161 - Fase 1): Valida tamaño (MAX_FILE_SIZE) y tipo
+ *   MIME de forma sincrona ANTES de cualquier llamada a la red. Separa los archivos en
+ *   validFiles y rejectedFiles. Solo los validos suben a Cloudinary. Usa
+ *   Promise.allSettled para que un fallo individual no descarte los uploads exitosos.
+ * - Modo Dual: Soporta creacion y edicion mediante logicas condicionadas por el 'mode'.
  * - Integración con Zod: Asegura la integridad de los datos antes de persistirlos 
  *   en la base de datos.
  *
