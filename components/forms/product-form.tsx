@@ -8,7 +8,7 @@ import { createProductSchema, type CreateProductInput } from "@/lib/validations/
 import { Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import Image from 'next/image';
-import { PRODUCT_CATEGORIES } from '@/lib/constants';
+import { PRODUCT_CATEGORIES, MAX_FILE_SIZE, MAX_IMAGES, ACCEPTED_IMAGE_TYPES_PRODUCTS, CLOUDINARY_FOLDERS } from "@/lib/constants";
 import { AiRefineButton } from "@/components/ui/ai-refine-button";
 
 /**
@@ -55,67 +55,95 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
     });
 
     /**
-     *  FUNCIÓN: handleImageUpload
-     *  Upload de imágenes a Cloudinary
+     * FUNCIÓN: handleImageUpload
+     * Valida archivos localmente ANTES de subir a Cloudinary (Fix Issue #161 - Fase 1).
+     * Separa en validFiles y rejectedFiles para que los errores parciales no bloqueen
+     * las imágenes correctas. Usa Promise.allSettled para mantener uploads exitosos
+     * aunque alguno falle en Cloudinary.
      */
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (!files || files.length === 0) return;
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
 
-        //  Validar límite de 5 imágenes
-        if (images.length + files.length > 5) {
-            toast.error("Máximo 5 fotos permitidas");
-            return;
+      // FASE 1: Validación síncrona previa — ningún archivo sube sin pasar este filtro
+      const validFiles: File[] = [];
+      const rejectedFiles: { file: File; reason: string }[] = [];
+
+      for (const file of Array.from(files)) {
+        if (file.size > MAX_FILE_SIZE) {
+          rejectedFiles.push({ file, reason: "excede el tamaño máximo de 5MB" });
+        } else if (!(ACCEPTED_IMAGE_TYPES_PRODUCTS as readonly string[]).includes(file.type)) {
+          rejectedFiles.push({ file, reason: "formato no permitido (solo JPEG, PNG o WEBP)" });
+        } else {
+          validFiles.push(file);
+        }
+      }
+
+      // Notificar rechazos inmediatamente, antes de cualquier llamada a la red
+      for (const { file, reason } of rejectedFiles) {
+        toast.error(`"${file.name}" ${reason}`);
+      }
+
+      // Validar límite usando solo los archivos válidos
+      const availableSlots = MAX_IMAGES - images.length;
+      if (validFiles.length > availableSlots) {
+        toast.error(`Solo puedes agregar ${availableSlots} imagen${availableSlots !== 1 ? "es" : ""} más (máximo ${MAX_IMAGES})`);
+        validFiles.splice(availableSlots);
+      }
+
+      if (validFiles.length === 0) return;
+
+      setUploadingImages(true);
+
+      try {
+        const uploadPromises = validFiles.map(async (file) => {
+          const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error("Error al leer archivo"));
+            reader.readAsDataURL(file);
+          });
+
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64, folder: CLOUDINARY_FOLDERS.PRODUCTS }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Error al subir imagen");
+          }
+
+          const data = await response.json();
+          return data.url as string;
+        });
+
+        // Promise.allSettled: un fallo en Cloudinary no cancela las demás subidas
+        const results = await Promise.allSettled(uploadPromises);
+
+        const uploadedUrls: string[] = [];
+        for (const result of results) {
+          if (result.status === "fulfilled") {
+            uploadedUrls.push(result.value);
+          } else {
+            const reason = result.reason instanceof Error ? result.reason.message : "Error desconocido";
+            toast.error(`Error al subir una imagen en el servidor: ${reason}`);
+          }
         }
 
-        setUploadingImages(true);
-
-        try {
-            const uploadPromises = Array.from(files).map(async (file) => {
-                //  Validar tamaño
-                if (file.size > 5 * 1024 * 1024) {
-                    throw new Error(`${file.name} excede 5MB`);
-                }
-
-                //  Validar formato
-                if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-                    throw new Error(`${file.name} debe ser JPEG, PNG o WEBP`);
-                }
-
-                //  Convertir a base64
-                const base64 = await new Promise<string>((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result as string);
-                    reader.onerror = () => reject(new Error("Error al leer archivo"));
-                    reader.readAsDataURL(file);
-                });
-
-                //  Upload a Cloudinary via API
-                const response = await fetch("/api/upload", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ image: base64, folder: "products" }),
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || "Error al subir imagen");
-                }
-
-                const data = await response.json();
-                return data.url;
-            });
-
-            const uploadedUrls = await Promise.all(uploadPromises);
-            const newImages = [...images, ...uploadedUrls];
-            setImages(newImages);
-            setValue("images", newImages, { shouldValidate: true });
-        } catch (error) {
-            console.error("Error uploading images:", error);
-            toast.error(error instanceof Error ? error.message : "Error al subir imágenes");
-        } finally {
-            setUploadingImages(false);
+        if (uploadedUrls.length > 0) {
+          const newImages = [...images, ...uploadedUrls];
+          setImages(newImages);
+          setValue("images", newImages, { shouldValidate: true });
         }
+      } catch (error) {
+        console.error("Error uploading images:", error);
+        toast.error(error instanceof Error ? error.message : "Error al subir imágenes");
+      } finally {
+        setUploadingImages(false);
+        e.target.value = "";
+      }
     };
 
     /**
@@ -374,7 +402,7 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
                 )}
 
                 {/* Botón de upload */}
-                {images.length < 5 && (
+                {images.length < MAX_IMAGES && (
                     <div>
                         <label
                             htmlFor="image-upload"
@@ -448,9 +476,12 @@ export default function ProductForm({ mode = "create", initialData, vendorId }: 
  * subida de imágenes y validación en tiempo real.
  *
  * Lógica Clave:
- * - handleImageUpload: Orquesta la subida de assets a Cloudinary antes del registro final.
- * - Validación Zod: Garantiza que el precio, stock y categoría sean válidos.
- * - Comportamiento Dual: Funciona tanto para creación como para edición (POST/PUT).
+ * - handleImageUpload (Fix Issue #161 - Fase 1): Valida tamaño (MAX_FILE_SIZE) y tipo
+ *   MIME de forma sincrona ANTES de cualquier llamada a la red. Separa los archivos en
+ *   validFiles y rejectedFiles. Solo los validos suben a Cloudinary. Usa
+ *   Promise.allSettled para que un fallo individual no descarte los uploads exitosos.
+ * - Validacion Zod: Garantiza que el precio, stock y categoria sean validos.
+ * - Comportamiento Dual: Funciona tanto para creacion como para edicion (POST/PUT).
  *
  * Dependencias Externas:
  * - react-hook-form: Motor de gestión de estados del formulario.
