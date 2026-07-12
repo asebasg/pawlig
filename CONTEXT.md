@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 12 de febrero de 2025.
+> **Última actualización**: 25 de febrero de 2025.
 > **Versión**: v1.8.0
 
 ---
@@ -924,10 +924,10 @@ model SystemAuditLog {
 ### Dependencias de Desarrollo & Testing
 
 - **Desarrollo/Testing**:
+  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada de interacciones de usuario en el entorno de pruebas.
   - `@tailwindcss/typography`: `^0.5.20` - Plugin oficial para aplicar estilos tipográficos automáticos a contenido HTML.
   - `@testing-library/jest-dom`: `^6.9.1` - Matchers personalizados de Jest para validar el estado del DOM.
   - `@testing-library/react`: `^16.3.1` - Utilidades para el testing de componentes React centrado en el usuario.
-  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada de interacciones de usuario en el entorno de pruebas.
   - `@types/bcryptjs`: `^2.4.6` - Definiciones de tipos de TypeScript para la biblioteca bcryptjs.
   - `@types/exceljs`: `^0.5.3` - Definiciones de tipos de TypeScript para la biblioteca exceljs.
   - `@types/jspdf`: `^1.3.3` - Definiciones de tipos de TypeScript para la biblioteca jspdf.
