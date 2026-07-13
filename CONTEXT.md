@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 12 de febrero de 2025.
+> **Última actualización**: 26 de febrero de 2025.
 > **Versión**: v1.8.0
 
 ---
@@ -166,8 +166,8 @@ model Vendor {
   address         String
   verified        Boolean      @default(false)
   rejectionReason String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @db.ObjectId
@@ -359,7 +359,6 @@ model SystemAuditLog {
   @@index([resourceType, resourceId])
   @@index([createdAt])
 }
-
 ```
 
 ---
@@ -514,100 +513,100 @@ model SystemAuditLog {
 │   │   │   │       ├── route.ts
 │   │   │   │       └── trends/
 │   │   │   │           └── route.ts
-│   │   │   ├── moderation/
-│   │   │   │   ├── audit/
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── shelters/
-│   │   │   │   │   ├── [id]/
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── vendors/
-│   │   │   │       ├── [id]/
-│   │   │   │       │   └── route.ts
-│   │   │   │       └── route.ts
-│   │   │   ├── shelter-requests/
+│   │   ├── moderation/
+│   │   │   ├── audit/
 │   │   │   │   └── route.ts
 │   │   │   ├── shelters/
-│   │   │   │   └── [shelterId]/
-│   │   │   │       └── route.ts
-│   │   │   └── users/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   └── vendors/
 │   │   │       ├── [id]/
-│   │   │       │   ├── block/
-│   │   │       │   │   └── route.ts
-│   │   │       │   └── role/
-│   │   │       │       └── route.ts
+│   │   │       │   └── route.ts
 │   │   │       └── route.ts
-│   │   ├── adoptions/
-│   │   │   ├── [id]/
-│   │   │   │   └── route.ts
+│   │   ├── shelter-requests/
 │   │   │   └── route.ts
-│   │   ├── ai/
-│   │   │   └── refine/
-│   │   │       └── route.ts
-│   │   ├── auth/
-│   │   │   ├── [...nextauth]/
-│   │   │   │   └── route.ts
-│   │   │   ├── forgot-password/
-│   │   │   │   └── route.ts
-│   │   │   └── register/
-│   │   │       └── route.ts
-│   │   ├── cart/
-│   │   │   ├── [id]/
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
-│   │   ├── cloudinary/
-│   │   │   ├── delete/
-│   │   │   │   └── route.ts
-│   │   │   └── sign/
-│   │   │       └── route.ts
-│   │   ├── pets/
-│   │   │   ├── [id]/
-│   │   │   │   ├── favorite/
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── route.ts
-│   │   │   │   └── status/
-│   │   │   │       └── route.ts
-│   │   │   ├── route.ts
-│   │   │   └── search/
-│   │   │       └── route.ts
-│   │   ├── products/
-│   │   │   ├── [id]/
-│   │   │   │   ├── route.ts
-│   │   │   │   └── stock/
-│   │   │   │       └── route.ts
-│   │   │   └── route.ts
-│   │   ├── shelter/
-│   │   │   ├── adoptions/
-│   │   │   │   └── route.ts
-│   │   │   └── reports/
-│   │   │       └── adoptions/
-│   │   │           ├── export/
-│   │   │           │   └── route.ts
-│   │   │           └── route.ts
 │   │   ├── shelters/
-│   │   │   ├── [id]/
-│   │   │   │   └── route.ts
-│   │   │   ├── map/
-│   │   │   │   └── route.ts
-│   │   │   └── search/
+│   │   │   └── [shelterId]/
 │   │   │       └── route.ts
-│   │   ├── upload/
-│   │   │   └── route.ts
-│   │   ├── user/
-│   │   │   ├── favorites/
-│   │   │   │   ├── check/
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
-│   │   │   ├── profile/
-│   │   │   │   └── route.ts
-│   │   │   ├── request-shelter-account/
-│   │   │   │   └── route.ts
-│   │   │   └── request-vendor-account/
-│   │   │       └── route.ts
-│   │   └── vendor/
-│   │       ├── metrics/
-│   │       │   ├── export/
+│   │   └── users/
+│   │       ├── [id]/
+│   │       │   ├── block/
 │   │       │   │   └── route.ts
+│   │       │   └── role/
+│   │       │       └── route.ts
+│   │       └── route.ts
+│   ├── adoptions/
+│   │   ├── [id]/
+│   │   │   └── route.ts
+│   │   └── route.ts
+│   ├── ai/
+│   │   └── refine/
+│   │       └── route.ts
+│   ├── auth/
+│   │   ├── [...nextauth]/
+│   │   │   └── route.ts
+│   │   ├── forgot-password/
+│   │   │   └── route.ts
+│   │   └── register/
+│   │       └── route.ts
+│   ├── cart/
+│   │   ├── [id]/
+│   │   │   └── route.ts
+│   │   └── route.ts
+│   ├── cloudinary/
+│   │   ├── delete/
+│   │   │   └── route.ts
+│   │   └── sign/
+│   │       └── route.ts
+│   ├── pets/
+│   │   ├── [id]/
+│   │   │   ├── favorite/
+│   │   │   │   └── route.ts
+│   │   │   ├── route.ts
+│   │   │   └── status/
+│   │   │       └── route.ts
+│   │   ├── route.ts
+│   │   └── search/
+│   │       └── route.ts
+│   ├── products/
+│   │   ├── [id]/
+│   │   │   ├── route.ts
+│   │   │   └── stock/
+│   │   │       └── route.ts
+│   │   └── route.ts
+│   ├── shelter/
+│   │   ├── adoptions/
+│   │   │   └── route.ts
+│   │   └── reports/
+│   │       └── adoptions/
+│   │           ├── export/
+│   │           │   └── route.ts
+│   │           └── route.ts
+│   ├── shelters/
+│   │   ├── [id]/
+│   │   │   └── route.ts
+│   │   ├── map/
+│   │   │   └── route.ts
+│   │   └── search/
+│   │       └── route.ts
+│   ├── upload/
+│   │   └── route.ts
+│   ├── user/
+│   │   ├── favorites/
+│   │   │   ├── check/
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── profile/
+│   │   │   └── route.ts
+│   │   ├── request-shelter-account/
+│   │   │   └── route.ts
+│   │   └── request-vendor-account/
+│   │       └── route.ts
+│   └── vendor/
+│       ├── metrics/
+│       │   ├── export/
+│   │   │   └── route.ts
 │   │       │   ├── orders/
 │   │       │   │   └── route.ts
 │   │       │   ├── products/
@@ -864,7 +863,6 @@ model SystemAuditLog {
 │   └── shelter.ts
 ├── vitest.config.ts
 └── vitest.setup.ts
-
 ```
 
 ---
