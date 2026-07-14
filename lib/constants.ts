@@ -220,3 +220,6 @@ export const AVAILABLE_DOCS: DocMetadata[] = [
   { slug: "casos-de-prueba",         title: "Casos de Prueba",           filePath: "13_Casos_de_Prueba.md",         category: "testing" },
   { slug: "manual-del-usuario",      title: "Manual del Usuario",        filePath: "14_Manual_del_Usuario.md",      category: "final" },
 ];
+
+
+
