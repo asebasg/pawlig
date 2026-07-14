@@ -90,22 +90,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
   );
 
   /**
-   * Actualiza un item concreto en el estado granular por su id y
-   * re-sincroniza el campo de imágenes del formulario.
-   */
-  const updateItem = useCallback(
-    (id: string, patch: Partial<ImageUploadItem>, currentItems: ImageUploadItem[]) => {
-      const updated = currentItems.map((item) =>
-        item.id === id ? { ...item, ...patch } : item
-      );
-      setImageItems(updated);
-      syncFormImages(updated);
-      return updated;
-    },
-    [syncFormImages]
-  );
-
-  /**
    * FUNCIÓN: handleImageUpload
    * Fase 1 (Issue #161): Valida tamaño y MIME de forma síncrona ANTES
    * de cualquier llamada a la red. Separa en validFiles / rejectedFiles.
@@ -664,7 +648,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
  * - syncFormImages: Función auxiliar que mantiene el campo "images" de
  *   React Hook Form siempre sincronizado con las URLs exitosas del estado
  *   granular, garantizando que el payload del submit solo contenga URLs válidas.
- * - updateItem: Utilidad para parchear un item por id y re-sincronizar.
  * - Promise.allSettled: Cada imagen sube de forma independiente; un fallo en
  *   Cloudinary no cancela los uploads en curso.
  * - Modo Dual: Soporta creación y edición mediante lógicas condicionadas por el 'mode'.

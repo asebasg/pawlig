@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, test, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PetForm from "../pet-form";
@@ -45,7 +45,7 @@ describe("PetForm - Upload de Imágenes (Fase 7)", () => {
         }
       }
     }
-    global.FileReader = MockFileReader as any;
+    global.FileReader = MockFileReader as unknown as typeof FileReader;
 
     // Mock URL methods
     global.URL.createObjectURL = vi.fn((file) => `blob:http://localhost/${file.name}`);
@@ -63,7 +63,7 @@ describe("PetForm - Upload de Imágenes (Fase 7)", () => {
     const user = userEvent.setup();
     
     // Mock de upload exitoso en Cloudinary
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as Mock).mockResolvedValue({
       ok: true,
       json: async () => ({ url: "https://res.cloudinary.com/pawlig/pets/luna.png" }),
     });
@@ -129,7 +129,7 @@ describe("PetForm - Upload de Imágenes (Fase 7)", () => {
     const user = userEvent.setup();
     
     // Mock de upload exitoso
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as Mock).mockResolvedValue({
       ok: true,
       json: async () => ({ url: "https://res.cloudinary.com/pawlig/pets/mix-success.png" }),
     });
@@ -161,7 +161,7 @@ describe("PetForm - Upload de Imágenes (Fase 7)", () => {
     const user = userEvent.setup();
     
     // Simular error del servidor para la subida
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as Mock).mockResolvedValue({
       ok: false,
       status: 500,
       json: async () => ({ error: "Error de conexión con Cloudinary" }),
@@ -195,7 +195,7 @@ describe("PetForm - Upload de Imágenes (Fase 7)", () => {
     const user = userEvent.setup();
 
     // Mock de uploads: primero falla, segundo éxito
-    (global.fetch as any)
+    (global.fetch as Mock)
       .mockResolvedValueOnce({
         ok: false,
         status: 500,
@@ -240,7 +240,7 @@ describe("PetForm - Upload de Imágenes (Fase 7)", () => {
 
     // Validar el payload del submit enviado por fetch
     await waitFor(() => {
-      const lastFetchCall = (global.fetch as any).mock.calls.find((call: any) => call[0] === "/api/pets");
+      const lastFetchCall = (global.fetch as Mock).mock.calls.find((call: unknown[]) => call[0] === "/api/pets");
       expect(lastFetchCall).toBeDefined();
       
       const payload = JSON.parse(lastFetchCall[1].body);
