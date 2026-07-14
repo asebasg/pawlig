@@ -30,9 +30,54 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "12 de junio de 2026";
+  const lastDevUpdate = "10 de julio de 2026";
 
   const devLogs = [
+    {
+      version: "v1.16.0-dev",
+      date: "10 de Julio, 2026",
+      title: "IA Validada y Optimización de Red del Carrito",
+      description:
+        "Extensión del refinamiento asistido por IA a formularios y moderación, endurecimiento de sus límites de entrada y salida, y supresión de peticiones del carrito fuera de contexto.",
+      type: "improvement",
+      logs: [
+        {
+          category: "feat",
+          title: "AiRefineButton Integrado",
+          description:
+            "Incorporación del componente de refinamiento en formularios de mascotas y productos, así como en los modales de aprobación y rechazo de moderación.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Endpoint de IA Endurecido",
+          description:
+            "Validación más estricta del contenido de moderación y saneamiento de la salida generada antes de devolverla al cliente.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "fix",
+          title: "Requisitos de Adopción Opcionales",
+          description:
+            "El esquema de mascotas ya no exige una longitud mínima en requisitos opcionales y la ficha muestra un estado informativo cuando no existen.",
+          icon: <Wrench size={18} className="text-amber-500" />,
+        },
+        {
+          category: "improvement",
+          title: "SWR Condicionado por Sesión y Ruta",
+          description:
+            "useCart y useCartSync usan claves nulas sin sesión; el botón flotante habilita la carga solo en /productos, evitando fetch inicial, revalidaciones y polling innecesarios.",
+          icon: <Zap size={18} className="text-amber-500" />,
+        },
+        {
+          category: "refactor",
+          title: "Consistencia Visual en Moderación",
+          description:
+            "Ajuste del visor de auditoría y unificación de tarjetas de albergues y negocios con accesos de perfil más claros.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
     {
       version: "v1.15.0-dev",
       date: "12 de Junio, 2026",

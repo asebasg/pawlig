@@ -4,6 +4,25 @@
 
 ---
 
+## 10-07-2026 - Asistencia Inteligente y Carrito Más Eficiente (v1.15.0)
+
+**Commits:** `865756e`, `0d9a0be`, `36e9bda`, `85dd7ae`
+**Tipo:** Mejora
+**Scope:** ai, moderation, adoptions, cart
+
+### Descripción
+
+Esta actualización mejora la creación y moderación de contenidos con asistencia de IA, flexibiliza los requisitos de adopción y optimiza el carrito para reducir consultas innecesarias cuando el usuario no está autenticado o no se encuentra en el catálogo.
+
+### Cambios
+
+- **Asistente IA en Formularios y Moderación**: Integración de `AiRefineButton` para refinar descripciones de mascotas y productos, además de los motivos utilizados en las decisiones de moderación.
+- **Respuestas de IA Más Seguras**: Refuerzo de las validaciones de entrada para solicitudes de moderación y saneamiento de la salida generada antes de devolverla al cliente.
+- **Requisitos de Adopción Flexibles**: Los requisitos opcionales de una mascota pueden dejarse vacíos. La ficha informa explícitamente cuando no existen requisitos de adopción adicionales.
+- **Carrito con Menos Consultas**: `useCart`, `useCartSync` y el botón flotante condicionan sus consultas a una sesión autenticada y, para el acceso rápido, a la ruta del catálogo. Esto evita solicitudes iniciales, revalidaciones y polling innecesarios para usuarios anónimos.
+
+---
+
 ## 12-06-2026 - Seguridad en Multimedia y Desbloqueo de Solicitudes (v1.14.0)
 
 **Commit:** `68d5ea4` (Merge PR #151)
