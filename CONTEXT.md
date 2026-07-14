@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 12 de febrero de 2025.
+> **Última actualización**: 14 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -359,7 +359,6 @@ model SystemAuditLog {
   @@index([resourceType, resourceId])
   @@index([createdAt])
 }
-
 ```
 
 ---
@@ -367,7 +366,6 @@ model SystemAuditLog {
 ## 2. Estructura del Proyecto
 
 ```text
-./
 ├── .env.local.example
 ├── .eslintrc.json
 ├── .github/
@@ -447,9 +445,9 @@ model SystemAuditLog {
 │   │   │   ├── page.tsx
 │   │   │   ├── profile/
 │   │   │   │   └── page.tsx
-│   │   │   ├── request-shelter/
+│   │   ├── request-shelter/
 │   │   │   │   └── page.tsx
-│   │   │   └── request-vendor/
+│   │   ├── request-vendor/
 │   │   │       └── page.tsx
 │   │   └── vendor/
 │   │       ├── metrics/
@@ -547,9 +545,9 @@ model SystemAuditLog {
 │   │   ├── auth/
 │   │   │   ├── [...nextauth]/
 │   │   │   │   └── route.ts
-│   │   │   ├── forgot-password/
+│   │   ├── forgot-password/
 │   │   │   │   └── route.ts
-│   │   │   └── register/
+│   │   ├── register/
 │   │   │       └── route.ts
 │   │   ├── cart/
 │   │   │   ├── [id]/
@@ -567,30 +565,30 @@ model SystemAuditLog {
 │   │   │   │   ├── route.ts
 │   │   │   │   └── status/
 │   │   │   │       └── route.ts
-│   │   │   ├── route.ts
-│   │   │   └── search/
-│   │   │       └── route.ts
+│   │   ├── route.ts
+│   │   └── search/
+│   │       └── route.ts
 │   │   ├── products/
 │   │   │   ├── [id]/
 │   │   │   │   ├── route.ts
 │   │   │   │   └── stock/
 │   │   │   │       └── route.ts
-│   │   │   └── route.ts
+│   │   └── route.ts
 │   │   ├── shelter/
 │   │   │   ├── adoptions/
 │   │   │   │   └── route.ts
-│   │   │   └── reports/
-│   │   │       └── adoptions/
-│   │   │           ├── export/
-│   │   │           │   └── route.ts
-│   │   │           └── route.ts
+│   │   └── reports/
+│   │       └── adoptions/
+│   │           ├── export/
+│   │           │   └── route.ts
+│   │           └── route.ts
 │   │   ├── shelters/
 │   │   │   ├── [id]/
 │   │   │   │   └── route.ts
-│   │   │   ├── map/
+│   │   ├── map/
 │   │   │   │   └── route.ts
-│   │   │   └── search/
-│   │   │       └── route.ts
+│   │   └── search/
+│   │       └── route.ts
 │   │   ├── upload/
 │   │   │   └── route.ts
 │   │   ├── user/
@@ -864,7 +862,6 @@ model SystemAuditLog {
 │   └── shelter.ts
 ├── vitest.config.ts
 └── vitest.setup.ts
-
 ```
 
 ---
