@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 14 de julio de 2026.
+> **Última actualización**: 15 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -382,6 +382,7 @@ model SystemAuditLog {
 ├── CHANGELOG.md
 ├── CONTEXT.md
 ├── DEV_NOTES.md
+├── ISSUE_161.md
 ├── README.md
 ├── app/
 │   ├── (auth)/
@@ -445,9 +446,9 @@ model SystemAuditLog {
 │   │   │   ├── page.tsx
 │   │   │   ├── profile/
 │   │   │   │   └── page.tsx
-│   │   ├── request-shelter/
+│   │   │   ├── request-shelter/
 │   │   │   │   └── page.tsx
-│   │   ├── request-vendor/
+│   │   │   └── request-vendor/
 │   │   │       └── page.tsx
 │   │   └── vendor/
 │   │       ├── metrics/
@@ -545,9 +546,9 @@ model SystemAuditLog {
 │   │   ├── auth/
 │   │   │   ├── [...nextauth]/
 │   │   │   │   └── route.ts
-│   │   ├── forgot-password/
+│   │   │   ├── forgot-password/
 │   │   │   │   └── route.ts
-│   │   ├── register/
+│   │   │   └── register/
 │   │   │       └── route.ts
 │   │   ├── cart/
 │   │   │   ├── [id]/
@@ -565,15 +566,15 @@ model SystemAuditLog {
 │   │   │   │   ├── route.ts
 │   │   │   │   └── status/
 │   │   │   │       └── route.ts
-│   │   ├── route.ts
-│   │   └── search/
+│   │   │   ├── route.ts
+│   │   │   └── search/
 │   │       └── route.ts
 │   │   ├── products/
 │   │   │   ├── [id]/
 │   │   │   │   ├── route.ts
 │   │   │   │   └── stock/
 │   │   │   │       └── route.ts
-│   │   └── route.ts
+│   │   │   └── route.ts
 │   │   ├── shelter/
 │   │   │   ├── adoptions/
 │   │   │   │   └── route.ts
@@ -585,9 +586,9 @@ model SystemAuditLog {
 │   │   ├── shelters/
 │   │   │   ├── [id]/
 │   │   │   │   └── route.ts
-│   │   ├── map/
+│   │   │   ├── map/
 │   │   │   │   └── route.ts
-│   │   └── search/
+│   │   │   └── search/
 │   │       └── route.ts
 │   │   ├── upload/
 │   │   │   └── route.ts
