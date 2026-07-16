@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 15 de julio de 2026.
+> **Última actualización**: 16 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -366,6 +366,7 @@ model SystemAuditLog {
 ## 2. Estructura del Proyecto
 
 ```text
+./
 ├── .env.local.example
 ├── .eslintrc.json
 ├── .github/
@@ -474,10 +475,10 @@ model SystemAuditLog {
 │   │   │   └── page.tsx
 │   │   ├── changelog/
 │   │   │   ├── changelog-client.tsx
-│   │   │   ├── dev/
+│   │   ├── dev/
 │   │   │   │   ├── dev-notes-client.tsx
 │   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
+│   │   └── page.tsx
 │   │   ├── faq/
 │   │   │   └── page.tsx
 │   │   ├── help/
@@ -556,7 +557,7 @@ model SystemAuditLog {
 │   │   │   └── route.ts
 │   │   ├── cloudinary/
 │   │   │   ├── delete/
-│   │   │   │   └── route.ts
+│   │  │   │   └── route.ts
 │   │   │   └── sign/
 │   │   │       └── route.ts
 │   │   ├── pets/
@@ -566,15 +567,15 @@ model SystemAuditLog {
 │   │   │   │   ├── route.ts
 │   │   │   │   └── status/
 │   │   │   │       └── route.ts
-│   │   │   ├── route.ts
-│   │   │   └── search/
+│   │   ├── route.ts
+│   │   └── search/
 │   │       └── route.ts
 │   │   ├── products/
 │   │   │   ├── [id]/
 │   │   │   │   ├── route.ts
 │   │   │   │   └── stock/
 │   │   │   │       └── route.ts
-│   │   │   └── route.ts
+│   │   └── route.ts
 │   │   ├── shelter/
 │   │   │   ├── adoptions/
 │   │   │   │   └── route.ts
@@ -589,7 +590,7 @@ model SystemAuditLog {
 │   │   │   ├── map/
 │   │   │   │   └── route.ts
 │   │   │   └── search/
-│   │       └── route.ts
+│   │   │       └── route.ts
 │   │   ├── upload/
 │   │   │   └── route.ts
 │   │   ├── user/
@@ -876,6 +877,7 @@ model SystemAuditLog {
   - `react`: `^18` - Biblioteca base para la construcción de interfaces de usuario.
   - `react-dom`: `^18` - Paquete para el renderizado de React en el navegador.
   - `swr`: `^2.4.1` - Estrategia de fetching de datos con invalidación y re-validación.
+
 - **UI & Components**:
   - `@radix-ui/react-checkbox`: `^1.3.3` - Primitivo de componente de checkbox accesible y sin estilos.
   - `@radix-ui/react-label`: `^2.1.8` - Primitivo de componente de etiqueta accesible para formularios.
@@ -889,25 +891,32 @@ model SystemAuditLog {
   - `tailwind-merge`: `^3.4.0` - Utilidad para fusionar clases de Tailwind CSS sin conflictos de especificidad.
   - `react-day-picker`: `^10.0.0` - Componente de calendario y selección de fechas para React.
   - `recharts`: `^3.8.1` - Biblioteca de gráficos basada en componentes de React y D3.
+
 - **Formularios & Validación**:
   - `react-hook-form`: `^7.66.1` - Gestión eficiente de formularios con validación flexible.
   - `@hookform/resolvers`: `^5.2.2` - Adaptadores para integrar esquemas de validación externos con react-hook-form.
   - `zod`: `^4.1.12` - Declaración de esquemas y validación de tipos estáticos para TypeScript.
+
 - **Database & ORM**:
   - `@prisma/client`: `^6.2.1` - Cliente de base de datos autogenerado y type-safe para Node.js.
+
 - **Autenticación & Seguridad**:
   - `next-auth`: `^4.24.7` - Solución completa de autenticación para aplicaciones Next.js.
   - `bcryptjs`: `^3.0.3` - Biblioteca para el hashing y verificación segura de contraseñas.
+
 - **Servicios Externos & IA**:
   - `cloudinary`: `^2.8.0` - SDK para la gestión, optimización y entrega de medios en la nube.
   - `@google/generative-ai`: `^0.24.1` - Cliente para interactuar con los modelos de IA generativa de Google Gemini.
+
 - **Emailing System**:
   - `resend`: `^6.12.2` - API moderna para el envío masivo y transaccional de correos electrónicos.
   - `@react-email/components`: `^1.0.12` - Colección de componentes de React para diseñar emails responsivos.
   - `@react-email/render`: `^2.0.7` - Utilidad para renderizar plantillas de React Email a HTML plano.
+
 - **Geolocalización & Mapas**:
   - `leaflet`: `^1.9.4` - Biblioteca JavaScript de código abierto para mapas interactivos móviles.
   - `react-leaflet`: `^4.2.1` - Componentes de React para la integración nativa con Leaflet.
+
 - **Reportes & Utilidades**:
   - `exceljs`: `^4.4.0` - Herramienta para leer, manipular y escribir hojas de cálculo Excel.
   - `jspdf`: `^4.2.1` - Biblioteca para la generación dinámica de documentos PDF en el cliente.
@@ -922,10 +931,10 @@ model SystemAuditLog {
 ### Dependencias de Desarrollo & Testing
 
 - **Desarrollo/Testing**:
+  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada de interacciones de usuario en el entorno de pruebas.
   - `@tailwindcss/typography`: `^0.5.20` - Plugin oficial para aplicar estilos tipográficos automáticos a contenido HTML.
   - `@testing-library/jest-dom`: `^6.9.1` - Matchers personalizados de Jest para validar el estado del DOM.
   - `@testing-library/react`: `^16.3.1` - Utilidades para el testing de componentes React centrado en el usuario.
-  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada de interacciones de usuario en el entorno de pruebas.
   - `@types/bcryptjs`: `^2.4.6` - Definiciones de tipos de TypeScript para la biblioteca bcryptjs.
   - `@types/exceljs`: `^0.5.3` - Definiciones de tipos de TypeScript para la biblioteca exceljs.
   - `@types/jspdf`: `^1.3.3` - Definiciones de tipos de TypeScript para la biblioteca jspdf.
