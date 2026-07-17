@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 16 de julio de 2026.
+> **Última actualización**: 17 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -166,8 +166,8 @@ model Vendor {
   address         String
   verified        Boolean      @default(false)
   rejectionReason String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @db.ObjectId
@@ -442,30 +442,30 @@ model SystemAuditLog {
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── page.tsx
 │   │   │   └── profile/
-│   │   │       └── page.tsx
-│   │   ├── user/
-│   │   │   ├── page.tsx
-│   │   │   ├── profile/
-│   │   │   │   └── page.tsx
-│   │   │   ├── request-shelter/
-│   │   │   │   └── page.tsx
-│   │   │   └── request-vendor/
-│   │   │       └── page.tsx
-│   │   └── vendor/
-│   │       ├── metrics/
-│   │       │   └── page.tsx
-│   │       ├── orders/
-│   │       │   └── page.tsx
-│   │       ├── page.tsx
-│   │       ├── products/
-│   │       │   ├── [id]/
-│   │       │   │   └── edit/
-│   │       │   │       └── page.tsx
-│   │       │   ├── new/
-│   │       │   │   └── page.tsx
-│   │       │   └── page.tsx
-│   │       └── profile/
-│   │           └── page.tsx
+│   │       └── page.tsx
+│   ├── user/
+│   │   ├── page.tsx
+│   │   ├── profile/
+│   │   │   └── page.tsx
+│   │   ├── request-shelter/
+│   │   │   └── page.tsx
+│   │   ├── request-vendor/
+│   │       └── page.tsx
+│   └── vendor/
+│       ├── metrics/
+│       │   └── page.tsx
+│       ├── orders/
+│       │   └── page.tsx
+│       ├── page.tsx
+│       ├── products/
+│       │   ├── [id]/
+│       │   │   └── edit/
+│       │   │       └── page.tsx
+│       │   ├── new/
+│       │   │   └── page.tsx
+│       │   └── page.tsx
+│       └── profile/
+│           └── page.tsx
 │   ├── (public)/
 │   │   ├── adopciones/
 │   │   │   ├── [id]/
@@ -475,10 +475,10 @@ model SystemAuditLog {
 │   │   │   └── page.tsx
 │   │   ├── changelog/
 │   │   │   ├── changelog-client.tsx
-│   │   ├── dev/
+│   │   │   ├── dev/
 │   │   │   │   ├── dev-notes-client.tsx
 │   │   │   │   └── page.tsx
-│   │   └── page.tsx
+│   │   │   └── page.tsx
 │   │   ├── faq/
 │   │   │   └── page.tsx
 │   │   ├── help/
@@ -557,7 +557,7 @@ model SystemAuditLog {
 │   │   │   └── route.ts
 │   │   ├── cloudinary/
 │   │   │   ├── delete/
-│   │  │   │   └── route.ts
+│   │   │   │   └── route.ts
 │   │   │   └── sign/
 │   │   │       └── route.ts
 │   │   ├── pets/
@@ -567,15 +567,15 @@ model SystemAuditLog {
 │   │   │   │   ├── route.ts
 │   │   │   │   └── status/
 │   │   │   │       └── route.ts
-│   │   ├── route.ts
-│   │   └── search/
-│   │       └── route.ts
+│   │   │   ├── route.ts
+│   │   │   └── search/
+│   │   │       └── route.ts
 │   │   ├── products/
 │   │   │   ├── [id]/
 │   │   │   │   ├── route.ts
 │   │   │   │   └── stock/
 │   │   │   │       └── route.ts
-│   │   └── route.ts
+│   │   │   └── route.ts
 │   │   ├── shelter/
 │   │   │   ├── adoptions/
 │   │   │   │   └── route.ts
