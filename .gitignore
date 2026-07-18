@@ -45,5 +45,6 @@ next-env.d.ts
 /.qodo/
 -p/
 /.agent/
+/.agents/
 /.antigravitycli/
 /.amazonq/
