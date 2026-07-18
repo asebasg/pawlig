@@ -12,13 +12,14 @@ import Image from "next/image";
 import { AiRefineButton } from "@/components/ui/ai-refine-button";
 import { MAX_FILE_SIZE, MAX_IMAGES, ACCEPTED_IMAGE_TYPES_PETS, CLOUDINARY_FOLDERS } from "@/lib/constants";
 import type { ImageUploadItem } from "@/types/upload.types";
+import { extractPublicId } from "@/lib/utils/cloudinary-helpers";
+import { useUnsavedImagesGuard } from "@/lib/hooks/use-unsaved-images-guard";
+import { LeaveFormConfirmModal } from "@/components/modals/leave-form-confirm-modal";
+import { FormTimeoutModal } from "@/components/modals/form-timeout-modal";
 
 /**
- * POST /api/pets
- * PUT /api/pets/[id]
- * Descripción: Formulario para la creación y edición de perfiles de mascotas con soporte para múltiples imágenes.
- * Requiere: Identificador del refugio (shelterId).
- * Implementa: HU-005 (Publicación y gestión de mascota).
+ * Formulario para crear o editar perfiles de mascotas con soporte para múltiples
+ * imágenes y validación de datos antes de enviarlos al servidor.
  */
 
 interface PetFormProps {
@@ -45,10 +46,23 @@ function buildInitialItem(cloudinaryUrl: string): ImageUploadItem {
 export default function PetForm({ mode = "create", initialData, shelterId }: PetFormProps) {
   const router = useRouter();
 
-  // Estado granular: cada imagen tiene su propio ciclo de vida (Issue #161 - Fase 2)
+  // Estado granular: cada imagen conserva su propio estado de carga y resultado.
   const [imageItems, setImageItems] = useState<ImageUploadItem[]>(
     (initialData?.images || []).map(buildInitialItem)
   );
+
+  // Protección para limpiar recursos pendientes cuando el usuario abandona el
+  // formulario antes de completar el guardado.
+  const {
+    markAsSubmitted,
+    requestNavigation,
+    showLeaveModal,
+    onCancelLeave,
+    onConfirmLeave,
+    registerActivity,
+    isLocked,
+    showTimeoutModal,
+  } = useUnsavedImagesGuard({ imageItems, setImageItems });
 
   // React Hook Form con Zod
   const {
@@ -90,18 +104,15 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
   );
 
   /**
-   * FUNCIÓN: handleImageUpload
-   * Fase 1 (Issue #161): Valida tamaño y MIME de forma síncrona ANTES
-   * de cualquier llamada a la red. Separa en validFiles / rejectedFiles.
-   * Fase 2 (Issue #161): Cada archivo válido genera su propio ImageUploadItem
-   * con ciclo de vida granular (pending → uploading → success | error).
-   * Usa Promise.allSettled para que un fallo individual no cancele los demás.
+   * Maneja la selección de imágenes, valida los archivos localmente y crea un
+   * registro independiente por cada una para mostrar su estado de carga.
    */
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // FASE 1: Validación síncrona previa
+    // Validación local previa para descartar archivos demasiado grandes o con
+    // formato no admitido antes de iniciar cualquier subida.
     const validFiles: File[] = [];
     const rejectedFiles: { file: File; reason: string }[] = [];
 
@@ -133,7 +144,8 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
        return;
     }
 
-    // FASE 2: Crear items en estado "pending" inmediatamente para mostrar en la UI
+    // Crear registros iniciales para mostrar la carga en la interfaz de forma
+    // inmediata mientras se procesan los archivos.
     const newItems: ImageUploadItem[] = validFiles.map((file) => ({
       id: crypto.randomUUID(),
       file,
@@ -180,7 +192,7 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
         const cloudinaryUrl = data.url as string;
 
         uploadSuccessCount++;
-        // Marcar como "success"
+        // Marcar como "success" y registrar actividad para reiniciar el timer de inactividad
         setImageItems((prev) => {
           const updated = prev.map((i) =>
             i.id === item.id
@@ -190,6 +202,8 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
           syncFormImages(updated);
           return updated;
         });
+        // Una subida exitosa cuenta como actividad aunque el usuario no esté tecleando
+        registerActivity();
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Error desconocido";
         uploadErrors.push(`"${item.file?.name}": ${errorMessage}`);
@@ -227,26 +241,6 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
     }
   };
 
-  /**
-   * Extrae el publicId de una URL de Cloudinary
-   */
-  const extractPublicId = (cloudinaryUrl: string): string | null => {
-    try {
-      const url = new URL(cloudinaryUrl);
-      const pathParts = url.pathname.split("/");
-      const pawligIndex = pathParts.findIndex((p) => p === "pawlig");
-      if (pawligIndex === -1) return null;
-
-      const publicIdWithExt = pathParts.slice(pawligIndex).join("/");
-      const lastDotIndex = publicIdWithExt.lastIndexOf(".");
-      if (lastDotIndex !== -1) {
-        return publicIdWithExt.substring(0, lastDotIndex);
-      }
-      return publicIdWithExt;
-    } catch {
-      return null;
-    }
-  };
 
   /**
    * FUNCIÓN: removeImage
@@ -330,6 +324,10 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
         { id: toastId }
       );
 
+      // Marcar el envío como completado antes de redirigir para evitar que el
+      // guardia intente limpiar recursos que ya quedaron persistidos.
+      markAsSubmitted();
+
       // Redireccionar después de 1.5 segundos
       setTimeout(() => {
         router.push("/shelter/pets");
@@ -349,7 +347,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
   const successCount = imageItems.filter((i) => i.status === "success").length;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      onInput={registerActivity}
+      className="space-y-6"
+    >
 
       {/* SECCIÓN 1: DATOS BÁSICOS */}
       <div className="space-y-4">
@@ -364,8 +366,9 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             {...register("name")}
             type="text"
             id="name"
+            disabled={isLocked}
             placeholder="Ej: Luna"
-            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
           {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
         </div>
@@ -378,7 +381,8 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
           <select
             {...register("species")}
             id="species"
-            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            disabled={isLocked}
+            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           >
             <option value={PetSpecies.DOG}>Perro</option>
             <option value={PetSpecies.CAT}>Gato</option>
@@ -396,8 +400,9 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             {...register("breed")}
             type="text"
             id="breed"
+            disabled={isLocked}
             placeholder="Ej: Labrador, Cruce, Desconocida"
-            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
           {errors.breed && <p className="mt-1 text-sm text-red-600">{errors.breed.message}</p>}
         </div>
@@ -414,10 +419,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 {...register("age", { setValueAs: (v) => v === "" ? 0 : Number(v) })}
                 type="number"
                 id="age"
+                disabled={isLocked}
                 min="0"
                 max="30"
                 placeholder="Años"
-                className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
               {errors.age && <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>}
             </div>
@@ -429,10 +435,11 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
                 {...register("months", { setValueAs: (v) => v === "" ? null : Number(v) })}
                 type="number"
                 id="months"
+                disabled={isLocked}
                 min="0"
                 max="11"
                 placeholder="Meses"
-                className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
               {errors.months && <p className="mt-1 text-sm text-red-600">{errors.months.message}</p>}
             </div>
@@ -446,7 +453,8 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             <select
               {...register("sex")}
               id="sex"
-              className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              disabled={isLocked}
+              className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
               <option value={PetSex.MALE}>Macho</option>
               <option value={PetSex.FEMALE}>Hembra</option>
@@ -469,9 +477,10 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
             <textarea
               {...register("description")}
               id="description"
+              disabled={isLocked}
               rows={5}
               placeholder="Describe el carácter, personalidad y comportamiento de la mascota. Mínimo 20 caracteres."
-              className="text-black w-full px-4 py-2 pb-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
+              className="text-black w-full px-4 py-2 pb-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
             <AiRefineButton
               currentText={getValues("description") ?? ""}
@@ -494,9 +503,10 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
           <textarea
             {...register("requirements")}
             id="requirements"
+            disabled={isLocked}
             rows={3}
             placeholder="Requisitos específicos para adopción (espacio, experiencia, otras mascotas, etc.)"
-            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical"
+            className="text-black w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-vertical disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
           <p className="mt-1 text-xs text-gray-500">Opcional. Máximo 500 caracteres.</p>
           {errors.requirements && <p className="mt-1 text-sm text-red-600">{errors.requirements.message}</p>}
@@ -605,15 +615,15 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
       <div className="flex gap-4 pt-6 border-t">
         <button
           type="button"
-          onClick={() => router.back()}
-          className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
-          disabled={isSubmitting}
+          onClick={() => requestNavigation()}
+          className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isSubmitting || isLocked}
         >
           Cancelar
         </button>
         <button
           type="submit"
-          disabled={isSubmitting || isUploadingAny}
+          disabled={isSubmitting || isUploadingAny || isLocked}
           className="flex-1 flex items-center justify-center gap-2 px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? (
@@ -623,6 +633,16 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
           )}
         </button>
       </div>
+
+      {/* Modal de confirmación de abandono */}
+      <LeaveFormConfirmModal
+        isOpen={showLeaveModal}
+        onCancel={onCancelLeave}
+        onConfirm={onConfirmLeave}
+      />
+
+      {/* Modal de tiempo límite de inactividad */}
+      <FormTimeoutModal isOpen={showTimeoutModal} />
     </form>
   );
 }
@@ -632,31 +652,8 @@ export default function PetForm({ mode = "create", initialData, shelterId }: Pet
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * Descripción General:
- * Este formulario integral permite la gestión de mascotas, incluyendo la carga
- * asíncrona de imágenes y validaciones robustas mediante esquemas de Zod.
- *
- * Lógica Clave:
- * - Estado Granular (Fix Issue #161 - Fase 2): Se reemplazó el estado plano
- *   string[] por ImageUploadItem[], donde cada imagen tiene su propio ciclo de
- *   vida (pending, uploading, success, error). Esto permite mostrar previews
- *   inmediatos, spinners por imagen, mensajes de error individuales y que las
- *   imágenes exitosas persistan aunque otras fallen.
- * - Validación Previa (Fix Issue #161 - Fase 1): Se valida tamaño y MIME de
- *   forma síncrona ANTES de abrir cualquier conexión a la red. Solo los
- *   archivos que pasan el filtro local entran al flujo de upload.
- * - syncFormImages: Función auxiliar que mantiene el campo "images" de
- *   React Hook Form siempre sincronizado con las URLs exitosas del estado
- *   granular, garantizando que el payload del submit solo contenga URLs válidas.
- * - Promise.allSettled: Cada imagen sube de forma independiente; un fallo en
- *   Cloudinary no cancela los uploads en curso.
- * - Modo Dual: Soporta creación y edición mediante lógicas condicionadas por el 'mode'.
- * - buildInitialItem: Hidrata el estado granular con imágenes preexistentes
- *   (modo edición), marcándolas como "success" directamente.
- *
- * Dependencias Externas:
- * - cloudinary (via API): Para almacenamiento optimizado de imágenes.
- * - react-hook-form: Gestión eficiente del estado y validación del formulario.
- * - sonner: Retroalimentación inmediata al usuario sobre acciones críticas.
- *
+ * Este formulario combina validación de datos, subida de imágenes y protección
+ * frente a abandono del proceso. Si se modifican los estados de carga o los
+ * mensajes de error, conviene conservar la coherencia entre la UI y los datos
+ * que se envían al servidor.
  */

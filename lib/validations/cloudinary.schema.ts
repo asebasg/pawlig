@@ -1,11 +1,9 @@
 import { z } from "zod";
 
 /**
- * Ruta/Componente/Servicio: Schemas de Cloudinary
- * Descripción: Define los schemas de Zod para validar operaciones con recursos de Cloudinary:
- *              subida de archivos (uploadIntentSchema) y eliminacion de recursos (deleteResourceSchema).
- * Requiere: -
- * Implementa: RNF-004, Issue-135
+ * Define los esquemas de validación utilizados por las operaciones de Cloudinary.
+ * Centraliza la verificación de entradas para firma de subida, borrado individual
+ * y limpieza en lote, de modo que las rutas de la API reciban datos consistentes.
  */
 
 export const uploadIntentSchema = z.object({
@@ -34,26 +32,37 @@ export type DeleteResource = z.infer<typeof deleteResourceSchema>;
 
 /*
  * ---------------------------------------------------------------------------
+ * SCHEMA: cleanupCloudinarySchema
+ * ---------------------------------------------------------------------------
+ * Usado por POST /api/cloudinary/cleanup para limpiar imágenes huérfanas
+ * que quedaron en Cloudinary tras el abandono de un formulario sin guardar.
+ * Acepta un array no vacío de objetos con la URL pública de Cloudinary.
+ * El endpoint deriva el publicId en el servidor usando cloudinary-helpers.
+ */
+
+const cleanupItemSchema = z.object({
+  url: z
+    .string({ message: "La URL es requerida" })
+    .url("Debe ser una URL válida de Cloudinary")
+    .trim(),
+});
+
+export const cleanupCloudinarySchema = z.object({
+  images: z
+    .array(cleanupItemSchema, { message: "El campo images es requerido" })
+    .min(1, "Debe incluir al menos una imagen para limpiar"),
+});
+
+export type CleanupCloudinaryInput = z.infer<typeof cleanupCloudinarySchema>;
+export type CleanupItem = z.infer<typeof cleanupItemSchema>;
+
+/*
+ * ---------------------------------------------------------------------------
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * Descripción General:
- * Este archivo proporciona los schemas de validacion centralizados para todas
- * las operaciones con recursos de Cloudinary en la plataforma. Cubre tanto
- * la generacion de firmas de subida (uploadIntentSchema) como la eliminacion
- * segura de recursos ya subidos (deleteResourceSchema).
- *
- * Lógica Clave:
- * - 'uploadIntentSchema': Usa 'z.enum' para crear una lista blanca estricta
- *   de carpetas de destino validas. Previene subidas a ubicaciones no
- *   autorizadas del bucket de Cloudinary.
- * - 'deleteResourceSchema': Valida el 'publicId' requerido y el 'resourceType'
- *   opcional. El 'resourceType' tiene default "image" para cubrir el caso de
- *   uso mas comun sin forzar al caller a especificarlo explicitamente.
- *   El campo 'publicId' es limpiado con '.trim()' para evitar espacios
- *   accidentales que causarian fallos en la API de Cloudinary.
- *
- * Dependencias Externas:
- * - 'zod': Para la creacion de los schemas de validacion.
- *
+ * Mantener estos esquemas actualizados es importante porque cualquier cambio en
+ * la API de Cloudinary o en los flujos de carga/limpieza debe reflejarse aquí.
+ * El objetivo es asegurar que la validación ocurra lo más cerca posible de la
+ * entrada del sistema, antes de ejecutar cualquier acción de subida o borrado.
  */
