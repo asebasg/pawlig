@@ -80,7 +80,7 @@ export const createPetSchema = z.object({
 
     images: z
         .array(z.string().url("Cada imagen debe ser una URL válida"))
-        .min(1, "Debes subir al menos una foto de la mascota (RN-007)")
+        .min(1, "Debes subir al menos una foto de la mascota")
         .max(5, "Máximo 5 fotos permitidas"),
 
     shelterId: z
