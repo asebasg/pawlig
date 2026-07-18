@@ -317,7 +317,11 @@ export function useUnsavedImagesGuard({
       const images = buildCleanupPayload(imageItems);
 
       if (images.length === 0 || hasSubmittedSuccessfullyRef.current) {
-        destination ? router.push(destination) : router.back();
+        if (destination) {
+          router.push(destination);
+        } else {
+          router.back();
+        }
         return;
       }
 
@@ -385,7 +389,7 @@ export function useUnsavedImagesGuard({
 
 /*
  * ---------------------------------------------------------------------------
- * NOTAS DE MANTENIMIENTO
+ * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
  * Este hook centraliza la Protección del formulario frente a escenarios como
@@ -393,3 +397,4 @@ export function useUnsavedImagesGuard({
  * Mantener su lógica simple ayuda a evitar que los recursos pendientes queden
  * huérfanos en Cloudinary.
  */
+
