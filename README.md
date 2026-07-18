@@ -14,7 +14,7 @@
 **Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.14.0 | Última actualización: 15 de junio de 2026_
+_Versión v1.15.0 | Última actualización: 10 de julio de 2026_
 
 </div>
 
@@ -33,7 +33,7 @@ _Versión v1.14.0 | Última actualización: 15 de junio de 2026_
 *   **Vendedores Especializados (Vendors):** Comercios locales y proveedores de productos de bienestar animal que acceden a un canal de ventas digital especializado, con capacidades avanzadas de administración de inventarios, procesamiento de órdenes y métricas de desempeño comercial.
 *   **Adoptantes y Clientes (Adopters):** Usuarios finales que disfrutan de una experiencia fluida y optimizada para la búsqueda empática de mascotas, gestión de favoritos, postulación para adopciones responsables y adquisición de suministros de alta calidad.
 
-El sistema destaca por incorporar capacidades avanzadas de **Inteligencia Artificial** para la optimización de contenido, **Visualización Geoespacial** interactiva y un **Motor de Simulación Física** 3D en la gestión de errores, redefiniendo los estándares de bienestar animal digital con una arquitectura transaccional sólida, segura y escalable.
+El sistema destaca por incorporar capacidades avanzadas de **Inteligencia Artificial** para la optimización de contenido, **Visualización Geoespacial** interactiva y un **Motor de Simulación Física** 2D en la gestión de errores, redefiniendo los estándares de bienestar animal digital con una arquitectura transaccional sólida, segura y escalable.
 
 ---
 
@@ -42,8 +42,10 @@ El sistema destaca por incorporar capacidades avanzadas de **Inteligencia Artifi
 La plataforma de PawLig está dotada de una serie de módulos robustos y características técnicas avanzadas:
 
 ### 🧠 Inteligencia Artificial Generativa (Google Gemini 2.5-flash)
-*   **Refinamiento Persuasivo de Contenido:** Integración del endpoint inteligente `/api/ai/refine` que analiza e incrementa el atractivo emocional de las descripciones básicas de mascotas, así como el tono persuasivo y comercial de las descripciones de productos de tienda.
-*   **Contextualización Adaptativa:** Modelado semántico mediante prompts especializados para adaptar dinámicamente el estilo textual (tono de empatía para adopciones vs. tono de venta técnica para el marketplace).
+*   **Asistente IA Multi-propósito:** Integración del componente `AiRefineButton` que conecta con el endpoint inteligente `/api/ai/refine` para el refinamiento automático de descripciones.
+*   **Refinamiento Persuasivo y Comercial:** Optimiza y eleva el impacto emocional de las descripciones básicas de mascotas, así como el tono persuasivo y comercial de las descripciones de productos de tienda.
+*   **Asistente de Moderación Inteligente:** Extiende el uso de la IA para ayudar a los administradores a refinar y redactar de forma clara y respetuosa los motivos de decisión utilizados en las aprobaciones, rechazos y bloqueos en el Moderation Hub.
+*   **Saneamiento y Respuestas Seguras:** Refuerzo de las validaciones de entrada en las solicitudes de moderación y saneamiento estricto de la salida generada por la IA antes de ser devuelta para garantizar la máxima seguridad.
 
 ### 🛡️ Moderation Hub Centralizado y Auditoría Polimórfica
 *   **Centro Administrativo Consolidado:** Gestión centralizada de solicitudes de verificación de albergues, vendedores y moderación de usuarios bajo el módulo administrativo `/admin/moderation`.
@@ -65,6 +67,13 @@ La plataforma de PawLig está dotada de una serie de módulos robustos y caracte
 ### 🗺️ Visualización Geoespacial e Interactiva (Leaflet)
 *   **Localización y Búsqueda por Mapa:** Mapa interactivo integrado que posiciona geográficamente los refugios verificados en el Valle de Aburrá, facilitando búsquedas personalizadas por municipios.
 *   **Servicio de Geocodificación Interno:** Script automático y capa de servicios (`geocoding.service.ts`) para convertir direcciones físicas registradas por los refugios en coordenadas geoespaciales (latitud y longitud) persistidas de forma segura en MongoDB.
+
+### 🐾 Flexibilidad en Fichas de Adopción
+*   **Requisitos de Adopción Opcionales:** Los albergues pueden omitir de forma flexible los requisitos de adopción adicionales de una mascota. La interfaz de usuario informa explícitamente cuando no existen requisitos de adopción adicionales para una mascota en particular, reduciendo las barreras iniciales de postulación.
+
+### 🛒 Carrito de Compras de Alto Rendimiento y Sincronización Eficiente
+*   **Optimización de Consultas (useCart y useCartSync):** La lógica de obtención y sincronización del carrito del usuario se ha condicionado de manera estricta para que se ejecute solo cuando el usuario se encuentra debidamente autenticado y está navegando en el catálogo de productos.
+*   **Reducción del Polling e Invocaciones Innecesarias:** Evita la ejecución de revalidaciones, consultas repetitivas de backend o revalidaciones en segundo plano para usuarios no autenticados o que visitan áreas de la plataforma no relacionadas con la tienda, mejorando drásticamente el rendimiento global de la plataforma.
 
 ### 🌌 404 Orbital Engine (Simulación en Canvas 2D)
 *   **Simulación Física Kepleriana:** La página de error 404 implementa un motor interactivo escrito en Canvas 2D que simula las leyes orbitales de Kepler para orbitar elementos visuales de la marca.
@@ -92,7 +101,7 @@ La plataforma de PawLig está dotada de una serie de módulos robustos y caracte
     ```
 
 2.  **Instalación de Dependencias del Proyecto:**
-    Este comando descargará todos los paquetes necesarios y ejecutará automáticamente el script de post-instalación de Prisma (`prisma generate`) para compilar los clientes type-safe adaptados a la base de datos MongoDB:
+    Este comando descargará todos los paquetes necesarios y ejecutará automáticamente el script de post-instalación de Prisma (`prisma generate`) para compilar y sincronizar el cliente de base de datos type-safe adaptados a la base de datos MongoDB:
     ```bash
     npm install
     ```
@@ -195,7 +204,7 @@ El stack tecnológico de PawLig ha sido rigurosamente estructurado para ofrecer 
 *   **Visualización de Datos:** Recharts v3.8.1 — Gráficas interactivas y modulares para analíticas de negocio.
 
 ### Servicios Externos e Inteligencia Artificial
-*   **Motor de IA:** Google Generative AI SDK (Gemini AI) v0.24.1 — Integración con el modelo de lenguaje `gemini-2.5-flash` para refinamiento de descripciones.
+*   **Motor de IA:** Google Generative AI SDK (Gemini AI) v0.24.1 — Integración con el modelo de lenguaje `gemini-2.5-flash` para refinamiento de descripciones y motivos de moderación.
 *   **Proveedor Multimedia:** Cloudinary SDK v2.8.0 — Gestión y optimización automatizada de recursos gráficos y fotografías de mascotas/productos.
 *   **Mensajería Electrónica:** Resend SDK v6.12.2 & React Email v1.0.12 — Infraestructura premium para el modelado y envío masivo de correos corporativos.
 
@@ -212,28 +221,28 @@ El repositorio de PawLig sigue las mejores convenciones de organización por cap
 ├── app/                  # Núcleo de Rutas, APIs y Segmentos del Sistema
 │   ├── (auth)/           # Segmento de Autenticación (Login, Registro, Recuperación)
 │   ├── (dashboard)/      # Paneles de Administración y Gestión Privada
-│   │   ├── admin/        # Dashboard del Administrador y Moderation Hub
-│   │   ├── user/         # Panel del Adoptante (Favoritos, Carrito, Historial)
-│   │   ├── shelter/      # Gestión del Albergue (Publicación de Mascotas, Adopciones)
-│   │   └── vendor/       # Gestión del Vendedor (Catálogo, Stock, Pedidos)
-│   ├── (public)/         # Vistas Públicas (Adopciones, Tienda, Albergues, Ayuda, Legal)
+│   │   ├── admin/        # Dashboard del Administrador, Moderation Hub e Historiales
+│   │   ├── user/         # Panel del Adoptante (Favoritos, Carrito, Historial de Solicitudes)
+│   │   ├── shelter/      # Gestión del Albergue (Publicación de Mascotas, Adopciones, Métricas)
+│   │   └── vendor/       # Gestión del Vendedor (Catálogo, Stock, Pedidos, Métricas)
+│   ├── (public)/         # Vistas Públicas (Adopciones, Tienda, Albergues, Ayuda, Legal, Changelog)
 │   ├── api/              # Endpoints de la API RESTful de la Aplicación
 │   ├── globals.css       # Configuración global de estilos Tailwind CSS
 │   ├── layout.tsx        # Diseño maestro (Master Layout) compartido de la aplicación
 │   └── not-found.tsx     # Página de error 404 inmersiva con el Motor Orbital 3D
 ├── components/           # Componentes Modulares de React y UI Reutilizable
-│   ├── admin/            # Vistas internas del Moderation Hub y Auditoría
+│   ├── admin/            # Vistas internas del Moderation Hub, Auditoría y Gestión de Usuarios
 │   ├── cards/            # Tarjetas de presentación visual de Mascotas y Productos
 │   ├── filters/          # Filtros avanzados interactivos de búsqueda de adopciones y tienda
 │   ├── forms/            # Lógica y validaciones de todos los formularios de captura
 │   ├── layout/           # Componentes estructurales (Barra de navegación por rol, Footer)
-│   ├── map/              # Componentes de interacción con Leaflet
-│   ├── ui/               # Botones, entradas de texto, modales y alertas base del sistema
+│   ├── map/              # Componentes de interacción con Leaflet y Búsqueda
+│   ├── ui/               # Botones, entradas de texto, modales y alertas base del sistema (incluye PasswordInput y AiRefineButton)
 │   └── vendor/           # Componentes analíticos y de inventario para vendedores
 ├── lib/                  # Núcleo de la Lógica de Negocio y Utilidades de Backend
 │   ├── auth/             # Configuración de NextAuth, callbacks y control de accesos
 │   ├── email/            # Código base y 11 plantillas interactivas de React Email
-│   ├── services/         # Capa de Servicios de Acceso a Base de Datos (Mascotas, Ventas, Correos)
+│   ├── services/         # Capa de Servicios de Acceso a Base de Datos (Mascotas, Ventas, Correos, Geocodificación)
 │   ├── utils/            # Generadores de Reportes (Excel, PDF, CSV), formateadores y base de datos
 │   └── validations/      # Definiciones de Esquemas de Zod para la verificación en cascada
 ├── prisma/               # Definición del Modelo de Datos Prisma y Script de Semilla
@@ -256,8 +265,8 @@ Agradecemos enormemente cualquier colaboración orientada a elevar el valor téc
 
 1.  **Fork del Repositorio:** Genere una bifurcación del repositorio principal a su cuenta personal.
 2.  **Creación de una Rama Temática:** Use una nomenclatura de rama que declare el tipo de intervención:
-    *   `feat/nueva-funcionalidad` para el desarrollo de nuevos requerimientos.
-    *   `fix/correccion-de-error` para solventar un bug.
+    *   `feat/nueva-funcionalidad` para el desarrollo de nuevos requerimientos o mejoras.
+    *   `fix/correccion-de-error` para solventar un bug o regresión.
     *   `refactor/mejora-arquitectonica` para reestructurar código existente sin alterar su lógica de funcionamiento.
 3.  **Adhesión al Estándar de Oro:** Es obligatorio seguir de forma estricta el manual de codificación y diseño detallado en el archivo `.rules.md`.
 4.  **Aseguramiento de Pruebas:** Ejecute toda la suite de pruebas del proyecto y cerciórese de que sigan pasando de manera exitosa:
