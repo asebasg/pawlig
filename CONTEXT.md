@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 18 de julio de 2026.
+> **Última actualización**: 19 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -367,6 +367,7 @@ model SystemAuditLog {
 
 ```text
 ./
+├── .env.local.example
 ├── .eslintrc.json
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
