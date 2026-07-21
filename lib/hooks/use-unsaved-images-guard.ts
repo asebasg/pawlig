@@ -185,6 +185,12 @@ export function useUnsavedImagesGuard({
   // -------------------------------------------------------------------------
   const hasSubmittedSuccessfullyRef = useRef<boolean>(false);
 
+  // Ref siempre actualizado con las imágenes para evitar closures obsoletos
+  const imageItemsRef = useRef(imageItems);
+  useEffect(() => {
+    imageItemsRef.current = imageItems;
+  }, [imageItems]);
+
   const markAsSubmitted = useCallback(() => {
     hasSubmittedSuccessfullyRef.current = true;
   }, []);
@@ -227,7 +233,7 @@ export function useUnsavedImagesGuard({
       // Solo actuar si hay imágenes sin guardar y no se hizo submit.
       if (hasSubmittedSuccessfullyRef.current) return;
 
-      const images = buildCleanupPayload(imageItems);
+      const images = buildCleanupPayload(imageItemsRef.current);
 
       // 1. Bloquear el formulario de inmediato para impedir nuevas interacciones.
       setIsLocked(true);
@@ -249,7 +255,7 @@ export function useUnsavedImagesGuard({
       // 4. Mostrar el modal de tiempo límite.
       setShowTimeoutModal(true);
     }, INACTIVITY_TIMEOUT_MS);
-  }, [isLocked, imageItems, setImageItems]);
+  }, [isLocked, setImageItems]);
 
   // Limpiar el timer al desmontar el componente.
   useEffect(() => {
@@ -314,7 +320,7 @@ export function useUnsavedImagesGuard({
   // -------------------------------------------------------------------------
   const requestNavigation = useCallback(
     (destination?: string) => {
-      const images = buildCleanupPayload(imageItems);
+      const images = buildCleanupPayload(imageItemsRef.current);
 
       if (images.length === 0 || hasSubmittedSuccessfullyRef.current) {
         if (destination) {
@@ -330,7 +336,7 @@ export function useUnsavedImagesGuard({
         : { type: "back" };
       setShowLeaveModal(true);
     },
-    [imageItems, router]
+    [router]
   );
 
   // -------------------------------------------------------------------------
@@ -345,7 +351,7 @@ export function useUnsavedImagesGuard({
   // Confirmación del abandono y limpieza de recursos pendientes.
   // -------------------------------------------------------------------------
   const onConfirmLeave = useCallback(async () => {
-    const images = buildCleanupPayload(imageItems);
+    const images = buildCleanupPayload(imageItemsRef.current);
 
     if (images.length > 0) {
       try {
@@ -369,7 +375,7 @@ export function useUnsavedImagesGuard({
     } else {
       history.back();
     }
-  }, [imageItems, setImageItems, router]);
+  }, [setImageItems, router]);
 
   // -------------------------------------------------------------------------
   // RETORNO DEL HOOK
