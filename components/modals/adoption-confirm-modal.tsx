@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 /**
  * COMPONENTE: AdoptionConfirmModal
@@ -39,20 +45,20 @@ export function AdoptionConfirmModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+    <AlertDialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <AlertDialogContent className="sm:max-w-lg bg-white p-0 overflow-hidden flex flex-col max-h-[90vh] rounded-2xl border-0 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">
+        <AlertDialogHeader className="flex flex-row items-center justify-between p-6 border-b border-gray-100 space-y-0">
+          <AlertDialogTitle className="text-xl font-bold text-gray-900">
             Solicitar adopción
-          </h2>
+          </AlertDialogTitle>
           <button
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
-        </div>
+        </AlertDialogHeader>
 
         {/* Content */}
         <div className="p-6 overflow-y-auto">
@@ -90,20 +96,20 @@ export function AdoptionConfirmModal({
             variant="outline"
             onClick={onClose}
             disabled={isSubmitting}
-            className="border-gray-200 text-gray-700 hover:bg-gray-100"
+            className="border-gray-200 text-gray-700 hover:bg-gray-100 rounded-xl"
           >
             Cancelar
           </Button>
           <Button
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className="bg-purple-600 hover:bg-purple-700 text-white min-w-[140px]"
+            className="bg-purple-600 hover:bg-purple-700 text-white min-w-[140px] rounded-xl"
           >
             {isSubmitting ? "Enviando..." : "Confirmar solicitud"}
           </Button>
         </div>
-      </div>
-    </div>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -112,11 +118,7 @@ export function AdoptionConfirmModal({
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * Descripción General:
- * Modal de confirmación para iniciar el proceso de adopción.
- *
- * Lógica Clave:
- * - Evita doble sumisión desactivando botones (isSubmitting).
- * - Permite al usuario enviar un mensaje opcional.
- *
+ * Modal de confirmación para iniciar el proceso de adopción utilizando el
+ * sistema de diálogo reutilizable de la aplicación para asegurar consistencia
+ * en el backdrop y overlay.
  */

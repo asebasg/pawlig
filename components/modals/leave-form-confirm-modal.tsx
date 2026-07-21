@@ -3,11 +3,19 @@
 import { useState } from "react";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 /**
  * Modal de confirmación usado cuando el usuario intenta abandonar un formulario
  * con contenido pendiente de guardar. Advierte sobre la pérdida de recursos y
  * ofrece una última oportunidad para cancelar la acción.
+ * Utiliza el sistema de diseño estandarizado de diálogos con backdrop oscuro (bg-black/80).
  */
 
 interface LeaveFormConfirmModalProps {
@@ -33,39 +41,30 @@ export function LeaveFormConfirmModal({
     try {
       await onConfirm();
     } finally {
-      // Solo reseteamos isLeaving si el componente sigue montado.
-      // Si onConfirm navega (desmonta el árbol), este setter es un no-op seguro.
       setIsLeaving(false);
     }
   };
 
   return (
-    <div
-      role="alertdialog"
-      aria-modal="true"
-      aria-labelledby="leave-modal-title"
-      aria-describedby="leave-modal-description"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
-    >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col">
-
+    <AlertDialog open={isOpen} onOpenChange={(open) => { if (!open) onCancel(); }}>
+      <AlertDialogContent className="sm:max-w-md bg-white p-0 overflow-hidden gap-0 rounded-2xl border-0 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center gap-4 p-6 border-b border-gray-100">
+        <AlertDialogHeader className="flex flex-row items-center gap-4 p-6 border-b border-gray-100 space-y-0 text-left">
           <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-red-50">
             <AlertTriangle className="w-6 h-6 text-red-600" aria-hidden="true" />
           </div>
           <div>
-            <h2
+            <AlertDialogTitle
               id="leave-modal-title"
               className="text-lg font-bold text-gray-900"
             >
               ¿Abandonar el formulario?
-            </h2>
-            <p className="text-sm text-gray-500 mt-0.5">
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-gray-500 mt-0.5">
               Tienes imágenes subidas sin guardar
-            </p>
+            </AlertDialogDescription>
           </div>
-        </div>
+        </AlertDialogHeader>
 
         {/* Body */}
         <div className="p-6">
@@ -93,7 +92,7 @@ export function LeaveFormConfirmModal({
             variant="outline"
             onClick={onCancel}
             disabled={isLeaving}
-            className="border-gray-200 text-gray-700 hover:bg-gray-100"
+            className="border-gray-200 text-gray-700 hover:bg-gray-100 rounded-xl"
           >
             Quedarme aquí
           </Button>
@@ -103,7 +102,7 @@ export function LeaveFormConfirmModal({
             variant="destructive"
             onClick={handleConfirm}
             disabled={isLeaving}
-            className="min-w-[140px]"
+            className="min-w-[140px] rounded-xl"
           >
             {isLeaving ? (
               <>
@@ -115,8 +114,8 @@ export function LeaveFormConfirmModal({
             )}
           </Button>
         </div>
-      </div>
-    </div>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -125,7 +124,6 @@ export function LeaveFormConfirmModal({
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * Este componente debe mantenerse simple y accesible. Si se cambian los textos,
- * los estilos o el flujo de confirmación, conviene preservar el comportamiento
- * de bloqueo del botón principal durante la operación asíncrona.
+ * Este componente utiliza AlertDialog de UI para garantizar un overlay consistente
+ * con bg-black/80 y backdrop-blur-sm en todo el ecosistema de PawLig.
  */

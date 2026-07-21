@@ -20,14 +20,14 @@ describe("FormTimeoutModal", () => {
     render(<FormTimeoutModal isOpen={true} />);
     expect(screen.getByText("Tiempo límite alcanzado")).toBeInTheDocument();
     expect(
-      screen.getByText(/El formulario estuvo inactivo por 10 minutos/)
+      screen.getByText(/Has estado inactivo durante 10 minutos/)
     ).toBeInTheDocument();
   });
 
-  it("should call window.location.reload when clicking 'Entendido — Reiniciar'", () => {
+  it("should call window.location.reload when clicking 'Entendido'", () => {
     render(<FormTimeoutModal isOpen={true} />);
 
-    const button = screen.getByText("Entendido — Reiniciar");
+    const button = screen.getByText("Entendido");
     fireEvent.click(button);
 
     expect(window.location.reload).toHaveBeenCalledTimes(1);
