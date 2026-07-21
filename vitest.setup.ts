@@ -27,6 +27,10 @@ class ResizeObserver {
 }
 global.ResizeObserver = ResizeObserver;
 
+// Mock environment variables
+process.env.EMAIL_FROM = "test@pawlig.lat";
+process.env.RESEND_API_KEY = "re_test_123";
+
 // Mock next/cache
 vi.mock("next/cache", () => ({
   revalidateTag: vi.fn(),
