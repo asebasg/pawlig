@@ -2,11 +2,19 @@
 
 import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 /**
  * Modal informativo que aparece cuando un formulario queda inactivo durante el
  * tiempo máximo permitido. Informa al usuario que el contenido pendiente fue
  * descartado y le ofrece reiniciar la experiencia.
+ * Utiliza el sistema de diseño estandarizado de diálogos con backdrop oscuro (bg-black/80).
  */
 
 interface FormTimeoutModalProps {
@@ -22,32 +30,25 @@ export function FormTimeoutModal({ isOpen }: FormTimeoutModalProps) {
   };
 
   return (
-    <div
-      role="alertdialog"
-      aria-modal="true"
-      aria-labelledby="timeout-modal-title"
-      aria-describedby="timeout-modal-description"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-    >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col">
-
+    <AlertDialog open={isOpen}>
+      <AlertDialogContent className="sm:max-w-md bg-white p-0 overflow-hidden gap-0 rounded-2xl border-0 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center gap-4 p-6 border-b border-gray-100">
+        <AlertDialogHeader className="flex flex-row items-center gap-4 p-6 border-b border-gray-100 space-y-0 text-left">
           <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-amber-50">
             <Clock className="w-6 h-6 text-amber-500" aria-hidden="true" />
           </div>
           <div>
-            <h2
+            <AlertDialogTitle
               id="timeout-modal-title"
-              className="text-lg font-bold text-gray-900"
+              className="text-lg font-bold text-gray-900 text-center"
             >
               Tiempo límite alcanzado
-            </h2>
-            <p className="text-sm text-gray-500 mt-0.5">
-              El formulario estuvo inactivo por 10 minutos
-            </p>
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-gray-500 mt-0.5 text-center">
+              Has estado inactivo durante 10 minutos
+            </AlertDialogDescription>
           </div>
-        </div>
+        </AlertDialogHeader>
 
         {/* Body */}
         <div className="p-6">
@@ -55,10 +56,10 @@ export function FormTimeoutModal({ isOpen }: FormTimeoutModalProps) {
             id="timeout-modal-description"
             className="text-sm text-gray-600 leading-relaxed"
           >
-            Por seguridad, las imágenes que habías subido fueron{" "}
-            <strong>eliminadas automáticamente</strong> de nuestro servidor ya
-            que el formulario no se completó en el tiempo límite. Puedes volver
-            a empezar recargando la página.
+            Por motivos de seguridad y para proteger su información, la sesión ha
+            expirado. Los archivos y datos cargados temporalmente han sido
+            eliminados de nuestros servidores. Le solicitamos reiniciar el proceso
+            para completar su formulario de manera segura.
           </p>
         </div>
 
@@ -68,13 +69,13 @@ export function FormTimeoutModal({ isOpen }: FormTimeoutModalProps) {
             id="timeout-modal-acknowledge"
             type="button"
             onClick={handleAcknowledge}
-            className="bg-purple-600 hover:bg-purple-700 text-white min-w-[140px]"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-xl transition-all shadow-md hover:shadow-lg"
           >
-            Entendido — Reiniciar
+            Entendido
           </Button>
         </div>
-      </div>
-    </div>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
@@ -83,7 +84,8 @@ export function FormTimeoutModal({ isOpen }: FormTimeoutModalProps) {
  * NOTAS DE IMPLEMENTACIÓN
  * ---------------------------------------------------------------------------
  *
- * Este modal es deliberadamente simple: no necesita un flujo de cancelación
- * porque el estado del formulario ya fue descartado antes de mostrarlo.
- * Cualquier cambio visual o de copy debe mantener el mensaje claro y directo.
+ * Este modal utiliza AlertDialog de UI para garantizar un overlay consistente
+ * con bg-black/80 y backdrop-blur-sm en todo el ecosistema de PawLig.
+ * No necesita un flujo de cancelación porque el estado del formulario ya fue
+ * descartado antes de mostrarlo.
  */
