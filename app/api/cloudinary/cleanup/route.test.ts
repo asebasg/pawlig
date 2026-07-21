@@ -13,7 +13,7 @@ vi.mock("@/lib/cloudinary", () => ({
 }));
 
 // Generador de Requests mock
-function createMockRequest(body: any) {
+function createMockRequest(body: unknown) {
   return new Request("http://localhost/api/cloudinary/cleanup", {
     method: "POST",
     headers: {
@@ -29,7 +29,7 @@ describe("POST /api/cloudinary/cleanup", () => {
   });
 
   it("should return 401 if user is not authenticated", async () => {
-    (getServerSession as any).mockResolvedValueOnce(null);
+    vi.mocked(getServerSession).mockResolvedValueOnce(null);
 
     const req = createMockRequest({ images: [{ url: "http://example.com/img.png" }] });
     const res = await POST(req);
@@ -40,7 +40,10 @@ describe("POST /api/cloudinary/cleanup", () => {
   });
 
   it("should return 400 if validation fails (empty array)", async () => {
-    (getServerSession as any).mockResolvedValueOnce({ user: { id: "1", isActive: true } });
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: "1", isActive: true },
+      expires: "2099-01-01",
+    });
 
     const req = createMockRequest({ images: [] });
     const res = await POST(req);
@@ -51,7 +54,10 @@ describe("POST /api/cloudinary/cleanup", () => {
   });
 
   it("should return 400 if validation fails (missing url)", async () => {
-    (getServerSession as any).mockResolvedValueOnce({ user: { id: "1", isActive: true } });
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: "1", isActive: true },
+      expires: "2099-01-01",
+    });
 
     const req = createMockRequest({ images: [{ notUrl: "something" }] });
     const res = await POST(req);
@@ -60,8 +66,11 @@ describe("POST /api/cloudinary/cleanup", () => {
   });
 
   it("should call deleteImagesFromCloudinary and return 200 on success", async () => {
-    (getServerSession as any).mockResolvedValueOnce({ user: { id: "1", isActive: true } });
-    (deleteImagesFromCloudinary as any).mockResolvedValueOnce(undefined);
+    vi.mocked(getServerSession).mockResolvedValueOnce({
+      user: { id: "1", isActive: true },
+      expires: "2099-01-01",
+    });
+    vi.mocked(deleteImagesFromCloudinary).mockResolvedValueOnce(undefined);
 
     const images = [
       { url: "https://res.cloudinary.com/demo/image/upload/pawlig/test1.png" },
@@ -81,7 +90,7 @@ describe("POST /api/cloudinary/cleanup", () => {
   });
 
   it("should return 500 if an internal error occurs", async () => {
-    (getServerSession as any).mockImplementationOnce(() => {
+    vi.mocked(getServerSession).mockImplementationOnce(() => {
       throw new Error("Unexpected database or session error");
     });
 

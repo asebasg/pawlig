@@ -21,24 +21,32 @@ describe("useUnsavedImagesGuard", () => {
   const mockRouter = {
     push: vi.fn(),
     back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
   };
 
   const mockSetImageItems = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useRouter as any).mockReturnValue(mockRouter);
+    vi.mocked(useRouter).mockReturnValue(mockRouter as unknown as ReturnType<typeof useRouter>);
+
     // Mock global fetch
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true }),
-      })
-    ) as any;
-    
+      Promise.resolve(
+        new Response(JSON.stringify({ success: true }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      )
+    );
+
     // Mock navigator.sendBeacon
-    Object.assign(navigator, {
-      sendBeacon: vi.fn(() => true),
+    Object.defineProperty(navigator, "sendBeacon", {
+      writable: true,
+      value: vi.fn(() => true),
     });
 
     vi.useFakeTimers();
