@@ -39,6 +39,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import { AiRefineButton } from "@/components/ui/ai-refine-button";
 
 /**
  * POST /api/admin/users
@@ -102,6 +103,7 @@ export default function CreateUserForm() {
     handleSubmit,
     control,
     watch,
+    setValue,
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<CreateUserByAdminInput>({
@@ -121,6 +123,11 @@ export default function CreateUserForm() {
 
   const selectedRole = watch("role");
   const isAdminRole = selectedRole === UserRole.ADMIN;
+  const requiresReason = selectedRole !== UserRole.ADOPTER;
+
+  const reason = watch("reason") || "";
+  const setReason = (text: string) =>
+    setValue("reason", text, { shouldValidate: true, shouldDirty: true });
 
   // ── Envío real al endpoint ──────────────────────────────────────────────────
   const submitToApi = async (data: CreateUserByAdminInput) => {
@@ -535,37 +542,48 @@ export default function CreateUserForm() {
           )}
         </div>
 
-        {/* Justificación — solo visible si rol === ADMIN */}
-        {isAdminRole && (
+        {/* Justificación — visible para todos los roles excepto ADOPTER */}
+        {requiresReason && (
           <div>
             <label
               htmlFor="create-user-reason"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Justificación para rol ADMIN{" "}
+              Justificación para rol {ROLE_LABELS[selectedRole]}{" "}
               <span className="text-red-500">*</span>
             </label>
-            <div className="p-3 mb-3 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-2">
+            <div className="p-3 mb-3 rounded-lg bg-amber-50 border border-amber-200 flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
               <p className="text-xs text-amber-700">
-                Asignar el rol Administrador otorga acceso total al sistema.
-                Documenta el motivo de esta decisión (mínimo 10 caracteres).
+                Documenta el motivo de asignación o alta del rol{" "}
+                <strong>{ROLE_LABELS[selectedRole]}</strong> (mínimo 10 caracteres).
               </p>
             </div>
-            <textarea
-              {...register("reason")}
-              id="create-user-reason"
-              rows={3}
-              aria-invalid={errors.reason ? "true" : "false"}
-              className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors resize-none ${
-                errors.reason ? "border-red-500" : "border-amber-300"
-              }`}
-              placeholder="Ej: Empleado del equipo técnico que requiere acceso completo para gestión interna."
-            />
+            <div className="relative">
+              <textarea
+                {...register("reason")}
+                id="create-user-reason"
+                rows={4}
+                maxLength={500}
+                aria-invalid={errors.reason ? "true" : "false"}
+                className={`text-black w-full px-4 py-2 pb-12 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors resize-none ${
+                  errors.reason ? "border-red-500" : "border-amber-300"
+                }`}
+                placeholder={`Ejemplo: Alta manual del rol ${ROLE_LABELS[selectedRole]} autorizada por administración...`}
+                disabled={isSubmitting}
+              />
+              <AiRefineButton
+                currentText={reason}
+                onRefined={setReason}
+                type="moderation"
+                disabled={isSubmitting}
+              />
+            </div>
+            <p className="mt-1 text-sm text-gray-500">
+              Mínimo 10 caracteres ({reason.length}/500)
+            </p>
             {errors.reason && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.reason.message}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>
             )}
           </div>
         )}

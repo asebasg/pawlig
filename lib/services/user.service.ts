@@ -143,10 +143,10 @@ export async function createUserByAdmin(
 
   const requestId = crypto.randomUUID();
 
-  // Razón de auditoría: obligatoria y personalizada si rol es ADMIN
-  // (garantizada por createUserByAdminSchema.refine); texto fijo en cualquier otro rol.
+  // Razón de auditoría: obligatoria y personalizada para cualquier rol diferente de ADOPTER
+  // (garantizada por createUserByAdminSchema.refine); texto fijo para rol ADOPTER.
   const auditReason =
-    role === UserRole.ADMIN && reason
+    role !== UserRole.ADOPTER && reason && reason.trim().length >= 10
       ? reason
       : "Usuario creado manualmente por administrador";
 

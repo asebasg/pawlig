@@ -52,6 +52,7 @@ const validPayload = {
   address: "Calle 123 # 45-67",
   idNumber: "1234567890",
   birthDate: "1990-01-01",
+  role: UserRole.ADOPTER,
 };
 
 function createRequest(body: unknown, headers?: HeadersInit): NextRequest {
@@ -143,7 +144,7 @@ describe("POST /api/admin/users", () => {
     expect(response.status).toBe(201);
     expect(hashPassword).toHaveBeenCalledWith("Temporal@123");
     expect(createUserByAdmin).toHaveBeenCalledWith(
-      { ...validPayload, role: UserRole.ADOPTER, hashedPassword: "hashed-password" },
+      { ...validPayload, hashedPassword: "hashed-password" },
       "admin-1",
       "admin@pawlig.com",
       "203.0.113.10",

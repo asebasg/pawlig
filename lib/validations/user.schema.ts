@@ -324,20 +324,19 @@ export const createUserByAdminSchema = z
 
     reason: z
       .string()
-      .min(10, "La justificación debe tener al menos 10 caracteres")
+      .max(500, "La justificación no puede exceder 500 caracteres")
       .optional(),
   })
   .refine(
     (data) => {
-      // Mismo patrón que shelterApplicationSchema: si se asigna rol ADMIN,
-      // reason pasa de opcional a obligatorio (mín. 10 chars ya validados en campo).
-      if (data.role === UserRole.ADMIN) {
-        return data.reason !== undefined && data.reason.trim().length >= 10;
+      // Si el rol asignado no es ADOPTER (ADMIN, SHELTER, VENDOR), reason es obligatorio (mínimo 10 caracteres)
+      if (data.role !== UserRole.ADOPTER) {
+        return typeof data.reason === "string" && data.reason.trim().length >= 10;
       }
       return true;
     },
     {
-      message: "Al asignar rol ADMIN se requiere una justificación de al menos 10 caracteres",
+      message: "Para este rol se requiere una justificación de al menos 10 caracteres",
       path: ["reason"],
     }
   );
