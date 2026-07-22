@@ -571,7 +571,7 @@ export default function CreateUserForm() {
         )}
 
         {/* Nota informativa de contraseña */}
-        <div className="flex items-start gap-3 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
+        <div className="flex items-center gap-3 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
           <Info className="w-4 h-4 shrink-0 mt-0.5" />
           La contraseña temporal se generará automáticamente y se mostrará al
           confirmar la creación. No se enviará por email hasta que el servicio
