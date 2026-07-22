@@ -6,9 +6,21 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { UserRole, Municipality } from "@prisma/client";
-import { Copy, Check, ShieldAlert, UserPlus } from "lucide-react";
+import {
+  Copy,
+  Check,
+  ShieldAlert,
+  UserPlus,
+  Info,
+  Heart,
+  Home,
+  ShoppingBag,
+} from "lucide-react";
 
-import { createUserByAdminSchema, CreateUserByAdminInput } from "@/lib/validations/user.schema";
+import {
+  createUserByAdminSchema,
+  CreateUserByAdminInput,
+} from "@/lib/validations/user.schema";
 import { AddressInput } from "@/components/ui/address-input";
 import {
   Select,
@@ -42,6 +54,14 @@ const ROLE_LABELS: Record<UserRole, string> = {
   SHELTER: "Albergue",
   VENDOR: "Vendedor",
   ADMIN: "Administrador",
+};
+
+// Iconos por rol (coincidentes con la vista de gestión de usuarios)
+const ROLE_ICONS: Record<UserRole, React.ReactNode> = {
+  ADOPTER: <Heart className="h-4 w-4 text-blue-500" />,
+  SHELTER: <Home className="h-4 w-4 text-teal-500" />,
+  VENDOR: <ShoppingBag className="h-4 w-4 text-orange-500" />,
+  ADMIN: <ShieldAlert className="h-4 w-4 text-purple-500" />,
 };
 
 // Respuesta exitosa del endpoint POST /api/admin/users
@@ -131,7 +151,9 @@ export default function CreateUserForm() {
 
         if (responseData.code === "VALIDATION_ERROR" && responseData.details) {
           const firstDetail = responseData.details[0];
-          toast.error(`Error de validación: ${firstDetail?.message ?? responseData.error}`);
+          toast.error(
+            `Error de validación: ${firstDetail?.message ?? responseData.error}`,
+          );
           return;
         }
 
@@ -153,7 +175,11 @@ export default function CreateUserForm() {
       }
     } catch (error) {
       console.error("[CreateUserForm] Error:", error);
-      toast.error(error instanceof Error ? error.message : "Error inesperado al crear el usuario");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Error inesperado al crear el usuario",
+      );
     }
   };
 
@@ -220,7 +246,9 @@ export default function CreateUserForm() {
       {/* ── Modal de credenciales temporales ─────────────────────────────── */}
       <AlertDialog
         open={!!tempCredentials}
-        onOpenChange={(open) => { if (!open) handleCredentialsClose(); }}
+        onOpenChange={(open) => {
+          if (!open) handleCredentialsClose();
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -237,13 +265,17 @@ export default function CreateUserForm() {
 
           <div className="space-y-3 my-2">
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">Correo electrónico</p>
+              <p className="text-xs font-medium text-gray-500 mb-1">
+                Correo electrónico
+              </p>
               <p className="text-sm font-mono bg-gray-100 rounded px-3 py-2 text-gray-800 select-all">
                 {tempCredentials?.email}
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">Contraseña temporal</p>
+              <p className="text-xs font-medium text-gray-500 mb-1">
+                Contraseña temporal
+              </p>
               <div className="flex items-center gap-2">
                 <p className="flex-1 text-sm font-mono bg-gray-100 rounded px-3 py-2 text-gray-800 select-all">
                   {tempCredentials?.password}
@@ -373,7 +405,9 @@ export default function CreateUserForm() {
             <option value={Municipality.BARBOSA}>Barbosa</option>
           </select>
           {errors.municipality && (
-            <p className="text-red-500 text-sm mt-1">{errors.municipality.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.municipality.message}
+            </p>
           )}
         </div>
 
@@ -397,7 +431,9 @@ export default function CreateUserForm() {
             )}
           />
           {errors.address && (
-            <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.address.message}
+            </p>
           )}
         </div>
 
@@ -420,7 +456,9 @@ export default function CreateUserForm() {
             placeholder="1234567890"
           />
           {errors.idNumber && (
-            <p className="text-red-500 text-sm mt-1">{errors.idNumber.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.idNumber.message}
+            </p>
           )}
         </div>
 
@@ -437,17 +475,23 @@ export default function CreateUserForm() {
             type="date"
             id="create-user-birthDate"
             aria-invalid={errors.birthDate ? "true" : "false"}
-            max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
-              .toISOString()
-              .split("T")[0]}
+            max={
+              new Date(new Date().setFullYear(new Date().getFullYear() - 18))
+                .toISOString()
+                .split("T")[0]
+            }
             className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors ${
               errors.birthDate ? "border-red-500" : "border-gray-300"
             }`}
           />
           {errors.birthDate && (
-            <p className="text-red-500 text-sm mt-1">{errors.birthDate.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.birthDate.message}
+            </p>
           )}
-          <p className="text-sm text-gray-500 mt-1">El usuario debe ser mayor de 18 años</p>
+          <p className="text-sm text-gray-500 mt-1">
+            El usuario debe ser mayor de 18 años
+          </p>
         </div>
 
         {/* Rol */}
@@ -476,7 +520,10 @@ export default function CreateUserForm() {
                 <SelectContent>
                   {(Object.keys(ROLE_LABELS) as UserRole[]).map((role) => (
                     <SelectItem key={role} value={role}>
-                      {ROLE_LABELS[role]}
+                      <div className="flex items-center gap-2">
+                        {ROLE_ICONS[role]}
+                        <span>{ROLE_LABELS[role]}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -516,13 +563,16 @@ export default function CreateUserForm() {
               placeholder="Ej: Empleado del equipo técnico que requiere acceso completo para gestión interna."
             />
             {errors.reason && (
-              <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.reason.message}
+              </p>
             )}
           </div>
         )}
 
         {/* Nota informativa de contraseña */}
-        <div className="rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
+        <div className="flex items-start gap-3 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
+          <Info className="w-4 h-4 shrink-0 mt-0.5" />
           La contraseña temporal se generará automáticamente y se mostrará al
           confirmar la creación. No se enviará por email hasta que el servicio
           de correo esté disponible.
@@ -581,7 +631,7 @@ export default function CreateUserForm() {
  * - react-hook-form + zod: Gestion de estado del formulario y validacion cliente.
  * - @prisma/client: Enums UserRole y Municipality para tipado y opciones.
  * - sonner: Notificaciones toast para errores y confirmacion de exito.
- * - lucide-react: Iconografia (UserPlus, ShieldAlert, Copy, Check).
+ * - lucide-react: Iconografia (UserPlus, ShieldAlert, Copy, Check, Heart, Home, ShoppingBag).
  * - @/components/ui/select: Componente Select para el picklist de roles.
  * - @/components/ui/alert-dialog: Dialogo de confirmacion ADMIN y credenciales.
  * - @/components/ui/address-input: Input de dirección reutilizado de register-form.

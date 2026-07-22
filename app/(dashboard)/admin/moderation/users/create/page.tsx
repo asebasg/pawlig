@@ -14,8 +14,9 @@ import CreateUserForm from "@/components/forms/create-user-form";
  */
 
 export const metadata = {
-  title: "Crear usuario | Administración",
-  description: "Formulario administrativo para el alta manual de usuarios en PawLig.",
+  title: "Crear usuario - User Moderation Hub",
+  description:
+    "Formulario administrativo para el alta manual de usuarios en PawLig.",
 };
 
 export default async function CreateUserPage() {
@@ -31,10 +32,11 @@ export default async function CreateUserPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-8">
+      <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold text-gray-900">Crear usuario</h1>
         <p className="text-gray-500 mt-1">
-          Alta manual de un nuevo usuario en el sistema. La contraseña se genera automáticamente.
+          Alta manual de un nuevo usuario en el sistema. La contraseña se genera
+          automáticamente.
         </p>
       </div>
 

@@ -273,10 +273,9 @@ export default function UsersManagementClient() {
           <Link href="/admin/moderation/users/create">
             <Button
               id="btn-crear-usuario"
-              className="h-10 bg-purple-600 hover:bg-purple-700 text-white w-full lg:w-auto"
+              className="h-10 text-primary hover:brightness-75 transition-all text-white w-full lg:w-auto"
             >
-              <UserPlus className="w-4 h-4 mr-2" />
-              Crear Usuario
+              <UserPlus className="w-4 h-4" />
             </Button>
           </Link>
         </div>
