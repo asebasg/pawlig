@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, Municipality } from "@prisma/client";
-import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye, Heart, Home, ShoppingBag, X } from "lucide-react";
+import { Search, Shield, User, MessageCircleQuestion, Activity, Scroll, ShieldAlert, Eye, Heart, Home, ShoppingBag, X, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import BlockUserButton from "@/components/admin/BlockUserButton";
 import Loader from "@/components/ui/loader";
 import {
@@ -268,6 +269,16 @@ export default function UsersManagementClient() {
             <X className="w-4 h-4 mr-2" />
             Limpiar Filtros
           </Button>
+
+          <Link href="/admin/moderation/users/create">
+            <Button
+              id="btn-crear-usuario"
+              className="h-10 bg-purple-600 hover:bg-purple-700 text-white w-full lg:w-auto"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Crear Usuario
+            </Button>
+          </Link>
         </div>
       </div>
 

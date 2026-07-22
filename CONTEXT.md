@@ -408,6 +408,8 @@ model SystemAuditLog {
 │   │   │   │   │   │       ├── __tests__/
 │   │   │   │   │   │       │   └── user-view.spec.tsx
 │   │   │   │   │   │       └── page.tsx
+│   │   │   │   │   ├── create/
+│   │   │   │   │   │   └── page.tsx
 │   │   │   │   │   ├── block-user-modal.tsx
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── users-management-client.tsx
@@ -651,6 +653,7 @@ model SystemAuditLog {
 │   │   ├── pet-filter.tsx
 │   │   └── product-filter.tsx
 │   ├── forms/
+│   │   ├── create-user-form.tsx
 │   │   ├── login-form.tsx
 │   │   ├── pet-form.tsx
 │   │   ├── product-form.tsx

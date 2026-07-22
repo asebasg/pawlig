@@ -277,6 +277,71 @@ export const roleUpdateSchema = z.object({
   reason: z.string().min(10, "La razón debe tener al menos 10 caracteres."),
 });
 
+//  ========== ESQUEMA DE CREACIÓN DE USUARIO POR ADMINISTRADOR ==========
+export const createUserByAdminSchema = z
+  .object({
+    email: z
+      .string()
+      .email("Email inválido")
+      .min(1, "Email es requerido"),
+
+    name: z
+      .string()
+      .min(2, "Nombre debe tener al menos 2 caracteres")
+      .max(100, "Nombre muy largo"),
+
+    phone: z
+      .string()
+      .min(7, "Teléfono inválido")
+      .max(15, "Teléfono inválido"),
+
+    municipality: z.nativeEnum(Municipality, {
+      message: "Municipio inválido",
+    }),
+
+    address: z
+      .string()
+      .min(5, "Dirección debe tener al menos 5 caracteres")
+      .max(200, "Dirección muy larga"),
+
+    idNumber: z
+      .string()
+      .min(5, "Número de identificación inválido")
+      .max(20, "Número de identificación inválido"),
+
+    birthDate: z
+      .string()
+      .refine((date) => {
+        const birthDate = new Date(date);
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+        return age >= 18;
+      }, "El usuario debe ser mayor de 18 años"),
+
+    role: z.nativeEnum(UserRole, {
+      message: "Rol inválido",
+    }),
+
+    reason: z
+      .string()
+      .min(10, "La justificación debe tener al menos 10 caracteres")
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // Mismo patrón que shelterApplicationSchema: si se asigna rol ADMIN,
+      // reason pasa de opcional a obligatorio (mín. 10 chars ya validados en campo).
+      if (data.role === UserRole.ADMIN) {
+        return data.reason !== undefined && data.reason.trim().length >= 10;
+      }
+      return true;
+    },
+    {
+      message: "Al asignar rol ADMIN se requiere una justificación de al menos 10 caracteres",
+      path: ["reason"],
+    }
+  );
+
 //  ========== TIPOS TYPESCRIPT INFERIDOS ==========
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -284,6 +349,7 @@ export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
 export type VendorApplicationInput = z.infer<typeof vendorApplicationSchema>;
 export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>;
 export type RoleUpdateInput = z.infer<typeof roleUpdateSchema>;
+export type CreateUserByAdminInput = z.infer<typeof createUserByAdminSchema>;
 
 /*
  * ---------------------------------------------------------------------------
@@ -304,6 +370,11 @@ export type RoleUpdateInput = z.infer<typeof roleUpdateSchema>;
  *   usuario representante y los datos específicos del albergue. Utiliza
  *   el método refine para aplicar la regla RN-013, que exige al menos un
  *   método de contacto (WhatsApp o Instagram).
+ * - createUserByAdminSchema: Valida el payload del endpoint administrativo
+ *   POST /api/admin/users. No incluye el campo 'password' (se genera en
+ *   servidor). Añade el campo 'role' (picklist de UserRole) y el campo
+ *   'reason' que se vuelve obligatorio (min. 10 caracteres) cuando el rol
+ *   seleccionado es ADMIN, aplicado mediante un refinamiento de nivel raíz.
  * - Expresiones Regulares (regex): Se utilizan para validaciones de
  *   formato precisas, como en shelterNit para el NIT colombiano y en
  *   contactWhatsApp para números de teléfono internacionales.

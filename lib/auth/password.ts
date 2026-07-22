@@ -1,4 +1,5 @@
-import bcrypt from 'bcryptjs';
+import { randomBytes } from "node:crypto";
+import bcrypt from "bcryptjs";
 
 /**
  * Ruta/Componente/Servicio: Servicio de Contraseñas
@@ -25,6 +26,50 @@ export function isValidPassword(password: string): boolean {
   return password.length >= 8;
 }
 
+/**
+ * Genera una contraseña temporal segura de 12 caracteres (supera el mínimo
+ * de 8 chars de registerUserSchema / RN-001) usando crypto.randomBytes
+ * del módulo nativo de Node.js. La contraseña se retorna en texto plano
+ * únicamente al flujo que la hashea y la envía por email; nunca se persiste
+ * en claro en base de datos ni en logs.
+ */
+export function generateTempPassword(): string {
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const digits = "0123456789";
+  const symbols = "@#$%&*!";
+  const all = uppercase + lowercase + digits + symbols;
+
+  const LENGTH = 12;
+
+  // Se solicitan LENGTH (12) bytes: los primeros 4 garantizan un carácter
+  // obligatorio de cada grupo; los 8 restantes completan los 12 caracteres.
+  const buf = randomBytes(LENGTH);
+
+  const mandatory = [
+    uppercase[buf[0] % uppercase.length],
+    lowercase[buf[1] % lowercase.length],
+    digits[buf[2] % digits.length],
+    symbols[buf[3] % symbols.length],
+  ];
+
+  const rest = Array.from(buf.subarray(4)).map(
+    (byte) => all[byte % all.length]
+  );
+
+  // Mezcla Fisher-Yates usando un segundo bloque de bytes independiente
+  // para no reutilizar los mismos bytes de construcción como índices.
+  const combined = [...mandatory, ...rest];
+  const shuffleBytes = randomBytes(LENGTH);
+
+  for (let i = combined.length - 1; i > 0; i--) {
+    const j = shuffleBytes[i % shuffleBytes.length] % (i + 1);
+    [combined[i], combined[j]] = [combined[j], combined[i]];
+  }
+
+  return combined.join("");
+}
+
 /*
  * ---------------------------------------------------------------------------
  * NOTAS DE IMPLEMENTACIÓN
@@ -46,8 +91,19 @@ export function isValidPassword(password: string): boolean {
  * - 'isValidPassword': Implementa la regla de negocio 'RN-001' que requiere que
  *   las contraseñas tengan una longitud mínima de 8 caracteres. Sirve como una
  *   validación básica del lado del servidor.
+ * - 'generateTempPassword': Genera una contraseña temporal de 12 caracteres
+ *   usando 'randomBytes' del módulo nativo 'node:crypto'. Garantiza la presencia
+ *   de al menos un carácter de cada grupo de complejidad (mayúscula, minúscula,
+ *   dígito, símbolo) mediante 4 bytes dedicados por grupo, más 8 bytes para
+ *   completar la longitud. El mezclado usa un segundo bloque de bytes
+ *   independiente (Fisher-Yates) para no reutilizar los mismos índices de
+ *   construcción. La contraseña se retorna en texto plano únicamente al flujo
+ *   que la hashea y la envía por email; nunca se persiste en claro.
+ *   Supera el mínimo de 8 chars de RN-001 / registerUserSchema.
+ *   Usada exclusivamente por el flujo administrativo de alta de usuarios.
  *
  * Dependencias Externas:
+ * - 'node:crypto': randomBytes para generación criptográfica segura de bytes.
  * - 'bcryptjs': Librería utilizada para todas las operaciones de hashing y
  *   comparación de contraseñas. Es el núcleo de la seguridad de las credenciales.
  *

@@ -2,6 +2,26 @@
 
 ## Registro de Cambios del Proyecto PawLig
 
+## 22-07-2026 - Alta Administrativa de Usuarios (ISSUE-174)
+
+**Tipo:** Feature
+**Scope:** admin, moderation, users, auth
+
+### Descripción
+
+Implementación del flujo administrativo para la creación manual de usuarios directamente desde el Moderation Hub (`/admin/moderation/users`), permitiendo a los administradores registrar cuentas sin login automático y con contraseñas temporales criptográficamente seguras generadas en el servidor.
+
+### Cambios
+
+- **Botón 'Crear Usuario'**: Añadido en `users-management-client.tsx` junto a los filtros de búsqueda para facilitar la navegación hacia la pantalla de alta.
+- **Página Protegida Server Component**: Creación de `/admin/moderation/users/create` restringida a administradores mediante comprobaciones de sesión (`getServerSession` + `UserRole.ADMIN`).
+- **Formulario Administrativo (`CreateUserForm`)**: Componente cliente basado en `register-form.tsx`, que reutiliza las validaciones de dirección, teléfono e identificación, incluye selector de rol (`ADOPTER`, `SHELTER`, `VENDOR`, `ADMIN`) y exige justificación obligatoria (mín. 10 caracteres) con diálogo de confirmación cuando se asigna el rol `ADMIN`.
+- **Endpoint `POST /api/admin/users`**: Handler que valida la sesión y permisos de admin, procesa el payload con `createUserByAdminSchema`, verifica duplicados de correo (`ACCOUNT_BLOCKED` / `EMAIL_ALREADY_EXISTS`), genera la contraseña temporal y ejecuta la creación atómica del usuario y su registro en `SystemAuditLog`. Muestra modal de credenciales temporales con botón de copiado.
+- **Utilidades y Servicios**:
+  - `generateTempPassword()` en `lib/auth/password.ts`: Genera contraseñas temporales de 12 caracteres usando `randomBytes` de `node:crypto`.
+  - `createUserByAdmin()` en `lib/services/user.service.ts`: Transacción interactiva Prisma para crear el usuario e insertar el evento en `SystemAuditLog` (`category: USER_MANAGEMENT`, `action: "CREATE"`).
+  - `createUserByAdminSchema` en `lib/validations/user.schema.ts`: Esquema Zod con refinamiento condicional para requirimento de justificación en rol de Administrador.
+
 ---
 
 ## 10-07-2026 - Asistencia Inteligente y Carrito Más Eficiente (v1.15.0)
