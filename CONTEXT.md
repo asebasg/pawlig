@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 22 de julio de 2026.
+> **Última actualización**: 23 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
