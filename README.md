@@ -14,7 +14,7 @@
 **Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.15.0 | Última actualización: 10 de julio de 2026_
+_Versión v1.8.0 | Última actualización: 23 de julio de 2026_
 
 </div>
 
@@ -42,8 +42,7 @@ El sistema destaca por incorporar capacidades avanzadas de **Inteligencia Artifi
 La plataforma de PawLig está dotada de una serie de módulos robustos y características técnicas avanzadas:
 
 ### 🧠 Inteligencia Artificial Generativa (Google Gemini 2.5-flash)
-*   **Asistente IA Multi-propósito:** Integración del componente `AiRefineButton` que conecta con el endpoint inteligente `/api/ai/refine` para el refinamiento automático de descripciones.
-*   **Refinamiento Persuasivo y Comercial:** Optimiza y eleva el impacto emocional de las descripciones básicas de mascotas, así como el tono persuasivo y comercial de las descripciones de productos de tienda.
+*   **Asistente IA Multi-propósito:** Integración del componente `AiRefineButton` que conecta con el endpoint inteligente `/api/ai/refine` para el refinamiento automático de descripciones de mascotas y productos.
 *   **Asistente de Moderación Inteligente:** Extiende el uso de la IA para ayudar a los administradores a refinar y redactar de forma clara y respetuosa los motivos de decisión utilizados en las aprobaciones, rechazos y bloqueos en el Moderation Hub.
 *   **Saneamiento y Respuestas Seguras:** Refuerzo de las validaciones de entrada en las solicitudes de moderación y saneamiento estricto de la salida generada por la IA antes de ser devuelta para garantizar la máxima seguridad.
 
@@ -51,7 +50,7 @@ La plataforma de PawLig está dotada de una serie de módulos robustos y caracte
 *   **Centro Administrativo Consolidado:** Gestión centralizada de solicitudes de verificación de albergues, vendedores y moderación de usuarios bajo el módulo administrativo `/admin/moderation`.
 *   **Registro de Auditoría Polimórfico (`SystemAuditLog`):** Sistema atómico que captura, almacena y expone de forma paginada un historial inalterable de cada evento administrativo crucial (bloqueos de cuentas, aprobación/rechazo de solicitudes, asignación de roles) exigiendo justificaciones obligatorias y almacenando estados diferenciales en formato JSON (estados *antes/después*).
 *   **Seguridad Multimedia Reforzada:** Endpoint seguro `/api/cloudinary/delete` que verifica la propiedad de los recursos a través del control de acceso basado en roles (RBAC), impidiendo la eliminación no autorizada de recursos en la nube de Cloudinary por parte de agentes o usuarios ajenos al recurso original.
-*   **Flujo de Reenvío de Solicitudes Desbloqueado:** Corrección lógica que permite a albergues o vendedores cuyas postulaciones fueron previamente denegadas reenviar una nueva solicitud de verificación, manteniendo la restricción de reenvío únicamente si hay una solicitud actual con estado `PENDING` o `APPROVED`.
+*   **Flujo de Reenvío de Solicitudes Desbloqueado:** Permite a albergues o vendedores cuyas postulaciones fueron previamente denegadas reenviar una nueva solicitud de verificación, manteniendo la restricción de reenvío únicamente si hay una solicitud actual con estado `PENDING` o `APPROVED`.
 
 ### 📧 Motor de Notificaciones Transaccionales (Resend & React Email)
 *   **11 Plantillas Responsive Integradas:** Emails completamente responsivos y personalizados bajo la identidad visual de PawLig, cubriendo flujos críticos como:
