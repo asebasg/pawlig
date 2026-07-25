@@ -1,11 +1,13 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 23 de julio de 2026.
+> **Última actualización**: 25 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
 
 ## 1. Esquema de la Base de Datos (schema.prisma)
+
+> **Sincronización del esquema de base de datos realizada el 25 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
 
 ```prisma
 // This is your Prisma schema file,
@@ -364,6 +366,8 @@ model SystemAuditLog {
 ---
 
 ## 2. Estructura del Proyecto
+
+> **Mapeo de la estructura de carpetas realizado el 25 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
 
 ```text
 ./
@@ -886,6 +890,8 @@ model SystemAuditLog {
 
 ## 3. Dependencias del Proyecto
 
+> **Análisis de dependencias realizado el 25 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
+
 ### Dependencias de Producción
 
 - **Frontend Core**:
@@ -971,3 +977,29 @@ model SystemAuditLog {
   - `typescript`: `^5` - Lenguaje de programación superconjunto de JavaScript con tipado estático.
   - `vite-tsconfig-paths`: `^6.0.3` - Soporte para la resolución de rutas de tsconfig en entornos de Vite.
   - `vitest`: `^4.0.16` - Runner de pruebas unitarias extremadamente rápido basado en Vite.
+
+---
+
+## 4. Estándares de Codificación, Scripts y Utilidades
+
+### Estándares de Codificación Obligatorios
+
+El proyecto sigue reglas estrictas de nomenclatura y estructura para asegurar la excelencia técnica:
+- **Indentación**: Uso estricto de 2 espacios (sin tabuladores).
+- **Nomenclatura**: variables y funciones en `camelCase`, componentes e interfaces en `PascalCase`, y archivos/directorios en `kebab-case`.
+- **Comentarios Mandatarios**:
+  - **Cabecera (JSDoc)**: Todos los archivos de lógica (servicios, componentes, API routes) deben incluir un bloque explicativo con su descripción, requisitos e historia de usuario implementada.
+  - **Pie de página (Notas de Implementación)**: Al final de cada archivo significativo, se debe incluir un bloque de comentarios con la descripción general, lógica clave y dependencias externas.
+
+### Scripts de Utilidad
+
+El proyecto incluye scripts ejecutables mediante `npx tsx scripts/<script-name>` para facilitar tareas administrativas y de mantenimiento:
+- `npx tsx scripts/cleanup-orphaned-images.ts` - Realiza el mantenimiento de Cloudinary, identificando y removiendo imágenes huérfanas de la base de datos.
+- `npx tsx scripts/test-live-emails.ts` - Pruebas de integración y envío de correos reales utilizando el servicio de Resend.
+- `npx tsx scripts/geocode-shelters.ts` - Utilidad de geocodificación para asignar latitud y longitud a aquellos albergues sin coordenadas geográficas explícitas.
+
+### Configuración del Entorno de Pruebas
+
+Para garantizar una correcta ejecución del suite de pruebas mediante Vitest (`npm test` o `vitest --run`):
+- **Node.js**: Se requiere una versión de ejecución Node.js 18.17+ (LTS recomendada).
+- **Variable de Entorno**: Se debe configurar obligatoriamente la variable `EMAIL_FROM=onboarding@resend.dev` para evitar errores y fallos de aserción en las pruebas del servicio de correos.
