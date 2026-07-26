@@ -1,13 +1,13 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 25 de julio de 2026.
+> **Última actualización**: 26 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
 
 ## 1. Esquema de la Base de Datos (schema.prisma)
 
-> **Sincronización del esquema de base de datos realizada el 25 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
+> **Sincronización del esquema de base de datos realizada el 26 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
 
 ```prisma
 // This is your Prisma schema file,
@@ -367,7 +367,7 @@ model SystemAuditLog {
 
 ## 2. Estructura del Proyecto
 
-> **Mapeo de la estructura de carpetas realizado el 25 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
+> **Mapeo de la estructura de carpetas realizado el 26 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
 
 ```text
 ./
@@ -518,112 +518,112 @@ model SystemAuditLog {
 │   │   │   │       ├── route.ts
 │   │   │   │       └── trends/
 │   │   │   │           └── route.ts
-│   │   │   ├── moderation/
-│   │   │   │   ├── audit/
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── shelters/
-│   │   │   │   │   ├── [id]/
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── vendors/
-│   │   │   │       ├── [id]/
-│   │   │   │       │   └── route.ts
-│   │   │   │       └── route.ts
-│   │   │   ├── shelter-requests/
+│   │   ├── moderation/
+│   │   │   ├── audit/
 │   │   │   │   └── route.ts
 │   │   │   ├── shelters/
-│   │   │   │   └── [shelterId]/
-│   │   │   │       └── route.ts
-│   │   │   └── users/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   └── vendors/
 │   │   │       ├── [id]/
-│   │   │       │   ├── block/
-│   │   │       │   │   └── route.ts
-│   │   │       │   └── role/
-│   │   │       │       └── route.ts
+│   │   │       │   └── route.ts
 │   │   │       └── route.ts
-│   │   ├── adoptions/
-│   │   │   ├── [id]/
-│   │   │   │   └── route.ts
+│   │   ├── shelter-requests/
 │   │   │   └── route.ts
-│   │   ├── ai/
-│   │   │   └── refine/
-│   │   │       └── route.ts
-│   │   ├── auth/
-│   │   │   ├── [...nextauth]/
-│   │   │   │   └── route.ts
-│   │   │   ├── forgot-password/
-│   │   │   │   └── route.ts
-│   │   │   └── register/
-│   │   │       └── route.ts
-│   │   ├── cart/
-│   │   │   ├── [id]/
-│   │   │   │   └── route.ts
-│   │   │   └── route.ts
-│   │   ├── cloudinary/
-│   │   │   ├── cleanup/
-│   │   │   │   ├── route.test.ts
-│   │   │   │   └── route.ts
-│   │   │   ├── delete/
-│   │   │   │   └── route.ts
-│   │   │   └── sign/
-│   │   │       └── route.ts
-│   │   ├── pets/
-│   │   │   ├── [id]/
-│   │   │   │   ├── favorite/
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── route.ts
-│   │   │   │   └── status/
-│   │   │   │       └── route.ts
-│   │   │   ├── route.ts
-│   │   │   └── search/
-│   │   │       └── route.ts
-│   │   ├── products/
-│   │   │   ├── [id]/
-│   │   │   │   ├── route.ts
-│   │   │   │   └── stock/
-│   │   │   │       └── route.ts
-│   │   │   └── route.ts
-│   │   ├── shelter/
-│   │   │   ├── adoptions/
-│   │   │   │   └── route.ts
-│   │   │   └── reports/
-│   │   │       └── adoptions/
-│   │   │           ├── export/
-│   │   │           │   └── route.ts
-│   │   │           └── route.ts
 │   │   ├── shelters/
-│   │   │   ├── [id]/
-│   │   │   │   └── route.ts
-│   │   │   ├── map/
-│   │   │   │   └── route.ts
-│   │   │   └── search/
+│   │   │   └── [shelterId]/
 │   │   │       └── route.ts
-│   │   ├── upload/
-│   │   │   └── route.ts
-│   │   ├── user/
-│   │   │   ├── favorites/
-│   │   │   │   ├── check/
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
-│   │   │   ├── profile/
-│   │   │   │   └── route.ts
-│   │   │   ├── request-shelter-account/
-│   │   │   │   └── route.ts
-│   │   │   └── request-vendor-account/
-│   │   │       └── route.ts
-│   │   └── vendor/
-│   │       ├── metrics/
-│   │       │   ├── export/
+│   │   └── users/
+│   │       ├── [id]/
+│   │       │   ├── block/
 │   │       │   │   └── route.ts
-│   │       │   ├── orders/
-│   │       │   │   └── route.ts
-│   │       │   ├── products/
-│   │       │   │   └── route.ts
-│   │       │   ├── route.ts
-│   │       │   └── trends/
+│   │       │   └── role/
 │   │       │       └── route.ts
-│   │       └── profile/
+│   │       └── route.ts
+│   ├── adoptions/
+│   │   ├── [id]/
+│   │   │   └── route.ts
+│   │   └── route.ts
+│   ├── ai/
+│   │   └── refine/
+│   │       └── route.ts
+│   ├── auth/
+│   │   ├── [...nextauth]/
+│   │   │   └── route.ts
+│   │   ├── forgot-password/
+│   │   │   └── route.ts
+│   │   └── register/
+│   │       └── route.ts
+│   ├── cart/
+│   │   ├── [id]/
+│   │  │   └── route.ts
+│   │   └── route.ts
+│   ├── cloudinary/
+│   │   ├── cleanup/
+│   │   │   ├── route.test.ts
+│   │   │   └── route.ts
+│   │   ├── delete/
+│   │   │   └── route.ts
+│   │   └── sign/
+│   │       └── route.ts
+│   ├── pets/
+│   │   ├── [id]/
+│   │   │   ├── favorite/
+│   │   │   │   └── route.ts
+│   │   │   ├── route.ts
+│   │   │   └── status/
+│   │   │       └── route.ts
+│   │   ├── route.ts
+│   │   └── search/
+│   │       └── route.ts
+│   ├── products/
+│   │   ├── [id]/
+│   │   │   ├── route.ts
+│   │   │   └── stock/
+│   │   │       └── route.ts
+│   │   └── route.ts
+│   ├── shelter/
+│   │   ├── adoptions/
+│   │   │   └── route.ts
+│   │   └── reports/
+│   │       └── adoptions/
+│   │           ├── export/
+│   │           │   └── route.ts
 │   │           └── route.ts
+│   ├── shelters/
+│   │   ├── [id]/
+│   │   │   └── route.ts
+│   │   ├── map/
+│   │   │   └── route.ts
+│   │   └── search/
+│   │       └── route.ts
+│   ├── upload/
+│   │   └── route.ts
+│   ├── user/
+│   │   ├── favorites/
+│   │   │   ├── check/
+│   │   │   │   └── route.ts
+│   │   │   └── route.ts
+│   │   ├── profile/
+│   │   │   └── route.ts
+│   │   ├── request-shelter-account/
+│   │   │   └── route.ts
+│   │   └── request-vendor-account/
+│   │       └── route.ts
+│   └── vendor/
+│       ├── metrics/
+│       │   ├── export/
+│       │   │   └── route.ts
+│       │   ├── orders/
+│       │   │   └── route.ts
+│       │   ├── products/
+│       │   │   └── route.ts
+│       │   ├── route.ts
+│       │   └── trends/
+│       │       └── route.ts
+│       └── profile/
+│           └── route.ts
 │   ├── fonts/
 │   │   ├── GeistMonoVF.woff
 │   │   └── GeistVF.woff
@@ -890,7 +890,7 @@ model SystemAuditLog {
 
 ## 3. Dependencias del Proyecto
 
-> **Análisis de dependencias realizado el 25 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
+> **Análisis de dependencias realizado el 26 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
 
 ### Dependencias de Producción
 
