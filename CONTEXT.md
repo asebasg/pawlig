@@ -1,13 +1,13 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 27 de julio de 2026.
+> **Última actualización**: 29 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
 
 ## 1. Esquema de la Base de Datos (schema.prisma)
 
-> **Sincronización del esquema de base de datos realizada el 27 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
+> **Sincronización del esquema de base de datos realizada el 29 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
 
 ```prisma
 // This is your Prisma schema file,
@@ -367,7 +367,7 @@ model SystemAuditLog {
 
 ## 2. Estructura del Proyecto
 
-> **Mapeo de la estructura de carpetas realizado el 27 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
+> **Mapeo de la estructura de carpetas realizado el 29 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
 
 ```text
 ./
@@ -890,7 +890,7 @@ model SystemAuditLog {
 
 ## 3. Dependencias del Proyecto
 
-> **Análisis de dependencias realizado el 27 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
+> **Análisis de dependencias realizado el 29 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
 
 ### Dependencias de Producción
 
