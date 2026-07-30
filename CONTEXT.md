@@ -1,13 +1,13 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 27 de julio de 2026.
+> **Última actualización**: 30 de julio de 2026.
 > **Versión**: v1.8.0
 
 ---
 
 ## 1. Esquema de la Base de Datos (schema.prisma)
 
-> **Sincronización del esquema de base de datos realizada el 27 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
+> **Sincronización del esquema de base de datos realizada el 30 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
 
 ```prisma
 // This is your Prisma schema file,
@@ -91,7 +91,7 @@ model User {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   email        String       @unique
   password     String
-  name         String
+  name         String       @unique
   role         UserRole     @default(ADOPTER)
   phone        String
   municipality Municipality
@@ -367,7 +367,7 @@ model SystemAuditLog {
 
 ## 2. Estructura del Proyecto
 
-> **Mapeo de la estructura de carpetas realizado el 27 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
+> **Mapeo de la estructura de carpetas realizado el 30 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
 
 ```text
 ./
@@ -518,7 +518,7 @@ model SystemAuditLog {
 │   │   │   │       ├── route.ts
 │   │   │   │       └── trends/
 │   │   │   │           └── route.ts
-│   │   │   ├── moderation/
+│   │   ├── moderation/
 │   │   │   │   ├── audit/
 │   │   │   │   │   └── route.ts
 │   │   │   │   ├── shelters/
@@ -890,93 +890,93 @@ model SystemAuditLog {
 
 ## 3. Dependencias del Proyecto
 
-> **Análisis de dependencias realizado el 27 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
+> **Análisis de dependencias realizado el 30 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
 
 ### Dependencias de Producción
 
 - **Frontend Core**:
-  - `next`: `14.2.33` - Framework de React optimizado para producción.
-  - `react`: `^18` - Biblioteca base para la construcción de interfaces de usuario.
-  - `react-dom`: `^18` - Paquete para el renderizado de React en el navegador.
-  - `swr`: `^2.4.1` - Estrategia de fetching de datos con invalidación y re-validación.
+  - `next`: `14.2.33` - Framework de React optimizado para producción con SSR, routing basado en carpetas y optimización de recursos.
+  - `react`: `^18` - Biblioteca base para la creación de interfaces de usuario basadas en componentes declarativos.
+  - `react-dom`: `^18` - Paquete que sirve como punto de entrada a los métodos específicos del DOM para React.
+  - `swr`: `^2.4.1` - Biblioteca para la obtención, almacenamiento en caché y revalidación de datos en tiempo real de manera eficiente.
 
 - **UI & Components**:
-  - `@radix-ui/react-checkbox`: `^1.3.3` - Primitivo de componente de checkbox accesible y sin estilos.
-  - `@radix-ui/react-label`: `^2.1.8` - Primitivo de componente de etiqueta accesible para formularios.
-  - `@radix-ui/react-radio-group`: `^1.3.8` - Primitivo de componente de grupo de selección radial accesible.
-  - `@radix-ui/react-select`: `^2.2.6` - Primitivo de componente de selección desplegable accesible.
-  - `@radix-ui/react-slot`: `^1.2.4` - Utilidad para la composición de componentes mediante slots.
-  - `lucide-react`: `^0.554.0` - Set de iconos vectoriales ligeros y consistentes.
-  - `sonner`: `^2.0.7` - Biblioteca para notificaciones tipo toast altamente personalizables.
-  - `class-variance-authority`: `^0.7.1` - Herramienta para la gestión de variantes y estados de componentes UI.
-  - `clsx`: `^2.1.1` - Utilidad para la concatenación condicional de clases CSS.
-  - `tailwind-merge`: `^3.4.0` - Utilidad para fusionar clases de Tailwind CSS sin conflictos de especificidad.
-  - `react-day-picker`: `^10.0.0` - Componente de calendario y selección de fechas para React.
-  - `recharts`: `^3.8.1` - Biblioteca de gráficos basada en componentes de React y D3.
+  - `@radix-ui/react-checkbox`: `^1.3.3` - Primitivo de componente de checkbox accesible y sin estilos para mayor flexibilidad de diseño.
+  - `@radix-ui/react-label`: `^2.1.8` - Primitivo de componente de etiqueta accesible con soporte para lectores de pantalla.
+  - `@radix-ui/react-radio-group`: `^1.3.8` - Primitivo de componente de grupo de selección radial accesible y navegable con teclado.
+  - `@radix-ui/react-select`: `^2.2.6` - Primitivo de componente de selección desplegable accesible y personalizable.
+  - `@radix-ui/react-slot`: `^1.2.4` - Utilidad para la composición de componentes mediante slots, permitiendo fusionar props en el componente hijo.
+  - `lucide-react`: `^0.554.0` - Set de iconos vectoriales SVG ligeros, consistentes y optimizados para React.
+  - `sonner`: `^2.0.7` - Biblioteca para notificaciones tipo toast elegantes, ligeras y altamente personalizables.
+  - `class-variance-authority`: `^0.7.1` - Herramienta para la gestión declarativa de variantes CSS y estados de componentes UI.
+  - `clsx`: `^2.1.1` - Utilidad para la concatenación condicional y limpia de nombres de clases CSS.
+  - `tailwind-merge`: `^3.4.0` - Utilidad para fusionar clases de Tailwind CSS en tiempo de ejecución de forma eficiente y sin conflictos.
+  - `react-day-picker`: `^10.0.0` - Componente de calendario interactivo para la selección de fechas individuales o rangos.
+  - `recharts`: `^3.8.1` - Biblioteca de gráficos interactivos y modulares basada en componentes de React y D3.
 
 - **Formularios & Validación**:
-  - `react-hook-form`: `^7.66.1` - Gestión eficiente de formularios con validación flexible.
-  - `@hookform/resolvers`: `^5.2.2` - Adaptadores para integrar esquemas de validación externos con react-hook-form.
-  - `zod`: `^4.1.12` - Declaración de esquemas y validación de tipos estáticos para TypeScript.
+  - `react-hook-form`: `^7.66.1` - Gestión eficiente del estado de formularios con validación flexible, minimizando renders innecesarios.
+  - `@hookform/resolvers`: `^5.2.2` - Adaptadores para integrar esquemas de validación externos como Zod con react-hook-form.
+  - `zod`: `^4.1.12` - Biblioteca de declaración de esquemas y validación de tipos en tiempo de ejecución de alta eficiencia.
 
 - **Database & ORM**:
-  - `@prisma/client`: `^6.2.1` - Cliente de base de datos autogenerado y type-safe para Node.js.
+  - `@prisma/client`: `^6.2.1` - Cliente de base de datos autogenerado, reactivo y type-safe para interactuar con MongoDB.
 
 - **Autenticación & Seguridad**:
-  - `next-auth`: `^4.24.7` - Solución completa de autenticación para aplicaciones Next.js.
-  - `bcryptjs`: `^3.0.3` - Biblioteca para el hashing y verificación segura de contraseñas.
+  - `next-auth`: `^4.24.7` - Solución completa y segura de autenticación y autorización para aplicaciones Next.js.
+  - `bcryptjs`: `^3.0.3` - Biblioteca nativa para el hashing y verificación segura de contraseñas mediante algoritmos criptográficos.
 
 - **Servicios Externos & IA**:
-  - `cloudinary`: `^2.8.0` - SDK para la gestión, optimización y entrega de medios en la nube.
-  - `@google/generative-ai`: `^0.24.1` - Cliente para interactuar con los modelos de IA generativa de Google Gemini.
+  - `cloudinary`: `^2.8.0` - SDK oficial para la carga, gestión, transformación y entrega optimizada de medios en la nube.
+  - `@google/generative-ai`: `^0.24.1` - Cliente oficial de Google para interactuar con los modelos avanzados de IA generativa Gemini.
 
 - **Emailing System**:
-  - `resend`: `^6.12.2` - API moderna para el envío masivo y transaccional de correos electrónicos.
-  - `@react-email/components`: `^1.0.12` - Colección de componentes de React para diseñar emails responsivos.
-  - `@react-email/render`: `^2.0.7` - Utilidad para renderizar plantillas de React Email a HTML plano.
+  - `resend`: `^6.12.2` - API moderna y de alta confiabilidad para el envío de correos electrónicos transaccionales y masivos.
+  - `@react-email/components`: `^1.0.12` - Colección de componentes de React para diseñar correos responsivos compatibles con múltiples clientes de email.
+  - `@react-email/render`: `^2.0.7` - Utilidad para transformar y renderizar plantillas de React Email a código HTML plano y optimizado.
 
 - **Geolocalización & Mapas**:
-  - `leaflet`: `^1.9.4` - Biblioteca JavaScript de código abierto para mapas interactivos móviles.
-  - `react-leaflet`: `^4.2.1` - Componentes de React para la integración nativa con Leaflet.
+  - `leaflet`: `^1.9.4` - Biblioteca JavaScript de código abierto líder para mapas interactivos y ligeros.
+  - `react-leaflet`: `^4.2.1` - Componentes y hooks de React para la abstracción nativa y reactiva de mapas Leaflet.
 
 - **Reportes & Utilidades**:
-  - `exceljs`: `^4.4.0` - Herramienta para leer, manipular y escribir hojas de cálculo Excel.
-  - `jspdf`: `^4.2.1` - Biblioteca para la generación dinámica de documentos PDF en el cliente.
-  - `jspdf-autotable`: `^5.0.7` - Extensión de jspdf para la creación automática de tablas complejas.
-  - `axios`: `^1.13.2` - Cliente HTTP basado en promesas para realizar peticiones asíncronas.
-  - `date-fns`: `^4.1.0` - Conjunto modular de utilidades para la manipulación y formateo de fechas.
-  - `remark`: `^15.0.1` - Procesador de Markdown basado en plugins.
-  - `remark-gfm`: `^4.0.1` - Extensión de remark para dar soporte a GitHub Flavored Markdown.
-  - `remark-html`: `^16.0.1` - Plugin de remark para la conversión de Markdown a HTML seguro.
-  - `unist-util-visit`: `^5.1.0` - Utilidad para recorrer nodos en árboles de sintaxis abstracta.
+  - `exceljs`: `^4.4.0` - Herramienta avanzada para leer, manipular y escribir hojas de cálculo complejas en formato XLSX.
+  - `jspdf`: `^4.2.1` - Biblioteca para la generación dinámica de documentos PDF vectoriales directamente desde el lado del cliente.
+  - `jspdf-autotable`: `^5.0.7` - Extensión de jspdf para la estructuración y creación automática de tablas complejas en archivos PDF.
+  - `axios`: `^1.13.2` - Cliente HTTP basado en promesas con soporte para interceptores y cancelaciones de peticiones.
+  - `date-fns`: `^4.1.0` - Conjunto modular de utilidades y funciones auxiliares para la manipulación y formateo multilingüe de fechas.
+  - `remark`: `^15.0.1` - Procesador de Markdown altamente extensible basado en plugins y AST.
+  - `remark-gfm`: `^4.0.1` - Extensión de remark para dar soporte al estándar GitHub Flavored Markdown (tablas, tachados, etc.).
+  - `remark-html`: `^16.0.1` - Plugin de remark para la conversión y serialización segura de nodos Markdown a código HTML.
+  - `unist-util-visit`: `^5.1.0` - Utilidad de bajo nivel para recorrer nodos en árboles de sintaxis abstracta (AST) de unist.
 
 ### Dependencias de Desarrollo & Testing
 
 - **Desarrollo/Testing**:
-  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada de interacciones de usuario en el entorno de pruebas.
-  - `@tailwindcss/typography`: `^0.5.20` - Plugin oficial para aplicar estilos tipográficos automáticos a contenido HTML.
-  - `@testing-library/jest-dom`: `^6.9.1` - Matchers personalizados de Jest para validar el estado del DOM.
-  - `@testing-library/react`: `^16.3.1` - Utilidades para el testing de componentes React centrado en el usuario.
-  - `@types/bcryptjs`: `^2.4.6` - Definiciones de tipos de TypeScript para la biblioteca bcryptjs.
-  - `@types/exceljs`: `^0.5.3` - Definiciones de tipos de TypeScript para la biblioteca exceljs.
-  - `@types/jspdf`: `^1.3.3` - Definiciones de tipos de TypeScript para la biblioteca jspdf.
-  - `@types/leaflet`: `^1.9.21` - Definiciones de tipos de TypeScript para la biblioteca Leaflet.
-  - `@types/node`: `^20` - Definiciones de tipos de TypeScript para el entorno de ejecución Node.js.
+  - `@testing-library/user-event`: `^14.6.1` - Simulación avanzada y fiel de interacciones reales de usuario en el entorno de pruebas automatizadas.
+  - `@tailwindcss/typography`: `^0.5.20` - Plugin oficial de Tailwind CSS para aplicar estilos tipográficos automáticos a bloques de contenido HTML.
+  - `@testing-library/jest-dom`: `^6.9.1` - Conjunto de matchers de aserción personalizados para validar estados y propiedades del DOM en pruebas.
+  - `@testing-library/react`: `^16.3.1` - Utilidades de pruebas centradas en el comportamiento del usuario para validar componentes React de forma robusta.
+  - `@types/bcryptjs`: `^2.4.6` - Definiciones estáticas de tipos para la biblioteca bcryptjs.
+  - `@types/exceljs`: `^0.5.3` - Definiciones estáticas de tipos para la biblioteca exceljs.
+  - `@types/jspdf`: `^1.3.3` - Definiciones estáticas de tipos para la biblioteca jspdf.
+  - `@types/leaflet`: `^1.9.21` - Definiciones estáticas de tipos para la biblioteca Leaflet.
+  - `@types/node`: `^20` - Definiciones de tipos para todas las APIs nativas del entorno de ejecución de Node.js.
   - `@types/react`: `^18` - Definiciones de tipos de TypeScript para la biblioteca React.
   - `@types/react-dom`: `^18` - Definiciones de tipos de TypeScript para React DOM.
-  - `@vitejs/plugin-react`: `^5.1.2` - Plugin oficial para el soporte de React en el empaquetador Vite.
-  - `@vitest/coverage-v8`: `^4.0.16` - Motor de generación de informes de cobertura de código V8 para Vitest.
-  - `dotenv`: `^17.2.3` - Módulo para cargar variables de entorno desde archivos .env.
-  - `eslint`: `^8` - Herramienta de análisis estático para identificar y reportar patrones en código JavaScript/TS.
-  - `eslint-config-next`: `14.2.33` - Configuración base de ESLint recomendada para proyectos Next.js.
-  - `jsdom`: `^27.4.0` - Implementación de estándares web (DOM, HTML) para entornos Node.js.
-  - `postcss`: `^8` - Herramienta para transformar estilos CSS con plugins de JavaScript.
-  - `prisma`: `^6.2.1` - Interfaz de línea de comandos para la gestión de migraciones y esquemas de Prisma.
-  - `tailwindcss`: `^3.4.1` - Framework CSS basado en utilidades para un diseño rápido y flexible.
-  - `ts-node`: `^10.9.2` - Motor de ejecución de TypeScript y REPL para Node.js.
-  - `typescript`: `^5` - Lenguaje de programación superconjunto de JavaScript con tipado estático.
-  - `vite-tsconfig-paths`: `^6.0.3` - Soporte para la resolución de rutas de tsconfig en entornos de Vite.
-  - `vitest`: `^4.0.16` - Runner de pruebas unitarias extremadamente rápido basado en Vite.
+  - `@vitejs/plugin-react`: `^5.1.2` - Plugin oficial de empaquetado para dar soporte rápido de React en entornos Vite.
+  - `@vitest/coverage-v8`: `^4.0.16` - Motor de cobertura de código basado en V8 para la generación de reportes detallados en Vitest.
+  - `dotenv`: `^17.2.3` - Módulo de carga automatizada de variables de entorno desde archivos locales `.env`.
+  - `eslint`: `^8` - Linter de análisis estático de código para la detección de errores y el cumplimiento de estándares.
+  - `eslint-config-next`: `14.2.33` - Configuración estándar de reglas de análisis estático recomendadas por el equipo de Next.js.
+  - `jsdom`: `^27.4.0` - Simulación pura del entorno del navegador y DOM para pruebas rápidas basadas en Node.js.
+  - `postcss`: `^8` - Herramienta extensible para transformar estilos CSS utilizando plugins basados en JavaScript.
+  - `prisma`: `^6.2.1` - CLI oficial de Prisma para la gestión de migraciones, introspection de esquemas y generación de cliente.
+  - `tailwindcss`: `^3.4.1` - Framework CSS basado en utilidades altamente optimizado para el diseño rápido y responsivo de interfaces.
+  - `ts-node`: `^10.9.2` - Motor de ejecución directa y REPL de código TypeScript en entornos de consola Node.js.
+  - `typescript`: `^5` - Superconjunto de JavaScript con tipado estático y compilación avanzada de última generación.
+  - `vite-tsconfig-paths`: `^6.0.3` - Plugin para la resolución automática de alias de rutas configurados en tsconfig.json dentro de Vite.
+  - `vitest`: `^4.0.16` - Entorno moderno, reactivo y de alto rendimiento para la ejecución de pruebas unitarias y de integración.
 
 ---
 
