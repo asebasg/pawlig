@@ -1,13 +1,13 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 30 de julio de 2026.
+> **Última actualización**: 4 de agosto de 2026.
 > **Versión**: v1.8.0
 
 ---
 
 ## 1. Esquema de la Base de Datos (schema.prisma)
 
-> **Sincronización del esquema de base de datos realizada el 30 de julio de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
+> **Sincronización del esquema de base de datos realizada el 4 de agosto de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
 
 ```prisma
 // This is your Prisma schema file,
@@ -91,7 +91,7 @@ model User {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   email        String       @unique
   password     String
-  name         String       @unique
+  name         String
   role         UserRole     @default(ADOPTER)
   phone        String
   municipality Municipality
@@ -367,7 +367,7 @@ model SystemAuditLog {
 
 ## 2. Estructura del Proyecto
 
-> **Mapeo de la estructura de carpetas realizado el 30 de julio de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
+> **Mapeo de la estructura de carpetas realizado el 4 de agosto de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
 
 ```text
 ./
@@ -429,47 +429,47 @@ model SystemAuditLog {
 │   │   │   │   └── vendors/
 │   │   │   │       ├── page.tsx
 │   │   │   │       └── vendor-moderation-client.tsx
-│   │   │   ├── page.tsx
-│   │   │   └── profile/
-│   │   │       └── page.tsx
-│   │   ├── shelter/
-│   │   │   ├── adoptions/
+│   │   ├── page.tsx
+│   │   └── profile/
+│   │       └── page.tsx
+│   ├── shelter/
+│   │   ├── adoptions/
+│   │   │   └── page.tsx
+│   │   ├── metrics/
+│   │   │   └── page.tsx
+│   │   ├── page.tsx
+│   │   ├── pets/
+│   │   │   ├── [id]/
+│   │   │   │   └── edit/
+│   │   │   │       └── page.tsx
+│   │   │   ├── new/
 │   │   │   │   └── page.tsx
-│   │   │   ├── metrics/
-│   │   │   │   └── page.tsx
-│   │   │   ├── page.tsx
-│   │   │   ├── pets/
-│   │   │   │   ├── [id]/
-│   │   │   │   │   └── edit/
-│   │   │   │   │       └── page.tsx
-│   │   │   │   ├── new/
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
-│   │   │   └── profile/
-│   │   │       └── page.tsx
-│   │   ├── user/
-│   │   │   ├── page.tsx
-│   │   │   ├── profile/
-│   │   │   │   └── page.tsx
-│   │   │   ├── request-shelter/
-│   │   │   │   └── page.tsx
-│   │   │   └── request-vendor/
-│   │   │       └── page.tsx
-│   │   └── vendor/
-│   │       ├── metrics/
+│   │   │   └── page.tsx
+│   │   └── profile/
+│   │       └── page.tsx
+│   ├── user/
+│   │   ├── page.tsx
+│   │   ├── profile/
+│   │   │   └── page.tsx
+│   │   ├── request-shelter/
+│   │   │   └── page.tsx
+│   │   └── request-vendor/
+│   │       └── page.tsx
+│   └── vendor/
+│       ├── metrics/
+│       │   └── page.tsx
+│       ├── orders/
+│       │   └── page.tsx
+│       ├── page.tsx
+│       ├── products/
+│       │   ├── [id]/
+│   │       │   └── edit/
+│   │       │       └── page.tsx
+│       │   ├── new/
 │   │       │   └── page.tsx
-│   │       ├── orders/
-│   │       │   └── page.tsx
-│   │       ├── page.tsx
-│   │       ├── products/
-│   │       │   ├── [id]/
-│   │       │   │   └── edit/
-│   │       │   │       └── page.tsx
-│   │       │   ├── new/
-│   │       │   │   └── page.tsx
-│   │       │   └── page.tsx
-│   │       └── profile/
-│   │           └── page.tsx
+│   │       └── page.tsx
+│       └── profile/
+│           └── page.tsx
 │   ├── (public)/
 │   │   ├── adopciones/
 │   │   │   ├── [id]/
@@ -518,7 +518,7 @@ model SystemAuditLog {
 │   │   │   │       ├── route.ts
 │   │   │   │       └── trends/
 │   │   │   │           └── route.ts
-│   │   ├── moderation/
+│   │   │   ├── moderation/
 │   │   │   │   ├── audit/
 │   │   │   │   │   └── route.ts
 │   │   │   │   ├── shelters/
@@ -890,7 +890,7 @@ model SystemAuditLog {
 
 ## 3. Dependencias del Proyecto
 
-> **Análisis de dependencias realizado el 30 de julio de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
+> **Análisis de dependencias realizado el 4 de agosto de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
 
 ### Dependencias de Producción
 
