@@ -22,6 +22,7 @@ export const buttonVariants = cva(
                 red: "bg-red-500 text-white hover:bg-red-600",
                 blue: "bg-blue-600 text-white hover:bg-blue-700",
                 green: "bg-green-600 text-white hover:bg-green-700",
+                emerald: "bg-emerald-600 text-white hover:bg-emerald-700"
             },
             size: {
                 default: "h-10 py-2 px-4",

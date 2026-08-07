@@ -1,9 +1,9 @@
 # Registro de Actualizaciones Mensuales — PawLig (2026)
 
 **Documento Legal y de Referencia**  
-Período: 01-01-2026 a 15-06-2026  
+Período: 01-01-2026 a 21-06-2026  
 Versión actual: v1.8.0  
-Última actualización: 15-06-2026
+Fecha de última actualización: 21 de junio de 2026
 
 ---
 

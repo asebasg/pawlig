@@ -62,6 +62,7 @@ export async function POST(request: Request) {
         - Bloqueo
         - Desbloqueo
         - Cambio de rol
+        - Creación de usuario
 
     Requisitos adicionales:
         1. Coherencia: La razón debe ser lógica y consecuente con la acción tomada.
