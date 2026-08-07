@@ -14,7 +14,7 @@
 **Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.15.0 | Última actualización: 10 de julio de 2026_
+_Versión v1.15.0 | Última actualización: 30 de julio de 2026_
 
 </div>
 
@@ -39,19 +39,18 @@ El sistema destaca por incorporar capacidades avanzadas de **Inteligencia Artifi
 
 ## 2. Características principales
 
-La plataforma de PawLig está dotada de una serie de módulos robustos y características técnicas avanzadas:
+La plataforma de PawLig está dotada de una serie de módulos robustos y características técnicas avanzadas alineadas con la versión **v1.15.0**:
 
 ### 🧠 Inteligencia Artificial Generativa (Google Gemini 2.5-flash)
-*   **Asistente IA Multi-propósito:** Integración del componente `AiRefineButton` que conecta con el endpoint inteligente `/api/ai/refine` para el refinamiento automático de descripciones.
-*   **Refinamiento Persuasivo y Comercial:** Optimiza y eleva el impacto emocional de las descripciones básicas de mascotas, así como el tono persuasivo y comercial de las descripciones de productos de tienda.
+*   **Asistente IA Multi-propósito:** Integración del componente `AiRefineButton` que conecta con el endpoint inteligente `/api/ai/refine` para el refinamiento automático de descripciones de mascotas y de productos en el marketplace.
 *   **Asistente de Moderación Inteligente:** Extiende el uso de la IA para ayudar a los administradores a refinar y redactar de forma clara y respetuosa los motivos de decisión utilizados en las aprobaciones, rechazos y bloqueos en el Moderation Hub.
 *   **Saneamiento y Respuestas Seguras:** Refuerzo de las validaciones de entrada en las solicitudes de moderación y saneamiento estricto de la salida generada por la IA antes de ser devuelta para garantizar la máxima seguridad.
 
 ### 🛡️ Moderation Hub Centralizado y Auditoría Polimórfica
-*   **Centro Administrativo Consolidado:** Gestión centralizada de solicitudes de verificación de albergues, vendedores y moderación de usuarios bajo el módulo administrativo `/admin/moderation`.
+*   **Centro Administrativo Consolidado:** Gestión centralizada de solicitudes de verificación de albergues, vendedores y moderación de usuarios bajo el módulo administrativo `/admin/moderation` (las rutas de gestión de usuarios se han unificado bajo `/admin/moderation/users` eliminando páginas independientes).
 *   **Registro de Auditoría Polimórfico (`SystemAuditLog`):** Sistema atómico que captura, almacena y expone de forma paginada un historial inalterable de cada evento administrativo crucial (bloqueos de cuentas, aprobación/rechazo de solicitudes, asignación de roles) exigiendo justificaciones obligatorias y almacenando estados diferenciales en formato JSON (estados *antes/después*).
-*   **Seguridad Multimedia Reforzada:** Endpoint seguro `/api/cloudinary/delete` que verifica la propiedad de los recursos a través del control de acceso basado en roles (RBAC), impidiendo la eliminación no autorizada de recursos en la nube de Cloudinary por parte de agentes o usuarios ajenos al recurso original.
-*   **Flujo de Reenvío de Solicitudes Desbloqueado:** Corrección lógica que permite a albergues o vendedores cuyas postulaciones fueron previamente denegadas reenviar una nueva solicitud de verificación, manteniendo la restricción de reenvío únicamente si hay una solicitud actual con estado `PENDING` o `APPROVED`.
+*   **Seguridad Multimedia Reforzada:** Endpoint seguro `/api/cloudinary/delete` que verifica la propiedad de los recursos a través del control de acceso basado en roles (RBAC) y helpers del SDK (`extractPublicId` y `deleteImagesFromCloudinary`), impidiendo la eliminación no autorizada de recursos en la nube de Cloudinary por parte de agentes o usuarios ajenos al recurso original.
+*   **Flujo de Reenvío de Solicitudes Desbloqueado:** Permite a albergues o vendedores cuyas postulaciones fueron previamente denegadas reenviar una nueva solicitud de verificación, manteniendo la restricción de reenvío únicamente si hay una solicitud actual con estado `PENDING` o `APPROVED`.
 
 ### 📧 Motor de Notificaciones Transaccionales (Resend & React Email)
 *   **11 Plantillas Responsive Integradas:** Emails completamente responsivos y personalizados bajo la identidad visual de PawLig, cubriendo flujos críticos como:
@@ -73,7 +72,7 @@ La plataforma de PawLig está dotada de una serie de módulos robustos y caracte
 
 ### 🛒 Carrito de Compras de Alto Rendimiento y Sincronización Eficiente
 *   **Optimización de Consultas (useCart y useCartSync):** La lógica de obtención y sincronización del carrito del usuario se ha condicionado de manera estricta para que se ejecute solo cuando el usuario se encuentra debidamente autenticado y está navegando en el catálogo de productos.
-*   **Reducción del Polling e Invocaciones Innecesarias:** Evita la ejecución de revalidaciones, consultas repetitivas de backend o revalidaciones en segundo plano para usuarios no autenticados o que visitan áreas de la plataforma no relacionadas con la tienda, mejorando drásticamente el rendimiento global de la plataforma.
+*   **Reducción del Polling e Invocaciones Innecesarias:** Evita la ejecución de revalidaciones, consultas repetitivas de backend o revalidaciones en segundo plano para usuarios no autenticados o que visitan áreas de la plataforma no relacionadas con la tienda, mejorando drásticamente el rendimiento global de la plataforma y del botón flotante del carrito.
 
 ### 🌌 404 Orbital Engine (Simulación en Canvas 2D)
 *   **Simulación Física Kepleriana:** La página de error 404 implementa un motor interactivo escrito en Canvas 2D que simula las leyes orbitales de Kepler para orbitar elementos visuales de la marca.
@@ -192,7 +191,7 @@ El stack tecnológico de PawLig ha sido rigurosamente estructurado para ofrecer 
 
 ### Base de Datos y Persistencia
 *   **Motor de Base de Datos:** MongoDB Atlas — Motor NoSQL flexible orientado a documentos en la nube.
-*   **ORM:** Prisma ORM v6.2.1 — Capa de mapeo de objetos segura y autogenerada de alta eficiencia con soporte para transacciones de MongoDB.
+*   **ORM:** Prisma ORM v6.2.1 (con cliente v6.19.3 para soporte avanzado) — Capa de mapeo de objetos segura y autogenerada de alta eficiencia con soporte para transacciones de MongoDB.
 
 ### Autenticación y Seguridad
 *   **Módulo de Autenticación:** NextAuth.js v4.24.7 — Autenticación robusta basada en cookies de sesión y roles (`ADMIN`, `SHELTER`, `VENDOR`, `ADOPTER`).
@@ -221,7 +220,7 @@ El repositorio de PawLig sigue las mejores convenciones de organización por cap
 ├── app/                  # Núcleo de Rutas, APIs y Segmentos del Sistema
 │   ├── (auth)/           # Segmento de Autenticación (Login, Registro, Recuperación)
 │   ├── (dashboard)/      # Paneles de Administración y Gestión Privada
-│   │   ├── admin/        # Dashboard del Administrador, Moderation Hub e Historiales
+│   │   ├── admin/        # Dashboard del Administrador, Moderation Hub (users, shelters, vendors, audit) e Historiales
 │   │   ├── user/         # Panel del Adoptante (Favoritos, Carrito, Historial de Solicitudes)
 │   │   ├── shelter/      # Gestión del Albergue (Publicación de Mascotas, Adopciones, Métricas)
 │   │   └── vendor/       # Gestión del Vendedor (Catálogo, Stock, Pedidos, Métricas)
@@ -235,7 +234,7 @@ El repositorio de PawLig sigue las mejores convenciones de organización por cap
 │   ├── cards/            # Tarjetas de presentación visual de Mascotas y Productos
 │   ├── filters/          # Filtros avanzados interactivos de búsqueda de adopciones y tienda
 │   ├── forms/            # Lógica y validaciones de todos los formularios de captura
-│   ├── layout/           # Componentes estructurales (Barra de navegación por rol, Footer)
+│   ├── layout/           # Componentes estructurales (Barra de navegación por rol, Footer, floating-cart-button)
 │   ├── map/              # Componentes de interacción con Leaflet y Búsqueda
 │   ├── ui/               # Botones, entradas de texto, modales y alertas base del sistema (incluye PasswordInput y AiRefineButton)
 │   └── vendor/           # Componentes analíticos y de inventario para vendedores
@@ -252,7 +251,7 @@ El repositorio de PawLig sigue las mejores convenciones de organización por cap
 │   ├── docs/             # Actas del proyecto, diagramas de procesos, requerimientos e historias
 │   └── images/           # Activos gráficos, logos y diagramas UML explicativos
 ├── types/                # Declaraciones de tipos globales de TypeScript
-└── scripts/              # Herramientas de automatización de geocodificación y validación de correos
+└── scripts/              # Herramientas de automatización de geocodificación, limpieza de imágenes y validación de correos
 ```
 
 ---
