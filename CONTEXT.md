@@ -1,6 +1,6 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.8.0)
 
-> **Última actualización**: 5 de agosto de 2026.
+> **Fecha de última actualización**: 21 de junio de 2026.
 > **Versión**: v1.8.0
 
 ---
@@ -365,6 +365,37 @@ model SystemAuditLog {
 
 ---
 
+### 1.1 Integración de Nuevas Rutas y Comportamiento Lógico de Base de Datos
+
+En la rama `feat/create-user-button`, se han integrado de forma segura rutas tanto en el frontend como en la API, permitiendo a los administradores el alta manual de usuarios y la trazabilidad de estas operaciones en la base de datos.
+
+#### Nuevas Rutas de Frontend
+- **/admin/moderation/users/create (Ruta de Frontend)**:
+  - **Tipo**: Server Component protegido (`app/(dashboard)/admin/moderation/users/create/page.tsx`).
+  - **Descripción**: Interfaz gráfica administrativa que renderiza el formulario modular `CreateUserForm` (`components/forms/create-user-form.tsx`).
+  - **Seguridad (Guard de Servidor)**: Requiere una sesión de usuario válida (`getServerSession`) y que el rol del usuario autenticado sea estrictamente `UserRole.ADMIN`. De lo contrario, se redirige al inicio de sesión o a `/unauthorized?reason=admin_only`.
+
+#### Nuevos Endpoints de API
+- **POST /api/admin/users (Ruta de API)**:
+  - **Tipo**: Route Handler dinámico (`app/api/admin/users/route.ts`).
+  - **Descripción**: Procesa la validación de entrada con Zod (`createUserByAdminSchema`), verifica la inexistencia de correos electrónicos duplicados (tanto cuentas activas como cuentas bloqueadas), autogenera una clave temporal segura y delega la lógica de persistencia al servicio de usuario.
+  - **Seguridad**: Solo accesible bajo el rol `ADMIN`. Retorna códigos de estado HTTP precisos: `401 Unauthorized` si no hay sesión, `403 Forbidden` si no es administrador, `400 Bad Request` en fallos de validación Zod, `409 Conflict` si el correo está ocupado, y `201 Created` al crearse de forma exitosa.
+
+#### Comportamiento y Flujo en la Base de Datos
+La persistencia de datos implementa las siguientes reglas lógicas del negocio directamente en el ORM de Prisma (MongoDB):
+1. **Lógica de Auditoría Polimórfica (`SystemAuditLog`)**:
+   - El modelo preexistente `SystemAuditLog` se utiliza para registrar la creación de cualquier usuario.
+   - Las operaciones se agrupan en una **transacción interactiva** (`prisma.$transaction(async (tx) => ...)`) lo que garantiza que el alta del registro en la tabla `User` y la bitácora en `SystemAuditLog` sean operaciones **atómicas**.
+   - Al ser interactiva, se recupera el ID autogenerado del nuevo `User` y se mapea directamente en el campo `resourceId` (como ObjectID de MongoDB) del log de auditoría.
+   - El log se registra con la acción `"CREATE"`, la categoría `AuditCategory.USER_MANAGEMENT` y el tipo de recurso `"USER"`. El campo `before` se almacena como `null`, y `after` guarda el string JSON que contiene el `email` y el `role` asignados.
+2. **Justificación Obligatoria de Roles Especiales**:
+   - Para roles diferentes a `ADOPTER` (tales como `ADMIN`, `SHELTER`, `VENDOR`), se exige una justificación (`reason`) descriptiva con una longitud mínima de 10 caracteres. Esta lógica es controlada por el esquema Zod `createUserByAdminSchema.refine` y persistida directamente en el campo `reason` del registro de auditoría.
+   - Para el rol por defecto `ADOPTER`, la base de datos almacena la razón estándar fija `"Usuario creado manualmente por administrador"`.
+3. **Seguridad de Credenciales**:
+   - Las contraseñas temporales no se persisten en texto plano en la base de datos; se hashean utilizando `bcryptjs` con 12 rondas de sal antes de insertarse en el campo `password` del modelo `User`.
+
+---
+
 ## 2. Estructura del Proyecto
 
 > **Mapeo de la estructura de carpetas realizado el 5 de agosto de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
@@ -387,7 +418,6 @@ model SystemAuditLog {
 ├── CHANGELOG.md
 ├── CONTEXT.md
 ├── DEV_NOTES.md
-├── ISSUE_161.md
 ├── README.md
 ├── app/
 │   ├── (auth)/
@@ -424,6 +454,8 @@ model SystemAuditLog {
 │   │   │   │   │   │       │   └── user-view.spec.tsx
 │   │   │   │   │   │       └── page.tsx
 │   │   │   │   │   ├── block-user-modal.tsx
+│   │   │   │   │   ├── create/
+│   │   │   │   │   │   └── page.tsx
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── users-management-client.tsx
 │   │   │   │   └── vendors/
@@ -540,6 +572,7 @@ model SystemAuditLog {
 │   │   │       │   │   └── route.ts
 │   │   │       │   └── role/
 │   │   │       │       └── route.ts
+│   │   │       ├── route.test.ts
 │   │   │       └── route.ts
 │   │   ├── adoptions/
 │   │   │   ├── [id]/
@@ -674,6 +707,7 @@ model SystemAuditLog {
 │   │   ├── __tests__/
 │   │   │   ├── pet-form.spec.tsx
 │   │   │   └── product-form.spec.tsx
+│   │   ├── create-user-form.tsx
 │   │   ├── login-form.tsx
 │   │   ├── pet-form.tsx
 │   │   ├── product-form.tsx
@@ -764,6 +798,7 @@ model SystemAuditLog {
 ├── lib/
 │   ├── auth/
 │   │   ├── auth-options.ts
+│   │   ├── password.test.ts
 │   │   ├── password.ts
 │   │   ├── require-role.ts
 │   │   └── session.ts
@@ -802,6 +837,7 @@ model SystemAuditLog {
 │   │   ├── pet.service.spec.ts
 │   │   ├── pet.service.ts
 │   │   ├── product.service.ts
+│   │   ├── user.service.spec.ts
 │   │   ├── user.service.ts
 │   │   └── vendor-metrics.service.ts
 │   ├── utils/
@@ -821,6 +857,7 @@ model SystemAuditLog {
 │       ├── pet-search.schema.ts
 │       ├── pet.schema.ts
 │       ├── product.schema.ts
+│       ├── user.schema.test.ts
 │       └── user.schema.ts
 ├── middleware.ts
 ├── monthly-updates.md

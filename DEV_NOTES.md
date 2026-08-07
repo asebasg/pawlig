@@ -1,5 +1,29 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Alta Manual de Usuarios y Auditoría Administrativa (v1.8.0 — 21-06-2026)
+
+Implementación del flujo de alta manual de usuarios para administradores. Permite la creación de cuentas sin inicio de sesión automático y con contraseñas seguras autogeneradas en el servidor, garantizando la trazabilidad de las acciones administrativas mediante el registro automático en el Moderation Hub.
+
+**Archivos creados/modificados:**
+
+- `app/(dashboard)/admin/moderation/users/create/page.tsx` — Server Component protegido con control de acceso (session + rol ADMIN) para el formulario de creación.
+- `components/forms/create-user-form.tsx` — Formulario interactivo en el cliente para el alta de usuarios con soporte de justificaciones y modales de confirmación.
+- `app/api/admin/users/route.ts` — Endpoint POST seguro para procesar la creación, hasheo de contraseñas y registro de auditoría.
+- `lib/services/user.service.ts` — Inclusión del método `createUserByAdmin` utilizando una transacción interactiva de Prisma.
+- `lib/validations/user.schema.ts` — Esquema Zod `createUserByAdminSchema` con regla de refinamiento de justificación obligatoria.
+- `lib/auth/password.ts` — Agregado `generateTempPassword` para la generación de contraseñas seguras y legibles.
+- `lib/validations/user.schema.test.ts`, `app/api/admin/users/route.test.ts`, `lib/services/user.service.spec.ts`, `lib/auth/password.test.ts` — Cobertura de pruebas unitarias y de integración para todo el flujo.
+
+**Detalles Técnicos:**
+
+- **Validación con Refinamientos Zod:** El esquema de creación administrativa implementa una validación raíz condicional. Cuando el rol asignado al usuario es diferente a `ADOPTER` (tales como `ADMIN`, `SHELTER`, `VENDOR`), se exige obligatoriamente un campo `reason` (justificación) con un mínimo de 10 caracteres. Esto asegura la justificación de los privilegios asignados.
+- **Transacción Interactiva y Atomicidad:** El servicio `createUserByAdmin` encapsula el alta del registro en la colección `User` y la bitácora en `SystemAuditLog` dentro de una transacción interactiva de Prisma (`prisma.$transaction(async (tx) => ...)`). Esto permite recuperar el ID autogenerado del nuevo usuario e inyectarlo de forma segura como `resourceId` en el log de auditoría antes de consolidar la operación.
+- **Generación de Contraseña Segura:** La contraseña temporal se genera mediante `crypto.randomBytes(16)` formateada a base64 (removiendo caracteres confusos) y limitándola a 12 caracteres. Posteriormente se hashea utilizando `bcryptjs` con 12 rondas de sal, garantizando el almacenamiento cifrado y seguro de las credenciales.
+- **Auditoría e Integración de IA:** En el formulario, los administradores cuentan con el botón `AiRefineButton` integrado en el campo de justificación. Esto permite refinar y formatear formalmente el texto de justificación utilizando IA (Gemini) antes de enviarlo. El SystemAuditLog registra la acción como `CREATE` bajo la categoría `USER_MANAGEMENT`, guardando los metadatos de IP, User-Agent, y el payload de cambios en los campos `before` (null) y `after` (email y rol creados).
+- **Caché y Revalidación:** Tras un alta exitosa, se invalida el tag de caché `user-detail` (`revalidateTag("user-detail")`) asegurando que los listados y las vistas administrativas se actualicen inmediatamente sin necesidad de recargas manuales de página.
+
+---
+
 ## Seguridad en Multimedia y Ciclo de Solicitudes (v1.14.0 — 12-06-2026)
 
 Mejoras críticas de seguridad y control de propiedad de imágenes en Cloudinary y corrección en el reenvío de formularios de solicitud de cuentas comerciales/refugios.

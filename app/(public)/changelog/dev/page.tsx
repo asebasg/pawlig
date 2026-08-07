@@ -397,12 +397,33 @@ export default function DevNotesPage() {
     },
     {
       version: "v1.8.0-dev",
-      date: "28 de Abril, 2026",
-      title: "Seguridad de Formularios y UX",
+      date: "21 de Junio, 2026",
+      title: "Alta Manual de Usuarios y Seguridad de Formularios",
       description:
-        "Optimización de la experiencia de usuario en campos de contraseña y limpieza de estilos Chromium.",
-      type: "fix",
+        "Implementación del flujo de alta manual de usuarios y auditoría administrativa con IA, optimización de campos de contraseña y supresión de hydration warnings.",
+      type: "feat",
       logs: [
+        {
+          category: "feat",
+          title: "Alta Manual de Usuarios y Botón de Creación",
+          description:
+            "Desarrollo de la vista /admin/moderation/users/create con formulario validado con Zod, campos condicionales y modal de copia de credenciales temporales.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "feat",
+          title: "API de Alta Administrativa Segura",
+          description:
+            "Endpoint POST /api/admin/users que realiza transacciones interactivas atómicas entre creación de User y SystemAuditLog con roles y justificaciones obligatorias.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Refinamiento de Razón con IA",
+          description:
+            "Integración de AiRefineButton en el formulario administrativo para pulir las justificaciones de asignación de roles especiales.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
         {
           category: "fix",
           title: "CSS: Botón Nativo de Password",
