@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Ecosistema digital unificado para la conexión de mascotas, hogares responsables y comercio especializado en el Valle de Aburrá.**
+**Ecosistema digital unificado para la conexión de mascotas, albergues de rescate animal y comercio especializado en el Valle de Aburrá.**
 
 ![Next.js](https://img.shields.io/badge/Next.js-14.2.33-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
@@ -14,7 +14,7 @@
 **Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.15.0 | Última actualización: 30 de julio de 2026_
+_Versión v1.15.0 | Última actualización: 5 de agosto de 2026_
 
 </div>
 
@@ -27,71 +27,78 @@ _Versión v1.15.0 | Última actualización: 30 de julio de 2026_
 
 ## 1. Descripción general
 
-**PawLig** es un ecosistema digital unificado y de nivel empresarial diseñado para consolidar y dinamizar los procesos de adopción de mascotas y el marketplace de bienestar animal en la región del Valle de Aburrá, Colombia. La plataforma proporciona una solución integral de pila completa (full-stack) para mitigar la fragmentación existente en el sector, conectando de forma directa y transparente a tres actores fundamentales:
+**PawLig** es un ecosistema digital de nivel empresarial de pila completa (full-stack) diseñado para centralizar, estructurar y potenciar las iniciativas de bienestar animal y el marketplace especializado en la región del Valle de Aburrá, Antioquia, Colombia. El proyecto tiene como propósito mitigar la fragmentación actual del sector, unificando en una única plataforma transaccional robusta, segura y escalable a tres actores clave del ecosistema:
 
-*   **Albergues de Mascotas (Shelters):** Organizaciones dedicadas al rescate animal que gestionan de forma estructurada el ciclo de vida de las mascotas, desde su ingreso y publicación hasta el seguimiento detallado de las solicitudes de adopción.
-*   **Vendedores Especializados (Vendors):** Comercios locales y proveedores de productos de bienestar animal que acceden a un canal de ventas digital especializado, con capacidades avanzadas de administración de inventarios, procesamiento de órdenes y métricas de desempeño comercial.
-*   **Adoptantes y Clientes (Adopters):** Usuarios finales que disfrutan de una experiencia fluida y optimizada para la búsqueda empática de mascotas, gestión de favoritos, postulación para adopciones responsables y adquisición de suministros de alta calidad.
+*   **Albergues de Mascotas (Shelters):** Organizaciones enfocadas en el rescate animal que gestionan de forma integral el ciclo de vida de las mascotas, controlando desde su ingreso, publicación de fichas de adopción, hasta el seguimiento transaccional de las postulaciones.
+*   **Vendedores Especializados (Vendors):** Comercios locales independientes y proveedores de insumos de bienestar animal que disponen de un marketplace especializado con un panel interactivo para la gestión de stocks, procesamiento de pedidos y métricas de desempeño comercial.
+*   **Adoptantes y Clientes (Adopters):** Usuarios finales con acceso a un entorno de búsqueda geoespacial y filtros avanzados para adopciones éticas, gestión de favoritos, solicitudes de adopción responsable y adquisición directa de productos de alta calidad para mascotas.
 
-El sistema destaca por incorporar capacidades avanzadas de **Inteligencia Artificial** para la optimización de contenido, **Visualización Geoespacial** interactiva y un **Motor de Simulación Física** 2D en la gestión de errores, redefiniendo los estándares de bienestar animal digital con una arquitectura transaccional sólida, segura y escalable.
+Con una arquitectura basada en tecnologías web de última generación, PawLig integra capacidades avanzadas de **Inteligencia Artificial Generativa**, **Geolocalización Interactiva**, **Notificaciones Transaccionales Robustas** y un **Motor de Simulación Física 2D** en la experiencia de errores, transformando la gestión digital de bienestar animal con el máximo nivel de rigor técnico.
 
 ---
 
 ## 2. Características principales
 
-La plataforma de PawLig está dotada de una serie de módulos robustos y características técnicas avanzadas alineadas con la versión **v1.15.0**:
+El ecosistema cuenta con módulos robustos y funcionalidades altamente técnicas diseñadas para garantizar la seguridad, usabilidad y rendimiento:
+
+### 👤 Alta Manual de Usuarios y Auditoría Administrativa (v1.8.0)
+*   **Creación Segura en el Servidor:** Flujo de alta manual de usuarios para administradores desde la interfaz `/admin/moderation/users/create`, permitiendo registrar nuevas cuentas sin requerir el inicio de sesión automático del creador.
+*   **Contraseñas Seguras Autogeneradas:** Generación de contraseñas temporales y robustas en el backend (mediante entropía criptográfica `crypto.randomBytes` formateada a base64 y filtrada de caracteres ambiguos) que se hashean con `bcryptjs` (12 rondas de sal) para una persistencia segura.
+*   **Justificación Obligatoria de Roles:** Validación con refinamientos condicionales de Zod (`createUserByAdminSchema.refine`). Al asignar roles administrativos o comerciales (`ADMIN`, `SHELTER`, `VENDOR`), se exige una justificación con un mínimo de 10 caracteres. Para el rol por defecto `ADOPTER`, se asigna una justificación estándar.
+*   **Integración de IA en Auditoría:** Los administradores disponen del componente `AiRefineButton` para mejorar y redactar formalmente los motivos de creación utilizando el endpoint de IA inteligente.
+*   **Transacciones Atómicas y Revalidación de Caché:** El servicio `createUserByAdmin` agrupa la creación del registro `User` y su bitácora en `SystemAuditLog` dentro de una transacción interactiva de Prisma (`prisma.$transaction`). Una vez guardado con éxito, se invalida el tag de caché `user-detail` (`revalidateTag`) para mantener los listados administrativos sincronizados instantáneamente.
 
 ### 🧠 Inteligencia Artificial Generativa (Google Gemini 2.5-flash)
-*   **Asistente IA Multi-propósito:** Integración del componente `AiRefineButton` que conecta con el endpoint inteligente `/api/ai/refine` para el refinamiento automático de descripciones de mascotas y de productos en el marketplace.
-*   **Asistente de Moderación Inteligente:** Extiende el uso de la IA para ayudar a los administradores a refinar y redactar de forma clara y respetuosa los motivos de decisión utilizados en las aprobaciones, rechazos y bloqueos en el Moderation Hub.
-*   **Saneamiento y Respuestas Seguras:** Refuerzo de las validaciones de entrada en las solicitudes de moderación y saneamiento estricto de la salida generada por la IA antes de ser devuelta para garantizar la máxima seguridad.
+*   **Asistente IA Multi-propósito:** Incorporación de botones inteligentes `AiRefineButton` que se comunican con `/api/ai/refine` para el refinamiento contextual de descripciones de mascotas en fichas de adopción y productos en el marketplace.
+*   **Asistente de Moderación:** Facilita a los administradores la redacción y optimización gramatical y respetuosa de los motivos de aprobación, rechazo y bloqueo en el Moderation Hub.
+*   **Saneamiento y Seguridad:** Validación y sanitización estricta de las entradas y salidas de la API generativa para mitigar ataques de inyección de prompts y garantizar la idoneidad del contenido visualizado.
 
 ### 🛡️ Moderation Hub Centralizado y Auditoría Polimórfica
-*   **Centro Administrativo Consolidado:** Gestión centralizada de solicitudes de verificación de albergues, vendedores y moderación de usuarios bajo el módulo administrativo `/admin/moderation` (las rutas de gestión de usuarios se han unificado bajo `/admin/moderation/users` eliminando páginas independientes).
-*   **Registro de Auditoría Polimórfico (`SystemAuditLog`):** Sistema atómico que captura, almacena y expone de forma paginada un historial inalterable de cada evento administrativo crucial (bloqueos de cuentas, aprobación/rechazo de solicitudes, asignación de roles) exigiendo justificaciones obligatorias y almacenando estados diferenciales en formato JSON (estados *antes/después*).
-*   **Seguridad Multimedia Reforzada:** Endpoint seguro `/api/cloudinary/delete` que verifica la propiedad de los recursos a través del control de acceso basado en roles (RBAC) y helpers del SDK (`extractPublicId` y `deleteImagesFromCloudinary`), impidiendo la eliminación no autorizada de recursos en la nube de Cloudinary por parte de agentes o usuarios ajenos al recurso original.
-*   **Flujo de Reenvío de Solicitudes Desbloqueado:** Permite a albergues o vendedores cuyas postulaciones fueron previamente denegadas reenviar una nueva solicitud de verificación, manteniendo la restricción de reenvío únicamente si hay una solicitud actual con estado `PENDING` o `APPROVED`.
+*   **Consolidación de Control:** Unificación de los procesos administrativos bajo el prefijo de rutas `/admin/moderation/*` (`/users`, `/shelters`, `/vendors`, `/audit`), eliminando pantallas independientes y robusteciendo la verificación administrativa.
+*   **Auditoría Polimórfica (`SystemAuditLog`):** Registro inmutable y atómico que almacena logs de auditoría para múltiples tipos de recursos, guardando el estado previo y posterior (`before` / `after`) en formato de texto JSON para garantizar trazabilidad técnica total.
+*   **Seguridad de Archivos:** Endpoint seguro `/api/cloudinary/delete` que verifica la propiedad de las imágenes a través de control de accesos basado en roles (RBAC), evitando que usuarios no autorizados eliminen recursos multimedia en Cloudinary.
+*   **Desbloqueo de Reenvíos:** Permite a los albergues o vendedores cuyas solicitudes fueron denegadas previamente corregir la información y reenviar un nuevo formulario, manteniendo el bloqueo únicamente cuando existe una postulación activa en estado `PENDING` o `APPROVED`.
 
 ### 📧 Motor de Notificaciones Transaccionales (Resend & React Email)
-*   **11 Plantillas Responsive Integradas:** Emails completamente responsivos y personalizados bajo la identidad visual de PawLig, cubriendo flujos críticos como:
-    *   Recuperación segura de contraseñas con tokens de un solo uso con vigencia de una hora.
-    *   Notificación instantánea de nuevas postulaciones de adopción al albergue.
-    *   Actualización de estados de solicitudes de adopción enviadas al adoptante.
-    *   Confirmación de órdenes de compra al comprador y avisos automáticos de venta a los comercios implicados.
-    *   Notificaciones de despacho y envío de pedidos con números de guía.
-    *   Alertas de seguridad por bloqueo o desbloqueo administrativo de cuentas.
-    *   Aprobaciones y rechazos detallados (con motivos explícitos) para las solicitudes de comercios y albergues.
-*   **Envío No Bloqueante:** Procesamiento asíncrono para garantizar que el tiempo de respuesta de los endpoints del backend no se vea penalizado por la latencia en el servicio de correos.
+*   **11 Plantillas de Correo Responsive:** Diseños responsivos construidos con React Email bajo el branding oficial de PawLig, cubriendo flujos transaccionales críticos:
+    *   Recuperación segura de contraseña con tokens de un solo uso válidos por una hora.
+    *   Notificación de nuevas solicitudes de adopción para los albergues.
+    *   Actualizaciones de estado de adopción dirigidas al adoptante.
+    *   Confirmación de órdenes de compra para el comprador y avisos automáticos de venta a los comercios.
+    *   Notificación de despacho con número de guía de envío de pedidos.
+    *   Alertas de seguridad por bloqueo o desbloqueo administrativo de cuentas de usuario.
+    *   Notificación formal de aprobación o rechazo con motivos explícitos para albergues y vendedores.
+*   **Envío Asíncrono No Bloqueante:** Procesamiento en segundo plano de las promesas de envío de correo para garantizar que la latencia del proveedor externo no penalice el tiempo de respuesta del backend ni interrumpa la experiencia del usuario.
 
 ### 🗺️ Visualización Geoespacial e Interactiva (Leaflet)
-*   **Localización y Búsqueda por Mapa:** Mapa interactivo integrado que posiciona geográficamente los refugios verificados en el Valle de Aburrá, facilitando búsquedas personalizadas por municipios.
-*   **Servicio de Geocodificación Interno:** Script automático y capa de servicios (`geocoding.service.ts`) para convertir direcciones físicas registradas por los refugios en coordenadas geoespaciales (latitud y longitud) persistidas de forma segura en MongoDB.
+*   **Localización en Mapa:** Mapa interactivo integrado que renderiza la ubicación de los refugios autorizados en el Valle de Aburrá, facilitando búsquedas personalizadas por municipio.
+*   **Servicio de Geocodificación Automático:** Módulo interno (`geocoding.service.ts`) y script ejecutable que convierte direcciones físicas registradas por los refugios en coordenadas (latitud y longitud) para su almacenamiento seguro en MongoDB.
 
 ### 🐾 Flexibilidad en Fichas de Adopción
-*   **Requisitos de Adopción Opcionales:** Los albergues pueden omitir de forma flexible los requisitos de adopción adicionales de una mascota. La interfaz de usuario informa explícitamente cuando no existen requisitos de adopción adicionales para una mascota en particular, reduciendo las barreras iniciales de postulación.
+*   **Requisitos de Adopción Flexibles:** Los albergues pueden omitir de forma flexible la inserción de requerimientos adicionales en la ficha de adopción. La UI informa con claridad cuando no existen requisitos de adopción adicionales para una mascota, reduciendo las barreras iniciales de postulación.
 
 ### 🛒 Carrito de Compras de Alto Rendimiento y Sincronización Eficiente
-*   **Optimización de Consultas (useCart y useCartSync):** La lógica de obtención y sincronización del carrito del usuario se ha condicionado de manera estricta para que se ejecute solo cuando el usuario se encuentra debidamente autenticado y está navegando en el catálogo de productos.
-*   **Reducción del Polling e Invocaciones Innecesarias:** Evita la ejecución de revalidaciones, consultas repetitivas de backend o revalidaciones en segundo plano para usuarios no autenticados o que visitan áreas de la plataforma no relacionadas con la tienda, mejorando drásticamente el rendimiento global de la plataforma y del botón flotante del carrito.
+*   **Optimización Dinámica (useCart y useCartSync):** La lógica de obtención y sincronización del carrito del usuario se ejecuta condicionalmente solo cuando el usuario tiene una sesión autenticada y se encuentra navegando activamente en el catálogo de productos.
+*   **Reducción del Polling:** Evita peticiones innecesarias, revalidaciones en segundo plano y consultas repetitivas para usuarios anónimos o en rutas administrativas, optimizando notablemente la velocidad global del sitio.
 
-### 🌌 404 Orbital Engine (Simulación en Canvas 2D)
-*   **Simulación Física Kepleriana:** La página de error 404 implementa un motor interactivo escrito en Canvas 2D que simula las leyes orbitales de Kepler para orbitar elementos visuales de la marca.
-*   **Proyección Isométrica 3D y Oclusión Dinámica:** Algoritmos matemáticos personalizados para renderizar volumen 3D real y oclusión de capas directamente sobre coordenadas bidimensionales con altísima eficiencia y rendimiento móvil.
+### 🌌 404 Orbital Engine (Simulación Física en Canvas 2D)
+*   **Simulación Física Kepleriana:** La página de error 404 integra un motor de renderizado Canvas 2D interactivo que simula las leyes de órbitas elípticas de Kepler utilizando la variación de velocidad orbital según la excentricidad de la elipse.
+*   **Proyección Isométrica 3D y Oclusión:** Algoritmos matemáticos personalizados para proyectar volumen 3D y gestionar la profundidad (Z-ordering) de elementos visuales en un lienzo bidimensional.
 
 ### 📊 Sistema de Métricas y Reportes
-*   **Paneles Analíticos Dinámicos:** Gráficos e indicadores en tiempo real mediante `Recharts` para ilustrar las tendencias de adopción, volúmenes de ventas de productos y comportamiento del inventario.
-*   **Exportación Multi-formato:** Soporte nativo para descargar reportes estructurados de transacciones y adopciones en formatos **Excel** (vía ExcelJS), **PDF** con formato de tabla profesional (vía jsPDF y autotable) y **CSV**.
+*   **Visualización Analítica de Negocio:** Paneles interactivos que ilustran tendencias de ventas, métricas de adopción e inventario en tiempo real mediante `Recharts`.
+*   **Exportación Multi-formato:** Soporte nativo para descargar reportes estadísticos y estructurados de transacciones y adopciones en formatos **Excel** (vía ExcelJS), **PDF** con formato de tabla profesional (vía jsPDF y autotable) y **CSV**.
 
 ---
 
 ## 3. Requisitos e instalación
 
 ### Prerrequisitos de Entorno
-*   **Node.js:** Versión `18.17.0` o superior (se recomienda encarecidamente utilizar versiones LTS estables como Node v18 o v20).
-*   **npm:** Versión `9.0.0` o superior.
-*   **Base de Datos:** Acceso a un clúster de **MongoDB** (local o a través de MongoDB Atlas Cloud).
+*   **Entorno de Ejecución:** Node.js versión `18.17.0` o superior (LTS recomendada, como Node v18 o v20).
+*   **Gestor de Paquetes:** npm versión `9.0.0` o superior.
+*   **Base de Datos:** Acceso a un clúster de **MongoDB** (local o clúster en la nube con MongoDB Atlas).
 
-### Guía de Instalación Paso a Paso
+### Guía de Instalación y Configuración Local
 
 1.  **Clonación del Repositorio:**
     ```bash
@@ -100,18 +107,18 @@ La plataforma de PawLig está dotada de una serie de módulos robustos y caracte
     ```
 
 2.  **Instalación de Dependencias del Proyecto:**
-    Este comando descargará todos los paquetes necesarios y ejecutará automáticamente el script de post-instalación de Prisma (`prisma generate`) para compilar y sincronizar el cliente de base de datos type-safe adaptados a la base de datos MongoDB:
+    Este comando descarga e instala todas las librerías necesarias del proyecto. Adicionalmente, el script de post-instalación de Prisma (`prisma generate`) se ejecutará automáticamente para generar y sincronizar el cliente type-safe adaptado al esquema de base de datos de MongoDB:
     ```bash
     npm install
     ```
 
 3.  **Configuración de Variables de Entorno:**
-    Cree un archivo `.env` en el directorio raíz de la aplicación. Puede tomar como referencia el archivo `.env.local.example`:
+    Cree un archivo `.env` en la raíz del proyecto tomando como referencia el archivo `.env.local.example` y configure sus credenciales de la siguiente manera:
     ```env
-    # Conexión a Base de Datos
+    # Conexión a Base de Datos de MongoDB
     DATABASE_URL="mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/pawlig"
 
-    # Autenticación y Seguridad
+    # Autenticación y Seguridad (NextAuth)
     NEXTAUTH_SECRET="ej: generar usando -> openssl rand -base64 32"
     NEXTAUTH_URL="http://localhost:3000"
 
@@ -127,131 +134,196 @@ La plataforma de PawLig está dotada de una serie de módulos robustos y caracte
     EMAIL_FROM="onboarding@resend.dev"
     ```
 
-4.  **Generación de la Base de Datos y Sincronización del Esquema:**
-    Ejecute los siguientes comandos para sincronizar la definición del modelo de Prisma con su base de datos MongoDB:
+4.  **Sincronización del Esquema con la Base de Datos:**
+    Sincronice la definición del esquema de Prisma (`prisma/schema.prisma`) con su base de datos de MongoDB en la nube o local:
     ```bash
     npx prisma db push
     ```
 
-5.  **Poblar la Base de Datos con Datos de Semilla (Opcional):**
-    Si desea cargar un conjunto de datos ficticios iniciales para pruebas locales (usuarios administradores, albergues, vendedores, mascotas, productos), ejecute:
+5.  **Poblamiento de Datos de Semilla (Seed - Opcional):**
+    Para cargar un conjunto de datos iniciales en la base de datos (usuarios con roles especiales, albergues, vendedores, mascotas, productos de prueba), ejecute:
     ```bash
     npx prisma db seed
     ```
-    *Nota: Las credenciales de acceso creadas por la semilla se listan de forma detallada en el archivo `credentials-seed.txt` en la raíz del proyecto.*
+    *Nota: Las credenciales de acceso creadas por la semilla de datos se listan detalladamente en el archivo `credentials-seed.txt` localizado en la raíz de la aplicación.*
 
 ---
 
 ## 4. Guía de uso
 
-La ejecución diaria y la interacción con las capacidades de desarrollo del ecosistema se gestionan a través de los siguientes comandos de consola estandarizados:
+Las operaciones diarias de desarrollo y administración del proyecto se gestionan a través de los siguientes scripts de consola:
 
-### Ejecución en Desarrollo Local
-Para levantar un servidor de desarrollo interactivo y con soporte de recarga en caliente (*Hot Module Replacement*):
+### Servidor de Desarrollo Local
+Para iniciar un servidor de desarrollo interactivo con recarga en caliente (Hot Module Replacement):
 ```bash
 npm run dev
 ```
-La aplicación se servirá automáticamente en el puerto local y estará disponible en [http://localhost:3000](http://localhost:3000).
+La aplicación estará disponible para interactuar localmente en la dirección: [http://localhost:3000](http://localhost:3000).
 
 ### Compilación y Construcción para Producción
-Para compilar la aplicación, optimizar los activos estáticos y preparar la estructura del lado del servidor de Next.js:
+Para compilar la aplicación, optimizar los activos y recursos del lado del cliente y servidor:
 ```bash
 npm run build
 ```
 
 ### Ejecución en Modo Producción
-Una vez que el proyecto se ha compilado con éxito mediante el comando anterior, inicie el servidor optimizado para entornos de producción:
+Una vez finalizada la compilación para producción con éxito, levante el servidor optimizado para producción mediante:
 ```bash
 npm run start
 ```
 
 ### Ejecución de Pruebas Unitarias y de Integración (Vitest)
-El proyecto cuenta con un entorno riguroso de pruebas unitarias. Para ejecutar toda la suite de pruebas locales:
+El proyecto cuenta con un entorno riguroso de testing configurado mediante Vitest. Para ejecutar la suite de pruebas locales de manera segura y evitar fallos de aserción en el servicio de correos, se debe proveer la variable de entorno `EMAIL_FROM`:
 ```bash
 EMAIL_FROM=onboarding@resend.dev npm test -- --run
 ```
-*Nota: Es mandatorio proveer de manera temporal la variable de entorno `EMAIL_FROM` en la consola para la ejecución correcta de las pruebas asociadas al servicio de mensajería electrónica.*
 
-### Análisis de Calidad de Código (ESLint)
-Para validar que las contribuciones se adhieran rigurosamente a los estándares de formato y de TypeScript del ecosistema:
+### Análisis de Calidad y Linting (ESLint)
+Para validar que el código se adhiera estrictamente a las reglas y estándares de TypeScript del proyecto:
 ```bash
 npm run lint
 ```
+
+### Scripts de Mantenimiento y Automatización
+El proyecto incluye scripts ejecutables para realizar tareas de administración de manera directa empleando `npx tsx scripts/<script-name>`:
+*   **Limpieza de Imágenes Huérfanas:** Mantenimiento de Cloudinary para identificar y remover imágenes que no se encuentren en la base de datos.
+    ```bash
+    npx tsx scripts/cleanup-orphaned-images.ts
+    ```
+*   **Prueba de Envío de Correos Reales:** Valida la integración de envío de correos directos consumiendo la API de Resend.
+    ```bash
+    npx tsx scripts/test-live-emails.ts
+    ```
+*   **Geocodificación Automática de Albergues:** Procesa las direcciones de los albergues registrados en la base de datos que no cuentan con coordenadas geoespaciales y las geolocaliza automáticamente.
+    ```bash
+    npx tsx scripts/geocode-shelters.ts
+    ```
 
 ---
 
 ## 5. Tecnologías
 
-El stack tecnológico de PawLig ha sido rigurosamente estructurado para ofrecer el máximo rendimiento, seguridad del lado del servidor y compatibilidad con tipado estricto:
+El stack tecnológico de PawLig ha sido seleccionado minuciosamente para garantizar un entorno seguro, escalable, con tipado estático robusto y excelente rendimiento:
 
-### Núcleo de Aplicación (Framework & Lenguaje)
-*   **Framework:** Next.js (App Router) v14.2.33 — Generación del lado del servidor (SSR) y Static Site Generation (SSG).
-*   **Lenguaje:** TypeScript v5.x — Garantiza solidez en el desarrollo de software mediante tipado estático y robusto.
-*   **Entorno de Ejecución:** Node.js v18+ — Capa base del ecosistema JavaScript de servidor.
+### Framework & Lenguaje
+*   **Next.js (App Router) v14.2.33:** Framework de React para renderizado del lado del servidor (SSR), Static Site Generation (SSG) y optimizaciones avanzadas.
+*   **TypeScript v5.x:** Superset de JavaScript que proporciona tipado estático fuerte para evitar errores en tiempo de ejecución.
+*   **Node.js v18.17+:** Entorno de ejecución estándar de la capa de backend de la aplicación.
 
-### Base de Datos y Persistencia
-*   **Motor de Base de Datos:** MongoDB Atlas — Motor NoSQL flexible orientado a documentos en la nube.
-*   **ORM:** Prisma ORM v6.2.1 (con cliente v6.19.3 para soporte avanzado) — Capa de mapeo de objetos segura y autogenerada de alta eficiencia con soporte para transacciones de MongoDB.
+### Base de Datos y ORM
+*   **MongoDB Atlas:** Base de datos NoSQL flexible orientada a documentos persistida en la nube.
+*   **Prisma ORM v6.2.1 (con cliente v6.19.3):** Capa de acceso a datos de alto rendimiento, autogenerada y type-safe para el control transaccional de MongoDB.
 
 ### Autenticación y Seguridad
-*   **Módulo de Autenticación:** NextAuth.js v4.24.7 — Autenticación robusta basada en cookies de sesión y roles (`ADMIN`, `SHELTER`, `VENDOR`, `ADOPTER`).
-*   **Cifrado de Datos:** bcryptjs v3.0.3 — Hashing criptográfico unidireccional de contraseñas.
+*   **NextAuth.js v4.24.7:** Sistema seguro de autenticación y sesiones basado en roles de usuario (`ADMIN`, `SHELTER`, `VENDOR`, `ADOPTER`).
+*   **bcryptjs v3.0.3:** Algoritmo seguro para el hashing y almacenamiento criptográfico de contraseñas de usuarios en el servidor.
 
 ### Diseño, Estilos y UI
-*   **Estructuración de Diseño:** Tailwind CSS v3.4.1 — Estilos adaptativos basados en clases de utilidad rápidas y variables semánticas.
-*   **Componentes UI Accesibles:** Radix UI Primitives — Primitivas interactivas sin estilos que garantizan el cumplimiento de normativas de accesibilidad (WAI-ARIA).
-*   **Visualización de Datos:** Recharts v3.8.1 — Gráficas interactivas y modulares para analíticas de negocio.
+*   **Tailwind CSS v3.4.1:** Framework CSS basado en clases de utilidad y variables semánticas para interfaces responsivas.
+*   **Radix UI Primitives:** Primitivas de interfaz de usuario sin estilos y accesibles (cumplimiento estricto de WCAG AA y estándares WAI-ARIA).
+*   **Recharts v3.8.1:** Librería de visualización interactiva de datos y analíticas de negocio en React.
+*   **Lucide React v0.554.0:** Conjunto unificado de iconos vectoriales SVG limpios y ligeros.
 
-### Servicios Externos e Inteligencia Artificial
-*   **Motor de IA:** Google Generative AI SDK (Gemini AI) v0.24.1 — Integración con el modelo de lenguaje `gemini-2.5-flash` para refinamiento de descripciones y motivos de moderación.
-*   **Proveedor Multimedia:** Cloudinary SDK v2.8.0 — Gestión y optimización automatizada de recursos gráficos y fotografías de mascotas/productos.
-*   **Mensajería Electrónica:** Resend SDK v6.12.2 & React Email v1.0.12 — Infraestructura premium para el modelado y envío masivo de correos corporativos.
+### Servicios de Inteligencia Artificial
+*   **Google Generative AI SDK (Gemini AI) v0.24.1:** Integración con el modelo `gemini-2.5-flash` para el refinamiento automático de descripciones y motivos de moderación administrativa.
 
-### Servicios Geoespaciales
-*   **Motor de Mapas:** Leaflet v1.9.4 & React Leaflet v4.2.1 — Visualización de mapas vectoriales e interacción dinámica.
+### Mensajería Electrónica y Multimedia
+*   **Resend SDK v6.12.2:** API premium de envío de correos transaccionales estables.
+*   **React Email v1.0.12:** Biblioteca de componentes para el diseño y renderizado seguro de correos en formato HTML responsivo.
+*   **Cloudinary SDK v2.8.0:** Plataforma inteligente para el almacenamiento, carga segura y optimización dinámica de imágenes y activos multimedia.
+
+### Servicios Geoespaciales y Mapas
+*   **Leaflet v1.9.4 & React Leaflet v4.2.1:** Biblioteca de mapas interactivos ligeros del lado del cliente.
+
+### Reportes & Utilidades
+*   **ExcelJS v4.4.0:** Herramienta para lectura, edición y escritura de reportes complejos en formato de hoja de cálculo XLSX.
+*   **jsPDF v4.2.1 & jsPDF-autotable v5.0.7:** Generación dinámica de documentos PDF interactivos directamente en el cliente.
+*   **date-fns v4.1.0:** Manipulación avanzada y formateo localizado de fechas.
+*   **remark v15.0.1, remark-gfm, remark-html y unist-util-visit:** Motor para procesamiento de Markdown a HTML.
 
 ---
 
-## 6. Estructura del Proyecto
+## 6. Estructura del proyecto
 
-El repositorio de PawLig sigue las mejores convenciones de organización por capas técnicas y características funcionales para garantizar la mantenibilidad a largo plazo:
+El repositorio de PawLig sigue las directrices arquitectónicas más estrictas de Next.js. A continuación, se detalla la disposición jerárquica de carpetas y archivos clave del proyecto (con conectores de árbol correctamente alineados y directorios finalizados con `/`):
 
 ```text
-├── app/                  # Núcleo de Rutas, APIs y Segmentos del Sistema
-│   ├── (auth)/           # Segmento de Autenticación (Login, Registro, Recuperación)
-│   ├── (dashboard)/      # Paneles de Administración y Gestión Privada
-│   │   ├── admin/        # Dashboard del Administrador, Moderation Hub (users, shelters, vendors, audit) e Historiales
-│   │   ├── user/         # Panel del Adoptante (Favoritos, Carrito, Historial de Solicitudes)
-│   │   ├── shelter/      # Gestión del Albergue (Publicación de Mascotas, Adopciones, Métricas)
-│   │   └── vendor/       # Gestión del Vendedor (Catálogo, Stock, Pedidos, Métricas)
-│   ├── (public)/         # Vistas Públicas (Adopciones, Tienda, Albergues, Ayuda, Legal, Changelog)
-│   ├── api/              # Endpoints de la API RESTful de la Aplicación
-│   ├── globals.css       # Configuración global de estilos Tailwind CSS
-│   ├── layout.tsx        # Diseño maestro (Master Layout) compartido de la aplicación
-│   └── not-found.tsx     # Página de error 404 inmersiva con el Motor Orbital 3D
-├── components/           # Componentes Modulares de React y UI Reutilizable
-│   ├── admin/            # Vistas internas del Moderation Hub, Auditoría y Gestión de Usuarios
-│   ├── cards/            # Tarjetas de presentación visual de Mascotas y Productos
-│   ├── filters/          # Filtros avanzados interactivos de búsqueda de adopciones y tienda
-│   ├── forms/            # Lógica y validaciones de todos los formularios de captura
-│   ├── layout/           # Componentes estructurales (Barra de navegación por rol, Footer, floating-cart-button)
-│   ├── map/              # Componentes de interacción con Leaflet y Búsqueda
-│   ├── ui/               # Botones, entradas de texto, modales y alertas base del sistema (incluye PasswordInput y AiRefineButton)
-│   └── vendor/           # Componentes analíticos y de inventario para vendedores
-├── lib/                  # Núcleo de la Lógica de Negocio y Utilidades de Backend
-│   ├── auth/             # Configuración de NextAuth, callbacks y control de accesos
-│   ├── email/            # Código base y 11 plantillas interactivas de React Email
-│   ├── services/         # Capa de Servicios de Acceso a Base de Datos (Mascotas, Ventas, Correos, Geocodificación)
-│   ├── utils/            # Generadores de Reportes (Excel, PDF, CSV), formateadores y base de datos
-│   └── validations/      # Definiciones de Esquemas de Zod para la verificación en cascada
-├── prisma/               # Definición del Modelo de Datos Prisma y Script de Semilla
-│   ├── schema.prisma     # Definición del esquema unificado de base de datos de MongoDB
-│   └── seed.ts           # Script de carga inicial de datos de prueba
-├── public/               # Documentación Técnica Formal (.md) y Recursos Estáticos
-│   ├── docs/             # Actas del proyecto, diagramas de procesos, requerimientos e historias
-│   └── images/           # Activos gráficos, logos y diagramas UML explicativos
-├── types/                # Declaraciones de tipos globales de TypeScript
-└── scripts/              # Herramientas de automatización de geocodificación, limpieza de imágenes y validación de correos
+./
+├── app/                      # Rutas de Next.js, APIs de Servidor y Segmentos del Sistema
+│   ├── (auth)/               # Segmento de Autenticación (Login, Register, Unauthorized)
+│   │   ├── login/            # Componentes de servidor y páginas para inicio de sesión
+│   │   ├── register/         # Creación de cuentas públicas de adoptantes
+│   │   └── unauthorized/     # Redirección en caso de accesos denegados por rol
+│   ├── (dashboard)/          # Paneles privados con accesos de seguridad por Rol
+│   │   ├── admin/            # Panel administrativo: métricas, desarrollo y Moderation Hub
+│   │   │   ├── metrics/      # Dashboard analítico global para administradores
+│   │   │   ├── moderation/   # Moderation Hub: gestión unificada de albergues, vendedores, usuarios y logs
+│   │   │   │   ├── audit/    # Interfaz interactiva y paginada para visualización de SystemAuditLog
+│   │   │   │   ├── shelters/ # Moderación de solicitudes de verificación de albergues
+│   │   │   │   ├── users/    # Administración de bloqueos, roles y alta manual de usuarios
+│   │   │   │   └── vendors/  # Moderación de solicitudes de verificación de tiendas
+│   │   │   └── profile/      # Perfil de cuenta del Administrador
+│   │   ├── shelter/          # Panel de albergues autorizados
+│   │   │   ├── adoptions/    # Visualización y control de postulaciones de adopción recibidas
+│   │   │   ├── metrics/      # Métricas analíticas de adopción de mascotas
+│   │   │   └── pets/         # Gestión CRUD de fichas de mascotas disponibles
+│   │   ├── user/             # Panel del Adoptante autenticado
+│   │   │   ├── profile/      # Datos personales e historial del usuario
+│   │   │   ├── request-shelter/  # Formulario de postulación de nuevo albergue
+│   │   │   └── request-vendor/   # Formulario de postulación de nueva tienda/comercio
+│   │   └── vendor/           # Panel comercial para vendedores autorizados
+│   │       ├── metrics/      # Analíticas de ventas, tendencias e ingresos del comercio
+│   │       ├── orders/       # Procesamiento de pedidos de productos y estados de envío
+│   │       └── products/     # Gestión CRUD del catálogo de productos y actualización de stock
+│   ├── (public)/             # Rutas públicas visibles por cualquier visitante
+│   │   ├── adopciones/       # Galería interactiva con filtros avanzados y detalle de mascotas
+│   │   ├── albergues/        # Directorio geográfico de refugios autorizados en el mapa
+│   │   ├── changelog/        # Registro técnico e historial visual de cambios del ecosistema
+│   │   ├── faq/              # Respuestas a las preguntas frecuentes
+│   │   ├── help/             # Centro de Ayuda e instructivo estructurado del usuario
+│   │   ├── nosotros/         # Información del equipo, misión y visión del proyecto
+│   │   ├── privacy/          # Políticas de privacidad y tratamiento de datos personales
+│   │   ├── productos/        # Marketplace público: galería de productos de bienestar animal
+│   │   └── terms/            # Términos y condiciones legales del servicio
+│   ├── api/                  # Endpoints RESTful de backend de la plataforma (Next.js API Routes)
+│   ├── globals.css           # Estilos CSS globales y variables de tema de Tailwind
+│   ├── layout.tsx            # Diseño estructural maestro compartido del ecosistema
+│   ├── not-found.tsx         # Página de error 404 con el simulador de física orbital Kepler 2D
+│   └── page.tsx              # Landing Page oficial de PawLig
+├── components/               # Componentes modulares de React reutilizables
+│   ├── admin/                # Componentes interactivos dedicados a las vistas del Moderation Hub
+│   ├── adopter/              # Componentes del dashboard de adoptantes
+│   ├── cards/                # Tarjetas de presentación de mascotas y productos comerciales
+│   ├── cart/                 # Componentes interactivos del carrito de compras
+│   ├── filters/              # Menús de filtrado de búsqueda (mascotas y productos)
+│   ├── forms/                # Formularios con validación e interactividad (login, registros, pet-form)
+│   │   ├── create-user-form.tsx # Formulario administrativo para el alta manual de usuarios
+│   │   └── .../              # Formularios adicionales de la plataforma
+│   ├── help/                 # Componentes visuales tipo acordeón para soporte
+│   ├── layout/               # Elementos del marco de aplicación (Navbar, Footer, Floating Cart)
+│   ├── map/                  # Componentes de interacción geoespacial con Leaflet
+│   ├── modals/               # Modales de confirmación de formularios e interacciones
+│   ├── products/             # Componentes de pago y simulación de transacciones
+│   ├── shelter/              # Componentes de visualización para refugios
+│   ├── shelters/             # Buscador de albergues y filtros municipales
+│   ├── ui/                   # Bloques visuales fundamentales (Button, Card, PasswordInput, AiRefineButton)
+│   └── vendor/               # Tablas de stock, productos y gráficos analíticos para vendedores
+├── lib/                      # Núcleo de la Lógica de Negocio y Utilidades de Backend
+│   ├── auth/                 # Configuración de NextAuth, control de accesos y roles (RBAC)
+│   ├── email/                # Lógica del motor de correos y 11 plantillas interactivas de React Email
+│   ├── services/             # Capa lógica de servicios CRUD y de negocio (Pet, Product, Moderation)
+│   │   ├── user.service.ts   # Servicio de persistencia y alta de usuarios (transacción interactiva)
+│   │   └── .../              # Servicios adicionales del ecosistema
+│   ├── utils/                # Utilidades multiplataforma (generadores de reportes PDF, Excel y CSV)
+│   └── validations/          # Esquemas de Zod para validaciones estrictas
+├── prisma/                   # Configuración del motor de persistencia Prisma
+│   ├── schema.prisma         # Esquema unificado y relacional de la base de datos MongoDB
+│   └── seed.ts               # Script para la inyección inicial de datos de semilla
+├── public/                   # Recursos estáticos y documentación formal del proyecto
+│   ├── docs/                 # Documentación formal de grado (Actas, Requerimientos, Historias de Usuario)
+│   └── images/               # Activos de marca, capturas de pantalla y diagramas técnicos UML
+├── types/                    # Declaraciones de tipos e interfaces globales de TypeScript
+└── scripts/                  # Scripts de mantenimiento (Cloudinary, geocodificación, prueba de correos)
 ```
 
 ---
@@ -260,30 +332,30 @@ El repositorio de PawLig sigue las mejores convenciones de organización por cap
 
 ### Contribución al Proyecto
 
-Agradecemos enormemente cualquier colaboración orientada a elevar el valor técnico del ecosistema. Siga de forma estricta los siguientes pasos para proponer mejoras al proyecto:
+Agradecemos profundamente el compromiso y las contribuciones de desarrollo orientadas a robustecer las capacidades del ecosistema. Para garantizar la consistencia, se debe seguir de forma estricta el siguiente flujo de trabajo:
 
-1.  **Fork del Repositorio:** Genere una bifurcación del repositorio principal a su cuenta personal.
-2.  **Creación de una Rama Temática:** Use una nomenclatura de rama que declare el tipo de intervención:
-    *   `feat/nueva-funcionalidad` para el desarrollo de nuevos requerimientos o mejoras.
-    *   `fix/correccion-de-error` para solventar un bug o regresión.
-    *   `refactor/mejora-arquitectonica` para reestructurar código existente sin alterar su lógica de funcionamiento.
-3.  **Adhesión al Estándar de Oro:** Es obligatorio seguir de forma estricta el manual de codificación y diseño detallado en el archivo `.rules.md`.
-4.  **Aseguramiento de Pruebas:** Ejecute toda la suite de pruebas del proyecto y cerciórese de que sigan pasando de manera exitosa:
+1.  **Bifurcación (Fork):** Realice un fork del repositorio oficial a su cuenta de GitHub.
+2.  **Creación de una Rama Temática:** Use la nomenclatura estándar según el tipo de intervención:
+    *   `feat/nueva-funcionalidad` para desarrollos y nuevos requerimientos.
+    *   `fix/correccion-de-error` para mitigar regresiones o solucionar fallos del sistema.
+    *   `refactor/mejora-arquitectonica` para reestructurar código existente sin alterar su comportamiento externo.
+3.  **Adhesión al Estándar de Oro (.rules.md):** Asegúrese de seguir con total rigurosidad el formato de indentación (2 espacios), nomenclatura, comentarios obligatorios (JSDoc de cabecera y notas de implementación en el pie de página) definidos en el archivo `.rules.md`.
+4.  **Aseguramiento de Pruebas locales:** Ejecute la suite completa de pruebas del proyecto y valide que todas las aserciones pasen de forma exitosa:
     ```bash
     EMAIL_FROM=onboarding@resend.dev npm test -- --run
     ```
-5.  **Análisis Estático de Código:** Valide que el código no contenga inconsistencias de linting:
+5.  **Análisis de Estilo (Lint):** Valide que las reglas estáticas de TypeScript y ESLint no arrojen advertencias o errores:
     ```bash
     npm run lint
     ```
-6.  **Apertura del Pull Request (PR):** Abra un Pull Request dirigido a la rama de desarrollo principal, describiendo detalladamente en **idioma español** las modificaciones introducidas, las decisiones técnicas adoptadas y las capturas o evidencias de las pruebas realizadas.
+6.  **Apertura del Pull Request (PR):** Envíe un Pull Request dirigido a la rama de desarrollo principal. El título y la descripción del PR deben detallarse estrictamente en **idioma español**, vinculando el número de Issue correspondiente (`Closes #N`), describiendo la solución adoptada, adjuntando evidencias (screenshots, logs) y siguiendo la guía en `documentacion_y_gestion_de_prs.md`.
 
-### Licencia
+### Licencia del Software
 
-Este software es un trabajo académico y de investigación desarrollado exclusivamente para la **Universidad de San Buenaventura, Seccional Medellín**. Todos los derechos reservados © 2026. Queda estrictamente prohibida la redistribución y el uso comercial de este material sin el consentimiento expreso y por escrito del equipo de desarrollo de PawLig y de las autoridades de la institución educativa.
+Este software es un desarrollo académico y de investigación desarrollado exclusivamente para la **Universidad de San Buenaventura, Seccional Medellín**. Todos los derechos reservados © 2026. Queda estrictamente prohibida la redistribución y el uso comercial no autorizado de este ecosistema digital sin el consentimiento expreso y por escrito del equipo de desarrollo de PawLig y de las autoridades de la institución educativa.
 
 ---
 
 <div align="center">
-Desarrollado con pasión y compromiso ❤️ por el equipo de PawLig desde Medellín, Colombia 🇨🇴.
+Desarrollado con dedicación y compromiso por el bienestar animal ❤️ por el equipo de PawLig en Medellín, Colombia 🇨🇴.
 </div>
