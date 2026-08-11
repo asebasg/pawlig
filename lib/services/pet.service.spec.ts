@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, type Mock } from "vitest";
-import { getPetsWithFilters } from "./pet.service";
+import { describe, it, expect, vi, type Mock, beforeEach } from "vitest";
+import { getPetsWithFilters, deletePet } from "./pet.service";
 import { prisma } from "@/lib/utils/db";
+import { deleteImagesFromCloudinary } from "@/lib/cloudinary";
 
 /**
  * Ruta/Componente/Servicio: Pruebas de Servicio de Mascotas
@@ -14,8 +15,17 @@ vi.mock("@/lib/utils/db", () => ({
     pet: {
       findMany: vi.fn(),
       count: vi.fn(),
+      findUnique: vi.fn(),
+      delete: vi.fn(),
     },
+    adoption: {
+      count: vi.fn(),
+    }
   },
+}));
+
+vi.mock("@/lib/cloudinary", () => ({
+  deleteImagesFromCloudinary: vi.fn().mockResolvedValue(true),
 }));
 
 describe("Pet Service - getPetsWithFilters", () => {
@@ -34,6 +44,44 @@ describe("Pet Service - getPetsWithFilters", () => {
       })
     );
     expect(result.data).toEqual(mockPets);
+  });
+});
+
+describe("Pet Service - deletePet", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("debería eliminar mascota con imágenes y confirmar borrado en Cloudinary", async () => {
+    const mockPetId = "pet123";
+    const mockShelterId = "shelter123";
+    
+    // Configurar mock de findUnique para que la mascota exista y pertenezca al shelter
+    (prisma.pet.findUnique as Mock).mockResolvedValue({
+      id: mockPetId,
+      shelterId: mockShelterId,
+    });
+    
+    // Configurar mock de adopciones para que no existan dependientes
+    (prisma.adoption.count as Mock).mockResolvedValue(0);
+
+    // Configurar mock de delete para que devuelva la mascota con imágenes
+    const mockDeletedPet = {
+      id: mockPetId,
+      name: "Buddy",
+      images: ["image1.jpg", "image2.jpg"],
+    };
+    (prisma.pet.delete as Mock).mockResolvedValue(mockDeletedPet);
+
+    // Ejecutar el método
+    const result = await deletePet(mockPetId, mockShelterId);
+
+    // Verificaciones
+    expect(prisma.pet.delete).toHaveBeenCalledWith({
+      where: { id: mockPetId },
+    });
+    expect(deleteImagesFromCloudinary).toHaveBeenCalledWith(["image1.jpg", "image2.jpg"]);
+    expect(result).toEqual(mockDeletedPet);
   });
 });
 
