@@ -195,7 +195,7 @@ export async function deletePet(id: string, shelterId: string) {
   });
 
   if (deletedPet.images && deletedPet.images.length > 0) {
-    deleteImagesFromCloudinary(deletedPet.images).catch(console.error);
+    await deleteImagesFromCloudinary(deletedPet.images);
   }
 
   return deletedPet;
