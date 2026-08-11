@@ -30,9 +30,33 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "10 de julio de 2026";
+  const lastDevUpdate = "11 de agosto de 2026";
 
   const devLogs = [
+    {
+      version: "v1.16.1-dev",
+      date: "11 de Agosto, 2026",
+      title: "Limpieza Automatizada de Imágenes en Cloudinary",
+      description:
+        "Implementación del borrado automático en cascada de recursos multimedia en Cloudinary tras la baja de mascotas, y refuerzo de la integridad referencial.",
+      type: "fix",
+      logs: [
+        {
+          category: "fix",
+          title: "Borrado en Cascada en Cloudinary",
+          description:
+            "Integración de llamadas a deleteImagesFromCloudinary directamente tras dar de baja o eliminar el registro de una mascota en pet.service.ts.",
+          icon: <Bug size={18} className="text-rose-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Validación Preventiva de Adopciones",
+          description:
+            "Comprobación preventiva en base de datos para impedir que mascotas con postulaciones activas puedan ser eliminadas.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
     {
       version: "v1.16.0-dev",
       date: "10 de Julio, 2026",

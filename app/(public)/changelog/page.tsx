@@ -29,9 +29,35 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "10 de julio de 2026";
+  const lastUpdate = "11 de agosto de 2026";
 
   const versions = [
+    {
+      version: "v1.15.1",
+      date: "11 de Agosto, 2026",
+      title: "Eliminación Segura de Imágenes y Limpieza Automatizada",
+      description:
+        "Implementamos la eliminación en cascada de imágenes de Cloudinary tras dar de baja o eliminar una mascota y protegimos la base de datos verificando adopciones pendientes.",
+      color: "from-amber-500 to-orange-600",
+      updates: [
+        {
+          type: "fixed",
+          title: "Borrado en Cascada en Cloudinary",
+          description:
+            "Al eliminar una mascota de la plataforma, sus imágenes asociadas se eliminan de forma automatizada y segura en Cloudinary para mantener el almacenamiento optimizado.",
+          icon: <Bug size={20} className="text-white" />,
+          bg: "bg-rose-500",
+        },
+        {
+          type: "improved",
+          title: "Integridad de Adopciones Relacionadas",
+          description:
+            "Se implementó un bloqueo preventivo que impide la eliminación física de mascotas que posean solicitudes de adopción registradas, garantizando la consistencia de los datos.",
+          icon: <Shield size={20} className="text-white" />,
+          bg: "bg-indigo-600",
+        },
+      ],
+    },
     {
       version: "v1.15.0",
       date: "10 de Julio, 2026",

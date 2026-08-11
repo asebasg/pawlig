@@ -1,5 +1,23 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Eliminación Segura de Imágenes y Limpieza Automatizada (v1.15.1 — 11-08-2026)
+
+Implementación del borrado automático en cascada de imágenes de Cloudinary tras dar de baja o eliminar una mascota en la plataforma, y refuerzo del servicio de persistencia.
+
+**Archivos creados/modificados:**
+
+- `lib/services/pet.service.ts` — Inclusión del método `deletePet` para encapsular la lógica de borrado de mascota y eliminación de sus imágenes en Cloudinary.
+- `lib/services/pet.service.spec.ts` — Pruebas unitarias para el servicio de eliminación de mascota y borrado en Cloudinary.
+- `app/api/pets/[id]/route.ts` — Consumo del servicio `deletePet` en el endpoint DELETE.
+
+**Detalles Técnicos:**
+
+- **Borrado en Cascada Real**: Al eliminar una mascota, el servicio `deletePet` verifica su existencia, los permisos del albergue y que no tenga adopciones pendientes, y procede a borrarla de la base de datos de Prisma. Posterior a la eliminación, se extraen las URLs de las imágenes y se llama de forma asíncrona a `deleteImagesFromCloudinary` para remover los recursos multimedia directamente de Cloudinary, evitando así que queden recursos huérfanos.
+- **Validación de Adopciones**: Antes de proceder con la eliminación física de la mascota en MongoDB, se realiza una verificación de las solicitudes de adopción asociadas. Si existen postulaciones, se lanza un error descriptivo para prevenir inconsistencias en la base de datos.
+- **Robustez y Pruebas Unitarias**: Se expandió el set de pruebas unitarias (`pet.service.spec.ts`) agregando un bloque de descripción para `deletePet`, comprobando los flujos felices y de error, y asegurando el correcto llamado al mock del API de Cloudinary.
+
+---
+
 ## Alta Manual de Usuarios y Auditoría Administrativa (v1.8.0 — 21-06-2026)
 
 Implementación del flujo de alta manual de usuarios para administradores. Permite la creación de cuentas sin inicio de sesión automático y con contraseñas seguras autogeneradas en el servidor, garantizando la trazabilidad de las acciones administrativas mediante el registro automático en el Moderation Hub.

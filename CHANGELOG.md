@@ -4,6 +4,25 @@
 
 ---
 
+## 11-08-2026 - Eliminación Segura de Imágenes y Limpieza Automatizada (v1.15.1)
+
+**Commit:** `047b34a`
+**Tipo:** Bug Fix / Security
+**Scope:** pets, api, cloudinary, storage
+
+### Descripción
+
+Esta actualización soluciona un problema crítico de almacenamiento huérfano asegurando el borrado automático en cascada de las imágenes de Cloudinary al eliminar o dar de baja una mascota de la plataforma, y refuerza la integridad relacional de la base de datos al impedir la eliminación de mascotas con solicitudes de adopción pendientes.
+
+### Cambios
+
+- **Borrado en Cascada en Cloudinary**: Integración de la llamada a `deleteImagesFromCloudinary` dentro del servicio de persistencia `deletePet` para liberar espacio de almacenamiento inmediatamente después del borrado de mascotas.
+- **Integridad de Adopciones Relacionadas**: Validación que bloquea el borrado si una mascota tiene solicitudes de adopción registradas, previniendo inconsistencias en la base de datos de Prisma/MongoDB.
+- **Servicio Unificado `deletePet`**: Refactorización del endpoint `DELETE /api/pets/[id]` delegando toda la lógica transaccional y de seguridad al servicio del backend `deletePet`.
+- **Suite de Pruebas Robustecida**: Adición de aserciones de prueba en `pet.service.spec.ts` que validan el flujo de eliminación feliz y la remoción de imágenes de Cloudinary.
+
+---
+
 ## 10-07-2026 - Asistencia Inteligente y Carrito Más Eficiente (v1.15.0)
 
 **Commits:** `865756e`, `0d9a0be`, `36e9bda`, `85dd7ae`

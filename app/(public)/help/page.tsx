@@ -439,7 +439,7 @@ export default function HelpPage() {
                 </a>
               </div>
             </div>
-            <p className="text-[10px] text-slate-400 text-right mt-4 font-bold tracking-widest uppercase">&copy; {currentYear} PawLig v1.13.1 Stable</p>
+            <p className="text-[10px] text-slate-400 text-right mt-4 font-bold tracking-widest uppercase">&copy; {currentYear} PawLig v1.15.1 Stable</p>
           </AccordionSection>
 
           {/* ── 12. GLOSARIO ── */}
@@ -478,6 +478,6 @@ export default function HelpPage() {
 /*
 NOTAS DE IMPLEMENTACIÓN
 Descripción General: Componente de servidor que renderiza el manual de usuario organizado por categorías funcionales y roles de usuario.
-Lógica Clave: Utiliza secciones de acordeón para mejorar la legibilidad y navegación en dispositivos móviles. La información se mantiene sincronizada con las últimas versiones del proyecto (v1.13.1).
+Lógica Clave: Utiliza secciones de acordeón para mejorar la legibilidad y navegación en dispositivos móviles. La información se mantiene sincronizada con las últimas versiones del proyecto (v1.15.1).
 Dependencias Externas: Lucide React para iconografía y Tailwind CSS para el sistema de diseño.
 */
