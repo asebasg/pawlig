@@ -41,6 +41,11 @@ Con una arquitectura basada en tecnologías web de última generación, PawLig i
 
 El ecosistema cuenta con módulos robustos y funcionalidades altamente técnicas diseñadas para garantizar la seguridad, usabilidad y rendimiento:
 
+### 🗑️ Gestión Segura de Multimedia e Integridad de Datos (v1.15.1)
+*   **Borrado en Cascada en Cloudinary:** Eliminación automática de las imágenes de Cloudinary al remover o dar de baja una mascota mediante el servicio `deletePet`, optimizando el uso de almacenamiento.
+*   **Integridad Relacional de Adopciones:** Validación en el servidor que impide la eliminación de mascotas con solicitudes de adopción asociadas, preservando la consistencia en Prisma y MongoDB.
+*   **Control de Accesos Basado en Roles (RBAC):** Endpoint centralizado `/api/cloudinary/delete` para verificación de propiedad y eliminación segura de recursos multimedia.
+
 ### 👤 Alta Manual de Usuarios y Auditoría Administrativa (v1.8.0)
 *   **Creación Segura en el Servidor:** Flujo de alta manual de usuarios para administradores desde la interfaz `/admin/moderation/users/create`, permitiendo registrar nuevas cuentas sin requerir el inicio de sesión automático del creador.
 *   **Contraseñas Seguras Autogeneradas:** Generación de contraseñas temporales y robustas en el backend (mediante entropía criptográfica `crypto.randomBytes` formateada a base64 y filtrada de caracteres ambiguos) que se hashean con `bcryptjs` (12 rondas de sal) para una persistencia segura.
