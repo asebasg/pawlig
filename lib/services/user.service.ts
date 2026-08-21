@@ -1,6 +1,7 @@
 import { unstable_cache, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/utils/db";
-import { AuditCategory, UserRole } from "@prisma/client";
+import { AuditCategory, Municipality, UserRole } from "@prisma/client";
+import { CreateUserByAdminInput } from "@/lib/validations/user.schema";
 
 /**
  * Ruta/Componente/Servicio: User Service
@@ -120,6 +121,88 @@ export async function updateUserRole(
   return transaction[0];
 }
 
+export async function createUserByAdmin(
+  payload: CreateUserByAdminInput & { hashedPassword: string },
+  adminId: string,
+  adminEmail: string,
+  ipAddress?: string,
+  userAgent?: string,
+) {
+  const {
+    email,
+    name,
+    phone,
+    municipality,
+    address,
+    idNumber,
+    birthDate,
+    role,
+    reason,
+    hashedPassword,
+  } = payload;
+
+  const requestId = crypto.randomUUID();
+
+  // Razón de auditoría: obligatoria y personalizada para cualquier rol diferente de ADOPTER
+  // (garantizada por createUserByAdminSchema.refine); texto fijo para rol ADOPTER.
+  const auditReason =
+    role !== UserRole.ADOPTER && reason && reason.trim().length >= 10
+      ? reason
+      : "Usuario creado manualmente por administrador";
+
+  // Transacción interactiva: permite usar newUser.id como resourceId
+  // en el registro de auditoría (no posible con $transaction([...]) paralela).
+  const newUser = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        email,
+        name,
+        phone,
+        municipality: municipality as Municipality,
+        address,
+        idNumber,
+        birthDate: new Date(birthDate),
+        role: role as UserRole,
+        password: hashedPassword,
+        isActive: true,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        phone: true,
+        municipality: true,
+        createdAt: true,
+      },
+    });
+
+    await tx.systemAuditLog.create({
+      data: {
+        category: AuditCategory.USER_MANAGEMENT,
+        action: "CREATE",
+        actorId: adminId,
+        actorEmail: adminEmail,
+        resourceType: "USER",
+        resourceId: user.id,
+        before: null,
+        after: JSON.stringify({ email, role }),
+        reason: auditReason,
+        requestId,
+        ipAddress,
+        userAgent,
+      },
+    });
+
+    return user;
+  });
+
+  // Invalidar caché de detalle de usuario, igual que updateUserRole
+  revalidateTag("user-detail");
+
+  return newUser;
+}
+
 /*
  * ---------------------------------------------------------------------------
  * NOTAS DE IMPLEMENTACIÓN
@@ -129,7 +212,7 @@ export async function updateUserRole(
  * Este servicio encapsula toda la lógica de negocio relacionada con la
  * gestión de usuarios por parte de los administradores. Se encarga de
  * obtener datos detallados de los usuarios y de manejar operaciones
- * sensibles como el cambio de roles.
+ * sensibles como el cambio de roles y el alta manual de cuentas.
  *
  * Lógica Clave:
  * - 'getUserById':
@@ -154,11 +237,29 @@ export async function updateUserRole(
  *     invalidar el caché de 'getUserById', asegurando que la próxima visita
  *     a la página de detalle muestre los datos más recientes.
  *
+ * - 'createUserByAdmin':
+ *   - Recibe el payload ya validado por Zod en el Route Handler (campos del
+ *     schema + hashedPassword) y los metadatos del admin como parámetros
+ *     explícitos: adminId, adminEmail, ipAddress?, userAgent?.
+ *   - Usa $transaction interactiva (async (tx) => ...) en lugar de la forma
+ *     paralela ($transaction([...])), lo que permite acceder a user.id
+ *     inmediatamente después del user.create y usarlo como resourceId en
+ *     el systemAuditLog.create, completando así el registro de auditoría.
+ *   - Razón de auditoría condicional: si role === ADMIN usa el campo reason
+ *     del payload (obligatorio por el refine del schema); en cualquier otro
+ *     rol usa el texto fijo 'Usuario creado manualmente por administrador'.
+ *   - SystemAuditLog.action = 'CREATE' es un String libre en Prisma, válido
+ *     sin migración. before = null (el usuario no existía previamente).
+ *   - Invalida el tag 'user-detail' al finalizar, igual que updateUserRole,
+ *     para que la vista de detalle refleje el nuevo usuario inmediatamente.
+ *
  * Dependencias Externas:
  * - 'next/cache': Para las funciones de cacheo 'unstable_cache' e
  *   invalidación 'revalidateTag'.
  * - '@prisma/client': Para la interacción con la base de datos y los
- *   enums ('UserRole', 'AuditAction').
+ *   enums ('UserRole', 'AuditCategory', 'Municipality').
  * - '@/lib/utils/db': Instancia de PrismaClient.
+ * - '@/lib/validations/user.schema': Tipo 'CreateUserByAdminInput' para
+ *   tipar el payload de la función 'createUserByAdmin'.
  *
  */

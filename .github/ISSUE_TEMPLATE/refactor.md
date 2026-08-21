@@ -12,44 +12,13 @@ assignees: ""
 
 **Por qué:**
 
-- [ ] Código duplicado
-- [ ] Difícil de entender
-- [ ] Difícil de testear
-- [ ] Violación de principios
-- [ ] Deuda técnica
-- [ ] Otro:
+<!-- Ej: código duplicado, difícil de entender, difícil de testear, violación de principios, deuda técnica, otro -->
 
 ---
 
-## 📋 Metadata
-
-**Status:**
-
-- [ ] 📋 Todo
-- [ ] 🔄 En Progreso
-- [ ] 👀 En Revisión
-- [ ] ✅ Finalizado
-
-**Priority:**
-
-- [ ] P0 - Crítico (bloqueando desarrollo)
-- [ ] P1 - Alto (impactando velocidad del equipo)
-- [ ] P2 - Medio (deuda técnica significativa)
-- [ ] P3 - Bajo (mejora preventiva)
-
-**Size (Story Points):**
-
-- [ ] XS (función simple)
-- [ ] S (múltiples funciones)
-- [ ] M (componente completo)
-- [ ] L (módulo)
-- [ ] XL (subsistema/sistema completo)
-- [ ] XXL (sistema completo)
-
 **Breaking changes:**
 
-- [ ] ✅ No
-- [ ] ⚠️ Sí (especificar abajo)
+<!-- No / Sí (especificar abajo) -->
 
 ---
 
@@ -57,22 +26,22 @@ assignees: ""
 
 ### Pre-refactor
 
-- [ ] Agregar tests para comportamiento actual
-- [ ] Documentar casos edge
-- [ ] Crear branch
+- Agregar tests para comportamiento actual
+- Documentar casos edge
+- Crear branch
 
 ### Refactor
 
-- [ ] Aplicar patrón/principio
-- [ ] Simplificar lógica
-- [ ] Mejorar nombres
-- [ ] Eliminar duplicación
+- Aplicar patrón/principio
+- Simplificar lógica
+- Mejorar nombres
+- Eliminar duplicación
 
 ### Post-refactor
 
-- [ ] Todos los tests pasan
-- [ ] Code review
-- [ ] Actualizar docs
+- Todos los tests pasan
+- Code review
+- Actualizar docs
 
 ## 🔧 Cambios
 
@@ -92,11 +61,7 @@ assignees: ""
 
 **Mejoras:**
 
-- [ ] Legibilidad +
-- [ ] Complejidad -
-- [ ] Testeable +
-- [ ] Mantenible +
-- [ ] Performance (si aplica)
+<!-- Ej: legibilidad, complejidad, testeable, mantenible, performance -->
 
 ## 📊 Métricas
 

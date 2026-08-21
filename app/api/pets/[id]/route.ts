@@ -24,7 +24,7 @@ import { prisma } from "@/lib/utils/db";
 import { UserRole, Prisma } from "@prisma/client";
 import { updatePetSchema, updatePetStatusSchema } from "@/lib/validations/pet.schema";
 import { ZodError } from "zod";
-import { deleteImagesFromCloudinary } from "@/lib/cloudinary";
+import { deletePet } from "@/lib/services/pet.service";
 
 /**
  *  GET /api/pets/[id]
@@ -408,55 +408,36 @@ export async function DELETE(
             );
         }
 
-        const existingPet = await prisma.pet.findUnique({
-            where: { id: petId },
-            select: { shelterId: true, name: true, images: true }
-        });
-
-        if (!existingPet) {
-            return NextResponse.json(
-                { error: "Mascota no encontrada" },
-                { status: 404 }
-            );
+        //  3. Eliminar usando el servicio
+        try {
+            const deletedPet = await deletePet(petId, shelter.id);
+            return NextResponse.json({
+                message: `Mascota "${deletedPet.name}" eliminada exitosamente`,
+            });
+        } catch (error) {
+            if (error instanceof Error) {
+                if (error.message === "Mascota no encontrada") {
+                    return NextResponse.json({ error: error.message }, { status: 404 });
+                }
+                if (error.message === "No tienes permiso para eliminar esta mascota") {
+                    return NextResponse.json({ error: error.message }, { status: 403 });
+                }
+                if (error.message === "No se puede eliminar: la mascota tiene adopciones pendientes") {
+                    return NextResponse.json({ error: error.message }, { status: 409 });
+                }
+            }
+            throw error;
         }
-
-        if (existingPet.shelterId !== shelter.id) {
-            return NextResponse.json(
-                { error: "No tienes permiso para editar esta mascota" },
-                { status: 403 }
-            );
-        }
-
-        //  3. Eliminar
-        await prisma.pet.delete({
-            where: { id: petId },
-        });
-
-        // 4. Eliminación en cascada en Cloudinary
-        // Se ejecuta sin bloquear el retorno HTTP usando void para asegurar respuesta rapida
-        if (existingPet.images && existingPet.images.length > 0) {
-            deleteImagesFromCloudinary(existingPet.images).catch(console.error);
-        }
-
-        return NextResponse.json({
-            message: `Mascota "${existingPet.name}" eliminada exitosamente`,
-        });
     } catch (error) {
         console.error("[DELETE /api/pets/[id]] - Se ha detectado un error:", error);
         
-        // Manejo específico de errores Prisma
+        // Manejo específico de errores Prisma (por si acaso algo más falla)
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             const prismaError = error as Prisma.PrismaClientKnownRequestError;
             if (prismaError.code === 'P2025') {
                 return NextResponse.json(
                     { error: "Mascota no encontrada" },
                     { status: 404 }
-                );
-            }
-            if (prismaError.code === 'P2003') {
-                return NextResponse.json(
-                    { error: "No se puede eliminar: la mascota tiene adopciones pendientes" },
-                    { status: 409 }
                 );
             }
         }

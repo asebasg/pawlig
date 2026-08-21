@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/utils/db';
 import { PetStatus, Municipality, Prisma } from '@prisma/client';
+import { deleteImagesFromCloudinary } from '@/lib/cloudinary';
 
 /**
  * Ruta/Componente/Servicio: Pet Service
@@ -164,6 +165,40 @@ export async function checkIsFavorited(userId: string, petId: string) {
     },
   });
   return !!favorite;
+}
+
+export async function deletePet(id: string, shelterId: string) {
+  const existingPet = await prisma.pet.findUnique({
+    where: { id },
+  });
+
+  if (!existingPet) {
+    throw new Error("Mascota no encontrada");
+  }
+
+  if (existingPet.shelterId !== shelterId) {
+    throw new Error("No tienes permiso para eliminar esta mascota");
+  }
+
+  const adoptionsCount = await prisma.adoption.count({
+    where: { petId: id },
+  });
+
+  if (adoptionsCount > 0) {
+    throw new Error(
+      "No se puede eliminar: la mascota tiene adopciones pendientes"
+    );
+  }
+
+  const deletedPet = await prisma.pet.delete({
+    where: { id },
+  });
+
+  if (deletedPet.images && deletedPet.images.length > 0) {
+    await deleteImagesFromCloudinary(deletedPet.images);
+  }
+
+  return deletedPet;
 }
 
 /*

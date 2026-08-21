@@ -29,9 +29,77 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "12 de junio de 2026";
+  const lastUpdate = "11 de agosto de 2026";
 
   const versions = [
+    {
+      version: "v1.15.1",
+      date: "11 de Agosto, 2026",
+      title: "Eliminación Segura de Imágenes y Limpieza Automatizada",
+      description:
+        "Implementamos la eliminación en cascada de imágenes de Cloudinary tras dar de baja o eliminar una mascota y protegimos la base de datos verificando adopciones pendientes.",
+      color: "from-amber-500 to-orange-600",
+      updates: [
+        {
+          type: "fixed",
+          title: "Borrado en Cascada en Cloudinary",
+          description:
+            "Al eliminar una mascota de la plataforma, sus imágenes asociadas se eliminan de forma automatizada y segura en Cloudinary para mantener el almacenamiento optimizado.",
+          icon: <Bug size={20} className="text-white" />,
+          bg: "bg-rose-500",
+        },
+        {
+          type: "improved",
+          title: "Integridad de Adopciones Relacionadas",
+          description:
+            "Se implementó un bloqueo preventivo que impide la eliminación física de mascotas que posean solicitudes de adopción registradas, garantizando la consistencia de los datos.",
+          icon: <Shield size={20} className="text-white" />,
+          bg: "bg-indigo-600",
+        },
+      ],
+    },
+    {
+      version: "v1.15.0",
+      date: "10 de Julio, 2026",
+      title: "Asistencia Inteligente y Carrito Más Eficiente",
+      description:
+        "Mejoramos la creación y moderación de contenidos con asistencia de IA, simplificamos los requisitos de adopción y optimizamos el carrito para evitar consultas innecesarias.",
+      color: "from-violet-600 to-indigo-700",
+      updates: [
+        {
+          type: "added",
+          title: "Asistente IA en Formularios y Moderación",
+          description:
+            "Ahora es posible refinar descripciones de mascotas, productos y decisiones de moderación con asistencia de IA directamente desde los flujos de trabajo.",
+          icon: <Sparkles size={20} className="text-white" />,
+          bg: "bg-violet-600",
+        },
+        {
+          type: "improved",
+          title: "Respuestas de IA Más Seguras",
+          description:
+            "Se reforzó la validación de solicitudes y el tratamiento de las respuestas generadas para ofrecer resultados más consistentes y confiables.",
+          icon: <Shield size={20} className="text-white" />,
+          bg: "bg-emerald-600",
+        },
+        {
+          type: "improved",
+          title: "Requisitos de Adopción Flexibles",
+          description:
+            "Los albergues pueden dejar los requisitos de adopción vacíos; en ese caso, la ficha de la mascota informa claramente que no existen requisitos adicionales.",
+          icon: <Heart size={20} className="text-white" />,
+          bg: "bg-pink-500",
+        },
+        {
+          type: "improved",
+          title: "Carrito con Menos Consultas",
+          description:
+            "El carrito y su botón de acceso rápido solo solicitan datos cuando hay una sesión activa y el usuario navega por el catálogo, reduciendo tráfico y mejorando el rendimiento.",
+          icon: <Zap size={20} className="text-white" />,
+          bg: "bg-amber-500",
+        },
+      ],
+    },
     {
       version: "v1.14.0",
       date: "12 de Junio, 2026",

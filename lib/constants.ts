@@ -195,6 +195,14 @@ export const CLOUDINARY_RESOURCE_TYPES = ["image", "video", "raw"] as const;
 
 export type CloudinaryResourceType = (typeof CLOUDINARY_RESOURCE_TYPES)[number];
 
+// Restricciones de upload de imagenes (SSOT para todos los formularios)
+export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB en bytes
+export const MAX_IMAGES = 5;
+
+// Tipos MIME aceptados por formulario
+export const ACCEPTED_IMAGE_TYPES_PETS = ["image/jpeg", "image/png"] as const;
+export const ACCEPTED_IMAGE_TYPES_PRODUCTS = ["image/jpeg", "image/png", "image/webp"] as const;
+
 // Documentos de proyecto disponibles para la sección de documentación (/admin/dev/docs/[slug])
 export const AVAILABLE_DOCS: DocMetadata[] = [
   { slug: "acta-de-constitucion",    title: "Acta de Constitución",      filePath: "01_Acta_de_Constitucion.md",    category: "analysis" },
@@ -212,3 +220,6 @@ export const AVAILABLE_DOCS: DocMetadata[] = [
   { slug: "casos-de-prueba",         title: "Casos de Prueba",           filePath: "13_Casos_de_Prueba.md",         category: "testing" },
   { slug: "manual-del-usuario",      title: "Manual del Usuario",        filePath: "14_Manual_del_Usuario.md",      category: "final" },
 ];
+
+
+

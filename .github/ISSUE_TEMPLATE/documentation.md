@@ -12,57 +12,26 @@ assignees: ""
 
 **Dónde se requiere documentar:**
 
-- [ ] README
-- [ ] API docs
-- [ ] Code comments
-- [ ] Wiki
-- [ ] Tutorials
-- [ ] Otro:
-
----
-
-## 📋 Metadata
-
-**Status:**
-
-- [ ] 📋 Todo
-- [ ] 🔄 En Progreso
-- [ ] 👀 En Revisión
-- [ ] ✅ Finalizado
-
-**Priority:**
-
-- [ ] P0 - Crítico (blocker para usar feature)
-- [ ] P1 - Alto (muy confuso sin docs)
-- [ ] P2 - Medio (mejoraría UX)
-- [ ] P3 - Bajo (nice-to-have)
-
-**Size (Story Points):**
-
-- [ ] XS (< 1h)
-- [ ] S (1-2h)
-- [ ] M (2-4h)
-- [ ] L (1 día)
-- [ ] XL (2-3 días)
+<!-- Ej: README, API docs, code comments, wiki, tutorials, otro -->
 
 ---
 
 ## ✅ TODO
 
-- [ ] Identificar gaps en docs actuales
-- [ ] Escribir/actualizar contenido
-- [ ] Agregar ejemplos de código
-- [ ] Agregar diagramas (si aplica)
-- [ ] Review por otro dev
-- [ ] Validar links y formato
+- Identificar gaps en docs actuales
+- Escribir/actualizar contenido
+- Agregar ejemplos de código
+- Agregar diagramas (si aplica)
+- Review por otro dev
+- Validar links y formato
 
 ## 🎯 Debe incluir
 
-- [ ] Qué hace y para qué sirve
-- [ ] Cómo usarlo (ejemplos)
-- [ ] Parámetros/opciones
-- [ ] Casos comunes
-- [ ] Troubleshooting
+- Qué hace y para qué sirve
+- Cómo usarlo (ejemplos)
+- Parámetros/opciones
+- Casos comunes
+- Troubleshooting
 
 ## 📝 Contenido
 

@@ -81,7 +81,7 @@ function getActionVariant(
     BLOCK: "orange",
     UNBLOCK: "teal",
     CHANGE_ROLE: "blue",
-    CREATE: "purple",
+    CREATE: "emerald",
     UPDATE: "yellow",
     DELETE: "destructive",
   };
@@ -261,7 +261,7 @@ export function AuditLogViewer() {
                       <span>Cambio de Rol</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="CREATE" disabled>
+                  <SelectItem value="CREATE">
                     <div className="flex items-center gap-2">
                       <PlusCircle className="h-4 w-4 text-emerald-500" />
                       <span>Creación</span>

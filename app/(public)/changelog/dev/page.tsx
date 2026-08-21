@@ -30,11 +30,80 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "12 de junio de 2026";
+  const lastDevUpdate = "11 de agosto de 2026";
 
   const devLogs = [
     {
+      version: "v1.15.1-dev",
+      date: "11 de Agosto, 2026",
+      title: "Limpieza Automatizada de Imágenes en Cloudinary",
+      description:
+        "Implementación del borrado automático en cascada de recursos multimedia en Cloudinary tras la baja de mascotas, y refuerzo de la integridad referencial.",
+      type: "fix",
+      logs: [
+        {
+          category: "fix",
+          title: "Borrado en Cascada en Cloudinary",
+          description:
+            "Integración de llamadas a deleteImagesFromCloudinary directamente tras dar de baja o eliminar el registro de una mascota en pet.service.ts.",
+          icon: <Bug size={18} className="text-rose-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Validación Preventiva de Adopciones",
+          description:
+            "Comprobación preventiva en base de datos para impedir que mascotas con postulaciones activas puedan ser eliminadas.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
+    {
       version: "v1.15.0-dev",
+      date: "10 de Julio, 2026",
+      title: "IA Validada y Optimización de Red del Carrito",
+      description:
+        "Extensión del refinamiento asistido por IA a formularios y moderación, endurecimiento de sus límites de entrada y salida, y supresión de peticiones del carrito fuera de contexto.",
+      type: "improvement",
+      logs: [
+        {
+          category: "feat",
+          title: "AiRefineButton Integrado",
+          description:
+            "Incorporación del componente de refinamiento en formularios de mascotas y productos, así como en los modales de aprobación y rechazo de moderación.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Endpoint de IA Endurecido",
+          description:
+            "Validación más estricta del contenido de moderación y saneamiento de la salida generada antes de devolverla al cliente.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "fix",
+          title: "Requisitos de Adopción Opcionales",
+          description:
+            "El esquema de mascotas ya no exige una longitud mínima en requisitos opcionales y la ficha muestra un estado informativo cuando no existen.",
+          icon: <Wrench size={18} className="text-amber-500" />,
+        },
+        {
+          category: "improvement",
+          title: "SWR Condicionado por Sesión y Ruta",
+          description:
+            "useCart y useCartSync usan claves nulas sin sesión; el botón flotante habilita la carga solo en /productos, evitando fetch inicial, revalidaciones y polling innecesarios.",
+          icon: <Zap size={18} className="text-amber-500" />,
+        },
+        {
+          category: "refactor",
+          title: "Consistencia Visual en Moderación",
+          description:
+            "Ajuste del visor de auditoría y unificación de tarjetas de albergues y negocios con accesos de perfil más claros.",
+          icon: <Layers size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
+    {
+      version: "v1.14.0-dev",
       date: "12 de Junio, 2026",
       title: "Seguridad de Multimedia y Ciclo de Solicitudes",
       description:
@@ -72,7 +141,7 @@ export default function DevNotesPage() {
       ],
     },
     {
-      version: "v1.14.0-dev",
+      version: "v1.13.0-dev",
       date: "27 de Mayo, 2026",
       title: "Moderation Hub Integrado y Auditoría del Sistema",
       description:
@@ -352,12 +421,33 @@ export default function DevNotesPage() {
     },
     {
       version: "v1.8.0-dev",
-      date: "28 de Abril, 2026",
-      title: "Seguridad de Formularios y UX",
+      date: "21 de Junio, 2026",
+      title: "Alta Manual de Usuarios y Seguridad de Formularios",
       description:
-        "Optimización de la experiencia de usuario en campos de contraseña y limpieza de estilos Chromium.",
-      type: "fix",
+        "Implementación del flujo de alta manual de usuarios y auditoría administrativa con IA, optimización de campos de contraseña y supresión de hydration warnings.",
+      type: "feat",
       logs: [
+        {
+          category: "feat",
+          title: "Alta Manual de Usuarios y Botón de Creación",
+          description:
+            "Desarrollo de la vista /admin/moderation/users/create con formulario validado con Zod, campos condicionales y modal de copia de credenciales temporales.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "feat",
+          title: "API de Alta Administrativa Segura",
+          description:
+            "Endpoint POST /api/admin/users que realiza transacciones interactivas atómicas entre creación de User y SystemAuditLog con roles y justificaciones obligatorias.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Refinamiento de Razón con IA",
+          description:
+            "Integración de AiRefineButton en el formulario administrativo para pulir las justificaciones de asignación de roles especiales.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
         {
           category: "fix",
           title: "CSS: Botón Nativo de Password",

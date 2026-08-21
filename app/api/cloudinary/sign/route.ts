@@ -6,13 +6,8 @@ import { uploadIntentSchema } from "@/lib/validations/cloudinary.schema";
 import { UserRole } from "@prisma/client";
 
 /**
- * 📚 CLOUDINARY SIGN ROUTE
- * Endpoint API que genera firmas de subida seguras.
- * * FLUJO:
- * 1. Autenticación (Session + Block Check)
- * 2. Validación de Payload (Zod)
- * 3. Autorización por Rol (RBAC)
- * 4. Generación de Firma
+ * Genera una firma de subida para Cloudinary tras validar la sesión del usuario,
+ * el estado de la cuenta y el destino autorizado para la carga de archivos.
  */
 export async function POST(req: Request) {
     try {

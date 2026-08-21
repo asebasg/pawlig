@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { Resend } from "resend";
 import * as emailService from "./email.service";
 
-process.env.EMAIL_FROM = "test@pawlig.com";
-
 // Mock de Resend para evitar envíos reales
 vi.mock("resend", () => {
   const sendMock = vi

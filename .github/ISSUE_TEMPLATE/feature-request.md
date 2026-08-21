@@ -23,76 +23,40 @@ assignees: ""
 
 ---
 
-## 📋 Metadata
-
-**Status:**
-
-- [ ] 📋 Todo (no iniciado)
-- [ ] 🔄 En Progreso (trabajando activamente)
-- [ ] 👀 En Revisión (para ser aprobado)
-- [ ] ✅ Finalizado (completado)
-
-**Priority:**
-
-- [ ] P0 - Crítico (blocker/requerimiento esencial)
-- [ ] P1 - Alto (alta demanda/valor de negocio)
-- [ ] P2 - Medio (mejora importante)
-- [ ] P3 - Bajo (nice-to-have)
-
-**Size (Story Points):**
-
-- [ ] XS (< 1h - cambio trivial)
-- [ ] S (1-2h - cambio simple)
-- [ ] M (2-4h - cambio pequeño)
-- [ ] L (1 día - cambio mediano)
-- [ ] XL (2-3 días - cambio grande)
-- [ ] XXL (> 3 días - cambio muy grande)
-
-**Componentes:**
-
-- [ ] Frontend
-- [ ] Backend
-- [ ] Database
-- [ ] API
-- [ ] Tests
-- [ ] Docs
-
----
-
 ## ✅ TODO
 
 ### Diseño
 
-- [ ] Definir arquitectura
-- [ ] Diseñar API/interfaces
-- [ ] Mockups/wireframes (si aplica)
+- Definir arquitectura
+- Diseñar API/interfaces
+- Mockups/wireframes (si aplica)
 
 ### Implementación
 
-- [ ] Setup inicial
-- [ ] Implementar lógica core
-- [ ] Integrar con sistema existente
-- [ ] Manejar edge cases
+- Setup inicial
+- Implementar lógica core
+- Integrar con sistema existente
+- Manejar edge cases
 
 ### Testing
 
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] E2E tests (si aplica)
+- Unit tests
+- Integration tests
+- E2E tests (si aplica)
 
 ### Finalización
 
-- [ ] Code review
-- [ ] Actualizar docs
-- [ ] Validar performance
+- Code review
+- Actualizar docs
+- Validar performance
 
 ---
 
 ## 🎯 Acceptance Criteria
 
-- [ ]
-- [ ]
-- [ ]
+-
+-
+-
 
 ---
 

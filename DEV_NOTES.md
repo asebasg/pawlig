@@ -1,5 +1,47 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Eliminación Segura de Imágenes y Limpieza Automatizada (v1.15.1 — 11-08-2026)
+
+Implementación del borrado automático en cascada de imágenes de Cloudinary tras dar de baja o eliminar una mascota en la plataforma, y refuerzo del servicio de persistencia.
+
+**Archivos creados/modificados:**
+
+- `lib/services/pet.service.ts` — Inclusión del método `deletePet` para encapsular la lógica de borrado de mascota y eliminación de sus imágenes en Cloudinary.
+- `lib/services/pet.service.spec.ts` — Pruebas unitarias para el servicio de eliminación de mascota y borrado en Cloudinary.
+- `app/api/pets/[id]/route.ts` — Consumo del servicio `deletePet` en el endpoint DELETE.
+
+**Detalles Técnicos:**
+
+- **Borrado en Cascada Real**: Al eliminar una mascota, el servicio `deletePet` verifica su existencia, los permisos del albergue y que no tenga adopciones pendientes, y procede a borrarla de la base de datos de Prisma. Posterior a la eliminación, se extraen las URLs de las imágenes y se llama de forma asíncrona a `deleteImagesFromCloudinary` para remover los recursos multimedia directamente de Cloudinary, evitando así que queden recursos huérfanos.
+- **Validación de Adopciones**: Antes de proceder con la eliminación física de la mascota en MongoDB, se realiza una verificación de las solicitudes de adopción asociadas. Si existen postulaciones, se lanza un error descriptivo para prevenir inconsistencias en la base de datos.
+- **Robustez y Pruebas Unitarias**: Se expandió el set de pruebas unitarias (`pet.service.spec.ts`) agregando un bloque de descripción para `deletePet`, comprobando los flujos felices y de error, y asegurando el correcto llamado al mock del API de Cloudinary.
+
+---
+
+## Alta Manual de Usuarios y Auditoría Administrativa (v1.8.0 — 21-06-2026)
+
+Implementación del flujo de alta manual de usuarios para administradores. Permite la creación de cuentas sin inicio de sesión automático y con contraseñas seguras autogeneradas en el servidor, garantizando la trazabilidad de las acciones administrativas mediante el registro automático en el Moderation Hub.
+
+**Archivos creados/modificados:**
+
+- `app/(dashboard)/admin/moderation/users/create/page.tsx` — Server Component protegido con control de acceso (session + rol ADMIN) para el formulario de creación.
+- `components/forms/create-user-form.tsx` — Formulario interactivo en el cliente para el alta de usuarios con soporte de justificaciones y modales de confirmación.
+- `app/api/admin/users/route.ts` — Endpoint POST seguro para procesar la creación, hasheo de contraseñas y registro de auditoría.
+- `lib/services/user.service.ts` — Inclusión del método `createUserByAdmin` utilizando una transacción interactiva de Prisma.
+- `lib/validations/user.schema.ts` — Esquema Zod `createUserByAdminSchema` con regla de refinamiento de justificación obligatoria.
+- `lib/auth/password.ts` — Agregado `generateTempPassword` para la generación de contraseñas seguras y legibles.
+- `lib/validations/user.schema.test.ts`, `app/api/admin/users/route.test.ts`, `lib/services/user.service.spec.ts`, `lib/auth/password.test.ts` — Cobertura de pruebas unitarias y de integración para todo el flujo.
+
+**Detalles Técnicos:**
+
+- **Validación con Refinamientos Zod:** El esquema de creación administrativa implementa una validación raíz condicional. Cuando el rol asignado al usuario es diferente a `ADOPTER` (tales como `ADMIN`, `SHELTER`, `VENDOR`), se exige obligatoriamente un campo `reason` (justificación) con un mínimo de 10 caracteres. Esto asegura la justificación de los privilegios asignados.
+- **Transacción Interactiva y Atomicidad:** El servicio `createUserByAdmin` encapsula el alta del registro en la colección `User` y la bitácora en `SystemAuditLog` dentro de una transacción interactiva de Prisma (`prisma.$transaction(async (tx) => ...)`). Esto permite recuperar el ID autogenerado del nuevo usuario e inyectarlo de forma segura como `resourceId` en el log de auditoría antes de consolidar la operación.
+- **Generación de Contraseña Segura:** La contraseña temporal se genera mediante `crypto.randomBytes(16)` formateada a base64 (removiendo caracteres confusos) y limitándola a 12 caracteres. Posteriormente se hashea utilizando `bcryptjs` con 12 rondas de sal, garantizando el almacenamiento cifrado y seguro de las credenciales.
+- **Auditoría e Integración de IA:** En el formulario, los administradores cuentan con el botón `AiRefineButton` integrado en el campo de justificación. Esto permite refinar y formatear formalmente el texto de justificación utilizando IA (Gemini) antes de enviarlo. El SystemAuditLog registra la acción como `CREATE` bajo la categoría `USER_MANAGEMENT`, guardando los metadatos de IP, User-Agent, y el payload de cambios en los campos `before` (null) y `after` (email y rol creados).
+- **Caché y Revalidación:** Tras un alta exitosa, se invalida el tag de caché `user-detail` (`revalidateTag("user-detail")`) asegurando que los listados y las vistas administrativas se actualicen inmediatamente sin necesidad de recargas manuales de página.
+
+---
+
 ## Seguridad en Multimedia y Ciclo de Solicitudes (v1.14.0 — 12-06-2026)
 
 Mejoras críticas de seguridad y control de propiedad de imágenes en Cloudinary y corrección en el reenvío de formularios de solicitud de cuentas comerciales/refugios.

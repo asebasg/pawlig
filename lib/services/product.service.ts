@@ -361,7 +361,7 @@ export async function deleteProduct(id: string, vendorId: string) {
 
   // Eliminación en cascada de imágenes en Cloudinary (fire-and-forget)
   if (deletedProduct.images && deletedProduct.images.length > 0) {
-    deleteImagesFromCloudinary(deletedProduct.images).catch(console.error);
+    await deleteImagesFromCloudinary(deletedProduct.images);
   }
 
   return deletedProduct;

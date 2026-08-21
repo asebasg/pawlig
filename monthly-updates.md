@@ -1,9 +1,9 @@
 # Registro de Actualizaciones Mensuales — PawLig (2026)
 
 **Documento Legal y de Referencia**  
-Período: 01-01-2026 a 15-06-2026  
-Versión actual: v1.8.0  
-Última actualización: 15-06-2026
+Período: 01-01-2026 a 11-08-2026  
+Versión actual: v1.15.1  
+Fecha de última actualización: 11 de agosto de 2026
 
 ---
 
@@ -14,6 +14,8 @@ Versión actual: v1.8.0
 4. [Abril 2026](#abril-2026)
 5. [Mayo 2026](#mayo-2026)
 6. [Junio 2026](#junio-2026)
+7. [Julio 2026](#julio-2026)
+8. [Agosto 2026](#agosto-2026)
 
 ---
 
@@ -82,18 +84,34 @@ Versión actual: v1.8.0
 
 ---
 
+## Julio 2026
+
+| Mes | Implementaciones | Notas Adicionales |
+|-----|------------------|-------------------|
+| **Julio** | **Asistencia Inteligente y Carrito Eficiente (v1.15.0)** — Incorporación de inteligencia artificial en formularios de creación y decisiones de moderación administrativa, junto con la optimización de consultas del carrito. | Integración de `AiRefineButton` en descripciones de mascotas, productos y motivos de moderación. Saneamiento de respuestas de la API `/api/ai/refine`. Sincronización optimizada de `useCart` y `useCartSync` para usuarios no autenticados. Commits: `865756e`, `0d9a0be`, `36e9bda`, `85dd7ae` (10-07-2026). |
+
+---
+
+## Agosto 2026
+
+| Mes | Implementaciones | Notas Adicionales |
+|-----|------------------|-------------------|
+| **Agosto** | **Eliminación Segura de Imágenes y Limpieza (v1.15.1)** — Implementación del borrado en cascada automatizado para eliminar imágenes asociadas en Cloudinary tras dar de baja mascotas de la plataforma. | Servicio `deletePet` en `pet.service.ts` para orquestar la eliminación atómica y el borrado seguro en Cloudinary. Validación para prevenir la eliminación de mascotas con solicitudes de adopción pendientes. Commit: `047b34a` (11-08-2026). |
+
+---
+
 ## Resumen Estadístico (2026)
 
 | Métrica | Cantidad |
 |---------|----------|
-| **Versiones Lanzadas** | 15 (v1.0.0 → v1.8.0) |
-| **Archivos Creados** | 70+ componentes, servicios y utilidades |
-| **Archivos Modificados** | 160+ archivos documentados y actualizados |
-| **Commits Documentados** | 111 commits |
-| **Features Principales** | 15 features principales + múltiples bugfixes |
+| **Versiones Lanzadas** | 17 (v1.0.0 → v1.15.1) |
+| **Archivos Creados** | 71+ componentes, servicios y utilidades |
+| **Archivos Modificados** | 165+ archivos documentados y actualizados |
+| **Commits Documentados** | 113 commits |
+| **Features Principales** | 17 features principales + múltiples bugfixes |
 | **Dependencias Agregadas** | @google/generative-ai, exceljs, jspdf, leaflet, recharts, resend |
-| **Meses Activos** | 6/6 (Enero-Junio) |
-| **Scope de Cambios** | core, ui, auth, email, metrics, map, products, adoptions, admin, moderation |
+| **Meses Activos** | 8/8 (Enero-Agosto) |
+| **Scope de Cambios** | core, ui, auth, email, metrics, map, products, adoptions, admin, moderation, storage |
 
 ---
 
@@ -112,6 +130,11 @@ Versión actual: v1.8.0
 - ✅ Mapa interactivo con geocodificación de albergues
 - ✅ Tipado estricto en toda la aplicación y gestión de estados transaccionales
 - ✅ Motor 3D para página de error 404
+
+### Q3 2026 (Julio-Septiembre)
+- ✅ Asistencia inteligente optimizada mediante Gemini (v1.15.0)
+- ✅ Optimización de rendimiento de red y reducción de peticiones del carrito (v1.15.0)
+- ✅ Borrado automatizado en cascada de imágenes de Cloudinary al eliminar mascotas (v1.15.1)
 
 ---
 
@@ -171,11 +194,11 @@ Este documento sirve como registro oficial de cambios y es de carácter **legal 
 - **Desarrollador Principal**: @asebasg
 - **Colaboradores**: @sospigz, google-labs-jules[bot]
 
-**Período de Documentación**: 01-01-2026 a 15-06-2026
-**Próxima Revisión Recomendada**: 30-06-2026
+**Período de Documentación**: 01-01-2026 a 11-08-2026
+**Próxima Revisión Recomendada**: 31-08-2026
 
 ---
 
-**Documento Generado**: 2026-06-15
-**Versión**: 1.1
+**Documento Generado**: 2026-08-11
+**Versión**: 1.2
 **Estado**: ✅ Completado y Verificado
