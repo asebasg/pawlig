@@ -20,17 +20,26 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            themes={["light", "dark", "solarized-light", "solarized-dark"]}
+            disableTransitionOnChange
+          >
           {/* Navbar */}
           <Navbar />
           {/* Contenido de las paginas */}
@@ -62,6 +71,7 @@ export default function RootLayout({
               loading: <LoaderCircle className="animate-spin text-indigo-600" size={25} />,
             }}
           />
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

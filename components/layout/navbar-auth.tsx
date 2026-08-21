@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 import { UserMenu } from "./user-menu";
 import { CartButton } from "./cart-button";
 import { NAVIGATION_BY_ROLE } from "@/lib/constants";
+import { ThemeSwitcher } from "./theme-switcher";
 
 /**
  * Componente: NavbarAuth
@@ -51,6 +52,8 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
 
       {/* Actions */}
       <div className="flex items-center gap-1 sm:gap-2">
+        <ThemeSwitcher />
+
         {/* Cart & Favorites - Sólo para rol ADOPTER */}
         {user.role === "ADOPTER" && (
           <>

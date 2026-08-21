@@ -8,6 +8,7 @@ import { signOut } from "next-auth/react";
 import { Logo } from "@/components/ui/logo";
 import { PUBLIC_LINKS, NAVIGATION_BY_ROLE } from "@/lib/constants";
 import Image from 'next/image';
+import { ThemeSwitcher } from "./theme-switcher";
 
 /**
  * Componente: NavbarMobile
@@ -82,12 +83,15 @@ export function NavbarMobile({ user }: NavbarMobileProps) {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <Logo size="md" />
+            <div className="flex items-center gap-2">
+            <ThemeSwitcher />
             <button
               onClick={() => setIsOpen(false)}
               className="p-2 rounded-lg hover:bg-gray-100"
             >
               <X size={24} />
             </button>
+            </div>
           </div>
 
           {/* User Info (if authenticated) */}
