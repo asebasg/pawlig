@@ -60,7 +60,7 @@ const Steps = ({ steps }: { steps: string[] }) => (
 
 export default function HelpPage() {
   const currentYear = new Date().getFullYear();
-  const lastUpdate = "21 de mayo de 2026";
+  const lastUpdate = "11 de agosto de 2026";
 
   return (
     <main className="container mx-auto px-4 py-16 max-w-5xl">

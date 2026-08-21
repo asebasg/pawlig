@@ -34,7 +34,7 @@ export default function DevNotesPage() {
 
   const devLogs = [
     {
-      version: "v1.16.1-dev",
+      version: "v1.15.1-dev",
       date: "11 de Agosto, 2026",
       title: "Limpieza Automatizada de Imágenes en Cloudinary",
       description:
@@ -58,7 +58,7 @@ export default function DevNotesPage() {
       ],
     },
     {
-      version: "v1.16.0-dev",
+      version: "v1.15.0-dev",
       date: "10 de Julio, 2026",
       title: "IA Validada y Optimización de Red del Carrito",
       description:
@@ -103,7 +103,7 @@ export default function DevNotesPage() {
       ],
     },
     {
-      version: "v1.15.0-dev",
+      version: "v1.14.0-dev",
       date: "12 de Junio, 2026",
       title: "Seguridad de Multimedia y Ciclo de Solicitudes",
       description:
@@ -141,7 +141,7 @@ export default function DevNotesPage() {
       ],
     },
     {
-      version: "v1.14.0-dev",
+      version: "v1.13.0-dev",
       date: "27 de Mayo, 2026",
       title: "Moderation Hub Integrado y Auditoría del Sistema",
       description:
