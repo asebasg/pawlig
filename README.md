@@ -300,9 +300,7 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 │   ├── cards/                # Tarjetas de presentación de mascotas y productos comerciales
 │   ├── cart/                 # Componentes interactivos del carrito de compras
 │   ├── filters/              # Menús de filtrado de búsqueda (mascotas y productos)
-│   ├── forms/                # Formularios con validación e interactividad (login, registros, pet-form)
-│   │   ├── create-user-form.tsx # Formulario administrativo para el alta manual de usuarios
-│   │   └── .../              # Formularios adicionales de la plataforma
+│   ├── forms/                # Formularios con validación e interactividad (login, registros, pet-form, etc.)
 │   ├── help/                 # Componentes visuales tipo acordeón para soporte
 │   ├── layout/               # Elementos del marco de aplicación (Navbar, Footer, Floating Cart)
 │   ├── map/                  # Componentes de interacción geoespacial con Leaflet
@@ -315,21 +313,19 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 ├── lib/                      # Núcleo de la Lógica de Negocio y Utilidades de Backend
 │   ├── auth/                 # Configuración de NextAuth, control de accesos y roles (RBAC)
 │   ├── email/                # Lógica del motor de correos y 11 plantillas interactivas de React Email
-│   ├── services/             # Capa lógica de servicios CRUD y de negocio (Pet, Product, Moderation)
-│   │   ├── user.service.ts   # Servicio de persistencia y alta de usuarios (transacción interactiva)
-│   │   └── .../              # Servicios adicionales del ecosistema
+│   ├── services/             # Capa lógica de servicios CRUD y de negocio (Pet, Product, Moderation, User)
 │   ├── utils/                # Utilidades multiplataforma (generadores de reportes PDF, Excel y CSV)
-│   └── validations/          # Esquemas de Zod para validaciones estrictas
+│   └── validations/          # Esquemas de Zod para validaciones estrictamente declarativas
 ├── prisma/                   # Configuración del motor de persistencia Prisma
 │   ├── schema.prisma         # Esquema unificado y relacional de la base de datos MongoDB
 │   └── seed.ts               # Script para la inyección inicial de datos de semilla
 ├── public/                   # Recursos estáticos y documentación formal del proyecto
 │   ├── docs/                 # Documentación formal de grado (Actas, Requerimientos, Historias de Usuario)
 │   └── images/               # Activos de marca, capturas de pantalla y diagramas técnicos UML
+├── scripts/                  # Scripts de mantenimiento (Cloudinary, geocodificación, prueba de correos)
 ├── types/                    # Declaraciones de tipos e interfaces globales de TypeScript
 ├── credentials-seed.txt      # Credenciales de acceso de prueba generadas en el seeding
-├── documentacion_y_gestion_de_prs.md # Guía para estandarización de PRs y control de versiones
-└── scripts/                  # Scripts de mantenimiento (Cloudinary, geocodificación, prueba de correos)
+└── documentacion_y_gestion_de_prs.md # Guía para estandarización de PRs y control de versiones
 ```
 
 ---
