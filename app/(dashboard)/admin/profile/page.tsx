@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { UserRole } from "@prisma/client";
+import UnifiedProfileClient from '@/components/profile/unified-profile-client';
 
 export const metadata: Metadata = {
   title: 'Editar Perfil',
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function AdminProfilePage() {
   const session = await getServerSession(authOptions);
-  // Verificar autenticación, rol y verificación de rol
+  
   if (!session || !session.user) {
     redirect("/login?callbackUrl=/admin/profile");
   }
@@ -31,10 +32,7 @@ export default async function AdminProfilePage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Editar Perfil de Administrador</h2>
-        <p className="text-gray-600">Funcionalidad en desarrollo</p>
-      </div>
+      <UnifiedProfileClient role={session.user.role} />
     </main>
   );
 }

@@ -270,6 +270,46 @@ export const vendorProfileUpdateSchema = z.object({
     .max(200, "Dirección muy larga"),
 });
 
+//  ========== ESQUEMA DE ACTUALIZACIÓN DE PERFIL DE ALBERGUE ==========
+export const shelterProfileUpdateSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Nombre del albergue requerido")
+    .max(100, "Nombre muy largo"),
+
+  description: z
+    .string()
+    .min(20, "Descripción debe tener al menos 20 caracteres")
+    .max(500, "Descripción muy larga")
+    .optional(),
+
+  municipality: z.nativeEnum(Municipality, {
+    message: "Municipio inválido"
+  }),
+
+  address: z
+    .string()
+    .min(5, "Dirección física del albergue requerida")
+    .max(200, "Dirección muy larga"),
+
+  contactWhatsApp: z
+    .string()
+    .regex(/^\+?[0-9]{10,15}$/, "Número de WhatsApp inválido (debe incluir código de país)")
+    .optional(),
+
+  contactInstagram: z
+    .string()
+    .regex(/^@?[a-zA-Z0-9._]{1,30}$/, "Usuario de Instagram inválido")
+    .optional(),
+})
+.refine(
+  (data) => data.contactWhatsApp || data.contactInstagram,
+  {
+    message: "Debes proporcionar al menos un método de contacto (WhatsApp o Instagram)",
+    path: ["contactWhatsApp"],
+  }
+);
+
 export const roleUpdateSchema = z.object({
   newRole: z.nativeEnum(UserRole, {
     message: "Rol inválido",
@@ -347,6 +387,7 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
 export type VendorApplicationInput = z.infer<typeof vendorApplicationSchema>;
 export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>;
+export type ShelterProfileUpdateInput = z.infer<typeof shelterProfileUpdateSchema>;
 export type RoleUpdateInput = z.infer<typeof roleUpdateSchema>;
 export type CreateUserByAdminInput = z.infer<typeof createUserByAdminSchema>;
 

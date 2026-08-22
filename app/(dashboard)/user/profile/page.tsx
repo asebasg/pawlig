@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
 import { UserRole } from '@prisma/client';
-import UserProfileForm from '@/components/forms/user-profile-form';
+import UnifiedProfileClient from '@/components/profile/unified-profile-client';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
@@ -49,9 +49,7 @@ export default async function UserProfilePage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <UserProfileForm />
-        </div>
+        <UnifiedProfileClient role={session.user.role} />
 
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-3">📋 Información Importante</h3>
