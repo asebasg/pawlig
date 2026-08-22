@@ -14,7 +14,7 @@
 **Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.15.1 | Última actualización: 11 de agosto de 2026_
+_Versión v1.15.1 | Última actualización: 21 de agosto de 2026_
 
 </div>
 
@@ -41,7 +41,11 @@ Con una arquitectura basada en tecnologías web de última generación, PawLig i
 
 El ecosistema cuenta con módulos robustos y funcionalidades altamente técnicas diseñadas para garantizar la seguridad, usabilidad y rendimiento:
 
-### 👤 Alta Manual de Usuarios y Auditoría Administrativa (v1.8.0)
+### 🧹 Eliminación Segura y Limpieza Automatizada en Cloudinary (v1.15.1)
+*   **Borrado en Cascada en Cloudinary:** Integración del método `deletePet` en `pet.service.ts` que desencadena la purga automática de activos multimedia en Cloudinary inmediatamente después de remover una mascota de la base de datos, previniendo el almacenamiento huérfano.
+*   **Integridad Relacional de Adopciones:** Verificación preventiva que bloquea la eliminación física de cualquier mascota que posea solicitudes de adopción registradas, preservando la consistencia transaccional del sistema.
+
+### 👤 Alta Manual de Usuarios y Auditoría Administrativa (v1.15.0)
 *   **Creación Segura en el Servidor:** Flujo de alta manual de usuarios para administradores desde la interfaz `/admin/moderation/users/create`, permitiendo registrar nuevas cuentas sin requerir el inicio de sesión automático del creador.
 *   **Contraseñas Seguras Autogeneradas:** Generación de contraseñas temporales y robustas en el backend (mediante entropía criptográfica `crypto.randomBytes` formateada a base64 y filtrada de caracteres ambiguos) que se hashean con `bcryptjs` (12 rondas de sal) para una persistencia segura.
 *   **Justificación Obligatoria de Roles:** Validación con refinamientos condicionales de Zod (`createUserByAdminSchema.refine`). Al asignar roles administrativos o comerciales (`ADMIN`, `SHELTER`, `VENDOR`), se exige una justificación con un mínimo de 10 caracteres. Para el rol por defecto `ADOPTER`, se asigna una justificación estándar.
@@ -323,6 +327,8 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 │   ├── docs/                 # Documentación formal de grado (Actas, Requerimientos, Historias de Usuario)
 │   └── images/               # Activos de marca, capturas de pantalla y diagramas técnicos UML
 ├── types/                    # Declaraciones de tipos e interfaces globales de TypeScript
+├── credentials-seed.txt      # Credenciales de acceso de prueba generadas en el seeding
+├── documentacion_y_gestion_de_prs.md # Guía para estandarización de PRs y control de versiones
 └── scripts/                  # Scripts de mantenimiento (Cloudinary, geocodificación, prueba de correos)
 ```
 

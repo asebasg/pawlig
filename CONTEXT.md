@@ -1,13 +1,13 @@
 # Contexto y Estructura del Proyecto — PawLig (v1.15.1)
 
-> **Última actualización**: 11 de agosto de 2026.
+> **Última actualización**: 21 de agosto de 2026.
 > **Versión**: v1.15.1
 
 ---
 
 ## 1. Esquema de la Base de Datos (schema.prisma)
 
-> **Sincronización del esquema de base de datos realizada el 5 de agosto de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
+> **Sincronización del esquema de base de datos realizada el 21 de agosto de 2026**: Este bloque de código representa una copia exacta y fiel de `prisma/schema.prisma` para asegurar consistencia absoluta con el ORM.
 
 ```prisma
 // This is your Prisma schema file,
@@ -365,17 +365,17 @@ model SystemAuditLog {
 
 ---
 
-### 1.1 Integración de Nuevas Rutas y Comportamiento Lógico de Base de Datos
+### 1.1 Integración de Rutas y Comportamiento Lógico de Base de Datos (Alta de Usuarios)
 
-En la rama `feat/create-user-button`, se han integrado de forma segura rutas tanto en el frontend como en la API, permitiendo a los administradores el alta manual de usuarios y la trazabilidad de estas operaciones en la base de datos.
+La plataforma cuenta con un flujo seguro para el alta manual de usuarios administrativos y comerciales, garantizando la trazabilidad de estas operaciones en la base de datos de MongoDB.
 
-#### Nuevas Rutas de Frontend
+#### Rutas de Frontend
 - **/admin/moderation/users/create (Ruta de Frontend)**:
   - **Tipo**: Server Component protegido (`app/(dashboard)/admin/moderation/users/create/page.tsx`).
   - **Descripción**: Interfaz gráfica administrativa que renderiza el formulario modular `CreateUserForm` (`components/forms/create-user-form.tsx`).
   - **Seguridad (Guard de Servidor)**: Requiere una sesión de usuario válida (`getServerSession`) y que el rol del usuario autenticado sea estrictamente `UserRole.ADMIN`. De lo contrario, se redirige al inicio de sesión o a `/unauthorized?reason=admin_only`.
 
-#### Nuevos Endpoints de API
+#### Endpoints de API
 - **POST /api/admin/users (Ruta de API)**:
   - **Tipo**: Route Handler dinámico (`app/api/admin/users/route.ts`).
   - **Descripción**: Procesa la validación de entrada con Zod (`createUserByAdminSchema`), verifica la inexistencia de correos electrónicos duplicados (tanto cuentas activas como cuentas bloqueadas), autogenera una clave temporal segura y delega la lógica de persistencia al servicio de usuario.
@@ -384,7 +384,7 @@ En la rama `feat/create-user-button`, se han integrado de forma segura rutas tan
 #### Comportamiento y Flujo en la Base de Datos
 La persistencia de datos implementa las siguientes reglas lógicas del negocio directamente en el ORM de Prisma (MongoDB):
 1. **Lógica de Auditoría Polimórfica (`SystemAuditLog`)**:
-   - El modelo preexistente `SystemAuditLog` se utiliza para registrar la creación de cualquier usuario.
+   - El modelo `SystemAuditLog` se utiliza para registrar la creación de cualquier usuario.
    - Las operaciones se agrupan en una **transacción interactiva** (`prisma.$transaction(async (tx) => ...)`) lo que garantiza que el alta del registro en la tabla `User` y la bitácora en `SystemAuditLog` sean operaciones **atómicas**.
    - Al ser interactiva, se recupera el ID autogenerado del nuevo `User` y se mapea directamente en el campo `resourceId` (como ObjectID de MongoDB) del log de auditoría.
    - El log se registra con la acción `"CREATE"`, la categoría `AuditCategory.USER_MANAGEMENT` y el tipo de recurso `"USER"`. El campo `before` se almacena como `null`, y `after` guarda el string JSON que contiene el `email` y el `role` asignados.
@@ -396,9 +396,21 @@ La persistencia de datos implementa las siguientes reglas lógicas del negocio d
 
 ---
 
+### 1.2 Eliminación Segura de Imágenes e Integridad de Adopciones (v1.15.1)
+
+El servicio `deletePet` (`lib/services/pet.service.ts`) encapsula las operaciones de baja física de mascotas y limpieza automatizada de almacenamiento:
+
+1. **Integridad Relacional de Adopciones**:
+   - Antes de ejecutar cualquier borrado, se verifica si la mascota tiene solicitudes en el modelo `Adoption` (`prisma.adoption.findMany({ where: { petId } })`).
+   - Si existen postulaciones pendientes o activas, se arroja un error descriptivo impidiendo la eliminación y manteniendo la consistencia de la base de datos.
+2. **Borrado en Cascada en Cloudinary**:
+   - Tras remover exitosamente la entidad en Prisma, se extraen los identificadores multimedia y se ejecuta `deleteImagesFromCloudinary(imageUrls)` de forma asíncrona no bloqueante, purgando recursos huérfanos del bucket de Cloudinary.
+
+---
+
 ## 2. Estructura del Proyecto
 
-> **Mapeo de la estructura de carpetas realizado el 5 de agosto de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
+> **Mapeo de la estructura de carpetas realizado el 21 de agosto de 2026**: Representación jerárquica de todos los archivos y carpetas del repositorio, excluyendo dependencias y compilaciones. Los directorios finalizan siempre con una barra diagonal `/`.
 
 ```text
 ./
@@ -410,7 +422,6 @@ La persistencia de datos implementa las siguientes reglas lógicas del negocio d
 │   │   ├── documentation.md
 │   │   ├── feature-request.md
 │   │   ├── performance.md
-│   │   ├── question.md
 │   │   └── refactor.md
 │   └── pull_request_template.md
 ├── .gitignore
@@ -419,6 +430,8 @@ La persistencia de datos implementa las siguientes reglas lógicas del negocio d
 ├── CONTEXT.md
 ├── DEV_NOTES.md
 ├── README.md
+├── credentials-seed.txt
+├── documentacion_y_gestion_de_prs.md
 ├── app/
 │   ├── (auth)/
 │   │   ├── login/
@@ -927,7 +940,7 @@ La persistencia de datos implementa las siguientes reglas lógicas del negocio d
 
 ## 3. Dependencias del Proyecto
 
-> **Análisis de dependencias realizado el 5 de agosto de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
+> **Análisis de dependencias realizado el 21 de agosto de 2026**: Esta sección presenta una categorización exhaustiva y rigurosa de todas las librerías, frameworks y herramientas clave utilizadas en el proyecto (extraídas directamente de `package.json`), organizadas y agrupadas según su propósito técnico específico.
 
 ### Dependencias de Producción
 

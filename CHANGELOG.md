@@ -23,6 +23,27 @@ Esta actualización soluciona un problema crítico de almacenamiento huérfano a
 
 ---
 
+## 07-08-2026 - Alta Administrativa de Usuarios y Trazabilidad (v1.15.0)
+
+**Commits:** `16c937d`, `7df604f`, `cd67ac5`, `703d1e8`, `faa828e`, `3235839` (Merge PR #218)
+**Tipo:** Feature / Security
+**Scope:** admin, users, moderation, auth, ai
+
+### Descripción
+
+Implementación integral del flujo de alta manual de usuarios para administradores en el Moderation Hub, permitiendo la creación de cuentas de forma segura en el servidor sin inicio de sesión automático, con contraseñas temporales criptográficamente seguras, justificación obligatoria para roles privilegiados y registro atómico en la bitácora de auditoría con soporte de refinamiento por IA.
+
+### Cambios
+
+- **Vista Administrativa de Creación**: Nuevo Server Component protegido bajo `/admin/moderation/users/create` con verificación estricta de sesión y rol `ADMIN`.
+- **Formulario Interactivo con IA**: Componente `CreateUserForm` con validación dinámica en el cliente, modal de confirmación y copia de credenciales temporales, e integración de `AiRefineButton` para la justificación de roles.
+- **Endpoint Seguro `POST /api/admin/users`**: Validación rigurosa con Zod (`createUserByAdminSchema`), verificación contra duplicados y respuesta estandarizada de códigos de estado HTTP.
+- **Transacciones Interactivas y Atomicidad**: Método `createUserByAdmin` en `user.service.ts` que ejecuta el alta de usuario y el registro en `SystemAuditLog` dentro de una transacción interactiva de Prisma.
+- **Generación Segura de Credenciales**: Función `generateTempPassword` basada en `crypto.randomBytes` y hashing con `bcryptjs` (12 rondas de sal).
+- **Cobertura de Pruebas**: Suite de pruebas unitarias y de integración en `user.schema.test.ts`, `route.test.ts`, `user.service.spec.ts` y `password.test.ts`.
+
+---
+
 ## 10-07-2026 - Asistencia Inteligente y Carrito Más Eficiente (v1.15.0)
 
 **Commits:** `865756e`, `0d9a0be`, `36e9bda`, `85dd7ae`

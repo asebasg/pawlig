@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 export default function DevNotesPage() {
-  const lastDevUpdate = "11 de agosto de 2026";
+  const lastDevUpdate = "21 de agosto de 2026";
 
   const devLogs = [
     {
@@ -54,6 +54,37 @@ export default function DevNotesPage() {
           description:
             "Comprobación preventiva en base de datos para impedir que mascotas con postulaciones activas puedan ser eliminadas.",
           icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+      ],
+    },
+    {
+      version: "v1.15.0-dev",
+      date: "07 de Agosto, 2026",
+      title: "Alta Administrativa de Usuarios y Auditoría con IA",
+      description:
+        "Implementación del flujo de alta manual de usuarios para administradores con contraseñas temporales seguras, justificación obligatoria con IA y bitácora atómica.",
+      type: "feat",
+      logs: [
+        {
+          category: "feat",
+          title: "Alta Manual de Usuarios (Admin)",
+          description:
+            "Desarrollo de la vista /admin/moderation/users/create con formulario validado con Zod, campos condicionales y modal de copia de credenciales temporales.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
+        },
+        {
+          category: "feat",
+          title: "API de Alta Administrativa Segura",
+          description:
+            "Endpoint POST /api/admin/users que realiza transacciones interactivas atómicas entre creación de User y SystemAuditLog con roles y justificaciones obligatorias.",
+          icon: <ShieldCheck size={18} className="text-indigo-500" />,
+        },
+        {
+          category: "improvement",
+          title: "Refinamiento de Justificación con IA",
+          description:
+            "Integración de AiRefineButton en el formulario administrativo para pulir las justificaciones de asignación de roles especiales mediante Gemini.",
+          icon: <Cpu size={18} className="text-emerald-500" />,
         },
       ],
     },
@@ -421,46 +452,32 @@ export default function DevNotesPage() {
     },
     {
       version: "v1.8.0-dev",
-      date: "21 de Junio, 2026",
-      title: "Alta Manual de Usuarios y Seguridad de Formularios",
+      date: "28 de Abril, 2026",
+      title: "Seguridad y UX en Formularios",
       description:
-        "Implementación del flujo de alta manual de usuarios y auditoría administrativa con IA, optimización de campos de contraseña y supresión de hydration warnings.",
+        "Implementación del componente PasswordInput con toggle de visibilidad en todos los formularios y supresión de estilos de navegador conflictivos.",
       type: "feat",
       logs: [
         {
           category: "feat",
-          title: "Alta Manual de Usuarios y Botón de Creación",
+          title: "Componente PasswordInput Reutilizable",
           description:
-            "Desarrollo de la vista /admin/moderation/users/create con formulario validado con Zod, campos condicionales y modal de copia de credenciales temporales.",
-          icon: <Cpu size={18} className="text-emerald-500" />,
-        },
-        {
-          category: "feat",
-          title: "API de Alta Administrativa Segura",
-          description:
-            "Endpoint POST /api/admin/users que realiza transacciones interactivas atómicas entre creación de User y SystemAuditLog con roles y justificaciones obligatorias.",
-          icon: <ShieldCheck size={18} className="text-indigo-500" />,
-        },
-        {
-          category: "improvement",
-          title: "Refinamiento de Razón con IA",
-          description:
-            "Integración de AiRefineButton en el formulario administrativo para pulir las justificaciones de asignación de roles especiales.",
-          icon: <Cpu size={18} className="text-emerald-500" />,
+            "Nuevo componente UI con alternancia de visibilidad de contraseña integrado en formularios de login, registro y solicitudes.",
+          icon: <Zap size={18} className="text-amber-500" />,
         },
         {
           category: "fix",
-          title: "CSS: Botón Nativo de Password",
+          title: "CSS: Botón Nativo de Contraseña",
           description:
-            "Ocultación de botones de revelación nativos (::-ms-reveal) para evitar duplicidad con PasswordInput.",
+            "Ocultación de botones de revelación nativos (::-ms-reveal) en navegadores basados en Chromium/Edge para evitar iconos duplicados.",
           icon: <Bug size={18} className="text-red-500" />,
         },
         {
           category: "improvement",
-          title: "Hydration Warning Suppression",
+          title: "Supresión de Advertencias de Hidratación",
           description:
-            "Ajuste en layout.tsx para asegurar compatibilidad con next-themes y evitar errores de hidratación.",
-          icon: <Zap size={18} className="text-amber-500" />,
+            "Inclusión de suppressHydrationWarning en layout.tsx para prevenir advertencias de hidratación en la integración de temas.",
+          icon: <Zap size={18} className="text-indigo-500" />,
         },
       ],
     },
