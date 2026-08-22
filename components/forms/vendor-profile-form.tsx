@@ -255,13 +255,6 @@ export default function VendorProfileForm() {
         >
           {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
         </button>
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-        >
-          Cancelar
-        </button>
       </div>
 
       {/* Nota de campos obligatorios */}

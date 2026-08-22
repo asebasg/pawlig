@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { UserRole } from '@prisma/client';
 import { prisma } from '@/lib/utils/db';
+import UnifiedProfileClient from '@/components/profile/unified-profile-client';
 
 export const metadata: Metadata = {
   title: 'Editar Perfil',
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function ShelterProfilePage() {
   const session = await getServerSession(authOptions);
-  // Verificar autenticación, rol y verificación de rol
+  
   if (!session || !session.user) {
     redirect("/login?callbackUrl=/shelter/profile");
   }
@@ -22,7 +23,7 @@ export default async function ShelterProfilePage() {
   if (session.user.role !== UserRole.SHELTER) {
     redirect("/unauthorized?reason=shelter_only");
   }
-  // Obtener id de SHELTER
+  
   const shelterId = session.user.shelterId as string;
   const shelter = await prisma.shelter.findUnique({
     where: { id: shelterId as string },
@@ -59,10 +60,7 @@ export default async function ShelterProfilePage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Editar Perfil del Albergue</h2>
-          <p className="text-gray-600">Funcionalidad en desarrollo</p>
-        </div>
+        <UnifiedProfileClient role={session.user.role} />
       </main>
 
       <footer className="bg-white border-t border-gray-200 mt-16">

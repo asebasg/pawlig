@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/auth-options';
 import { redirect } from 'next/navigation';
-import VendorProfileForm from '@/components/forms/vendor-profile-form';
+import UnifiedProfileClient from '@/components/profile/unified-profile-client';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { prisma } from '@/lib/utils/db';
@@ -53,9 +53,7 @@ export default async function VendorProfilePage() {
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <VendorProfileForm />
-        </div>
+        <UnifiedProfileClient role={session.user.role} />
 
         {/* Info Section */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
