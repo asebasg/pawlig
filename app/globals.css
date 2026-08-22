@@ -55,3 +55,48 @@ input::-ms-clear {
     scrollbar-width: none;
   }
 }
+
+.dark {
+  --background: #171717;
+  --foreground: #ffffff;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+
+  /* Colores de roles ajustados para mejor contraste en dark */
+  --role-admin: #a78bfa;
+  --role-shelter: #2dd4bf;
+  --role-vendor: #fb923c;
+  --role-adopter: #60a5fa;
+}
+
+.solarized-light {
+  --background: #fdf6e3;
+  --foreground: #657b83;
+  --primary: #268bd2;
+  --primary-foreground: #ffffff;
+  --muted: #eee8d5;
+  --muted-foreground: #93a1a1;
+
+  /* Colores de roles para solarized light */
+  --role-admin: #6c71c4;
+  --role-shelter: #2aa198;
+  --role-vendor: #cb4b16;
+  --role-adopter: #268bd2;
+}
+
+.solarized-dark {
+  --background: #002b36;
+  --foreground: #839496;
+  --primary: #268bd2;
+  --primary-foreground: #ffffff;
+  --muted: #073642;
+  --muted-foreground: #586e75;
+
+  /* Colores de roles ajustados para mejor contraste en solarized dark */
+  --role-admin: #6c71c4;
+  --role-shelter: #2aa198;
+  --role-vendor: #cb4b16;
+  --role-adopter: #268bd2;
+}

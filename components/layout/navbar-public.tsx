@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PUBLIC_LINKS } from "@/lib/constants";
+import { ThemeSwitcher } from "./theme-switcher";
 
 /**
  * Componente: NavbarPublic
@@ -36,6 +37,7 @@ export function NavbarPublic() {
 
       {/* Auth Buttons */}
       <div className="flex items-center gap-2 sm:gap-3">
+        <ThemeSwitcher />
         <Link
           href="/login"
           className="px-2 sm:px-4 py-2 text-sm sm:text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors"
