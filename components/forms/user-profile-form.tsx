@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { registerUserSchema } from '@/lib/validations/user.schema';
-import { Municipality } from '@prisma/client';
-import { AddressInput } from '@/components/ui/address-input';
+import { registerUserSchema } from "@/lib/validations/user.schema";
+import { Municipality } from "@prisma/client";
+import { AddressInput } from "@/components/ui/address-input";
 
 /**
  * GET /api/users/profile
@@ -56,20 +56,20 @@ export default function UserProfileForm() {
   } = useForm<UserProfileUpdateInput>({
     resolver: zodResolver(userProfileUpdateSchema),
     defaultValues: {
-      name: '',
-      phone: '',
+      name: "",
+      phone: "",
       municipality: Municipality.MEDELLIN,
-      address: '',
-      idNumber: '',
-      birthDate: '',
-    }
+      address: "",
+      idNumber: "",
+      birthDate: "",
+    },
   });
 
   // Cargar datos actuales del usuario al montar
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch('/api/user/profile');
+        const response = await fetch("/api/user/profile");
         if (!response.ok) throw new Error("Error al cargar perfil");
         const data: UserProfileResponse = await response.json();
 
@@ -79,7 +79,7 @@ export default function UserProfileForm() {
           municipality: data.municipality,
           address: data.address,
           idNumber: data.idNumber,
-          birthDate: data.birthDate ? data.birthDate.split('T')[0] : '',
+          birthDate: data.birthDate ? data.birthDate.split("T")[0] : "",
         });
       } catch (error) {
         console.error(error);
@@ -97,40 +97,49 @@ export default function UserProfileForm() {
     const toastId = toast.loading("Guardando cambios...");
 
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 403) {
-          throw new Error('Tu cuenta está bloqueada.');
+          throw new Error("Tu cuenta está bloqueada.");
         }
-        throw new Error(errorData.error || 'Error al actualizar perfil');
+        throw new Error(errorData.error || "Error al actualizar perfil");
       }
 
       toast.success("¡Perfil actualizado exitosamente!", {
         id: toastId,
-        description: "Los cambios se aplicarán inmediatamente."
+        description: "Los cambios se aplicarán inmediatamente.",
       });
-
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
+      toast.error(error instanceof Error ? error.message : "Error inesperado", {
+        id: toastId,
+      });
     }
   };
 
   const municipalities = Object.values(Municipality);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Editar Perfil Personal</h2>
+        <h2 className="text-3xl font-bold text-gray-900">
+          Editar Perfil Personal
+        </h2>
         <p className="text-gray-600 mt-2">
-          Actualiza tu información personal. Los cambios se aplicarán inmediatamente.
+          Actualiza tu información personal. Los cambios se aplicarán
+          inmediatamente.
+        </p>
+
+        {/* Nota de campos obligatorios */}
+        <p className="text-sm text-gray-500 mt-4">
+          Los campos marcados con * son obligatorios.
         </p>
       </div>
 
@@ -140,10 +149,11 @@ export default function UserProfileForm() {
           Nombre Completo *
         </label>
         <input
-          {...register('name')}
+          {...register("name")}
           type="text"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.name ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
           placeholder="Ej: Juan Pérez García"
         />
         {errors.name && (
@@ -157,10 +167,11 @@ export default function UserProfileForm() {
           Teléfono *
         </label>
         <input
-          {...register('phone')}
+          {...register("phone")}
           type="tel"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.phone ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
           placeholder="Ej: 3001234567"
         />
         {errors.phone && (
@@ -174,10 +185,11 @@ export default function UserProfileForm() {
           Número de Identificación *
         </label>
         <input
-          {...register('idNumber')}
+          {...register("idNumber")}
           type="text"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.idNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.idNumber ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
           placeholder="Ej: 1234567890"
         />
         {errors.idNumber && (
@@ -191,13 +203,16 @@ export default function UserProfileForm() {
           Fecha de Nacimiento *
         </label>
         <input
-          {...register('birthDate')}
+          {...register("birthDate")}
           type="date"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.birthDate ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.birthDate ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
         />
         {errors.birthDate && (
-          <p className="text-red-600 text-sm mt-1">{errors.birthDate.message}</p>
+          <p className="text-red-600 text-sm mt-1">
+            {errors.birthDate.message}
+          </p>
         )}
       </div>
 
@@ -207,19 +222,22 @@ export default function UserProfileForm() {
           Municipio *
         </label>
         <select
-          {...register('municipality')}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          {...register("municipality")}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.municipality ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
         >
           <option value="">Selecciona un municipio</option>
           {municipalities.map((municipality) => (
             <option key={municipality} value={municipality}>
-              {municipality.replace(/_/g, ' ')}
+              {municipality.replace(/_/g, " ")}
             </option>
           ))}
         </select>
         {errors.municipality && (
-          <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>
+          <p className="text-red-600 text-sm mt-1">
+            {errors.municipality.message}
+          </p>
         )}
       </div>
 
@@ -250,14 +268,9 @@ export default function UserProfileForm() {
           disabled={isSubmitting}
           className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
+          {isSubmitting ? "Guardando cambios..." : "Guardar Cambios"}
         </button>
       </div>
-
-      {/* Nota de campos obligatorios */}
-      <p className="text-sm text-gray-500 mt-4">
-        Los campos marcados con * son obligatorios.
-      </p>
     </form>
   );
 }
@@ -268,15 +281,15 @@ export default function UserProfileForm() {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este componente permite al usuario gestionar su identidad digital dentro de la 
+ * Este componente permite al usuario gestionar su identidad digital dentro de la
  * plataforma, asegurando que los datos de contacto estén siempre vigentes.
  *
  * Lógica Clave:
- * - Pick Schema: Reutiliza el esquema de registro mediante .pick() para asegurar 
+ * - Pick Schema: Reutiliza el esquema de registro mediante .pick() para asegurar
  *   que las reglas de validación sean consistentes en toda la app.
- * - Sincronización Inicial: Utiliza useEffect para poblar el formulario con los 
+ * - Sincronización Inicial: Utiliza useEffect para poblar el formulario con los
  *   datos actuales del usuario servidor tras el montaje.
- * - Validación de Seguridad: Verifica el estado de bloqueo de la cuenta antes de 
+ * - Validación de Seguridad: Verifica el estado de bloqueo de la cuenta antes de
  *   permitir cualquier modificación persistente.
  *
  * Dependencias Externas:
