@@ -26,7 +26,6 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
   const pathname = usePathname();
   const navigation = NAVIGATION_BY_ROLE[user.role as keyof typeof NAVIGATION_BY_ROLE] || [];
   const displayNav = navigation;
-  // const displayNav = user.role === "ADMIN" ? navigation.slice(0, 3) : navigation.slice(0, 3);
 
   return (
     <>
