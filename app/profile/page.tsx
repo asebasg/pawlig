@@ -1,21 +1,21 @@
-import { Metadata } from 'next';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/auth-options';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth-options";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, Info } from "lucide-react";
 import { UserRole } from "@prisma/client";
-import { prisma } from '@/lib/utils/db';
-import UnifiedProfileClient from '@/components/profile/unified-profile-client';
+import { prisma } from "@/lib/utils/db";
+import UnifiedProfileClient from "@/components/profile/unified-profile-client";
 
 export const metadata: Metadata = {
-  title: 'Mi Perfil | PawLig',
-  description: 'Gestiona tu información personal y configuración de cuenta.',
+  title: "Mi Perfil",
+  description: "Gestiona tu información personal y configuración de cuenta.",
 };
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
-  
+
   if (!session || !session.user) {
     redirect("/login?callbackUrl=/profile");
   }
@@ -65,24 +65,38 @@ export default async function ProfilePage() {
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8">
-        <Link href={backUrl} className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 text-sm font-semibold">
+        <Link
+          href={backUrl}
+          className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 text-sm font-semibold"
+        >
           <ArrowLeft className="w-4 h-4" />
           {backText}
         </Link>
+
+        {/* Información específica para roles */}
+        {session.user.role === UserRole.ADOPTER && (
+          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-blue-900 mb-3">
+              <Info className="w-5 h-5 inline-flex align-center mr-2" /> Información Importante
+            </h3>
+            <ul className="list-disc pl-5 space-y-2 text-blue-800 text-sm">
+              <li>
+                La información actualizada se reflejará en todas tus nuevas
+                postulaciones.
+              </li>
+              <li>
+                Asegúrate de mantener tu número de teléfono vigente para
+                facilitar el contacto.
+              </li>
+              <li>
+                Por el momento no es posible modificar tu correo electrónico.
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
 
       <UnifiedProfileClient role={session.user.role as UserRole} />
-
-      {/* Información específica para roles */}
-      {session.user.role === UserRole.ADOPTER && (
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-900 mb-3">📋 Información Importante</h3>
-          <ul className="list-disc pl-5 space-y-2 text-blue-800 text-sm">
-            <li>La información actualizada se reflejará en todas tus nuevas postulaciones.</li>
-            <li>Asegúrate de mantener tu número de teléfono vigente para facilitar el contacto.</li>
-          </ul>
-        </div>
-      )}
     </main>
   );
 }
