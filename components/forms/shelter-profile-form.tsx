@@ -7,6 +7,9 @@ import { toast } from "sonner";
 import { shelterProfileUpdateSchema, ShelterProfileUpdateInput } from '@/lib/validations/user.schema';
 import { Municipality } from '@prisma/client';
 import { AddressInput } from '@/components/ui/address-input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { motion, useReducedMotion } from "framer-motion";
+import { springMomentum, reducedMotionTransition } from "@/lib/utils/motion";
 
 interface ShelterProfileResponse {
   id: string;
@@ -20,12 +23,19 @@ interface ShelterProfileResponse {
   updatedAt: string;
 }
 
+import { AiRefineButton } from '@/components/ui/ai-refine-button';
+
 export default function ShelterProfileForm() {
+  const shouldReduceMotion = useReducedMotion();
+  const transitionMomentum = shouldReduceMotion ? reducedMotionTransition : springMomentum;
+
   const {
     register,
     handleSubmit,
     control,
     reset,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ShelterProfileUpdateInput>({
     resolver: zodResolver(shelterProfileUpdateSchema),
@@ -95,13 +105,17 @@ export default function ShelterProfileForm() {
 
   const municipalities = Object.values(Municipality);
 
+  {/* // TODO: Implementar el sistema de fotos de perfil a la app */}
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Editar Perfil del Albergue</h2>
-        <p className="text-gray-600 mt-2">
+      <div className="mb-10">
+        <h2 className="text-[28px] leading-tight font-semibold tracking-tight text-gray-900">Editar Perfil del Albergue</h2>
+        <p className="text-gray-500 mt-2 text-[15px] leading-relaxed">
           Actualiza la información pública de tu albergue.
         </p>
+        <p className="text-sm text-gray-500 mt-4">
+        Los campos marcados con * son obligatorios.
+      </p>
       </div>
 
       <div>
@@ -124,13 +138,21 @@ export default function ShelterProfileForm() {
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Descripción del Albergue
         </label>
-        <textarea
-          {...register('description')}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-          placeholder="Describe tu labor, misión, instalaciones, etc."
-          rows={4}
-        />
+        <div className="relative">
+          <textarea
+            {...register('description')}
+            className={`text-black w-full px-4 py-2 pb-12 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              }`}
+            placeholder="Describe tu labor, misión, instalaciones, etc."
+            rows={4}
+          />
+          <AiRefineButton
+            currentText={getValues("description") ?? ""}
+            onRefined={(text) => setValue("description", text, { shouldValidate: true })}
+            type="shelter"
+            minLength={20}
+          />
+        </div>
         {errors.description && (
           <p className="text-red-600 text-sm mt-1">{errors.description.message}</p>
         )}
@@ -172,18 +194,28 @@ export default function ShelterProfileForm() {
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Municipio *
         </label>
-        <select
-          {...register('municipality')}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-        >
-          <option value="">Selecciona un municipio</option>
-          {municipalities.map((municipality) => (
-            <option key={municipality} value={municipality}>
-              {municipality.replace(/_/g, ' ')}
-            </option>
-          ))}
-        </select>
+        <Controller
+          control={control}
+          name="municipality"
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger
+                className={`text-black w-full border focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all ${
+                  errors.municipality ? "border-red-500 bg-red-50" : "border-gray-300"
+                }`}
+              >
+                <SelectValue placeholder="Selecciona un municipio" />
+              </SelectTrigger>
+              <SelectContent>
+                {municipalities.map((municipality) => (
+                  <SelectItem key={municipality} value={municipality}>
+                    {municipality.replace(/_/g, " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.municipality && (
           <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>
         )}
@@ -210,18 +242,16 @@ export default function ShelterProfileForm() {
       </div>
 
       <div className="flex gap-4 pt-6">
-        <button
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          transition={transitionMomentum}
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 bg-purple-600 text-white py-3 rounded-xl font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm"
         >
           {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
-        </button>
+        </motion.button>
       </div>
-
-      <p className="text-sm text-gray-500 mt-4">
-        Los campos marcados con * son obligatorios.
-      </p>
     </form>
   );
 }

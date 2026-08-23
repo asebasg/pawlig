@@ -46,12 +46,12 @@ export default function RootLayout({
             duration={5000}
             toastOptions={{
               classNames: {
-                toast: "toast group font-sans text-base border-2 flex items-center justify-center shadow-md cursor-pointer",
-                success: "!bg-green-100 !text-green-700 !border-green-400",
-                error: "!bg-red-100 !text-red-700 !border-red-400",
-                warning: "!bg-yellow-100 !text-yellow-700 !border-yellow-400",
-                info: "!bg-blue-100 !text-blue-700 !border-blue-400",
-                loading: "!bg-indigo-100 !text-indigo-700 !border-indigo-400",
+                toast: "group font-sans text-[15px] font-medium tracking-tight bg-white/80 backdrop-blur-2xl border border-white/60 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.2)] rounded-2xl flex items-center px-4 py-3 cursor-pointer",
+                success: "!bg-green-50/80 !text-green-800 !border-green-200/60",
+                error: "!bg-red-50/80 !text-red-800 !border-red-200/60",
+                warning: "!bg-yellow-50/80 !text-yellow-800 !border-yellow-200/60",
+                info: "!bg-blue-50/80 !text-blue-800 !border-blue-200/60",
+                loading: "!bg-indigo-50/80 !text-indigo-800 !border-indigo-200/60",
               },
             }}
             icons={{
