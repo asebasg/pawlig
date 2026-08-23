@@ -55,9 +55,10 @@ describe("createUserByAdmin", () => {
       systemAuditLog: { create: createAuditRecord },
     };
 
-    vi.mocked(prisma.$transaction).mockImplementation(async (callback) =>
-      callback(transaction)
-    );
+    vi.mocked(prisma.$transaction).mockImplementation(async (callback: unknown) => {
+      const cb = callback as (tx: unknown) => Promise<unknown>;
+      return cb(transaction);
+    });
 
     const result = await createUserByAdmin(basePayload, "admin-1", "admin@pawlig.com", "127.0.0.1", "Vitest");
 
@@ -92,8 +93,9 @@ describe("createUserByAdmin", () => {
     };
     const createAuditRecord = vi.fn().mockResolvedValue({ id: "audit-2" });
 
-    vi.mocked(prisma.$transaction).mockImplementation(async (callback) =>
-      callback({
+    vi.mocked(prisma.$transaction).mockImplementation(async (callback: unknown) => {
+      const cb = callback as (tx: unknown) => Promise<unknown>;
+      return cb({
         user: {
           create: vi.fn().mockResolvedValue({
             id: "admin-2",
@@ -103,8 +105,8 @@ describe("createUserByAdmin", () => {
           }),
         },
         systemAuditLog: { create: createAuditRecord },
-      })
-    );
+      });
+    });
 
     await createUserByAdmin(payload, "admin-1", "superadmin@pawlig.com");
 
