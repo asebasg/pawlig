@@ -25,13 +25,28 @@ import {
   VendorRejectionEmailPayload,
 } from "@/types/email.types";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.EMAIL_FROM;
+/**
+ * Descripción: Servicio para el envío de correos electrónicos transaccionales mediante Resend.
+ * Requiere: Variables de entorno RESEND_API_KEY y EMAIL_FROM.
+ * Implementa: Notificaciones por correo electrónico del sistema.
+ */
 
-if (!fromEmail) {
-  throw new Error(
-    "EMAIL_FROM no está definido. Por favor, defínelo en tu archivo .env.",
-  );
+export function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY no configurada");
+  }
+  return new Resend(apiKey);
+}
+
+export function getFromEmail(): string {
+  const fromEmail = process.env.EMAIL_FROM;
+  if (!fromEmail) {
+    throw new Error(
+      "EMAIL_FROM no está definido. Por favor, defínelo en tu archivo .env.",
+    );
+  }
+  return fromEmail;
 }
 
 /**
@@ -39,6 +54,7 @@ if (!fromEmail) {
  */
 const sendEmail = async (payload: CreateEmailOptions) => {
   try {
+    const resend = getResendClient();
     const { data, error } = await resend.emails.send(payload);
     if (error) {
       console.error("Error sending email:", error);
@@ -55,7 +71,7 @@ export const sendPasswordResetEmail = async (
   payload: PasswordResetEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig <${fromEmail}>`,
+    from: `PawLig <${getFromEmail()}>`,
     to: [payload.to],
     subject: "Recuperación de contraseña - PawLig",
     react: PasswordResetEmail({
@@ -69,7 +85,7 @@ export const sendAdoptionStatusEmail = async (
   payload: AdoptionStatusEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig Adopciones <${fromEmail}>`,
+    from: `PawLig Adopciones <${getFromEmail()}>`,
     to: [payload.to],
     subject: `Actualización de tu solicitud para ${payload.petName}`,
     react: AdoptionStatusEmail({
@@ -86,7 +102,7 @@ export const sendNewAdoptionRequestEmail = async (
   payload: NewAdoptionRequestEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig <${fromEmail}>`,
+    from: `PawLig <${getFromEmail()}>`,
     to: [payload.to],
     subject: `Nueva solicitud de adopción para ${payload.petName}`,
     react: NewAdoptionEmail({
@@ -107,7 +123,7 @@ export const sendUserBlockStatusEmail = async (
       : "Tu cuenta ha sido reactivada en PawLig";
 
   return sendEmail({
-    from: `PawLig Soporte <${fromEmail}>`,
+    from: `PawLig Soporte <${getFromEmail()}>`,
     to: [payload.to],
     subject,
     react: UserBlockStatusEmail({
@@ -122,7 +138,7 @@ export const sendOrderConfirmationEmail = async (
   payload: OrderConfirmationEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig Tienda <${fromEmail}>`,
+    from: `PawLig Tienda <${getFromEmail()}>`,
     to: [payload.to],
     subject: `Confirmación de orden #${payload.orderId.slice(-6).toUpperCase()}`,
     react: OrderConfirmationEmail({
@@ -136,7 +152,7 @@ export const sendOrderConfirmationEmail = async (
 
 export const sendNewSaleEmail = async (payload: NewSaleEmailPayload) => {
   return sendEmail({
-    from: `PawLig Vendedores <${fromEmail}>`,
+    from: `PawLig Vendedores <${getFromEmail()}>`,
     to: [payload.to],
     subject: `¡Nueva Venta! Orden #${payload.orderId.slice(-6).toUpperCase()}`,
     react: NewSaleEmail({
@@ -151,7 +167,7 @@ export const sendOrderStatusUpdateEmail = async (
   payload: OrderStatusUpdateEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig Tienda <${fromEmail}>`,
+    from: `PawLig Tienda <${getFromEmail()}>`,
     to: [payload.to],
     subject: `Actualización de tu orden #${payload.orderId.slice(-6).toUpperCase()}`,
     react: OrderStatusEmail({
@@ -167,7 +183,7 @@ export const sendShelterApprovalEmail = async (
   payload: ShelterApprovalEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig <${fromEmail}>`,
+    from: `PawLig <${getFromEmail()}>`,
     to: [payload.to],
     subject: "¡Solicitud de Albergue Aprobada!",
     react: ShelterApprovalEmail({
@@ -182,7 +198,7 @@ export const sendShelterRejectionEmail = async (
   payload: ShelterRejectionEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig <${fromEmail}>`,
+    from: `PawLig <${getFromEmail()}>`,
     to: [payload.to],
     subject: "Actualización de tu solicitud de Albergue",
     react: ShelterRejectionEmail({
@@ -197,7 +213,7 @@ export const sendVendorApprovalEmail = async (
   payload: VendorApprovalEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig <${fromEmail}>`,
+    from: `PawLig <${getFromEmail()}>`,
     to: [payload.to],
     subject: "¡Solicitud de Vendedor Aprobada!",
     react: VendorApprovalEmail({
@@ -212,7 +228,7 @@ export const sendVendorRejectionEmail = async (
   payload: VendorRejectionEmailPayload,
 ) => {
   return sendEmail({
-    from: `PawLig <${fromEmail}>`,
+    from: `PawLig <${getFromEmail()}>`,
     to: [payload.to],
     subject: "Actualización de tu solicitud de Tienda",
     react: VendorRejectionEmail({
@@ -222,3 +238,24 @@ export const sendVendorRejectionEmail = async (
     }),
   });
 };
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Módulo encargado del envío de correos electrónicos transaccionales (restablecimiento de contraseña,
+ * notificaciones de adopción, confirmaciones de compra, avisos de moderación y aprobación de cuentas).
+ *
+ * Lógica Clave:
+ * - Inicialización Lazy: El cliente de Resend se instancia bajo demanda mediante getResendClient(),
+ *   evitando fallos en tiempo de compilación (Build Time) si las credenciales no están presentes.
+ * - Obtención de Remitente Lazy: getFromEmail() valida EMAIL_FROM en tiempo de ejecución.
+ * - Manejo de Errores: Centralizado en sendEmail para capturar tanto errores de la API de Resend
+ *   como excepciones de red sin interrumpir el flujo principal de la aplicación.
+ *
+ * Dependencias Externas:
+ * - Resend: SDK oficial para la entrega de correos electrónicos y plantillas React Email.
+ *
+ */
