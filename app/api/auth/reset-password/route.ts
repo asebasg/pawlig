@@ -46,10 +46,15 @@ export async function POST(request: Request) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: resetTokenRecord.userId },
-        data: { password: newHashedPassword },
+        data: { 
+          password: newHashedPassword,
+          tokenVersion: { increment: 1 } 
+        },
       }),
-      prisma.passwordResetToken.update({
-        where: { id: resetTokenRecord.id },
+      // Invalidar TODOS los tokens de este usuario, asegurando que ninguno previo 
+      // o concurrente quede activo tras el restablecimiento exitoso.
+      prisma.passwordResetToken.updateMany({
+        where: { userId: resetTokenRecord.userId, used: false },
         data: { used: true },
       }),
     ]);

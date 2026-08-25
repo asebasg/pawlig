@@ -52,7 +52,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         throw new Error(result.error || "Error al restablecer la contraseña");
       }
 
-      toast.success("¡Contraseña restablecida con éxito! Serás redirigido al inicio de sesión.");
+      toast.success("¡Contraseña actualizada! Todas las sesiones previas fueron cerradas. Serás redirigido al inicio.");
 
       setTimeout(() => {
         router.push("/login");

@@ -23,49 +23,59 @@ function maskEmail(email: string): string {
   return `${visible}***@${domain}`;
 }
 
+// Global rate limit map for forgot password requests by email
+// Stores { email: { count, firstRequest } }
+const globalForRateLimit = globalThis as unknown as {
+  forgotPasswordRateLimitMap?: Map<string, { count: number; firstRequest: number }>;
+};
+const rateLimitMap = globalForRateLimit.forgotPasswordRateLimitMap || new Map();
+if (process.env.NODE_ENV !== "production") {
+  globalForRateLimit.forgotPasswordRateLimitMap = rateLimitMap;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email } = forgotPasswordSchema.parse(body);
 
+    // Rate Limiting en memoria: 3 solicitudes en los últimos 5 minutos por email
+    const now = Date.now();
+    const windowMs = 5 * 60 * 1000;
+    
+    const rateLimit = rateLimitMap.get(email) || { count: 0, firstRequest: now };
+    
+    if (now - rateLimit.firstRequest > windowMs) {
+      rateLimit.count = 1;
+      rateLimit.firstRequest = now;
+    } else {
+      rateLimit.count++;
+    }
+    
+    rateLimitMap.set(email, rateLimit);
+    
+    if (rateLimit.count > 3) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor, intenta más tarde." },
+        { status: 429 },
+      );
+    }
+
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
-    // Para evitar enumeración de correos, siempre retornamos éxito aunque no exista
     if (!user) {
       return NextResponse.json(
-        {
-          message:
-            "Si el correo está registrado, recibirás un enlace de recuperación pronto.",
-        },
-        { status: 200 },
+        { error: "Usuario no encontrado" },
+        { status: 404 },
       );
     }
 
     // Si el usuario está inactivo (bloqueado)
     if (!user.isActive) {
       return NextResponse.json(
-        { error: "Cuenta suspendida. Contacta con soporte." },
+        { error: "Cuenta bloqueada. Contacta con soporte para más información" },
         { status: 403 },
-      );
-    }
-
-    // Rate Limiting: 3 solicitudes en los últimos 5 minutos
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    const recentRequests = await prisma.passwordResetToken.count({
-      where: {
-        userId: user.id,
-        createdAt: {
-          gte: fiveMinutesAgo,
-        },
-      },
-    });
-
-    if (recentRequests >= 3) {
-      return NextResponse.json(
-        { error: "Demasiadas solicitudes. Por favor, intenta más tarde." },
-        { status: 429 },
       );
     }
 
@@ -73,14 +83,21 @@ export async function POST(request: Request) {
     const { token, hashedToken } = generateResetToken();
     const expiresAt = new Date(Date.now() + 3600000); // 1 hora de validez
 
-    // Guardar token hasheado en BD
-    await prisma.passwordResetToken.create({
-      data: {
-        token: hashedToken,
-        userId: user.id,
-        expiresAt,
-      },
-    });
+    // 1. Invalidar cualquier token activo previamente solicitado por el usuario
+    // 2. Guardar el nuevo token hasheado en BD
+    await prisma.$transaction([
+      prisma.passwordResetToken.updateMany({
+        where: { userId: user.id, used: false },
+        data: { used: true },
+      }),
+      prisma.passwordResetToken.create({
+        data: {
+          token: hashedToken,
+          userId: user.id,
+          expiresAt,
+        },
+      }),
+    ]);
 
     // Enviar correo con el token en texto plano
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
