@@ -31,6 +31,17 @@ import {
  * Implementa: Notificaciones por correo electrónico del sistema.
  */
 
+/**
+ * Ofusca un correo electrónico para su uso seguro en logs.
+ * Ejemplo: "usuario@dominio.com" → "u***@dominio.com"
+ */
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!local || !domain) return "***@***.***";
+  const visible = local.slice(0, 1);
+  return `${visible}***@${domain}`;
+}
+
 export function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -55,14 +66,29 @@ export function getFromEmail(): string {
 const sendEmail = async (payload: CreateEmailOptions) => {
   try {
     const resend = getResendClient();
+    const recipient = Array.isArray(payload.to) ? payload.to[0] : payload.to;
+    const maskedRecipient = maskEmail(String(recipient));
+    console.log("[EMAIL] Enviando a:", maskedRecipient, "desde:", payload.from);
+
     const { data, error } = await resend.emails.send(payload);
+
     if (error) {
-      console.error("[ERROR] Fallo en la API de Resend al enviar email:", JSON.stringify(error, null, 2));
+      if (process.env.NODE_ENV === "development") {
+        console.error("[EMAIL] ❌ Error:", JSON.stringify(error, null, 2));
+      } else {
+        console.error("[EMAIL] ❌ Error al enviar correo.");
+      }
       return { success: false, error };
     }
+
+    console.log("[EMAIL] ✅ Enviado:", data?.id);
     return { success: true, data };
   } catch (error) {
-    console.error("[ERROR] Excepción inesperada en sendEmail (Resend/API):", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("[EMAIL] ❌ Exception:", error);
+    } else {
+      console.error("[EMAIL] ❌ Excepción al intentar enviar correo.");
+    }
     return { success: false, error };
   }
 };
