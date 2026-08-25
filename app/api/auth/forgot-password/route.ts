@@ -12,6 +12,17 @@ import { forgotPasswordSchema } from "@/lib/validations/user.schema";
  * Implementa: RF-004, ISSUE-225
  */
 
+/**
+ * Ofusca un correo electrónico para su uso seguro en logs.
+ * Ejemplo: "usuario@dominio.com" → "u***@dominio.com"
+ */
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!local || !domain) return "***@***.***";
+  const visible = local.slice(0, 1);
+  return `${visible}***@${domain}`;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -74,8 +85,10 @@ export async function POST(request: Request) {
     // Enviar correo con el token en texto plano
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
 
-    console.log(`[DEBUG] Iniciando envío de email a: ${user.email}`);
-    console.log(`[DEBUG] Reset URL generado: ${resetUrl}`);
+    const maskedEmail = maskEmail(user.email ?? "");
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[DEBUG] Iniciando envío de email a: ${maskedEmail}`);
+    }
 
     const emailResult = await sendPasswordResetEmail({
       to: user.email,
@@ -83,12 +96,10 @@ export async function POST(request: Request) {
       resetUrl,
     });
 
-    console.log(`[DEBUG] Resultado de sendPasswordResetEmail:`, emailResult);
-
     if (!emailResult.success) {
-      console.error("Fallo al enviar correo de recuperación a", user.email, emailResult.error);
-    } else {
-      console.log(`[DEBUG] Correo enviado exitosamente a: ${user.email}`);
+      console.error(`[ERROR] Fallo al enviar correo de recuperación a: ${maskedEmail}`);
+    } else if (process.env.NODE_ENV === "development") {
+      console.log(`[DEBUG] Correo de recuperación enviado exitosamente a: ${maskedEmail}`);
     }
 
     return NextResponse.json(
@@ -106,7 +117,11 @@ export async function POST(request: Request) {
       );
     }
 
-    console.error("Error en forgot-password:", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error en forgot-password:", error);
+    } else {
+      console.error("Error interno en el proceso de recuperación de contraseña.");
+    }
     return NextResponse.json(
       { error: "Error interno del servidor" },
       { status: 500 },

@@ -129,7 +129,11 @@ export const moderationService = {
       representativeName: shelter.user.name,
       shelterName: shelter.name,
       loginUrl: `${appUrl}/login`,
-    }).catch(console.error);
+    })
+      .then((res) => {
+        if (!res.success) console.error("[ERROR] Fallo al enviar correo de aprobación de Shelter (API/Resend):", res.error);
+      })
+      .catch((e) => console.error("[ERROR] Excepción enviando correo de aprobación de Shelter:", e));
 
     revalidateTag("user-detail");
     return result;
@@ -176,7 +180,11 @@ export const moderationService = {
       representativeName: shelter.user.name,
       shelterName: shelter.name,
       rejectionReason: reason,
-    }).catch(console.error);
+    })
+      .then((res) => {
+        if (!res.success) console.error("[ERROR] Fallo al enviar correo de rechazo de Shelter (API/Resend):", res.error);
+      })
+      .catch((e) => console.error("[ERROR] Excepción enviando correo de rechazo de Shelter:", e));
 
     revalidateTag("user-detail");
     return result;
@@ -229,7 +237,11 @@ export const moderationService = {
       userName: vendor.user.name,
       businessName: vendor.businessName,
       loginUrl: `${appUrl}/login`,
-    }).catch(console.error);
+    })
+      .then((res) => {
+        if (!res.success) console.error("[ERROR] Fallo al enviar correo de aprobación de Vendor (API/Resend):", res.error);
+      })
+      .catch((e) => console.error("[ERROR] Excepción enviando correo de aprobación de Vendor:", e));
 
     revalidateTag("user-detail");
     return result;
@@ -276,7 +288,11 @@ export const moderationService = {
       userName: vendor.user.name,
       businessName: vendor.businessName,
       rejectionReason: reason,
-    }).catch(console.error);
+    })
+      .then((res) => {
+        if (!res.success) console.error("[ERROR] Fallo al enviar correo de rechazo de Vendor (API/Resend):", res.error);
+      })
+      .catch((e) => console.error("[ERROR] Excepción enviando correo de rechazo de Vendor:", e));
 
     revalidateTag("user-detail");
     return result;
