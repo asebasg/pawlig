@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, createHash } from "node:crypto";
 import bcrypt from "bcryptjs";
 
 /**
@@ -68,6 +68,23 @@ export function generateTempPassword(): string {
   }
 
   return combined.join("");
+}
+
+/**
+ * Genera un token aleatorio y seguro para la recuperación de contraseña.
+ * Retorna el token en texto plano (para el correo) y el hash SHA-256 (para la BD).
+ */
+export function generateResetToken(): { token: string; hashedToken: string } {
+  const token = randomBytes(32).toString("hex");
+  const hashedToken = hashResetToken(token);
+  return { token, hashedToken };
+}
+
+/**
+ * Hashea un token de recuperación con SHA-256 para validarlo o almacenarlo de forma segura.
+ */
+export function hashResetToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
 }
 
 /*

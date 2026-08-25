@@ -54,4 +54,17 @@ input::-ms-clear {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Blur de página completa al abrir modales (incluye navbar) */
+  /* Aplicar blur a todos los elementos semánticos principales pero excluir el portal */
+  body.modal-open > *:not([data-portal-wrapper]):not(script):not(style) {
+    filter: blur(6px);
+    transition: filter 0.25s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.modal-open > *:not([data-portal-wrapper]):not(script):not(style) {
+      transition: none;
+    }
+  }
 }

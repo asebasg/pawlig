@@ -1,14 +1,18 @@
-'use client';
+"use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from 'next/link';
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { loginSchema, LoginInput } from "@/lib/validations/user.schema";
-import { PawPrint } from 'lucide-react';
+import { PawPrint } from "lucide-react";
 import { PasswordInput } from "@/components/ui/password-input";
+import ForgotPasswordModal from "@/components/modals/forgot-password-modal";
+import { springMomentum, reducedMotionTransition } from "@/lib/utils/motion";
 
 /**
  * Descripción: Formulario de inicio de sesión con validación Zod e integración con NextAuth.
@@ -19,9 +23,25 @@ import { PasswordInput } from "@/components/ui/password-input";
 export default function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+
+    const shouldReduceMotion = useReducedMotion();
+    const transitionMomentum = shouldReduceMotion ? reducedMotionTransition : springMomentum;
+
+    // Aplica blur a toda la página (incluyendo navbar) cuando el modal está abierto
+    useEffect(() => {
+      if (isForgotModalOpen) {
+        document.body.classList.add("modal-open");
+      } else {
+        document.body.classList.remove("modal-open");
+      }
+      return () => {
+        document.body.classList.remove("modal-open");
+      };
+    }, [isForgotModalOpen]);
 
     // Obtener URL de retorno
-    const callbackUrl = searchParams.get('callbackUrl') || '/adopciones';
+    const callbackUrl = searchParams.get("callbackUrl") || "/adopciones";
 
     // React Hook Form
     const {
@@ -113,12 +133,15 @@ export default function LoginForm() {
                         placeholder="Tu contraseña"
                     />
                     <div className="flex justify-end mt-1">
-                        <Link
-                            href="/forgot-password"
-                            className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                        <motion.button
+                            type="button"
+                            onClick={() => setIsForgotModalOpen(true)}
+                            whileTap={{ scale: 0.96 }}
+                            transition={transitionMomentum}
+                            className="text-sm text-primary/80 hover:text-primary font-medium transition-colors"
                         >
                             ¿Olvidaste tu contraseña?
-                        </Link>
+                        </motion.button>
                     </div>
                     {errors.password && (
                         <p className="text-red-500 text-sm mt-1">
@@ -166,6 +189,10 @@ export default function LoginForm() {
                     </Link>
                 </div>
             </div>
+            <ForgotPasswordModal 
+                isOpen={isForgotModalOpen} 
+                onClose={() => setIsForgotModalOpen(false)} 
+            />
         </form>
     );
 };

@@ -381,6 +381,27 @@ export const createUserByAdminSchema = z
     }
   );
 
+//  ========== ESQUEMA DE RESTABLECIMIENTO DE CONTRASEÑA ==========
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .email("Email inválido")
+    .min(1, "Email es requerido"),
+});
+
+export const resetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(8, "La contraseña debe tener mínimo 8 caracteres")
+    .max(128, "La contraseña es muy larga"),
+  passwordConfirm: z
+    .string()
+    .min(1, "La confirmación de contraseña es requerida"),
+}).refine((data) => data.password === data.passwordConfirm, {
+  message: "Las contraseñas no coinciden",
+  path: ["passwordConfirm"],
+});
+
 //  ========== TIPOS TYPESCRIPT INFERIDOS ==========
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -390,6 +411,8 @@ export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>
 export type ShelterProfileUpdateInput = z.infer<typeof shelterProfileUpdateSchema>;
 export type RoleUpdateInput = z.infer<typeof roleUpdateSchema>;
 export type CreateUserByAdminInput = z.infer<typeof createUserByAdminSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 /*
  * ---------------------------------------------------------------------------
