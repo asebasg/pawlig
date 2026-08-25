@@ -8,6 +8,7 @@ declare module 'next-auth' {
       vendorId?: string | null;
       shelterId?: string | null;
       isActive: boolean; // Estado de cuenta (bloqueado/desbloqueado)
+      tokenVersion: number; // Versionado para invalidar sesiones
     } & DefaultSession['user'];
   }
 
@@ -17,15 +18,17 @@ declare module 'next-auth' {
     vendorId?: string | null;
     shelterId?: string | null;
     isActive: boolean; // Estado de cuenta (bloqueado/desbloqueado)
+    tokenVersion: number; // Versionado para invalidar sesiones
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    id: string;
-    role: string;
+    id?: string;
+    role?: string;
     vendorId?: string | null;
     shelterId?: string | null;
-    isActive: boolean; // Estado de cuenta (bloqueado/desbloqueado)
+    isActive?: boolean; // Estado de cuenta (bloqueado/desbloqueado)
+    tokenVersion?: number; // Versionado para invalidar sesiones
   }
 }

@@ -64,13 +64,15 @@ export default function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordM
           toast.error("Has superado el límite de intentos. Por favor, espera 5 minutos.");
           return;
         }
-        throw new Error("Error al procesar la solicitud");
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || "Error al procesar la solicitud");
       }
 
       setIsSuccess(true);
     } catch (error) {
       console.error(error);
-      toast.error("Hubo un problema al enviar la solicitud. Inténtalo más tarde.");
+      const message = error instanceof Error ? error.message : "Hubo un problema al enviar la solicitud. Inténtalo más tarde.";
+      toast.error(message);
     }
   };
 
