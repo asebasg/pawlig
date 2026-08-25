@@ -74,14 +74,21 @@ export async function POST(request: Request) {
     // Enviar correo con el token en texto plano
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
 
+    console.log(`[DEBUG] Iniciando envío de email a: ${user.email}`);
+    console.log(`[DEBUG] Reset URL generado: ${resetUrl}`);
+
     const emailResult = await sendPasswordResetEmail({
       to: user.email,
       userName: user.name,
       resetUrl,
     });
 
+    console.log(`[DEBUG] Resultado de sendPasswordResetEmail:`, emailResult);
+
     if (!emailResult.success) {
-      console.error("Fallo al enviar correo de recuperación a", user.email);
+      console.error("Fallo al enviar correo de recuperación a", user.email, emailResult.error);
+    } else {
+      console.log(`[DEBUG] Correo enviado exitosamente a: ${user.email}`);
     }
 
     return NextResponse.json(

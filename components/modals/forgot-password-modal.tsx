@@ -179,7 +179,13 @@ export default function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordM
                           Ingresa el correo electrónico asociado a tu cuenta y te enviaremos un enlace
                           para restablecer tu contraseña.
                         </p>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                        <form
+                          onSubmit={(e) => {
+                            e.stopPropagation();
+                            handleSubmit(onSubmit)(e);
+                          }}
+                          className="space-y-4"
+                        >
                           <div>
                             <label
                               htmlFor="reset-email"
