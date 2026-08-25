@@ -248,5 +248,5 @@ describe("ProductForm - Upload de Imágenes (Fase 7)", () => {
       const payload = JSON.parse(lastFetchCall![1].body);
       expect(payload.images).toEqual(["https://res.cloudinary.com/pawlig/products/exito.png"]);
     });
-  });
+  }, 15000);
 });

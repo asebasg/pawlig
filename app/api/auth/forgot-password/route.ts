@@ -2,18 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/utils/db";
 import { sendPasswordResetEmail } from "@/lib/services/email.service";
 import { z } from "zod";
-import crypto from "crypto";
+import { generateResetToken } from "@/lib/auth/password";
+import { forgotPasswordSchema } from "@/lib/validations/user.schema";
 
 /**
  * POST /api/auth/forgot-password
  * Descripción: Endpoint para solicitar recuperación de contraseña.
  * Requiere: Email del usuario en el body.
- * Implementa: RF-004
+ * Implementa: RF-004, ISSUE-225
  */
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Email inválido"),
-});
 
 export async function POST(request: Request) {
   try {
@@ -43,26 +40,39 @@ export async function POST(request: Request) {
       );
     }
 
-    // Generar token único (32 bytes hex = 64 caracteres)
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 3600000); // 1 hora de validez
-
-    // Guardar token en BD (opcionalmente invalidar anteriores)
-    await prisma.passwordResetToken.updateMany({
-      where: { userId: user.id, used: false },
-      data: { used: true }, // Marcamos los anteriores como usados/inválidos
+    // Rate Limiting: 3 solicitudes en los últimos 5 minutos
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const recentRequests = await prisma.passwordResetToken.count({
+      where: {
+        userId: user.id,
+        createdAt: {
+          gte: fiveMinutesAgo,
+        },
+      },
     });
 
+    if (recentRequests >= 3) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor, intenta más tarde." },
+        { status: 429 },
+      );
+    }
+
+    // Generar token único en texto plano para el correo y hasheado para BD
+    const { token, hashedToken } = generateResetToken();
+    const expiresAt = new Date(Date.now() + 3600000); // 1 hora de validez
+
+    // Guardar token hasheado en BD
     await prisma.passwordResetToken.create({
       data: {
-        token: resetToken,
+        token: hashedToken,
         userId: user.id,
         expiresAt,
       },
     });
 
-    // Enviar correo
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${resetToken}`;
+    // Enviar correo con el token en texto plano
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
 
     const emailResult = await sendPasswordResetEmail({
       to: user.email,
@@ -72,8 +82,6 @@ export async function POST(request: Request) {
 
     if (!emailResult.success) {
       console.error("Fallo al enviar correo de recuperación a", user.email);
-      // Podríamos retornar 500, pero seguimos devolviendo 200 por el principio de no enumeración
-      // O podemos manejarlo internamente. De momento, solo lo registramos.
     }
 
     return NextResponse.json(
@@ -110,11 +118,12 @@ export async function POST(request: Request) {
  *
  * Lógica Clave:
  * - Evita enumeración de emails retornando el mismo mensaje siempre (200 OK).
- * - Invalida tokens previos no usados para mayor seguridad.
+ * - Rate Limiting consultando en BD los tokens recientes (máximo 3 en 5 min).
+ * - Los tokens se almacenan en la BD hasheados para evitar extracción de BD.
  * - Los tokens expiran en 1 hora.
  *
  * Dependencias Externas:
  * - Resend/React Email para el envío.
- * - crypto (nativo) para la generación de tokens aleatorios seguros.
+ * - crypto (vía lib/auth/password) para generación y hasheo de tokens.
  *
  */
