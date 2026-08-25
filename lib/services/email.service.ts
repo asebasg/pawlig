@@ -57,12 +57,12 @@ const sendEmail = async (payload: CreateEmailOptions) => {
     const resend = getResendClient();
     const { data, error } = await resend.emails.send(payload);
     if (error) {
-      console.error("Error sending email:", error);
+      console.error("[ERROR] Fallo en la API de Resend al enviar email:", JSON.stringify(error, null, 2));
       return { success: false, error };
     }
     return { success: true, data };
   } catch (error) {
-    console.error("Exception in sendEmail:", error);
+    console.error("[ERROR] Excepción inesperada en sendEmail (Resend/API):", error);
     return { success: false, error };
   }
 };
