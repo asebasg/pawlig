@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -40,19 +40,19 @@ vi.mock("@/components/ui/select", () => {
   const CONTENT_TAG = "@@SelectContent";
   const ITEM_TAG = "@@SelectItem";
 
-  function SelectTrigger({ id }: { id?: string; children?: R.ReactNode }) {
+  function SelectTrigger({ id }: { id?: string; children?: React.ReactNode }) {
     void id;
     return null;
   }
   (SelectTrigger as unknown as Record<string, unknown>).__tag = TRIGGER_TAG;
 
-  function SelectContent({ children }: { children?: R.ReactNode }) {
+  function SelectContent({ children }: { children?: React.ReactNode }) {
     void children;
     return null;
   }
   (SelectContent as unknown as Record<string, unknown>).__tag = CONTENT_TAG;
 
-  function SelectItem({ value, children }: { value: string; children?: R.ReactNode }) {
+  function SelectItem({ value, children }: { value: string; children?: React.ReactNode }) {
     void value; void children;
     return null;
   }
@@ -62,15 +62,15 @@ vi.mock("@/components/ui/select", () => {
     onValueChange: (value: string) => void;
     defaultValue: string;
     disabled?: boolean;
-    children: R.ReactNode;
+    children: React.ReactNode;
   }) {
     let triggerId: string | undefined;
-    const options: Array<{ value: string; label: R.ReactNode }> = [];
+    const options: Array<{ value: string; label: React.ReactNode }> = [];
 
     R.Children.forEach(children, (child) => {
       if (!R.isValidElement(child)) return;
       const childType = child.type as { __tag?: string };
-      const childProps = child.props as { id?: string; children?: R.ReactNode };
+      const childProps = child.props as { id?: string; children?: React.ReactNode };
 
       if (childType.__tag === TRIGGER_TAG) {
         triggerId = childProps.id;
@@ -80,7 +80,7 @@ vi.mock("@/components/ui/select", () => {
           if (!R.isValidElement(item)) return;
           const itemType = item.type as { __tag?: string };
           if (itemType.__tag === ITEM_TAG) {
-            const itemProps = item.props as { value: string; children?: R.ReactNode };
+            const itemProps = item.props as { value: string; children?: React.ReactNode };
             options.push({ value: itemProps.value, label: itemProps.children });
           }
         });

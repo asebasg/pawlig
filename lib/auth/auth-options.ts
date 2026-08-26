@@ -32,14 +32,19 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
+        // Hash dummy con coste 12 para mitigar ataques de temporización (Timing Attacks)
+        const DUMMY_BCRYPT_HASH = "$2a$12$e86gX8pBL5FzQyWvhc9Hdu5aI7B7y3L2lZ1s9J2n9K8v9x2m4z3q";
+
         if (!user) {
-          throw new Error('Correo electrónico o contraseña incorrectos');
+          await verifyPassword(credentials.password, DUMMY_BCRYPT_HASH);
+          throw new Error("Correo electrónico o contraseña incorrectos");
         }
 
         //  Verificar si el usuario está bloqueado (HU-014)
         if (!user.isActive) {
+          await verifyPassword(credentials.password, user.password || DUMMY_BCRYPT_HASH);
           throw new Error(
-            'Ha ocurrido un error inesperado al intentar iniciar sesion, si sigue persistiendo contacta a soporte'
+            "Ha ocurrido un error inesperado al intentar iniciar sesion, si sigue persistiendo contacta a soporte"
           );
         }
 
@@ -50,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isValidPassword) {
-          throw new Error('Correo electrónico o contraseña incorrectos');
+          throw new Error("Correo electrónico o contraseña incorrectos");
         }
 
         //  Retornar datos del usuario (sin password)

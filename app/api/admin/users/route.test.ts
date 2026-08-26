@@ -42,6 +42,7 @@ const adminSession: Session = {
     email: "admin@pawlig.com",
     role: UserRole.ADMIN,
     isActive: true,
+    tokenVersion: 0,
   },
 };
 

@@ -70,7 +70,7 @@ export default function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordM
         return;
       }
 
-      toast.success("Enlace de recuperación enviado exitosamente.");
+      toast.success("Solicitud procesada. Revisa tu bandeja si el correo está registrado.");
       setIsSuccess(true);
     } catch (error) {
       console.error(error);
@@ -156,11 +156,13 @@ export default function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordM
                           <CheckCircle2 className="w-8 h-8 text-green-600" />
                         </motion.div>
                         <h3 className="text-xl font-semibold tracking-tight text-gray-900">
-                          Solicitud enviada
+                          Solicitud procesada
                         </h3>
                         <p className="text-gray-500 text-sm leading-relaxed">
-                          Si la cuenta existe, recibirás un correo en los próximos minutos con las
-                          instrucciones para restablecer tu contraseña.
+                          Si la dirección ingresada coincide con una cuenta activa, recibirás un correo en los próximos minutos con las instrucciones para restablecer tu contraseña.
+                        </p>
+                        <p className="text-gray-400 text-xs leading-relaxed">
+                          Si no lo recibes, comprueba tu carpeta de spam o verifica haber escrito el correo correctamente.
                         </p>
                         <motion.button
                           onClick={handleClose}

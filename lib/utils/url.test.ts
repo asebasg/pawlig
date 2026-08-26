@@ -53,12 +53,12 @@ describe("getAppBaseUrl", () => {
   });
 
   it("debería devolver localhost en entorno de desarrollo local", () => {
-    process.env.NODE_ENV = "development";
+    (process.env as Record<string, string | undefined>).NODE_ENV = "development";
     expect(getAppBaseUrl()).toBe("http://localhost:3000");
   });
 
   it("debería devolver el dominio de producción como último fallback", () => {
-    process.env.NODE_ENV = "production";
+    (process.env as Record<string, string | undefined>).NODE_ENV = "production";
     expect(getAppBaseUrl()).toBe("https://pawlig.lat");
   });
 
