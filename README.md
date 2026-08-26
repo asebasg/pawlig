@@ -14,7 +14,7 @@
 **Proyecto de Grado** <br>
 📍 Medellín, Antioquia, Colombia
 <br>
-_Versión v1.15.1 | Última actualización: 11 de agosto de 2026_
+_Versión v1.15.1 | Última actualización: 23 de agosto de 2026_
 
 </div>
 
@@ -58,6 +58,7 @@ El ecosistema cuenta con módulos robustos y funcionalidades altamente técnicas
 *   **Auditoría Polimórfica (`SystemAuditLog`):** Registro inmutable y atómico que almacena logs de auditoría para múltiples tipos de recursos, guardando el estado previo y posterior (`before` / `after`) en formato de texto JSON para garantizar trazabilidad técnica total.
 *   **Seguridad de Archivos:** Endpoint seguro `/api/cloudinary/delete` que verifica la propiedad de las imágenes a través de control de accesos basado en roles (RBAC), evitando que usuarios no autorizados eliminen recursos multimedia en Cloudinary.
 *   **Desbloqueo de Reenvíos:** Permite a los albergues o vendedores cuyas solicitudes fueron denegadas previamente corregir la información y reenviar un nuevo formulario, manteniendo el bloqueo únicamente cuando existe una postulación activa en estado `PENDING` o `APPROVED`.
+*   **Limpieza de Imágenes Huérfanas y Eliminación en Cascada (v1.15.1):** Borrado automatizado en cascada de imágenes de Cloudinary al dar de baja mascotas de la plataforma. Validaciones estrictas previenen la eliminación de mascotas con solicitudes de adopción pendientes, garantizando la integridad de la base de datos.
 
 ### 📧 Motor de Notificaciones Transaccionales (Resend & React Email)
 *   **11 Plantillas de Correo Responsive:** Diseños responsivos construidos con React Email bajo el branding oficial de PawLig, cubriendo flujos transaccionales críticos:

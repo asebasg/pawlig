@@ -1,9 +1,9 @@
 # Registro de Actualizaciones Mensuales — PawLig (2026)
 
 **Documento Legal y de Referencia**  
-Período: 01-01-2026 a 11-08-2026  
+Período: 01-01-2026 a 23-08-2026
 Versión actual: v1.15.1  
-Fecha de última actualización: 11 de agosto de 2026
+Fecha de última actualización: 23 de agosto de 2026
 
 ---
 
@@ -97,6 +97,7 @@ Fecha de última actualización: 11 de agosto de 2026
 | Mes | Implementaciones | Notas Adicionales |
 |-----|------------------|-------------------|
 | **Agosto** | **Eliminación Segura de Imágenes y Limpieza (v1.15.1)** — Implementación del borrado en cascada automatizado para eliminar imágenes asociadas en Cloudinary tras dar de baja mascotas de la plataforma. | Servicio `deletePet` en `pet.service.ts` para orquestar la eliminación atómica y el borrado seguro en Cloudinary. Validación para prevenir la eliminación de mascotas con solicitudes de adopción pendientes. Commit: `047b34a` (11-08-2026). |
+| | **Orquestación de Almacenamiento Cloudinary, Guardia de Imágenes Huérfanas y Controles de Seguridad en Moderación Hub (v1.15.1)** — Funciones de mantenimiento de Cloudinary para evitar imágenes huérfanas y añadir validación de seguridad de roles en el moderador. | Endpoints: POST `/api/cloudinary/cleanup`. Nuevos componentes de modales de desconexión e hooks como `useUnsavedImagesGuard`. Adición de validación para prevenir borrar imágenes de manera insegura. Commit: `e3451bd` (21-08-2026). |
 
 ---
 
@@ -194,11 +195,11 @@ Este documento sirve como registro oficial de cambios y es de carácter **legal 
 - **Desarrollador Principal**: @asebasg
 - **Colaboradores**: @sospigz, google-labs-jules[bot]
 
-**Período de Documentación**: 01-01-2026 a 11-08-2026
+**Período de Documentación**: 01-01-2026 a 23-08-2026
 **Próxima Revisión Recomendada**: 31-08-2026
 
 ---
 
-**Documento Generado**: 2026-08-11
+**Documento Generado**: 2026-08-23
 **Versión**: 1.2
 **Estado**: ✅ Completado y Verificado
