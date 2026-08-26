@@ -61,13 +61,16 @@ export default function ForgotPasswordModal({ isOpen, onClose }: ForgotPasswordM
 
       if (!response.ok) {
         if (response.status === 429) {
-          toast.error("Has superado el límite de intentos. Por favor, espera 5 minutos.");
+          toast.error("Has superado el límite de 3 intentos. Por favor, espera 5 minutos.");
           return;
         }
         const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.error || "Error al procesar la solicitud");
+        const errorMessage = errorData?.error || "Error al procesar la solicitud";
+        toast.error(errorMessage);
+        return;
       }
 
+      toast.success("Enlace de recuperación enviado exitosamente.");
       setIsSuccess(true);
     } catch (error) {
       console.error(error);

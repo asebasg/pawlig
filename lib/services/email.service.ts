@@ -68,28 +68,28 @@ const sendEmail = async (payload: CreateEmailOptions) => {
     const resend = getResendClient();
     const recipient = Array.isArray(payload.to) ? payload.to[0] : payload.to;
     const maskedRecipient = maskEmail(String(recipient));
-    console.log("[EMAIL] Enviando a:", maskedRecipient, "desde:", payload.from);
 
-    const { data, error } = await resend.emails.send(payload);
+    if (process.env.NODE_ENV === "development") {
+      console.log("[EMAIL] Enviando a:", maskedRecipient, "desde:", payload.from);
+    }
+
+    const { error } = await resend.emails.send(payload);
 
     if (error) {
+      // Registra código y mensaje técnico sin exponer PII ni datos sensibles
+      console.error(`[EMAIL] ❌ Error de Resend (${error.name || "API_ERROR"}):`, error.message);
       if (process.env.NODE_ENV === "development") {
-        console.error("[EMAIL] ❌ Error:", JSON.stringify(error, null, 2));
-      } else {
-        console.error("[EMAIL] ❌ Error al enviar correo.");
+        console.error("[EMAIL] Detalle técnico:", JSON.stringify(error, null, 2));
       }
-      return { success: false, error };
+      return { success: false, error: { message: error.message, name: error.name } };
     }
 
-    console.log("[EMAIL] ✅ Enviado:", data?.id);
-    return { success: true, data };
+    console.log("[EMAIL] ✅ Enviado con éxito a:", maskedRecipient);
+    return { success: true };
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("[EMAIL] ❌ Exception:", error);
-    } else {
-      console.error("[EMAIL] ❌ Excepción al intentar enviar correo.");
-    }
-    return { success: false, error };
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+    console.error("[EMAIL] ❌ Excepción al intentar enviar correo:", errorMessage);
+    return { success: false, error: { message: errorMessage } };
   }
 };
 

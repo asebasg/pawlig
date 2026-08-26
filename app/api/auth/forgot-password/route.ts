@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/utils/db";
 import { sendPasswordResetEmail } from "@/lib/services/email.service";
+import { getAppBaseUrl } from "@/lib/utils/url";
 import { z } from "zod";
 import { generateResetToken } from "@/lib/auth/password";
 import { forgotPasswordSchema } from "@/lib/validations/user.schema";
@@ -100,12 +101,9 @@ export async function POST(request: Request) {
     ]);
 
     // Enviar correo con el token en texto plano
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+    const resetUrl = `${getAppBaseUrl()}/reset-password?token=${token}`;
 
     const maskedEmail = maskEmail(user.email ?? "");
-    if (process.env.NODE_ENV === "development") {
-      console.log(`[DEBUG] Iniciando envío de email a: ${maskedEmail}`);
-    }
 
     const emailResult = await sendPasswordResetEmail({
       to: user.email,
@@ -114,9 +112,12 @@ export async function POST(request: Request) {
     });
 
     if (!emailResult.success) {
-      console.error(`[ERROR] Fallo al enviar correo de recuperación a: ${maskedEmail}`);
-    } else if (process.env.NODE_ENV === "development") {
-      console.log(`[DEBUG] Correo de recuperación enviado exitosamente a: ${maskedEmail}`);
+      console.error(
+        `[ERROR] Fallo al enviar correo de recuperación a ${maskedEmail}. Causa:`,
+        emailResult.error,
+      );
+    } else {
+      console.log(`[AUTH] Correo de recuperación enviado satisfactoriamente a: ${maskedEmail}`);
     }
 
     return NextResponse.json(
@@ -137,7 +138,12 @@ export async function POST(request: Request) {
     if (process.env.NODE_ENV === "development") {
       console.error("Error en forgot-password:", error);
     } else {
-      console.error("Error interno en el proceso de recuperación de contraseña.");
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error("[forgot-password] Error interno en recuperación de contraseña.", {
+        name: err.name,
+        message: err.message,
+        cause: err.cause instanceof Error ? err.cause.message : String(err.cause ?? ""),
+      });
     }
     return NextResponse.json(
       { error: "Error interno del servidor" },
