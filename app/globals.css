@@ -55,16 +55,33 @@ input::-ms-clear {
     scrollbar-width: none;
   }
 
-  /* Blur de página completa al abrir modales (incluye navbar) */
-  /* Aplicar blur a todos los elementos semánticos principales pero excluir el portal */
-  body.modal-open > *:not([data-portal-wrapper]):not(script):not(style) {
+  /* Blur de página completa al abrir modales (navbar, contenido y footer) */
+  /* Aplicar blur únicamente a las secciones de la página, excluyendo portales, modales, toasts y extensiones */
+  body.modal-open > nav,
+  body.modal-open > header,
+  body.modal-open > main,
+  body.modal-open > footer,
+  body.modal-open > div:not([data-portal-wrapper]):not([data-sonner-toaster]):not([data-overlay-container]) {
     filter: blur(6px);
     transition: filter 0.25s ease;
   }
 
+  /* Garantizar que el contenedor de toasts nunca tenga blur y quede por encima de los modales */
+  [data-sonner-toaster],
+  section[aria-label="Notifications"] {
+    filter: none !important;
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    body.modal-open > *:not([data-portal-wrapper]):not(script):not(style) {
+    body.modal-open > nav,
+    body.modal-open > header,
+    body.modal-open > main,
+    body.modal-open > footer,
+    body.modal-open > div:not([data-portal-wrapper]):not([data-sonner-toaster]):not([data-overlay-container]) {
       transition: none;
     }
   }
 }
+
