@@ -33,13 +33,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          throw new Error('Usuario no encontrado');
+          throw new Error('Correo electrónico o contraseña incorrectos');
         }
 
         //  Verificar si el usuario está bloqueado (HU-014)
         if (!user.isActive) {
           throw new Error(
-            `Cuenta bloqueada. Contacta con soporte para más información`
+            'Ha ocurrido un error inesperado al intentar iniciar sesion, si sigue persistiendo contacta a soporte'
           );
         }
 
@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isValidPassword) {
-          throw new Error('Contraseña incorrecta');
+          throw new Error('Correo electrónico o contraseña incorrectos');
         }
 
         //  Retornar datos del usuario (sin password)

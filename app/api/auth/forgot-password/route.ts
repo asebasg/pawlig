@@ -24,59 +24,53 @@ function maskEmail(email: string): string {
   return `${visible}***@${domain}`;
 }
 
-// Global rate limit map for forgot password requests by email
-// Stores { email: { count, firstRequest } }
-const globalForRateLimit = globalThis as unknown as {
-  forgotPasswordRateLimitMap?: Map<string, { count: number; firstRequest: number }>;
-};
-const rateLimitMap = globalForRateLimit.forgotPasswordRateLimitMap || new Map();
-if (process.env.NODE_ENV !== "production") {
-  globalForRateLimit.forgotPasswordRateLimitMap = rateLimitMap;
-}
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email } = forgotPasswordSchema.parse(body);
 
-    // Rate Limiting en memoria: 3 solicitudes en los últimos 5 minutos por email
-    const now = Date.now();
-    const windowMs = 5 * 60 * 1000;
-    
-    const rateLimit = rateLimitMap.get(email) || { count: 0, firstRequest: now };
-    
-    if (now - rateLimit.firstRequest > windowMs) {
-      rateLimit.count = 1;
-      rateLimit.firstRequest = now;
-    } else {
-      rateLimit.count++;
-    }
-    
-    rateLimitMap.set(email, rateLimit);
-    
-    if (rateLimit.count > 3) {
-      return NextResponse.json(
-        { error: "Demasiadas solicitudes. Por favor, intenta más tarde." },
-        { status: 429 },
-      );
-    }
-
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
+    // Prevención de enumeración de emails: Retornar 200 OK aunque el usuario no exista
     if (!user) {
       return NextResponse.json(
-        { error: "Usuario no encontrado" },
-        { status: 404 },
+        {
+          message:
+            "Si el correo está registrado, recibirás un enlace de recuperación pronto.",
+        },
+        { status: 200 },
       );
     }
 
-    // Si el usuario está inactivo (bloqueado)
+    // Si el usuario está inactivo (bloqueado), podríamos retornar error o simular éxito.
+    // Por seguridad y para no confirmar existencia, simularemos éxito también.
     if (!user.isActive) {
       return NextResponse.json(
-        { error: "Cuenta bloqueada. Contacta con soporte para más información" },
-        { status: 403 },
+        {
+          message:
+            "Si el correo está registrado, recibirás un enlace de recuperación pronto.",
+        },
+        { status: 200 },
+      );
+    }
+
+    // Rate Limiting en BD: Consultar tokens generados en los últimos 5 minutos
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const recentTokensCount = await prisma.passwordResetToken.count({
+      where: {
+        userId: user.id,
+        createdAt: {
+          gte: fiveMinutesAgo,
+        },
+      },
+    });
+
+    if (recentTokensCount >= 3) {
+      return NextResponse.json(
+        { error: "Demasiadas solicitudes. Por favor, espera 5 minutos antes de volver a intentar." },
+        { status: 429 },
       );
     }
 
@@ -162,7 +156,8 @@ export async function POST(request: Request) {
  * y enviando un correo al usuario.
  *
  * Lógica Clave:
- * - Evita enumeración de emails retornando el mismo mensaje siempre (200 OK).
+ * - Evita enumeración de emails retornando el mismo mensaje siempre (200 OK)
+ *   incluso si el usuario no existe o está inactivo.
  * - Rate Limiting consultando en BD los tokens recientes (máximo 3 en 5 min).
  * - Los tokens se almacenan en la BD hasheados para evitar extracción de BD.
  * - Los tokens expiran en 1 hora.
