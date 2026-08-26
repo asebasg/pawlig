@@ -23,8 +23,16 @@ export function getAppBaseUrl(): string {
     return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
   }
 
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  if (
+    process.env.VERCEL_ENV === "production" ||
+    process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+  ) {
+    return "https://pawlig.lat";
+  }
+
+  const vercelUrl = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_VERCEL_URL;
+  if (vercelUrl) {
+    return `https://${vercelUrl}`;
   }
 
   if (process.env.NODE_ENV === "development") {

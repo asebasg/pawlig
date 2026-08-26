@@ -8,23 +8,20 @@ import { getAppBaseUrl } from "./url";
 
 describe("getAppBaseUrl", () => {
   // Guarda y restaura las variables de entorno entre tests para evitar contaminación
-  let originalNextPublicAppUrl: string | undefined;
-  let originalVercelUrl: string | undefined;
-  let originalNodeEnv: string | undefined;
+  let originalEnv: NodeJS.ProcessEnv;
 
   beforeEach(() => {
-    originalNextPublicAppUrl = process.env.NEXT_PUBLIC_APP_URL;
-    originalVercelUrl = process.env.VERCEL_URL;
-    originalNodeEnv = process.env.NODE_ENV;
+    originalEnv = { ...process.env };
 
     delete process.env.NEXT_PUBLIC_APP_URL;
     delete process.env.VERCEL_URL;
+    delete process.env.VERCEL_ENV;
+    delete process.env.NEXT_PUBLIC_VERCEL_ENV;
+    delete process.env.NEXT_PUBLIC_VERCEL_URL;
   });
 
   afterEach(() => {
-    process.env.NEXT_PUBLIC_APP_URL = originalNextPublicAppUrl;
-    process.env.VERCEL_URL = originalVercelUrl;
-    process.env.NODE_ENV = originalNodeEnv;
+    process.env = originalEnv;
   });
 
   it("debería usar NEXT_PUBLIC_APP_URL si está definida", () => {
@@ -37,12 +34,25 @@ describe("getAppBaseUrl", () => {
     expect(getAppBaseUrl()).toBe("https://pawlig.lat");
   });
 
-  it("debería usar VERCEL_URL con prefijo https:// cuando NEXT_PUBLIC_APP_URL no está definida", () => {
+  it("debería usar pawlig.lat cuando VERCEL_ENV es production (ignorando VERCEL_URL)", () => {
+    process.env.VERCEL_ENV = "production";
+    process.env.VERCEL_URL = "pawlig-git-feature.vercel.app";
+    expect(getAppBaseUrl()).toBe("https://pawlig.lat");
+  });
+
+  it("debería usar VERCEL_URL con prefijo https:// cuando VERCEL_ENV es preview", () => {
+    process.env.VERCEL_ENV = "preview";
     process.env.VERCEL_URL = "pawlig-git-feature-abc123.vercel.app";
     expect(getAppBaseUrl()).toBe("https://pawlig-git-feature-abc123.vercel.app");
   });
 
-  it("debería devolver localhost en entorno de desarrollo sin otras variables", () => {
+  it("debería usar NEXT_PUBLIC_VERCEL_URL como alternativa a VERCEL_URL en preview", () => {
+    process.env.VERCEL_ENV = "preview";
+    process.env.NEXT_PUBLIC_VERCEL_URL = "pawlig-git-feature-nextpublic.vercel.app";
+    expect(getAppBaseUrl()).toBe("https://pawlig-git-feature-nextpublic.vercel.app");
+  });
+
+  it("debería devolver localhost en entorno de desarrollo local", () => {
     process.env.NODE_ENV = "development";
     expect(getAppBaseUrl()).toBe("http://localhost:3000");
   });
@@ -52,9 +62,9 @@ describe("getAppBaseUrl", () => {
     expect(getAppBaseUrl()).toBe("https://pawlig.lat");
   });
 
-  it("NEXT_PUBLIC_APP_URL tiene prioridad sobre VERCEL_URL", () => {
-    process.env.NEXT_PUBLIC_APP_URL = "https://pawlig.lat";
-    process.env.VERCEL_URL = "pawlig-git-feature-abc123.vercel.app";
-    expect(getAppBaseUrl()).toBe("https://pawlig.lat");
+  it("NEXT_PUBLIC_APP_URL tiene máxima prioridad incluso sobre VERCEL_ENV=production", () => {
+    process.env.NEXT_PUBLIC_APP_URL = "http://localhost:3001";
+    process.env.VERCEL_ENV = "production";
+    expect(getAppBaseUrl()).toBe("http://localhost:3001");
   });
 });
