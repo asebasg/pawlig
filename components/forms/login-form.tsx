@@ -69,18 +69,7 @@ export default function LoginForm() {
             });
 
             if (result?.error) {
-                // Mensajes de error específicos
-                let errorMessage = "Email o contraseña incorrectos";
-                if (result.error.includes("Cuenta bloqueada")) {
-                    errorMessage = result.error;
-                } else if (result.error.includes("Usuario no encontrado")) {
-                    errorMessage = "El usuario no existe";
-                } else if (result.error.includes("Contraseña incorrecta")) {
-                    errorMessage = "Contraseña incorrecta";
-                } else {
-                    errorMessage = result.error;
-                }
-                toast.error(errorMessage);
+                toast.error(result.error);
                 return;
             }
 
