@@ -140,10 +140,15 @@ describe("ProductForm - Upload de Imágenes (Fase 7)", () => {
     const validFile = new File(["valid image"], "buena.png", { type: "image/png" });
     const invalidFile = new File(["a".repeat(6 * 1024 * 1024)], "pesada.png", { type: "image/png" });
 
-    await user.upload(fileInput, [validFile, invalidFile]);
+    // Usar fireEvent.change para simular la carga simultánea de archivos
+    fireEvent.change(fileInput, {
+      target: { files: [validFile, invalidFile] },
+    });
 
     // Debe haber llamado a fetch solo una vez (para la buena)
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
 
     // Debe mostrar preview solo para la válida
     await waitFor(() => {
@@ -172,7 +177,9 @@ describe("ProductForm - Upload de Imágenes (Fase 7)", () => {
     const fileInput = screen.getByLabelText(/Subir imágenes/i) as HTMLInputElement;
     const file = new File(["image data"], "fail.png", { type: "image/png" });
 
-    await user.upload(fileInput, file);
+    fireEvent.change(fileInput, {
+      target: { files: [file] },
+    });
 
     // Debería marcarse en estado de error en la UI
     await waitFor(() => {
