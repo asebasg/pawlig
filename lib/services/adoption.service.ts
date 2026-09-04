@@ -128,7 +128,11 @@ export const adoptionService = {
         adopterName: adopter.name,
         petName: pet.name,
         adoptionId: adoption.id,
-      }).catch((e) => console.error("Error enviando correo de nueva adopción:", e));
+      })
+        .then((res) => {
+          if (!res.success) console.error("[ERROR] Fallo al enviar correo de nueva adopción (API/Resend):", res.error);
+        })
+        .catch((e) => console.error("[ERROR] Excepción enviando correo de nueva adopción:", e));
     }
 
     return adoption;
@@ -188,7 +192,11 @@ export const adoptionService = {
         petName: adoption.pet.name,
         shelterName: adoption.pet.shelter.name,
         status: "APPROVED",
-      }).catch((e) => console.error("Error enviando correo de adopción aprobada:", e));
+      })
+        .then((res) => {
+          if (!res.success) console.error("[ERROR] Fallo al enviar correo de adopción aprobada (API/Resend):", res.error);
+        })
+        .catch((e) => console.error("[ERROR] Excepción enviando correo de adopción aprobada:", e));
 
       return updatedAdoption;
     }
@@ -207,7 +215,11 @@ export const adoptionService = {
       shelterName: adoption.pet.shelter.name,
       status: "REJECTED",
       rejectionReason: rejectionReason || "No cumple con los requisitos del albergue.",
-    }).catch((e) => console.error("Error enviando correo de adopción rechazada:", e));
+    })
+      .then((res) => {
+        if (!res.success) console.error("[ERROR] Fallo al enviar correo de adopción rechazada (API/Resend):", res.error);
+      })
+      .catch((e) => console.error("[ERROR] Excepción enviando correo de adopción rechazada:", e));
 
     return updatedAdoption;
   },

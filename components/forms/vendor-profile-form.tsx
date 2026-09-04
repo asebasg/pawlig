@@ -1,13 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { vendorProfileUpdateSchema, VendorProfileUpdateInput } from '@/lib/validations/user.schema';
-import { Municipality } from '@prisma/client';
-import Image from 'next/image';
-import { AddressInput } from '@/components/ui/address-input';
+import {
+  vendorProfileUpdateSchema,
+  VendorProfileUpdateInput,
+} from "@/lib/validations/user.schema";
+import { Municipality } from "@prisma/client";
+import Image from "next/image";
+import { AddressInput } from "@/components/ui/address-input";
+
+import { AiRefineButton } from "@/components/ui/ai-refine-button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { motion, useReducedMotion } from "framer-motion";
+import { springMomentum, reducedMotionTransition } from "@/lib/utils/motion";
 
 /**
  * GET /api/vendors/profile
@@ -30,47 +38,52 @@ interface VendorProfileResponse {
 }
 
 export default function VendorProfileForm() {
+  const shouldReduceMotion = useReducedMotion();
+  const transitionMomentum = shouldReduceMotion ? reducedMotionTransition : springMomentum;
+
   const {
     register,
     handleSubmit,
     control,
     reset,
     watch,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<VendorProfileUpdateInput>({
     resolver: zodResolver(vendorProfileUpdateSchema),
     defaultValues: {
-      businessName: '',
-      businessPhone: '',
-      description: '',
-      logo: '',
+      businessName: "",
+      businessPhone: "",
+      description: "",
+      logo: "",
       municipality: Municipality.MEDELLIN,
-      address: '',
-    }
+      address: "",
+    },
   });
 
-  const logoUrl = watch('logo'); // Observar cambios en el logo para preview
+  const logoUrl = watch("logo"); // Observar cambios en el logo para preview
 
   // Cargar datos actuales del vendedor al montar
   useEffect(() => {
     const fetchVendorProfile = async () => {
       try {
-        const response = await fetch('/api/vendor/profile');
+        const response = await fetch("/api/vendor/profile");
         if (!response.ok) throw new Error("Error al cargar perfil");
 
         const data: VendorProfileResponse = await response.json();
 
         reset({
           businessName: data.businessName,
-          businessPhone: data.businessPhone || '',
-          description: data.description || '',
-          logo: data.logo || '',
+          businessPhone: data.businessPhone || "",
+          description: data.description || "",
+          logo: data.logo || "",
           municipality: data.municipality,
           address: data.address,
         });
       } catch (error) {
-        console.error('Error fetching vendor profile:', error);
-        toast.error('Error al cargar la información del negocio');
+        console.error("Error fetching vendor profile:", error);
+        toast.error("Error al cargar la información del negocio");
       }
     };
 
@@ -84,40 +97,45 @@ export default function VendorProfileForm() {
     const toastId = toast.loading("Guardando cambios...");
 
     try {
-      const response = await fetch('/api/vendor/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/vendor/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 403) {
-          throw new Error('Tu cuenta está bloqueada.');
+          throw new Error("Tu cuenta está bloqueada.");
         }
-        throw new Error(errorData.error || 'Error al actualizar perfil');
+        throw new Error(errorData.error || "Error al actualizar perfil");
       }
 
       toast.success("¡Perfil actualizado exitosamente!", {
         id: toastId,
-        description: "Los cambios se aplicarán inmediatamente en tu tienda."
+        description: "Los cambios se aplicarán inmediatamente en tu tienda.",
       });
-
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Error inesperado", { id: toastId });
+      toast.error(error instanceof Error ? error.message : "Error inesperado", {
+        id: toastId,
+      });
     }
   };
 
   const municipalities = Object.values(Municipality);
 
+  {/* // TODO: Implementar el sistema de fotos de perfil a la app */}
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
       {/* Header */}
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Editar Perfil de Negocio</h2>
-        <p className="text-gray-600 mt-2">
+      <div className="mb-10">
+        <h2 className="text-[28px] leading-tight font-semibold tracking-tight text-gray-900">Editar Perfil de Negocio</h2>
+        <p className="text-gray-500 mt-2 text-[15px] leading-relaxed">
           Actualiza la información de tu negocio. Los cambios se aplicarán inmediatamente.
+        </p>
+        <p className="text-sm text-gray-500 mt-4">
+          Los campos marcados con * son obligatorios.
         </p>
       </div>
 
@@ -127,14 +145,17 @@ export default function VendorProfileForm() {
           Nombre del Negocio *
         </label>
         <input
-          {...register('businessName')}
+          {...register("businessName")}
           type="text"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessName ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.businessName ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
           placeholder="Ej: PawShop Premium"
         />
         {errors.businessName && (
-          <p className="text-red-600 text-sm mt-1">{errors.businessName.message}</p>
+          <p className="text-red-600 text-sm mt-1">
+            {errors.businessName.message}
+          </p>
         )}
       </div>
 
@@ -144,14 +165,19 @@ export default function VendorProfileForm() {
           Teléfono del Negocio
         </label>
         <input
-          {...register('businessPhone')}
+          {...register("businessPhone")}
           type="tel"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.businessPhone ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.businessPhone
+              ? "border-red-500 bg-red-50"
+              : "border-gray-300"
+          }`}
           placeholder="Ej: 3001234567"
         />
         {errors.businessPhone && (
-          <p className="text-red-600 text-sm mt-1">{errors.businessPhone.message}</p>
+          <p className="text-red-600 text-sm mt-1">
+            {errors.businessPhone.message}
+          </p>
         )}
       </div>
 
@@ -160,15 +186,30 @@ export default function VendorProfileForm() {
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Descripción del Negocio
         </label>
-        <input
-          {...register('description')}
-          type="text"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.description ? 'border-red-500 bg-red-50' : 'border-gray-300'
+        <div className="relative">
+          <textarea
+            {...register("description")}
+            className={`text-black w-full px-4 py-2 pb-12 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+              errors.description
+                ? "border-red-500 bg-red-50"
+                : "border-gray-300"
             }`}
-          placeholder="Describe tu negocio, productos especiales, misión, etc."
-        />
+            placeholder="Describe tu negocio, productos especiales, misión, etc."
+            rows={4}
+          />
+          <AiRefineButton
+            currentText={getValues("description") ?? ""}
+            onRefined={(text) =>
+              setValue("description", text, { shouldValidate: true })
+            }
+            type="vendor"
+            minLength={20}
+          />
+        </div>
         {errors.description && (
-          <p className="text-red-600 text-sm mt-1">{errors.description.message}</p>
+          <p className="text-red-600 text-sm mt-1">
+            {errors.description.message}
+          </p>
         )}
       </div>
 
@@ -178,10 +219,11 @@ export default function VendorProfileForm() {
           URL del Logo
         </label>
         <input
-          {...register('logo')}
+          {...register("logo")}
           type="url"
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.logo ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
+          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${
+            errors.logo ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
           placeholder="https://ejemplo.com/logo.png"
         />
         {errors.logo && (
@@ -194,9 +236,11 @@ export default function VendorProfileForm() {
               <Image
                 src={logoUrl}
                 alt="Logo preview"
+                width={64}
+                height={64}
                 className="h-16 w-16 object-cover rounded border"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
+                  (e.target as HTMLImageElement).style.display = "none";
                 }}
               />
             </div>
@@ -209,18 +253,28 @@ export default function VendorProfileForm() {
         <label className="block text-sm font-semibold text-gray-700 mb-2">
           Municipio *
         </label>
-        <select
-          {...register('municipality')}
-          className={`text-black w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition ${errors.municipality ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-        >
-          <option value="">Selecciona un municipio</option>
-          {municipalities.map((municipality) => (
-            <option key={municipality} value={municipality}>
-              {municipality.replace(/_/g, ' ')}
-            </option>
-          ))}
-        </select>
+        <Controller
+          control={control}
+          name="municipality"
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger
+                className={`text-black w-full border focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all ${
+                  errors.municipality ? "border-red-500 bg-red-50" : "border-gray-300"
+                }`}
+              >
+                <SelectValue placeholder="Selecciona un municipio" />
+              </SelectTrigger>
+              <SelectContent>
+                {municipalities.map((municipality) => (
+                  <SelectItem key={municipality} value={municipality}>
+                    {municipality.replace(/_/g, " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.municipality && (
           <p className="text-red-600 text-sm mt-1">{errors.municipality.message}</p>
         )}
@@ -248,26 +302,16 @@ export default function VendorProfileForm() {
 
       {/* Botones de acción */}
       <div className="flex gap-4 pt-6">
-        <button
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          transition={transitionMomentum}
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 bg-purple-600 text-white py-3 rounded-xl font-semibold hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm"
         >
-          {isSubmitting ? 'Guardando cambios...' : 'Guardar Cambios'}
-        </button>
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-        >
-          Cancelar
-        </button>
+          {isSubmitting ? "Guardando cambios..." : "Guardar Cambios"}
+        </motion.button>
       </div>
-
-      {/* Nota de campos obligatorios */}
-      <p className="text-sm text-gray-500 mt-4">
-        Los campos marcados con * son obligatorios.
-      </p>
     </form>
   );
 }
@@ -278,15 +322,15 @@ export default function VendorProfileForm() {
  * ---------------------------------------------------------------------------
  *
  * Descripción General:
- * Este formulario le otorga al vendedor el control sobre su presencia de marca en 
+ * Este formulario le otorga al vendedor el control sobre su presencia de marca en
  * la plataforma, permitiendo la personalización de su perfil comercial.
  *
  * Lógica Clave:
- * - Vista Previa Reactiva: Utiliza el hook watch() para renderizar el logo en tiempo 
+ * - Vista Previa Reactiva: Utiliza el hook watch() para renderizar el logo en tiempo
  *   real mientras el usuario edita la URL, mejorando la confianza en el cambio.
- * - Integración con la Tienda: Los cambios persisten en el perfil del Vendedor y se 
+ * - Integración con la Tienda: Los cambios persisten en el perfil del Vendedor y se
  *   reflejan en todas sus publicaciones de productos.
- * - Validación de URL: Zod asegura que el campo de logo sea una URL válida para 
+ * - Validación de URL: Zod asegura que el campo de logo sea una URL válida para
  *   prevenir errores de carga de imágenes en el catálogo.
  *
  * Dependencias Externas:

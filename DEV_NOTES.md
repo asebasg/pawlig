@@ -18,7 +18,7 @@ Implementación del borrado automático en cascada de imágenes de Cloudinary tr
 
 ---
 
-## Alta Manual de Usuarios y Auditoría Administrativa (v1.8.0 — 21-06-2026)
+## Alta Manual de Usuarios y Auditoría Administrativa (v1.15.0 — 07-08-2026)
 
 Implementación del flujo de alta manual de usuarios para administradores. Permite la creación de cuentas sin inicio de sesión automático y con contraseñas seguras autogeneradas en el servidor, garantizando la trazabilidad de las acciones administrativas mediante el registro automático en el Moderation Hub.
 
@@ -39,6 +39,27 @@ Implementación del flujo de alta manual de usuarios para administradores. Permi
 - **Generación de Contraseña Segura:** La contraseña temporal se genera mediante `crypto.randomBytes(16)` formateada a base64 (removiendo caracteres confusos) y limitándola a 12 caracteres. Posteriormente se hashea utilizando `bcryptjs` con 12 rondas de sal, garantizando el almacenamiento cifrado y seguro de las credenciales.
 - **Auditoría e Integración de IA:** En el formulario, los administradores cuentan con el botón `AiRefineButton` integrado en el campo de justificación. Esto permite refinar y formatear formalmente el texto de justificación utilizando IA (Gemini) antes de enviarlo. El SystemAuditLog registra la acción como `CREATE` bajo la categoría `USER_MANAGEMENT`, guardando los metadatos de IP, User-Agent, y el payload de cambios en los campos `before` (null) y `after` (email y rol creados).
 - **Caché y Revalidación:** Tras un alta exitosa, se invalida el tag de caché `user-detail` (`revalidateTag("user-detail")`) asegurando que los listados y las vistas administrativas se actualicen inmediatamente sin necesidad de recargas manuales de página.
+
+---
+
+## Asistencia Inteligente y Optimización de Red del Carrito (v1.15.0 — 10-07-2026)
+
+Integración de asistencia de IA generativa (Google Gemini) en formularios y decisiones de moderación, flexibilización de requisitos de adopción y optimización del tráfico de red en el módulo del carrito.
+
+**Archivos creados/modificados:**
+
+- `components/ui/ai-refine-button.tsx` — Botón interactivo de refinamiento asistido por IA para campos de texto.
+- `app/api/ai/refine/route.ts` — Endpoint de refinamiento con validación y sanitización estricta de prompts y respuestas.
+- `components/forms/pet-form.tsx` & `components/forms/product-form.tsx` — Integración de refinamiento en descripciones de mascotas y productos.
+- `lib/validations/pet.schema.ts` — Esquema flexibilizado para soportar requisitos de adopción opcionales sin longitud mínima forzada.
+- `lib/hooks/use-cart.ts` & `lib/hooks/use-cart-sync.ts` — Claves SWR condicionales para suspender peticiones y revalidaciones en ausencia de sesión autenticada.
+- `components/layout/floating-cart-button.tsx` — Carga condicionada a la ruta `/productos` para mitigar el polling de fondo.
+
+**Detalles Técnicos:**
+
+- **Asistente IA Multi-propósito y Saneamiento:** El componente `AiRefineButton` interactúa con `/api/ai/refine` enviando el texto actual y el contexto (mascota, producto o justificación de moderación). La API valida exhaustivamente las entradas y limpia la salida generada por Gemini (`gemini-2.5-flash`) antes de retornarla, mitigando inyecciones y asegurando formato pulcro.
+- **Flexibilidad en Requisitos de Adopción:** Se removió la exigencia obligatoria de requisitos en el esquema Zod de mascotas. Si un albergue decide omitir requisitos adicionales, la ficha de adopción informa al usuario de manera clara que no se solicitan condiciones especiales.
+- **Supresión de Peticiones y Polling Innecesario:** Los hooks `useCart` y `useCartSync` implementan el patrón de SWR con claves nulas (`null`) cuando no existe sesión activa (`status !== "authenticated"`). Adicionalmente, el botón flotante del carrito solo activa la sincronización cuando el usuario navega en `/productos`, reduciendo sustancialmente el consumo de recursos y solicitudes HTTP en páginas estáticas.
 
 ---
 

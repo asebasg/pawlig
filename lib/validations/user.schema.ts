@@ -270,6 +270,46 @@ export const vendorProfileUpdateSchema = z.object({
     .max(200, "Dirección muy larga"),
 });
 
+//  ========== ESQUEMA DE ACTUALIZACIÓN DE PERFIL DE ALBERGUE ==========
+export const shelterProfileUpdateSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Nombre del albergue requerido")
+    .max(100, "Nombre muy largo"),
+
+  description: z
+    .string()
+    .min(20, "Descripción debe tener al menos 20 caracteres")
+    .max(500, "Descripción muy larga")
+    .optional(),
+
+  municipality: z.nativeEnum(Municipality, {
+    message: "Municipio inválido"
+  }),
+
+  address: z
+    .string()
+    .min(5, "Dirección física del albergue requerida")
+    .max(200, "Dirección muy larga"),
+
+  contactWhatsApp: z
+    .string()
+    .regex(/^\+?[0-9]{10,15}$/, "Número de WhatsApp inválido (debe incluir código de país)")
+    .optional(),
+
+  contactInstagram: z
+    .string()
+    .regex(/^@?[a-zA-Z0-9._]{1,30}$/, "Usuario de Instagram inválido")
+    .optional(),
+})
+.refine(
+  (data) => data.contactWhatsApp || data.contactInstagram,
+  {
+    message: "Debes proporcionar al menos un método de contacto (WhatsApp o Instagram)",
+    path: ["contactWhatsApp"],
+  }
+);
+
 export const roleUpdateSchema = z.object({
   newRole: z.nativeEnum(UserRole, {
     message: "Rol inválido",
@@ -341,14 +381,38 @@ export const createUserByAdminSchema = z
     }
   );
 
+//  ========== ESQUEMA DE RESTABLECIMIENTO DE CONTRASEÑA ==========
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .email("Email inválido")
+    .min(1, "Email es requerido"),
+});
+
+export const resetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(8, "La contraseña debe tener mínimo 8 caracteres")
+    .max(128, "La contraseña es muy larga"),
+  passwordConfirm: z
+    .string()
+    .min(1, "La confirmación de contraseña es requerida"),
+}).refine((data) => data.password === data.passwordConfirm, {
+  message: "Las contraseñas no coinciden",
+  path: ["passwordConfirm"],
+});
+
 //  ========== TIPOS TYPESCRIPT INFERIDOS ==========
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ShelterApplicationInput = z.infer<typeof shelterApplicationSchema>;
 export type VendorApplicationInput = z.infer<typeof vendorApplicationSchema>;
 export type VendorProfileUpdateInput = z.infer<typeof vendorProfileUpdateSchema>;
+export type ShelterProfileUpdateInput = z.infer<typeof shelterProfileUpdateSchema>;
 export type RoleUpdateInput = z.infer<typeof roleUpdateSchema>;
 export type CreateUserByAdminInput = z.infer<typeof createUserByAdminSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 /*
  * ---------------------------------------------------------------------------

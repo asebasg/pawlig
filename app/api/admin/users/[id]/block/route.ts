@@ -161,7 +161,11 @@ export async function PUT(
       userName: targetUser.name,
       action: action,
       reason: action === "BLOCK" ? reason : undefined,
-    }).catch((err) => console.error("Error enviando email de bloqueo:", err));
+    })
+      .then((res) => {
+        if (!res.success) console.error("[ERROR] Fallo al enviar email de estado de bloqueo (API/Resend):", res.error);
+      })
+      .catch((err) => console.error("[ERROR] Excepción enviando email de estado de bloqueo:", err));
 
     return NextResponse.json({
       success: true,

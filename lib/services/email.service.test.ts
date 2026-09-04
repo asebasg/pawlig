@@ -185,4 +185,47 @@ describe("Email Service", () => {
     expect(response.success).toBe(false);
     expect(response.error).toBeDefined();
   });
+
+  describe("getResendClient", () => {
+    const originalEnv = process.env;
+
+    beforeEach(() => {
+      process.env = { ...originalEnv };
+    });
+
+    it("throws error if RESEND_API_KEY is not defined", () => {
+      delete process.env.RESEND_API_KEY;
+      expect(() => emailService.getResendClient()).toThrow(
+        "RESEND_API_KEY no configurada",
+      );
+    });
+
+    it("returns Resend instance if RESEND_API_KEY is defined", () => {
+      process.env.RESEND_API_KEY = "re_test_key";
+      const client = emailService.getResendClient();
+      expect(client).toBeDefined();
+      expect(client.emails).toBeDefined();
+    });
+  });
+
+  describe("getFromEmail", () => {
+    const originalEnv = process.env;
+
+    beforeEach(() => {
+      process.env = { ...originalEnv };
+    });
+
+    it("throws error if EMAIL_FROM is not defined", () => {
+      delete process.env.EMAIL_FROM;
+      expect(() => emailService.getFromEmail()).toThrow(
+        "EMAIL_FROM no está definido. Por favor, defínelo en tu archivo .env.",
+      );
+    });
+
+    it("returns email if EMAIL_FROM is defined", () => {
+      process.env.EMAIL_FROM = "test@pawlig.com";
+      expect(emailService.getFromEmail()).toBe("test@pawlig.com");
+    });
+  });
 });
+

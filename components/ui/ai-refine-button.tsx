@@ -8,7 +8,7 @@ import { toast } from "sonner";
 interface AiRefineButtonProps {
   currentText: string;
   onRefined: (text: string) => void;
-  type?: "pet" | "product" | "moderation";
+  type?: "pet" | "product" | "moderation" | "shelter" | "vendor";
   disabled?: boolean;
   className?: string;
   minLength?: number;

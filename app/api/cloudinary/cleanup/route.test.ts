@@ -3,6 +3,8 @@ import { POST } from "./route";
 import { getServerSession } from "next-auth";
 import { deleteImagesFromCloudinary } from "@/lib/cloudinary";
 
+import { NextRequest } from "next/server";
+
 // Mocks
 vi.mock("next-auth", () => ({
   getServerSession: vi.fn(),
@@ -14,7 +16,7 @@ vi.mock("@/lib/cloudinary", () => ({
 
 // Generador de Requests mock
 function createMockRequest(body: unknown) {
-  return new Request("http://localhost/api/cloudinary/cleanup", {
+  return new NextRequest("http://localhost/api/cloudinary/cleanup", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

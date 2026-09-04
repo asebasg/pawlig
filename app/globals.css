@@ -54,4 +54,57 @@ input::-ms-clear {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Blur de página completa al abrir modales (navbar, contenido y footer) */
+  /* Aplicar blur únicamente al fondo estructural de la página, sin afectar portales, modales ni extensiones */
+  body.modal-open > nav,
+  body.modal-open > header,
+  body.modal-open > main,
+  body.modal-open > footer {
+    filter: blur(6px);
+    transition: filter 0.25s ease;
+  }
+
+  /* Garantizar que los portales, modales, toasts y extensiones de navegador nunca tengan blur */
+  [data-portal-wrapper],
+  [data-sonner-toaster],
+  section[aria-label="Notifications"],
+  protonpass-root,
+  [id*="protonpass"],
+  [class*="protonpass"],
+  [id*="bitwarden"],
+  [class*="bitwarden"],
+  [id*="1password"],
+  [class*="1password"],
+  [id*="lastpass"],
+  [class*="lastpass"],
+  [id*="dashlane"],
+  [class*="dashlane"],
+  [id*="keeper"],
+  [class*="keeper"],
+  [id*="nordpass"],
+  [class*="nordpass"],
+  [id*="chrome-extension"],
+  div[data-protonpass-root],
+  div[data-bitwarden-root],
+  div[data-1password-root] {
+    filter: none !important;
+  }
+
+  /* El contenedor de toasts debe quedar siempre accesible e interactuable */
+  [data-sonner-toaster],
+  section[aria-label="Notifications"] {
+    z-index: 99999 !important;
+    pointer-events: auto !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.modal-open > nav,
+    body.modal-open > header,
+    body.modal-open > main,
+    body.modal-open > footer {
+      transition: none;
+    }
+  }
 }
+

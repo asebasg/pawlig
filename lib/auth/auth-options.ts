@@ -32,14 +32,19 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
+        // Hash dummy con coste 12 para mitigar ataques de temporización (Timing Attacks)
+        const DUMMY_BCRYPT_HASH = "$2a$12$e86gX8pBL5FzQyWvhc9Hdu5aI7B7y3L2lZ1s9J2n9K8v9x2m4z3q";
+
         if (!user) {
-          throw new Error('Usuario no encontrado');
+          await verifyPassword(credentials.password, DUMMY_BCRYPT_HASH);
+          throw new Error("Correo electrónico o contraseña incorrectos");
         }
 
         //  Verificar si el usuario está bloqueado (HU-014)
         if (!user.isActive) {
+          await verifyPassword(credentials.password, user.password || DUMMY_BCRYPT_HASH);
           throw new Error(
-            `Cuenta bloqueada. Contacta con soporte para más información`
+            "Ha ocurrido un error inesperado al intentar iniciar sesion, si sigue persistiendo contacta a soporte"
           );
         }
 
@@ -50,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isValidPassword) {
-          throw new Error('Contraseña incorrecta');
+          throw new Error("Correo electrónico o contraseña incorrectos");
         }
 
         //  Retornar datos del usuario (sin password)
@@ -62,32 +67,48 @@ export const authOptions: NextAuthOptions = {
           isActive: user.isActive,
           vendorId: user.vendor?.id,
           shelterId: user.shelter?.id,
+          tokenVersion: user.tokenVersion,
         };
       },
     }),
   ],
 
   callbacks: {
-    //  Callback JWT: agregar role e isActive al token
+    //  Callback JWT: agregar role e isActive al token y validar tokenVersion
     async jwt({ token, user }) {
       if (user) {
+        // Ejecución en el primer inicio de sesión
         token.id = user.id;
         token.role = user.role;
         token.isActive = user.isActive;
         token.vendorId = user.vendorId;
         token.shelterId = user.shelterId;
+        token.tokenVersion = user.tokenVersion;
+      } else if (token.id) {
+        // Ejecución en validaciones subsecuentes: comprobamos si el tokenVersion o estado cambió
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { tokenVersion: true, isActive: true },
+        });
+
+        if (!dbUser || !dbUser.isActive || dbUser.tokenVersion !== token.tokenVersion) {
+          // Si el usuario fue borrado, bloqueado o la contraseña cambió (tokenVersion distinto),
+          // forzamos el cierre de sesión retornando un token vacío que invalidará la sesión.
+          return {};
+        }
       }
       return token;
     },
 
     //  Callback Session: pasar datos del token a la sesión del cliente
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.isActive = token.isActive as boolean;
-        session.user.vendorId = token.vendorId as string | null | undefined;
-        session.user.shelterId = token.shelterId as string | null | undefined;
+      if (session.user && token.id) {
+        session.user.id = token.id;
+        session.user.role = token.role ?? "";
+        session.user.isActive = token.isActive ?? false;
+        session.user.vendorId = token.vendorId;
+        session.user.shelterId = token.shelterId;
+        session.user.tokenVersion = token.tokenVersion ?? 0;
       }
       return session;
     },
