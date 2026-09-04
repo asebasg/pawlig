@@ -1,0 +1,17 @@
+--- lib/constants.ts
++++ lib/constants.ts
+@@ -107,13 +107,13 @@
+     { label: "Nosotros", href: "/nosotros" },
+     { label: "Reportar Problema", href: "/issues/new/choose" },
+   ],
+-  // TODO: Crear una página de recursos adicionales (anidado en GitHub Pages)
+   resources: [
+     { label: "Guía de Adopción", href: "/guia-adopcion" },
+     { label: "Cuidado de Mascotas", href: "/cuidado" },
+     { label: "Manual del Usuario", href: "/guide" },
+     { label: "Términos y Condiciones", href: "/terms" },
+     { label: "Política de Privacidad", href: "/privacy" },
+     { label: "Notas de Lanzamiento", href: "/changelog" },
++    { label: "Recursos Adicionales", href: "/recursos" },
+   ],
+   social: [

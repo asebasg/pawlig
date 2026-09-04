@@ -107,6 +107,7 @@ export const FOOTER_LINKS = {
     { label: "Nosotros", href: "/nosotros" },
     { label: "Reportar Problema", href: "/issues/new/choose" },
   ],
+  // TODO: Crear una página de recursos adicionales (anidado en GitHub Pages)
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
@@ -114,7 +115,6 @@ export const FOOTER_LINKS = {
     { label: "Términos y Condiciones", href: "/terms" },
     { label: "Política de Privacidad", href: "/privacy" },
     { label: "Notas de Lanzamiento", href: "/changelog" },
-    { label: "Recursos Adicionales", href: "/recursos" },
   ],
   social: [
     {
@@ -220,6 +220,3 @@ export const AVAILABLE_DOCS: DocMetadata[] = [
   { slug: "casos-de-prueba",         title: "Casos de Prueba",           filePath: "13_Casos_de_Prueba.md",         category: "testing" },
   { slug: "manual-del-usuario",      title: "Manual del Usuario",        filePath: "14_Manual_del_Usuario.md",      category: "final" },
 ];
-
-
-
