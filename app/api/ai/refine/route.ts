@@ -71,6 +71,25 @@ export async function POST(request: Request) {
         4. Honestidad: No inventes hechos, acciones ni detalles que no estén presentes en el texto original.
         5. Formato: Genera únicamente la entrada del registro según la estructura solicitada, sin introducciones, explicaciones ni texto adicional.
     `;
+  } else if (type === "shelter") {
+    promptContext = `
+    Actúa como un experto en relaciones públicas y redacción para ONGs. Tu objetivo es transformar la descripción del albergue de mascotas proporcionada en un texto inspirador, claro y que transmita confianza.
+
+    Sigue estas directrices:
+    1. Tono: Conmovedor, profesional, transparente y esperanzador.
+    2. Estructura: Destaca la misión, el impacto y cómo ayudan a los animales.
+    3. Cierre: Invita al usuario a apoyar o conocer más.
+    4. Claridad: Formato fácil de leer.
+    `;
+  } else if (type === "vendor") {
+    promptContext = `
+    Actúa como un experto copywriter de negocios e-commerce. Tu objetivo es transformar la descripción del negocio proporcionada en un texto atractivo, claro y orientado a generar confianza en los compradores.
+
+    Sigue estas directrices:
+    1. Tono: Profesional, seguro y atractivo.
+    2. Estructura: Resalta la calidad de los productos, la experiencia y el compromiso con los clientes (y sus mascotas).
+    3. Cierre: Invita a explorar el catálogo.
+    `;
   } else {
     // Por defecto, el tipo es 'pet'
     promptContext = `

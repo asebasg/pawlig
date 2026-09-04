@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { getServerSession, type Session } from "next-auth";
-import { Municipality, UserRole } from "@prisma/client";
+import { Municipality, UserRole, User } from "@prisma/client";
 import { prisma } from "@/lib/utils/db";
 import { generateTempPassword, hashPassword } from "@/lib/auth/password";
 import { createUserByAdmin } from "@/lib/services/user.service";
@@ -41,6 +41,8 @@ const adminSession: Session = {
     id: "admin-1",
     email: "admin@pawlig.com",
     role: UserRole.ADMIN,
+    isActive: true,
+    tokenVersion: 0,
   },
 };
 
@@ -109,14 +111,14 @@ describe("POST /api/admin/users", () => {
 
   it("distingue cuentas activas duplicadas de cuentas bloqueadas", async () => {
     vi.mocked(getServerSession).mockResolvedValue(adminSession);
-    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ isActive: true });
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ isActive: true } as unknown as User);
 
     const duplicateResponse = await POST(createRequest(validPayload));
 
     expect(duplicateResponse.status).toBe(409);
     await expect(duplicateResponse.json()).resolves.toMatchObject({ code: "EMAIL_ALREADY_EXISTS" });
 
-    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ isActive: false });
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({ isActive: false } as unknown as User);
     const blockedResponse = await POST(createRequest(validPayload));
 
     expect(blockedResponse.status).toBe(409);
@@ -129,7 +131,7 @@ describe("POST /api/admin/users", () => {
       email: validPayload.email,
       name: validPayload.name,
       role: UserRole.ADOPTER,
-    };
+    } as unknown as User;
     vi.mocked(getServerSession).mockResolvedValue(adminSession);
     vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
     vi.mocked(generateTempPassword).mockReturnValue("Temporal@123");

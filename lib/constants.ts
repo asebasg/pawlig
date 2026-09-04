@@ -62,7 +62,7 @@ export const PUBLIC_LINKS = [
 export const USER_MENU_OPTIONS = {
   ADOPTER: [
     { label: "Dashboard", href: "/user", icon: "LayoutDashboard" },
-    { label: "Mi Perfil", href: "/user/profile", icon: "User" },
+    { label: "Mi Perfil", href: "/profile", icon: "User" },
     {
       label: "Solicitar Albergue",
       href: "/user/request-shelter",
@@ -72,18 +72,18 @@ export const USER_MENU_OPTIONS = {
   ],
   SHELTER: [
     { label: "Métricas", href: "/shelter/metrics", icon: "TrendingUp" },
-    { label: "Mi Perfil", href: "/shelter/profile", icon: "User" },
+    { label: "Mi Perfil", href: "/profile", icon: "User" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
   ],
   VENDOR: [
     { label: "Métricas", href: "/vendor/metrics", icon: "TrendingUp" },
-    { label: "Mi Perfil", href: "/vendor/profile", icon: "User" },
+    { label: "Mi Perfil", href: "/profile", icon: "User" },
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
   ],
   ADMIN: [
-    { label: "Mi Perfil", href: "/admin/profile", icon: "User" },
+    { label: "Mi Perfil", href: "/profile", icon: "User" },
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
@@ -107,7 +107,6 @@ export const FOOTER_LINKS = {
     { label: "Nosotros", href: "/nosotros" },
     { label: "Reportar Problema", href: "/issues/new/choose" },
   ],
-  // TODO: Crear una página de recursos adicionales (anidado en GitHub Pages)
   resources: [
     { label: "Guía de Adopción", href: "/guia-adopcion" },
     { label: "Cuidado de Mascotas", href: "/cuidado" },
@@ -115,6 +114,7 @@ export const FOOTER_LINKS = {
     { label: "Términos y Condiciones", href: "/terms" },
     { label: "Política de Privacidad", href: "/privacy" },
     { label: "Notas de Lanzamiento", href: "/changelog" },
+    { label: "Recursos Adicionales", href: "/recursos" },
   ],
   social: [
     {

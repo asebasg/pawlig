@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  const lastUpdate = "11 de agosto de 2026";
+  const lastUpdate = "21 de agosto de 2026";
 
   const versions = [
     {
@@ -54,6 +54,32 @@ export default function ChangelogPage() {
           description:
             "Se implementó un bloqueo preventivo que impide la eliminación física de mascotas que posean solicitudes de adopción registradas, garantizando la consistencia de los datos.",
           icon: <Shield size={20} className="text-white" />,
+          bg: "bg-indigo-600",
+        },
+      ],
+    },
+    {
+      version: "v1.15.0",
+      date: "07 de Agosto, 2026",
+      title: "Alta Administrativa de Usuarios y Trazabilidad",
+      description:
+        "Implementamos el módulo de creación de usuarios para administradores con contraseñas seguras temporales, justificación condicional de roles y auditoría asistida por IA.",
+      color: "from-blue-600 to-indigo-700",
+      updates: [
+        {
+          type: "added",
+          title: "Creación Manual de Cuentas",
+          description:
+            "Los administradores pueden registrar usuarios directamente desde /admin/moderation/users/create con asignación de roles y generación segura de credenciales temporales.",
+          icon: <Rocket size={20} className="text-white" />,
+          bg: "bg-blue-600",
+        },
+        {
+          type: "improved",
+          title: "Auditoría Transaccional y Asistencia IA",
+          description:
+            "Registro atómico en SystemAuditLog con justificación asistida por el botón inteligente AiRefineButton para roles administrativos y comerciales.",
+          icon: <Sparkles size={20} className="text-white" />,
           bg: "bg-indigo-600",
         },
       ],
