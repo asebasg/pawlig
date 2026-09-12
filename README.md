@@ -260,19 +260,18 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 │   │   └── unauthorized/     # Redirección en caso de accesos denegados por rol
 │   ├── (dashboard)/          # Paneles privados con accesos de seguridad por Rol
 │   │   ├── admin/            # Panel administrativo: métricas, desarrollo y Moderation Hub
+│   │   │   ├── dev/          # Entorno de pruebas y desarrollo interno
 │   │   │   ├── metrics/      # Dashboard analítico global para administradores
-│   │   │   ├── moderation/   # Moderation Hub: gestión unificada de albergues, vendedores, usuarios y logs
-│   │   │   │   ├── audit/    # Interfaz interactiva y paginada para visualización de SystemAuditLog
-│   │   │   │   ├── shelters/ # Moderación de solicitudes de verificación de albergues
-│   │   │   │   ├── users/    # Administración de bloqueos, roles y alta manual de usuarios
-│   │   │   │   └── vendors/  # Moderación de solicitudes de verificación de tiendas
-│   │   │   └── profile/      # Perfil de cuenta del Administrador
+│   │   │   └── moderation/   # Moderation Hub: gestión unificada de albergues, vendedores, usuarios y logs
+│   │   │       ├── audit/    # Interfaz interactiva y paginada para visualización de SystemAuditLog
+│   │   │       ├── shelters/ # Moderación de solicitudes de verificación de albergues
+│   │   │       ├── users/    # Administración de bloqueos, roles y alta manual de usuarios
+│   │   │       └── vendors/  # Moderación de solicitudes de verificación de tiendas
 │   │   ├── shelter/          # Panel de albergues autorizados
 │   │   │   ├── adoptions/    # Visualización y control de postulaciones de adopción recibidas
 │   │   │   ├── metrics/      # Métricas analíticas de adopción de mascotas
 │   │   │   └── pets/         # Gestión CRUD de fichas de mascotas disponibles
 │   │   ├── user/             # Panel del Adoptante autenticado
-│   │   │   ├── profile/      # Datos personales e historial del usuario
 │   │   │   ├── request-shelter/  # Formulario de postulación de nuevo albergue
 │   │   │   └── request-vendor/   # Formulario de postulación de nueva tienda/comercio
 │   │   └── vendor/           # Panel comercial para vendedores autorizados
@@ -290,6 +289,8 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 │   │   ├── productos/        # Marketplace público: galería de productos de bienestar animal
 │   │   └── terms/            # Términos y condiciones legales del servicio
 │   ├── api/                  # Endpoints RESTful de backend de la plataforma (Next.js API Routes)
+│   ├── fonts/                # Fuentes locales tipográficas optimizadas
+│   ├── profile/              # Perfil unificado de usuario
 │   ├── globals.css           # Estilos CSS globales y variables de tema de Tailwind
 │   ├── layout.tsx            # Diseño estructural maestro compartido del ecosistema
 │   ├── not-found.tsx         # Página de error 404 con el simulador de física orbital Kepler 2D
@@ -306,6 +307,7 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 │   ├── map/                  # Componentes de interacción geoespacial con Leaflet
 │   ├── modals/               # Modales de confirmación de formularios e interacciones
 │   ├── products/             # Componentes de pago y simulación de transacciones
+│   ├── profile/              # Perfil de usuario unificado
 │   ├── shelter/              # Componentes de visualización para refugios
 │   ├── shelters/             # Buscador de albergues y filtros municipales
 │   ├── ui/                   # Bloques visuales fundamentales (Button, Card, PasswordInput, AiRefineButton)
@@ -313,6 +315,7 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 ├── lib/                      # Núcleo de la Lógica de Negocio y Utilidades de Backend
 │   ├── auth/                 # Configuración de NextAuth, control de accesos y roles (RBAC)
 │   ├── email/                # Lógica del motor de correos y 11 plantillas interactivas de React Email
+│   ├── hooks/                # Hooks personalizados de React (useCart, useCartSync, etc.)
 │   ├── services/             # Capa lógica de servicios CRUD y de negocio (Pet, Product, Moderation, User)
 │   ├── utils/                # Utilidades multiplataforma (generadores de reportes PDF, Excel y CSV)
 │   └── validations/          # Esquemas de Zod para validaciones estrictamente declarativas
