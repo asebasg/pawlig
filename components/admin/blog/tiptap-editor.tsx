@@ -22,6 +22,7 @@ export function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       }),
     ],
     content: value,
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },

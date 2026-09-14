@@ -58,6 +58,18 @@ export async function PUT(
     const body = await request.json();
     const validatedData = updateBlogSchema.parse(body);
 
+    if (validatedData.content) {
+      const sanitizeHtml = (await import("sanitize-html")).default;
+      validatedData.content = sanitizeHtml(validatedData.content, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
+        allowedAttributes: {
+          ...sanitizeHtml.defaults.allowedAttributes,
+          'img': [ 'src', 'alt' ],
+          'a': [ 'href', 'name', 'target' ]
+        }
+      });
+    }
+
     const updatedPost = await updateBlogPost(
       params.id, 
       validatedData,

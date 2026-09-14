@@ -62,8 +62,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = createBlogSchema.parse(body);
 
+    const sanitizeHtml = (await import("sanitize-html")).default;
+    const sanitizedContent = sanitizeHtml(validatedData.content, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ]),
+      allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        'img': [ 'src', 'alt' ],
+        'a': [ 'href', 'name', 'target' ]
+      }
+    });
+
     const post = await createBlogPost(
-      validatedData, 
+      { ...validatedData, content: sanitizedContent }, 
       session.user.id,
       session.user.email ?? "admin@pawlig.com",
       request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip") ?? undefined,
