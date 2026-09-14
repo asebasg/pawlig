@@ -75,7 +75,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <h3 className="text-2xl font-bold mb-6">Artículos Relacionados</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedPosts.map((relatedPost) => (
-              <BlogCard key={relatedPost.id} post={relatedPost as any} />
+              <BlogCard key={relatedPost.id} post={relatedPost} />
             ))}
           </div>
         </div>

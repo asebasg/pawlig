@@ -4,6 +4,25 @@
 
 ---
 
+## 13-09-2026 - Módulo de Blog y Artículos (v1.16.0)
+
+**Tipo:** Feature
+**Scope:** blog, admin, public, tiptap
+
+### Descripción
+
+Implementación de un sistema de gestión de blogs y artículos, incluyendo un editor rico basado en TipTap, sanitización de contenido en servidor para prevenir XSS, contador de vistas por cliente y una galería pública de artículos.
+
+### Cambios
+
+- **Módulo de Blog**: Creación del modelo `BlogPost` para manejar los artículos.
+- **TipTap**: Integración del editor de texto enriquecido `@tiptap/react` en el panel de administración.
+- **Sanitización**: Uso de `sanitize-html` en el servidor para limpiar el contenido HTML antes de persistirlo.
+- **Galería Pública**: Rutas públicas `/blog` y `/blog/[slug]` para listado y lectura, con contador de visitas y detección única por cliente mediante cookies.
+- **Rutas Admin**: Gestión de artículos bajo `/admin/blog` con soporte de creación, edición, borrado, y filtrado.
+
+---
+
 ## 11-08-2026 - Eliminación Segura de Imágenes y Limpieza Automatizada (v1.15.1)
 
 **Commit:** `047b34a`

@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { BlogPost } from "@prisma/client";
 import { z } from "zod";
 import { TipTapEditor } from "./tiptap-editor";
-import { createBlogSchema, CreateBlogInput } from "@/lib/validations/blog.schema";
+import { createBlogSchema } from "@/lib/validations/blog.schema";
 
 interface BlogFormProps {
   initialData?: BlogPost;
@@ -25,7 +25,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
       excerpt: initialData?.excerpt || "",
       content: initialData?.content || "",
       featured: initialData?.featured || "",
-      status: (initialData?.status as any) || "DRAFT",
+      status: initialData?.status || "DRAFT",
       tags: initialData?.tags || [],
     },
   });

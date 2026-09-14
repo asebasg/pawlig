@@ -361,6 +361,27 @@ model SystemAuditLog {
   @@index([resourceType, resourceId])
   @@index([createdAt])
 }
+
+model BlogPost {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String         @unique
+  excerpt     String
+  content     String         // HTML sanitizado
+  featured    String?        // URL Cloudinary de imagen de portada
+  status      BlogPostStatus @default(DRAFT)
+  author      User           @relation(fields: [authorId], references: [id])
+  authorId    String         @db.ObjectId
+  tags        String[]
+  views       Int            @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([status])
+  @@index([publishedAt])
+  @@index([createdAt])
+}
 ```
 
 ---
@@ -405,6 +426,21 @@ El servicio `deletePet` (`lib/services/pet.service.ts`) encapsula las operacione
    - Si existen postulaciones pendientes o activas, se arroja un error descriptivo impidiendo la eliminación y manteniendo la consistencia de la base de datos.
 2. **Borrado en Cascada en Cloudinary**:
    - Tras remover exitosamente la entidad en Prisma, se extraen los identificadores multimedia y se ejecuta `deleteImagesFromCloudinary(imageUrls)` de forma asíncrona no bloqueante, purgando recursos huérfanos del bucket de Cloudinary.
+
+---
+
+### 1.3 Módulo de Blog y Artículos (v1.16.0)
+
+El nuevo módulo de blog gestiona la publicación y consumo de artículos en la plataforma, implementando componentes ricos y contadores seguros:
+
+1. **Gestión de Artículos (Admin)**:
+   - Rutas protegidas bajo `/admin/blog` para listar, crear y editar posts.
+   - El editor utiliza `@tiptap/react` como editor de texto enriquecido.
+   - Sanitización de HTML en el servidor usando `sanitize-html` en el endpoint `/api/admin/blog` para proteger contra XSS.
+2. **Consumo Público**:
+   - Galería pública en `/blog` para listado de artículos publicados.
+   - Lectura de artículo individual en `/blog/[slug]`.
+   - Sistema de visitas único por cliente utilizando cookies para evitar conteos repetidos.
 
 ---
 

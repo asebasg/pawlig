@@ -1,5 +1,24 @@
 # Detalles Técnicos de Desarrollo — PawLig
 
+## Sistema de Blog, Editor Rico y Sanitización en Servidor (v1.16.0 — 13-09-2026)
+
+Implementación del módulo de blog y artículos para la plataforma, incorporando un editor de texto enriquecido, protección contra vulnerabilidades XSS y analíticas de visitas únicas por cliente.
+
+**Archivos creados/modificados:**
+
+- `components/admin/blog/tiptap-editor.tsx` — Componente cliente que envuelve `@tiptap/react` para la edición de contenido rico.
+- `app/api/admin/blog/route.ts` — Endpoint protegido de creación de artículos donde se implementa la sanitización de HTML.
+- `app/api/blog/[slug]/view/route.ts` — Endpoint para el registro de vistas únicas.
+- `prisma/schema.prisma` — Creación del modelo `BlogPost`.
+
+**Detalles Técnicos:**
+
+- **Elección de `@tiptap/react` vs Quill**: Se optó por TipTap frente a Quill debido a su arquitectura headless. TipTap permite tener control absoluto sobre el renderizado, la UI y los estilos (mediante Tailwind Typography), evitando la inyección de estilos cerrados que Quill suele generar y facilitando su integración nativa y responsiva con React y Next.js.
+- **Uso de `sanitize-html` en el servidor**: Para prevenir ataques XSS persistentes (Cross-Site Scripting), el contenido HTML generado por el editor en el cliente es filtrado rigurosamente por `sanitize-html` en la ruta de API (`/api/admin/blog`) antes de ser persistido en MongoDB. Esto remueve cualquier etiqueta `<script>`, `<iframe>` u onclick malicioso, garantizando que el uso de `dangerouslySetInnerHTML` en las vistas públicas sea 100% seguro.
+- **Contador de vistas por cliente**: Para evitar la manipulación artificial de las métricas (por ejemplo, recargando repetidamente la página de un artículo), se implementó un sistema de control de visitas mediante cookies. Al leer un post, el endpoint establece una cookie específica por slug (`viewed_blog_[slug]`). Si la cookie está presente en futuras peticiones al mismo artículo, la vista no se vuelve a contabilizar, asegurando la precisión analítica basada en sesiones de lectura reales.
+
+---
+
 ## Eliminación Segura de Imágenes y Limpieza Automatizada (v1.15.1 — 11-08-2026)
 
 Implementación del borrado automático en cascada de imágenes de Cloudinary tras dar de baja o eliminar una mascota en la plataforma, y refuerzo del servicio de persistencia.
