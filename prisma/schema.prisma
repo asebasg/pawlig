@@ -42,6 +42,7 @@ enum AuditCategory {
   USER_MANAGEMENT
   SHELTER_MODERATION
   VENDOR_MODERATION
+  BLOG_MANAGEMENT
 }
 
 enum PetStatus {
@@ -71,6 +72,12 @@ enum ProductCategory {
   HIGIENE
   MEDICAMENTOS
   OTROS
+}
+
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 // ===== MODELS =====
@@ -107,6 +114,7 @@ model User {
   favorites           Favorite[]
   passwordResetTokens PasswordResetToken[]
   cartItems           CartItem[]
+  blogPosts           BlogPost[]
 
   // Auditoría (HU-014) - Migrado a SystemAuditLog
   // (Las relaciones directas a logs se manejan manualmente dado el polimorfismo de SystemAuditLog)
@@ -350,5 +358,26 @@ model SystemAuditLog {
   @@index([category])
   @@index([action])
   @@index([resourceType, resourceId])
+  @@index([createdAt])
+}
+
+model BlogPost {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String         @unique
+  excerpt     String
+  content     String         // HTML sanitizado
+  featured    String?        // URL Cloudinary de imagen de portada
+  status      BlogPostStatus @default(DRAFT)
+  author      User           @relation(fields: [authorId], references: [id])
+  authorId    String         @db.ObjectId
+  tags        String[]
+  views       Int            @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([status])
+  @@index([publishedAt])
   @@index([createdAt])
 }
