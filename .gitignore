@@ -42,9 +42,4 @@ next-env.d.ts
 
 # editor
 /.vscode/
-/.qodo/
 -p/
-/.agent/
-/.agents/
-/.antigravitycli/
-/.amazonq/
