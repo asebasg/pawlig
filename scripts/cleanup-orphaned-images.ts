@@ -15,10 +15,19 @@ const prisma = new PrismaClient();
 const HOURS_CUTOFF = 48;
 const MAX_RESULTS_PER_PAGE = 500; // Máximo permitido por Cloudinary Search API
 
+interface CloudinaryResource {
+  public_id: string;
+}
+
+interface CloudinarySearchResponse {
+  resources?: CloudinaryResource[];
+  next_cursor?: string;
+}
+
 async function main() {
-  console.log(`\n=============================================`);
-  console.log(`🧹 Iniciando limpieza de imágenes huérfanas...`);
-  console.log(`=============================================\n`);
+  console.log("\n=============================================");
+  console.log("🧹 Iniciando limpieza de imágenes huérfanas...");
+  console.log("=============================================\n");
 
   try {
     // 1. Calcular fecha de corte (hace 48 horas)
@@ -29,9 +38,9 @@ async function main() {
     console.log(`Buscando imágenes subidas antes de: ${cutoffIso}`);
 
     // 2. Obtener todas las imágenes referenciadas en la base de datos
-    console.log(`\nConsultando base de datos para construir lista de imágenes activas...`);
+    console.log("\nConsultando base de datos para construir lista de imágenes activas...");
     
-    // Optimizamos obteniendo solo el campo 'images'
+    // Optimizamos obteniendo solo el campo "images"
     const pets = await prisma.pet.findMany({ select: { images: true } });
     const products = await prisma.product.findMany({ select: { images: true } });
 
@@ -59,14 +68,14 @@ async function main() {
     let totalScanned = 0;
     const toDelete: string[] = [];
 
-    console.log(`\nConsultando API de Cloudinary...`);
+    console.log("\nConsultando API de Cloudinary...");
     
     // Expresión de búsqueda: imágenes antiguas
     // (Filtramos manualmente las carpetas de PawLig por si la cuenta tiene otros proyectos)
     const searchExpr = `resource_type:image AND uploaded_at<${cutoffIso}`;
 
     do {
-      const result: any = await cloudinary.search
+      const result: CloudinarySearchResponse = await cloudinary.search
         .expression(searchExpr)
         .max_results(MAX_RESULTS_PER_PAGE)
         .next_cursor(nextCursor)
@@ -97,7 +106,7 @@ async function main() {
 
     // 4. Eliminar las imágenes huérfanas encontradas
     if (toDelete.length === 0) {
-      console.log(`\n✨ No se encontraron imágenes huérfanas. ¡Todo limpio!`);
+      console.log("\n✨ No se encontraron imágenes huérfanas. ¡Todo limpio!");
     } else {
       console.log(`\n🗑️ Se detectaron ${toDelete.length} imágenes huérfanas. Procediendo a eliminar...`);
       
@@ -113,19 +122,19 @@ async function main() {
           deletedCount += batch.length;
           console.log(`   Progreso: ${deletedCount}/${toDelete.length} eliminadas...`);
         } catch (error) {
-          console.error(`   ❌ Error eliminando lote:`, error);
+          console.error("   ❌ Error eliminando lote:", error);
           errorCount += batch.length;
         }
       }
       
-      console.log(`\nResumen de limpieza:`);
+      console.log("\nResumen de limpieza:");
       console.log(`✅ Eliminadas: ${deletedCount}`);
       if (errorCount > 0) console.log(`❌ Errores: ${errorCount}`);
     }
 
-    console.log(`\n=============================================`);
+    console.log("\n=============================================");
     console.log("✅ Script de limpieza completado");
-    console.log(`=============================================\n`);
+    console.log("=============================================\n");
 
   } catch (error) {
     console.error("\n❌ Error inesperado en el script de limpieza:", error);

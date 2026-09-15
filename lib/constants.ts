@@ -114,7 +114,7 @@ export const FOOTER_LINKS = {
     { label: "Términos y Condiciones", href: "/terms" },
     { label: "Política de Privacidad", href: "/privacy" },
     { label: "Notas de Lanzamiento", href: "/changelog" },
-    { label: "Recursos Adicionales", href: "/recursos" },
+    { label: "Recursos Adicionales", href: "/blog" },
   ],
   social: [
     {

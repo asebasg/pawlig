@@ -1,3 +1,10 @@
+/**
+ * Tests: Integration / API / Blog
+ * Descripción: Pruebas de integración para las rutas de API del blog (admin y públicas).
+ * Requiere: Mocks de next-auth y blogService.
+ * Implementa: HU-Blog
+ */
+
 import { expect, test, describe, vi, beforeEach } from "vitest";
 import { GET as getAdminBlog, POST as postAdminBlog } from "@/app/api/admin/blog/route";
 import { GET as getAdminBlogById, PUT as putAdminBlogById, DELETE as deleteAdminBlogById } from "@/app/api/admin/blog/[id]/route";
@@ -6,6 +13,7 @@ import { GET as getPublicBlog } from "@/app/api/blog/route";
 import { NextRequest } from "next/server";
 import * as blogService from "@/lib/services/blog.service";
 import { getServerSession } from "next-auth";
+import type { Session } from "next-auth";
 
 // Mocks
 vi.mock("next-auth", () => ({
@@ -24,6 +32,47 @@ vi.mock("@/lib/services/blog.service", () => ({
   deleteBlogPost: vi.fn(),
 }));
 
+function createMockSession(role: string, id = "1"): Session {
+  return {
+    user: {
+      id,
+      role,
+      name: "Test User",
+      email: "test@example.com",
+      isActive: true,
+      tokenVersion: 1,
+      vendorId: null,
+      shelterId: null,
+    },
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  };
+}
+
+function createMockBlogPost(
+  overrides: Partial<blogService.BlogPostWithAuthor> = {}
+): blogService.BlogPostWithAuthor {
+  return {
+    id: "p1",
+    title: "Test",
+    slug: "test",
+    excerpt: "Excerpt",
+    content: "Content",
+    featured: null,
+    status: "DRAFT",
+    authorId: "1",
+    tags: ["test"],
+    views: 0,
+    publishedAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    author: {
+      id: "1",
+      name: "Test Author",
+    },
+    ...overrides,
+  };
+}
+
 describe("Blog API Routes", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -39,7 +88,7 @@ describe("Blog API Routes", () => {
     });
 
     test("Debería retornar 403 si el rol no es ADMIN", async () => {
-      vi.mocked(getServerSession).mockResolvedValueOnce({ user: { role: "USER" } } as any);
+      vi.mocked(getServerSession).mockResolvedValueOnce(createMockSession("USER"));
       const request = new NextRequest("http://localhost/api/admin/blog");
       const response = await getAdminBlog(request);
       
@@ -47,11 +96,11 @@ describe("Blog API Routes", () => {
     });
 
     test("Debería retornar 200 y los artículos si es ADMIN", async () => {
-      vi.mocked(getServerSession).mockResolvedValueOnce({ user: { role: "ADMIN" } } as any);
+      vi.mocked(getServerSession).mockResolvedValueOnce(createMockSession("ADMIN"));
       vi.mocked(blogService.getBlogPosts).mockResolvedValueOnce({
         data: [],
-        meta: { total: 0, page: 1, limit: 10, totalPages: 0 }
-      } as any);
+        meta: { total: 0, page: 1, limit: 10, totalPages: 0 },
+      });
 
       const request = new NextRequest("http://localhost/api/admin/blog?page=1&limit=10");
       const response = await getAdminBlog(request);
@@ -68,9 +117,9 @@ describe("Blog API Routes", () => {
 
   describe("POST /api/admin/blog", () => {
     test("Debería crear un artículo exitosamente", async () => {
-      vi.mocked(getServerSession).mockResolvedValueOnce({ user: { id: "1", role: "ADMIN" } } as any);
-      const mockPost = { id: "p1", title: "Test" };
-      vi.mocked(blogService.createBlogPost).mockResolvedValueOnce(mockPost as any);
+      vi.mocked(getServerSession).mockResolvedValueOnce(createMockSession("ADMIN", "1"));
+      const mockPost = createMockBlogPost({ id: "p1", title: "Test" });
+      vi.mocked(blogService.createBlogPost).mockResolvedValueOnce(mockPost);
 
       const request = new NextRequest("http://localhost/api/admin/blog", {
         method: "POST",
@@ -79,8 +128,8 @@ describe("Blog API Routes", () => {
           excerpt: "This is a valid excerpt",
           content: "This is a long content to pass validation.",
           status: "DRAFT",
-          tags: ["test"]
-        })
+          tags: ["test"],
+        }),
       });
       const response = await postAdminBlog(request);
       const json = await response.json();
@@ -93,9 +142,9 @@ describe("Blog API Routes", () => {
 
   describe("GET /api/admin/blog/[id]", () => {
     test("Debería retornar el artículo por ID", async () => {
-      vi.mocked(getServerSession).mockResolvedValueOnce({ user: { role: "ADMIN" } } as any);
-      const mockPost = { id: "1", title: "Test" };
-      vi.mocked(blogService.getBlogPostById).mockResolvedValueOnce(mockPost as any);
+      vi.mocked(getServerSession).mockResolvedValueOnce(createMockSession("ADMIN"));
+      const mockPost = createMockBlogPost({ id: "1", title: "Test" });
+      vi.mocked(blogService.getBlogPostById).mockResolvedValueOnce(mockPost);
 
       const request = new NextRequest("http://localhost/api/admin/blog/1");
       const response = await getAdminBlogById(request, { params: { id: "1" } });
@@ -108,13 +157,13 @@ describe("Blog API Routes", () => {
 
   describe("PUT /api/admin/blog/[id]", () => {
     test("Debería actualizar el artículo por ID", async () => {
-      vi.mocked(getServerSession).mockResolvedValueOnce({ user: { id: "1", role: "ADMIN" } } as any);
-      const mockPost = { id: "1", title: "Test Updated" };
-      vi.mocked(blogService.updateBlogPost).mockResolvedValueOnce(mockPost as any);
+      vi.mocked(getServerSession).mockResolvedValueOnce(createMockSession("ADMIN", "1"));
+      const mockPost = createMockBlogPost({ id: "1", title: "Test Updated" });
+      vi.mocked(blogService.updateBlogPost).mockResolvedValueOnce(mockPost);
 
       const request = new NextRequest("http://localhost/api/admin/blog/1", {
         method: "PUT",
-        body: JSON.stringify({ title: "Test title valid updated" })
+        body: JSON.stringify({ title: "Test title valid updated" }),
       });
       const response = await putAdminBlogById(request, { params: { id: "1" } });
       const json = await response.json();
@@ -126,8 +175,8 @@ describe("Blog API Routes", () => {
 
   describe("DELETE /api/admin/blog/[id]", () => {
     test("Debería eliminar el artículo por ID", async () => {
-      vi.mocked(getServerSession).mockResolvedValueOnce({ user: { id: "1", role: "ADMIN" } } as any);
-      vi.mocked(blogService.deleteBlogPost).mockResolvedValueOnce(undefined as any);
+      vi.mocked(getServerSession).mockResolvedValueOnce(createMockSession("ADMIN", "1"));
+      vi.mocked(blogService.deleteBlogPost).mockResolvedValueOnce(undefined);
 
       const request = new NextRequest("http://localhost/api/admin/blog/1", { method: "DELETE" });
       const response = await deleteAdminBlogById(request, { params: { id: "1" } });
@@ -140,9 +189,13 @@ describe("Blog API Routes", () => {
 
   describe("POST /api/admin/blog/[id]/publish", () => {
     test("Debería cambiar el estado de publicación", async () => {
-      vi.mocked(getServerSession).mockResolvedValueOnce({ user: { id: "1", role: "ADMIN" } } as any);
-      vi.mocked(blogService.getBlogPostById).mockResolvedValueOnce({ id: "1", status: "DRAFT" } as any);
-      vi.mocked(blogService.updateBlogPost).mockResolvedValueOnce({ id: "1", status: "PUBLISHED" } as any);
+      vi.mocked(getServerSession).mockResolvedValueOnce(createMockSession("ADMIN", "1"));
+      vi.mocked(blogService.getBlogPostById).mockResolvedValueOnce(
+        createMockBlogPost({ id: "1", status: "DRAFT" })
+      );
+      vi.mocked(blogService.updateBlogPost).mockResolvedValueOnce(
+        createMockBlogPost({ id: "1", status: "PUBLISHED" })
+      );
 
       const request = new NextRequest("http://localhost/api/admin/blog/1/publish", { method: "POST" });
       const response = await publishAdminBlog(request, { params: { id: "1" } });
@@ -156,9 +209,9 @@ describe("Blog API Routes", () => {
   describe("GET /api/blog", () => {
     test("Debería retornar 200 y llamar a getBlogPosts sin privilegios de admin", async () => {
       vi.mocked(blogService.getBlogPosts).mockResolvedValueOnce({
-        data: [{ id: "1", title: "Publicado" }],
-        meta: { total: 1, page: 1, limit: 10, totalPages: 1 }
-      } as any);
+        data: [createMockBlogPost({ id: "1", title: "Publicado", status: "PUBLISHED" })],
+        meta: { total: 1, page: 1, limit: 10, totalPages: 1 },
+      });
 
       const request = new NextRequest("http://localhost/api/blog");
       const response = await getPublicBlog(request);
@@ -168,7 +221,7 @@ describe("Blog API Routes", () => {
       expect(json.success).toBe(true);
       expect(json.data.length).toBe(1);
       expect(blogService.getBlogPosts).toHaveBeenCalledWith(
-        expect.any(Object),
+        expect.objectContaining({ page: 1, limit: 10 }),
         false
       );
     });

@@ -1,11 +1,36 @@
+import { prisma } from "@/lib/utils/db";
+import { BlogPost, AuditCategory, Prisma } from "@prisma/client";
+import { CreateBlogInput, UpdateBlogInput, BlogQueryInput } from "@/lib/validations/blog.schema";
+
 /**
- * @fileoverview Servicio centralizado para la gestión del módulo de Blog.
- * Proporciona métodos para CRUD de artículos, validación de slugs y paginación.
+ * Servicio: BlogService
+ * Descripción: Servicio para la gestión completa de artículos del blog, generación de slugs únicos, paginación y auditoría.
+ * Requiere: Modelos BlogPost y SystemAuditLog en Prisma Client.
+ * Implementa: HU-Blog
  */
 
-import { prisma } from "@/lib/utils/db";
-import { AuditCategory, Prisma } from "@prisma/client";
-import { CreateBlogInput, UpdateBlogInput, BlogQueryInput } from "@/lib/validations/blog.schema";
+export type BlogPostWithAuthor = Prisma.BlogPostGetPayload<{
+  include: {
+    author: {
+      select: { name: true; id: true };
+    };
+  };
+}>;
+
+export interface PaginatedBlogPosts {
+  data: BlogPostWithAuthor[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export interface BlogTagCount {
+  name: string;
+  count: number;
+}
 
 /**
  * Normaliza y genera un slug único a partir de un texto.
@@ -50,7 +75,7 @@ export async function generateUniqueSlug(title: string): Promise<string> {
  * @param {string} authorEmail Email del creador (para auditoría).
  * @param {string} [ipAddress] IP de origen (opcional).
  * @param {string} [userAgent] User agent de origen (opcional).
- * @returns {Promise<any>} El artículo creado.
+ * @returns {Promise<BlogPost>} El artículo creado.
  */
 export async function createBlogPost(
   data: CreateBlogInput, 
@@ -58,7 +83,7 @@ export async function createBlogPost(
   authorEmail: string,
   ipAddress?: string,
   userAgent?: string
-) {
+): Promise<BlogPost> {
   const slug = await generateUniqueSlug(data.title);
   
   const post = await prisma.$transaction(async (tx) => {
@@ -84,7 +109,7 @@ export async function createBlogPost(
         reason: "Creación de artículo de blog",
         ipAddress,
         userAgent,
-      }
+      },
     });
 
     return createdPost;
@@ -98,9 +123,12 @@ export async function createBlogPost(
  * 
  * @param {BlogQueryInput} query Filtros, paginación y orden.
  * @param {boolean} admin Si es true, retorna artículos sin filtrar por estado (salvo que se pida).
- * @returns {Promise<any>} Objeto con datos y metadata de paginación.
+ * @returns {Promise<PaginatedBlogPosts>} Objeto con datos y metadata de paginación.
  */
-export async function getBlogPosts(query: BlogQueryInput, admin = false) {
+export async function getBlogPosts(
+  query: BlogQueryInput, 
+  admin = false
+): Promise<PaginatedBlogPosts> {
   const { page = 1, limit = 10, tag, status, search, sort = "recent" } = query;
   const skip = (page - 1) * limit;
 
@@ -160,9 +188,9 @@ export async function getBlogPosts(query: BlogQueryInput, admin = false) {
  * Obtiene un artículo por su slug y aumenta su contador de vistas.
  * 
  * @param {string} slug Slug del artículo.
- * @returns {Promise<any>} El artículo encontrado o null.
+ * @returns {Promise<BlogPostWithAuthor | null>} El artículo encontrado o null.
  */
-export async function getBlogPostBySlug(slug: string) {
+export async function getBlogPostBySlug(slug: string): Promise<BlogPostWithAuthor | null> {
   try {
     const post = await prisma.blogPost.update({
       where: { slug },
@@ -187,9 +215,9 @@ export async function getBlogPostBySlug(slug: string) {
  * Obtiene un artículo por su ID.
  * 
  * @param {string} id ID del artículo.
- * @returns {Promise<any>} El artículo encontrado o null.
+ * @returns {Promise<BlogPostWithAuthor | null>} El artículo encontrado o null.
  */
-export async function getBlogPostById(id: string) {
+export async function getBlogPostById(id: string): Promise<BlogPostWithAuthor | null> {
   const post = await prisma.blogPost.findUnique({
     where: { id },
     include: {
@@ -211,7 +239,7 @@ export async function getBlogPostById(id: string) {
  * @param {string} actorEmail Email del usuario que actualiza.
  * @param {string} [ipAddress] IP de origen (opcional).
  * @param {string} [userAgent] User agent de origen (opcional).
- * @returns {Promise<any>} El artículo actualizado.
+ * @returns {Promise<BlogPost>} El artículo actualizado.
  */
 export async function updateBlogPost(
   id: string, 
@@ -220,7 +248,7 @@ export async function updateBlogPost(
   actorEmail: string,
   ipAddress?: string,
   userAgent?: string
-) {
+): Promise<BlogPost> {
   const currentPost = await prisma.blogPost.findUnique({ where: { id } });
   if (!currentPost) {
     throw new Error("Artículo no encontrado");
@@ -259,7 +287,7 @@ export async function updateBlogPost(
         reason: "Actualización de artículo de blog",
         ipAddress,
         userAgent,
-      }
+      },
     });
 
     return post;
@@ -284,7 +312,7 @@ export async function deleteBlogPost(
   actorEmail: string,
   ipAddress?: string,
   userAgent?: string
-) {
+): Promise<void> {
   const currentPost = await prisma.blogPost.findUnique({ where: { id } });
   if (!currentPost) return;
 
@@ -304,7 +332,7 @@ export async function deleteBlogPost(
         reason: "Eliminación de artículo de blog",
         ipAddress,
         userAgent,
-      }
+      },
     });
   });
 }
@@ -312,9 +340,9 @@ export async function deleteBlogPost(
 /**
  * Obtiene etiquetas únicas y su conteo.
  * 
- * @returns {Promise<any>} Lista de etiquetas y conteos.
+ * @returns {Promise<BlogTagCount[]>} Lista de etiquetas y conteos.
  */
-export async function getBlogTags() {
+export async function getBlogTags(): Promise<BlogTagCount[]> {
   const posts = await prisma.blogPost.findMany({
     where: { status: "PUBLISHED" },
     select: { tags: true },
@@ -336,10 +364,13 @@ export async function getBlogTags() {
  * Obtiene artículos relacionados basados en etiquetas comunes.
  * 
  * @param {string} slug Slug del artículo base.
- * @param {number} limit Cantidad máxima de artículos a retornar.
- * @returns {Promise<any[]>} Lista de artículos relacionados.
+ * @param {number} [limit=3] Cantidad máxima de artículos a retornar.
+ * @returns {Promise<BlogPostWithAuthor[]>} Lista de artículos relacionados.
  */
-export async function getRelatedBlogPosts(slug: string, limit: number = 3) {
+export async function getRelatedBlogPosts(
+  slug: string, 
+  limit = 3
+): Promise<BlogPostWithAuthor[]> {
   const currentPost = await prisma.blogPost.findUnique({
     where: { slug },
     select: { tags: true, id: true },
@@ -366,3 +397,22 @@ export async function getRelatedBlogPosts(slug: string, limit: number = 3) {
 
   return related;
 }
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Centraliza la lógica de negocio para la administración y consumo público de artículos de blog en PawLig.
+ *
+ * Lógica Clave:
+ * - Generación de Slugs: Normaliza títulos removiendo diacríticos y caracteres especiales, agregando sufijos numéricos si existen colisiones.
+ * - Transaccionalidad y Auditoría: Todas las operaciones de mutación (creación, edición, eliminación) se ejecutan dentro de transacciones de Prisma acompañadas de su registro en SystemAuditLog.
+ * - Conteo de Vistas Atómico: La obtención por slug incrementa de forma atómica el contador de vistas y maneja de manera segura el error P2025 de registro no encontrado.
+ * - Paginación y Filtrado: Soporta filtros por estado, etiqueta, búsqueda insensible a mayúsculas/minúsculas y ordenamiento por fecha o vistas.
+ *
+ * Dependencias Externas:
+ * - Prisma ORM (@prisma/client) y esquemas Zod (blog.schema).
+ *
+ */

@@ -450,10 +450,10 @@ describe("useUnsavedImagesGuard", () => {
         window.dispatchEvent(event);
       });
 
-      expect(navigator.sendBeacon).toHaveBeenCalledWith(
-        "/api/cloudinary/cleanup",
-        expect.any(Blob)
-      );
+      expect(navigator.sendBeacon).toHaveBeenCalledTimes(1);
+      const [calledUrl, calledData] = vi.mocked(navigator.sendBeacon).mock.calls[0];
+      expect(calledUrl).toBe("/api/cloudinary/cleanup");
+      expect(calledData).toBeInstanceOf(Blob);
       expect(preventDefaultSpy).toHaveBeenCalled();
     });
 

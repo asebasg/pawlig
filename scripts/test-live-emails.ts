@@ -39,7 +39,7 @@ async function runTests() {
     `\x1b[35m🚀 Iniciando pruebas de email para:\x1b[0m \x1b[1m${targetEmail}\x1b[0m\n`,
   );
 
-  const tests: Record<string, () => Promise<any>> = {
+  const tests: Record<string, () => ReturnType<typeof sendPasswordResetEmail>> = {
     auth: () =>
       sendPasswordResetEmail({
         to: targetEmail,
