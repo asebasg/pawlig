@@ -12,7 +12,7 @@ interface TipTapEditorProps {
   onChange: (value: string) => void;
 }
 
-export function TipTapEditor({ value, onChange }: TipTapEditorProps) {
+export const TipTapEditor = React.memo(function TipTapEditor({ value, onChange }: TipTapEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -125,4 +125,4 @@ export function TipTapEditor({ value, onChange }: TipTapEditorProps) {
       />
     </div>
   );
-}
+});

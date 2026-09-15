@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { BlogPost } from "@prisma/client";
@@ -11,10 +11,38 @@ import { TipTapEditor } from "./tiptap-editor";
 import { createBlogSchema } from "@/lib/validations/blog.schema";
 import { motion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BlogFormProps {
   initialData?: BlogPost;
 }
+
+const TagsInput = ({ form, initialTags }: { form: UseFormReturn<z.input<typeof createBlogSchema>>, initialTags?: string[] }) => {
+  const [tagInput, setTagInput] = useState(() => initialTags?.join(", ") || "");
+
+  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTagInput(value);
+    const tagsArray = value.split(",").map(tag => tag.trim()).filter(Boolean);
+    form.setValue("tags", tagsArray, { shouldValidate: true });
+  };
+
+  return (
+    <>
+      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Etiquetas (separadas por coma)</label>
+      <input 
+        type="text" 
+        value={tagInput}
+        onChange={handleTagsChange}
+        className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950" 
+        placeholder="ej. Next.js, React, Tutorial" 
+      />
+      {form.formState.errors.tags && (
+        <p className="text-red-500 text-xs mt-1">{form.formState.errors.tags.message}</p>
+      )}
+    </>
+  );
+};
 
 export function BlogForm({ initialData }: BlogFormProps) {
   const router = useRouter();
@@ -59,13 +87,6 @@ export function BlogForm({ initialData }: BlogFormProps) {
     }
   };
 
-  const tagString = form.watch("tags").join(", ");
-  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const tagsArray = value.split(",").map(tag => tag.trim()).filter(Boolean);
-    form.setValue("tags", tagsArray, { shouldValidate: true });
-  };
-
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md shadow-sm border border-white/60 dark:border-white/10 rounded-2xl p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -96,9 +117,15 @@ export function BlogForm({ initialData }: BlogFormProps) {
 
         <div className="col-span-1 md:col-span-2">
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Contenido *</label>
-          <TipTapEditor 
-            value={form.watch("content")} 
-            onChange={(val) => form.setValue("content", val, { shouldValidate: true })}
+          <Controller
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <TipTapEditor 
+                value={field.value} 
+                onChange={field.onChange}
+              />
+            )}
           />
           {form.formState.errors.content && (
             <p className="text-red-500 text-xs mt-1">{form.formState.errors.content.message}</p>
@@ -120,28 +147,28 @@ export function BlogForm({ initialData }: BlogFormProps) {
 
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Estado</label>
-          <select 
-            {...form.register("status")}
-            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
-          >
-            <option value="DRAFT">Borrador</option>
-            <option value="PUBLISHED">Publicado</option>
-            <option value="ARCHIVED">Archivado</option>
-          </select>
+          <Controller
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger
+                  className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none transition-all"
+                >
+                  <SelectValue placeholder="Selecciona un estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DRAFT">Borrador</SelectItem>
+                  <SelectItem value="PUBLISHED">Publicado</SelectItem>
+                  <SelectItem value="ARCHIVED">Archivado</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Etiquetas (separadas por coma)</label>
-          <input 
-            type="text" 
-            value={tagString}
-            onChange={handleTagsChange}
-            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950" 
-            placeholder="ej. Next.js, React, Tutorial" 
-          />
-          {form.formState.errors.tags && (
-            <p className="text-red-500 text-xs mt-1">{form.formState.errors.tags.message}</p>
-          )}
+          <TagsInput form={form} initialTags={initialData?.tags} />
         </div>
       </div>
 
@@ -168,3 +195,4 @@ export function BlogForm({ initialData }: BlogFormProps) {
     </form>
   );
 }
+

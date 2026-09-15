@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClipboardCheck, BarChart3, ArrowRight, CodeXml } from 'lucide-react';
+import { ClipboardCheck, BarChart3, ArrowRight, CodeXml, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -47,6 +47,14 @@ export default function AdminDashboardClient({ userSession }: AdminDashboardClie
             href: '/admin/dev',
             color: 'text-green-500',
             bgColor: 'bg-green-50',
+        },
+        {
+            title: 'Blog',
+            description: 'Accede al dashboard de edición de artículos para el blog oficial.',
+            icon: Newspaper,
+            href: '/admin/blog',
+            color: 'text-pink-500',
+            bgColor: 'bg-pink-50',
         },
     ];
 
