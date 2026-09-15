@@ -15,28 +15,85 @@ import {
 import { cn } from "@/lib/utils";
 import { springs } from "@/lib/motion/springs";
 
+/**
+ * Descripción: Componente DeleteButton interactivo con confirmación in-place.
+ * Requiere: Prop onConfirm para ejecutar la acción confirmada, framer-motion.
+ * Implementa: Componente RareUI adoptado según DESIGN.md §7.1 con soporte para variantes default y destructive.
+ */
+
 const HINGE = "3px 6px";
 const LID_OPEN = -35;
 const WALL_TOP = 6;
 const WALL_TOP_OPEN = 13.5;
 const WALL_BASE = 20;
 
-const TILE = 48;
-const PANEL = 84;
 const HOLD = { deleted: 1400, kept: 600 };
-
 const INSTANT = { duration: 0 } as Transition;
 
-const SURFACE = "bg-zinc-100 dark:bg-zinc-800";
-const RECESS = "bg-zinc-200/50 dark:bg-zinc-900/50";
-const GLYPH = "text-zinc-500 dark:text-zinc-400";
-const FOCUS = "outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950";
-const ACCENT_CLASS = "text-purple-600 dark:text-purple-400";
+export type DeleteButtonVariant = "default" | "destructive";
+export type DeleteButtonSize = "default" | "sm";
 
-const LIFT =
-  "shadow-sm border border-zinc-200/50 dark:border-zinc-700/50";
+interface VariantStyle {
+  surface: string;
+  recess: string;
+  glyph: string;
+  focus: string;
+  accent: string;
+  circleFocus: string;
+}
 
-const CIRCLE = `grid h-7 w-7 place-items-center rounded-full transition-colors duration-200 hover:bg-zinc-200 dark:hover:bg-zinc-700 ${FOCUS} ${SURFACE} ${LIFT}`;
+const VARIANTS: Record<DeleteButtonVariant, VariantStyle> = {
+  default: {
+    surface: "bg-zinc-100 dark:bg-zinc-800",
+    recess: "bg-zinc-200/50 dark:bg-zinc-900/50",
+    glyph: "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200",
+    focus: "outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+    accent: "text-purple-600 dark:text-purple-400",
+    circleFocus: "outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+  },
+  destructive: {
+    surface: "bg-red-50/80 dark:bg-red-950/30 border border-red-200/60 dark:border-red-900/40",
+    recess: "bg-red-100/50 dark:bg-red-950/50",
+    glyph: "text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300",
+    focus: "outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+    accent: "text-red-600 dark:text-red-400",
+    circleFocus: "outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+  },
+};
+
+interface SizeStyle {
+  tile: number;
+  panel: number;
+  containerClass: string;
+  triggerClass: string;
+  svgSize: number;
+  circleClass: string;
+  circleSvgSize: number;
+  gapClass: string;
+}
+
+const SIZES: Record<DeleteButtonSize, SizeStyle> = {
+  default: {
+    tile: 48,
+    panel: 84,
+    containerClass: "h-12 rounded-2xl",
+    triggerClass: "h-12 w-12 rounded-2xl",
+    svgSize: 20,
+    circleClass: "h-7 w-7",
+    circleSvgSize: 14,
+    gapClass: "gap-2",
+  },
+  sm: {
+    tile: 36,
+    panel: 68,
+    containerClass: "h-9 rounded-xl",
+    triggerClass: "h-9 w-9 rounded-xl",
+    svgSize: 16,
+    circleClass: "h-6 w-6",
+    circleSvgSize: 12,
+    gapClass: "gap-1.5",
+  },
+};
 
 const ICON = {
   viewBox: "0 0 24 24",
@@ -59,10 +116,16 @@ const circleMotion = {
 function Circle({
   label,
   onClick,
+  circleClass,
+  focusClass,
+  svgSize,
   children,
 }: {
   label: string;
   onClick: () => void;
+  circleClass: string;
+  focusClass: string;
+  svgSize: number;
   children: ReactNode;
 }) {
   const reduced = useReducedMotion() ?? false;
@@ -73,15 +136,20 @@ function Circle({
         type="button"
         aria-label={label}
         onClick={onClick}
-        whileHover={reduced ? undefined : { scale: 1.03 }}
+        whileHover={reduced ? undefined : { scale: 1.04 }}
         whileTap={reduced ? undefined : { scale: 0.84 }}
         transition={springs.snap}
-        className={CIRCLE}
+        className={cn(
+          "grid place-items-center rounded-full transition-colors duration-200",
+          circleClass,
+          "hover:bg-zinc-200 dark:hover:bg-zinc-700 bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50",
+          focusClass
+        )}
       >
         <svg
           {...ICON}
-          width="14"
-          height="14"
+          width={svgSize}
+          height={svgSize}
           stroke="currentColor"
           strokeWidth="3.5"
         >
@@ -98,16 +166,22 @@ export type DeleteButtonProps = Omit<
   ComponentProps<"div">,
   "onAnimationStart" | "onDrag" | "onDragStart" | "onDragEnd"
 > & {
+  variant?: DeleteButtonVariant;
+  size?: DeleteButtonSize;
   onConfirm?: () => void | Promise<void>;
   onCancel?: () => void | Promise<void>;
   disabled?: boolean;
+  "aria-label"?: string;
 };
 
 export function DeleteButton({
   className,
+  variant = "default",
+  size = "default",
   onConfirm,
   onCancel,
   disabled,
+  "aria-label": ariaLabel = "Eliminar",
   ...props
 }: DeleteButtonProps) {
   const reduced = useReducedMotion() ?? false;
@@ -115,6 +189,9 @@ export function DeleteButton({
   const [status, setStatus] = useState<Status>("idle");
   const trigger = useRef<HTMLButtonElement>(null);
   const timing = (transition: Transition) => (reduced ? INSTANT : transition);
+
+  const variantStyle = VARIANTS[variant] || VARIANTS.default;
+  const sizeStyle = SIZES[size] || SIZES.default;
 
   const top = useMotionValue(WALL_TOP);
   const wall = useTransform(top, (y) => WALL_BASE - y);
@@ -132,13 +209,22 @@ export function DeleteButton({
 
   useEffect(() => {
     if (status === "idle") return;
-    const nudge =
-      status === "kept" && !reduced
-        ? animate(settle, [1, 0.86, 1], springs.snap)
-        : null;
+    let active = true;
+    let currentAnim: ReturnType<typeof animate> | null = null;
+
+    if (status === "kept" && !reduced) {
+      currentAnim = animate(settle, 0.86, springs.snap);
+      currentAnim.then(() => {
+        if (active) {
+          currentAnim = animate(settle, 1, springs.snap);
+        }
+      });
+    }
+
     const done = setTimeout(() => setStatus("idle"), HOLD[status]);
     return () => {
-      nudge?.stop();
+      active = false;
+      currentAnim?.stop();
       clearTimeout(done);
     };
   }, [status, reduced, settle]);
@@ -159,8 +245,17 @@ export function DeleteButton({
       data-slot="delete-button"
       data-state={open ? "open" : "closed"}
       data-status={status}
-      className={cn("relative h-12 rounded-2xl", SURFACE, GLYPH, disabled && "opacity-50 pointer-events-none", className)}
-      animate={{ width: open ? TILE + PANEL : TILE }}
+      data-variant={variant}
+      data-size={size}
+      className={cn(
+        "relative inline-flex items-center",
+        sizeStyle.containerClass,
+        variantStyle.surface,
+        variantStyle.glyph,
+        disabled && "opacity-50 pointer-events-none",
+        className
+      )}
+      animate={{ width: open ? sizeStyle.tile + sizeStyle.panel : sizeStyle.tile }}
       transition={timing(springs.modal)}
       onKeyDown={(event) => {
         if (event.key === "Escape" && open) resolve("kept");
@@ -171,7 +266,7 @@ export function DeleteButton({
         ref={trigger}
         type="button"
         disabled={disabled}
-        aria-label="Eliminar"
+        aria-label={ariaLabel}
         aria-expanded={open}
         onClick={() => {
           if (open) return resolve("kept");
@@ -181,8 +276,9 @@ export function DeleteButton({
         whileTap={reduced ? undefined : { scale: 0.94 }}
         transition={springs.snap}
         className={cn(
-          "relative z-10 grid h-12 w-12 place-items-center rounded-2xl",
-          FOCUS,
+          "relative z-10 grid place-items-center",
+          sizeStyle.triggerClass,
+          variantStyle.focus
         )}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -190,10 +286,10 @@ export function DeleteButton({
             <motion.svg
               key="done"
               {...ICON}
-              width="20"
-              height="20"
+              width={sizeStyle.svgSize}
+              height={sizeStyle.svgSize}
               stroke="currentColor"
-              className={ACCENT_CLASS}
+              className={variantStyle.accent}
               strokeWidth="2.5"
               initial={{ opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -211,8 +307,8 @@ export function DeleteButton({
             <motion.svg
               key="bin"
               {...ICON}
-              width="20"
-              height="20"
+              width={sizeStyle.svgSize}
+              height={sizeStyle.svgSize}
               stroke="currentColor"
               strokeWidth="2"
               className="overflow-visible"
@@ -244,10 +340,11 @@ export function DeleteButton({
         {open && (
           <motion.div
             key="panel"
-            style={{ width: PANEL }}
+            style={{ width: sizeStyle.panel }}
             className={cn(
-              "absolute inset-y-0 right-0 flex items-center justify-center gap-2 rounded-2xl",
-              RECESS,
+              "absolute inset-y-0 right-0 flex items-center justify-center rounded-2xl",
+              sizeStyle.gapClass,
+              variantStyle.recess
             )}
             variants={reduced ? undefined : panelMotion}
             initial="hidden"
@@ -258,14 +355,26 @@ export function DeleteButton({
               aria-hidden
               className={cn(
                 "absolute -left-1.25 top-1/2 z-20 h-2.5 w-1.5 -translate-y-1/2 [clip-path:polygon(100%_0,0_50%,100%_100%)]",
-                RECESS,
+                variantStyle.recess
               )}
             />
-            <Circle label="Confirmar eliminación" onClick={() => resolve("deleted")}>
-              <path d="M4 12.5 9.5 18 20 7" className={ACCENT_CLASS} stroke="currentColor" />
+            <Circle
+              label="Confirmar eliminación"
+              onClick={() => resolve("deleted")}
+              circleClass={sizeStyle.circleClass}
+              focusClass={variantStyle.circleFocus}
+              svgSize={sizeStyle.circleSvgSize}
+            >
+              <path d="M4 12.5 9.5 18 20 7" className={variantStyle.accent} stroke="currentColor" />
             </Circle>
-            <Circle label="Cancelar" onClick={() => resolve("kept")}>
-              <path d="M6 6 18 18M18 6 6 18" />
+            <Circle
+              label="Cancelar"
+              onClick={() => resolve("kept")}
+              circleClass={sizeStyle.circleClass}
+              focusClass="outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+              svgSize={sizeStyle.circleSvgSize}
+            >
+              <path d="M6 6 18 18M18 6 6 18" className="text-zinc-600 dark:text-zinc-400" />
             </Circle>
           </motion.div>
         )}
@@ -275,3 +384,24 @@ export function DeleteButton({
 }
 
 export default DeleteButton;
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Botón interactivo de eliminación con animación física y confirmación in-place.
+ * Integra apertura de tapa con resortes y panel retráctil de opciones.
+ *
+ * Lógica Clave:
+ * - Soporte para variantes default (púrpura) y destructive (rojo eliminación).
+ * - Soporte de tamaños default (h-12) y sm (h-9) para tablas y listas compactas.
+ * - Animaciones impulsadas por framer-motion con resortes canónicos de springs.ts.
+ * - Cumplimiento de WCAG AA y reducción de movimiento con useReducedMotion.
+ *
+ * Dependencias Externas:
+ * - framer-motion para las animaciones y resortes físicos.
+ * - clsx / tailwind-merge (via cn) para composición de clases utilitarias.
+ *
+ */

@@ -24,6 +24,7 @@ import {
   Plus,
   ShieldPlus,
   CodeXml,
+  Newspaper,
 } from "lucide-react";
 import { USER_MENU_OPTIONS, COMMON_MENU_OPTIONS } from "@/lib/constants";
 
@@ -60,6 +61,7 @@ const iconMap = {
   Plus,
   ShieldPlus,
   CodeXml,
+  Newspaper,
 };
 
 const roleLabels = {

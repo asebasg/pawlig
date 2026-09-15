@@ -87,6 +87,7 @@ export const USER_MENU_OPTIONS = {
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
+    { label: "Blog", href: "/admin/blog", icon: "Newspaper" },
     { label: "Integrated Developer Hub", href: "/admin/dev", icon: "CodeXml" },
   ],
 } as const;
