@@ -16,6 +16,21 @@ interface Meta {
   totalPages: number;
 }
 
+const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
+  PUBLISHED: {
+    label: "Publicado",
+    className: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800",
+  },
+  DRAFT: {
+    label: "Borrador",
+    className: "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800",
+  },
+  ARCHIVED: {
+    label: "Archivado",
+    className: "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700",
+  },
+};
+
 export function BlogTable() {
   const { data, error, isLoading, mutate } = useSWR<{ success: boolean; data: BlogPost[]; meta: Meta }>("/api/admin/blog", fetcher);
 
@@ -57,11 +72,9 @@ export function BlogTable() {
               <td className="px-6 py-4 font-medium text-zinc-900 dark:text-zinc-50 max-w-xs truncate" title={post.title}>{post.title}</td>
               <td className="px-6 py-4">
                 <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                  post.status === "PUBLISHED" ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400" :
-                  post.status === "DRAFT" ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400" :
-                  "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                  STATUS_CONFIG[post.status]?.className || "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
                 }`}>
-                  {post.status}
+                  {STATUS_CONFIG[post.status]?.label || post.status}
                 </span>
               </td>
               <td className="px-6 py-4 text-zinc-700 dark:text-zinc-300">{post.views}</td>

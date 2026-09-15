@@ -12,6 +12,7 @@ import { createBlogSchema } from "@/lib/validations/blog.schema";
 import { motion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DeleteButton } from "@/components/ui/delete-button";
 
 interface BlogFormProps {
   initialData?: BlogPost;
@@ -82,7 +83,6 @@ export function BlogForm({ initialData }: BlogFormProps) {
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Error desconocido");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -172,25 +172,49 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-6 border-t border-zinc-100 dark:border-zinc-800">
-        <motion.button 
-          whileTap={{ scale: 0.97 }}
-          transition={springs.snap}
-          type="button" 
-          onClick={() => router.push("/admin/blog")}
-          className="px-4 py-2 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
-        >
-          Cancelar
-        </motion.button>
-        <motion.button 
-          whileTap={{ scale: 0.97 }}
-          transition={springs.snap}
-          type="submit" 
-          disabled={isLoading}
-          className="bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
-        >
-          {isLoading ? "Guardando..." : "Guardar Artículo"}
-        </motion.button>
+      <div className="flex justify-between items-center gap-3 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+        <div>
+          {initialData && (
+            <DeleteButton
+              disabled={isLoading}
+              onConfirm={async () => {
+                try {
+                  setIsLoading(true);
+                  const res = await fetch(`/api/admin/blog/${initialData.id}`, {
+                    method: "DELETE",
+                  });
+                  if (!res.ok) throw new Error("Error al eliminar el artículo");
+                  toast.success("Artículo eliminado");
+                  router.push("/admin/blog");
+                  router.refresh();
+                } catch (error) {
+                  toast.error(error instanceof Error ? error.message : "Error desconocido");
+                  setIsLoading(false);
+                }
+              }}
+            />
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          <motion.button 
+            whileTap={{ scale: 0.97 }}
+            transition={springs.snap}
+            type="button" 
+            onClick={() => router.push("/admin/blog")}
+            className="px-4 h-12 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+          >
+            Cancelar
+          </motion.button>
+          <motion.button 
+            whileTap={{ scale: 0.97 }}
+            transition={springs.snap}
+            type="submit" 
+            disabled={isLoading}
+            className="bg-purple-600 text-white px-4 h-12 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+          >
+            {isLoading ? "Guardando..." : "Guardar Artículo"}
+          </motion.button>
+        </div>
       </div>
     </form>
   );
