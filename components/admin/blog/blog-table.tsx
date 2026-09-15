@@ -41,49 +41,49 @@ export function BlogTable() {
   const posts = data?.data || [];
 
   return (
-    <div className="overflow-x-auto border rounded-md">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto border border-zinc-200 dark:border-zinc-800 rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md">
+      <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800 text-sm">
+        <thead className="bg-zinc-50 dark:bg-zinc-900/50">
           <tr>
-            <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase">Título</th>
-            <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase">Estado</th>
-            <th className="px-6 py-3 text-left font-medium text-gray-500 uppercase">Vistas</th>
-            <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase">Acciones</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Título</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Estado</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Vistas</th>
+            <th className="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Acciones</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
           {posts.map(post => (
-            <tr key={post.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 font-medium max-w-xs truncate" title={post.title}>{post.title}</td>
+            <tr key={post.id} className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/50 transition-colors duration-150">
+              <td className="px-6 py-4 font-medium text-zinc-900 dark:text-zinc-50 max-w-xs truncate" title={post.title}>{post.title}</td>
               <td className="px-6 py-4">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  post.status === "PUBLISHED" ? "bg-green-100 text-green-800" :
-                  post.status === "DRAFT" ? "bg-yellow-100 text-yellow-800" :
-                  "bg-gray-100 text-gray-800"
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                  post.status === "PUBLISHED" ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400" :
+                  post.status === "DRAFT" ? "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400" :
+                  "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
                 }`}>
                   {post.status}
                 </span>
               </td>
-              <td className="px-6 py-4">{post.views}</td>
+              <td className="px-6 py-4 text-zinc-700 dark:text-zinc-300">{post.views}</td>
               <td className="px-6 py-4 text-right space-x-3">
                 <Link 
                   href={`/admin/blog/${post.id}/edit`}
-                  className="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+                  className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 inline-flex items-center gap-1 transition-colors"
                 >
-                  <Edit size={16} /> <span className="hidden sm:inline">Editar</span>
+                  <Edit className="w-4 h-4" strokeWidth={1.5} /> <span className="hidden sm:inline">Editar</span>
                 </Link>
                 <button 
                   onClick={() => handleDelete(post.id)}
-                  className="text-red-600 hover:text-red-800 inline-flex items-center gap-1"
+                  className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 inline-flex items-center gap-1 transition-colors"
                 >
-                  <Trash2 size={16} /> <span className="hidden sm:inline">Eliminar</span>
+                  <Trash2 className="w-4 h-4" strokeWidth={1.5} /> <span className="hidden sm:inline">Eliminar</span>
                 </button>
               </td>
             </tr>
           ))}
           {posts.length === 0 && (
             <tr>
-              <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+              <td colSpan={4} className="px-6 py-8 text-center text-zinc-500 dark:text-zinc-400">
                 No se encontraron artículos.
               </td>
             </tr>

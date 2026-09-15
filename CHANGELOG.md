@@ -11,7 +11,7 @@
 
 ### Descripción
 
-Implementación de un sistema de gestión de blogs y artículos, incluyendo un editor rico basado en TipTap, sanitización de contenido en servidor para prevenir XSS, contador de vistas por cliente y una galería pública de artículos.
+Implementación de un sistema de gestión de blogs y artículos (ISSUE-157), incluyendo un editor rico basado en TipTap, sanitización de contenido en servidor para prevenir XSS, contador de vistas por cliente y una galería pública de artículos.
 
 ### Cambios
 

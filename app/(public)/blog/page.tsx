@@ -7,10 +7,10 @@ export default async function PublicBlogPage() {
   const posts = postsResponse.data;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-10 min-h-screen">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 min-h-screen">
       <div className="text-center space-y-4 max-w-2xl mx-auto mt-8">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Nuestro Blog</h1>
-        <p className="text-xl text-gray-500">
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Nuestro Blog</h1>
+        <p className="text-sm font-normal leading-relaxed text-zinc-700 dark:text-zinc-300">
           Últimas noticias, consejos y recursos para el cuidado de tus mascotas.
         </p>
       </div>
@@ -22,8 +22,8 @@ export default async function PublicBlogPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-gray-50 rounded-xl border border-dashed">
-          <p className="text-lg text-gray-500">Aún no hay artículos publicados. ¡Vuelve pronto!</p>
+        <div className="text-center py-20 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800">
+          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Aún no hay artículos publicados. ¡Vuelve pronto!</p>
         </div>
       )}
     </div>

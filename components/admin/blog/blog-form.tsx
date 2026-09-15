@@ -9,6 +9,8 @@ import { BlogPost } from "@prisma/client";
 import { z } from "zod";
 import { TipTapEditor } from "./tiptap-editor";
 import { createBlogSchema } from "@/lib/validations/blog.schema";
+import { motion } from "framer-motion";
+import { springs } from "@/lib/motion/springs";
 
 interface BlogFormProps {
   initialData?: BlogPost;
@@ -65,14 +67,14 @@ export function BlogForm({ initialData }: BlogFormProps) {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 rounded-md shadow-sm border">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md shadow-sm border border-white/60 dark:border-white/10 rounded-2xl p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Título *</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Título *</label>
           <input 
             type="text" 
             {...form.register("title")}
-            className="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" 
+            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950" 
             placeholder="Título del artículo" 
           />
           {form.formState.errors.title && (
@@ -81,10 +83,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Extracto *</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Extracto *</label>
           <textarea 
             {...form.register("excerpt")}
-            className="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none h-20" 
+            className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 min-h-[5rem]" 
             placeholder="Breve resumen del artículo" 
           />
           {form.formState.errors.excerpt && (
@@ -93,7 +95,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Contenido *</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Contenido *</label>
           <TipTapEditor 
             value={form.watch("content")} 
             onChange={(val) => form.setValue("content", val, { shouldValidate: true })}
@@ -104,11 +106,11 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Imagen Destacada (URL)</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Imagen Destacada (URL)</label>
           <input 
             type="url" 
             {...form.register("featured")}
-            className="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" 
+            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950" 
             placeholder="https://ejemplo.com/imagen.jpg" 
           />
           {form.formState.errors.featured && (
@@ -117,10 +119,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Estado</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Estado</label>
           <select 
             {...form.register("status")}
-            className="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
           >
             <option value="DRAFT">Borrador</option>
             <option value="PUBLISHED">Publicado</option>
@@ -129,12 +131,12 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
 
         <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium mb-1">Etiquetas (separadas por coma)</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">Etiquetas (separadas por coma)</label>
           <input 
             type="text" 
             value={tagString}
             onChange={handleTagsChange}
-            className="w-full border rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" 
+            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950" 
             placeholder="ej. Next.js, React, Tutorial" 
           />
           {form.formState.errors.tags && (
@@ -143,21 +145,25 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-4 border-t">
-        <button 
+      <div className="flex justify-end gap-3 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+        <motion.button 
+          whileTap={{ scale: 0.97 }}
+          transition={springs.snap}
           type="button" 
           onClick={() => router.push("/admin/blog")}
-          className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
         >
           Cancelar
-        </button>
-        <button 
+        </motion.button>
+        <motion.button 
+          whileTap={{ scale: 0.97 }}
+          transition={springs.snap}
           type="submit" 
           disabled={isLoading}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
         >
           {isLoading ? "Guardando..." : "Guardar Artículo"}
-        </button>
+        </motion.button>
       </div>
     </form>
   );
