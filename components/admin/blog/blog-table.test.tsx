@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BlogTable } from "./blog-table";
 import useSWR from "swr";
+import type { BlogPost } from "@prisma/client";
 import { toast } from "sonner";
 
 vi.mock("swr");
@@ -15,7 +16,7 @@ vi.mock("sonner", () => ({
 
 describe("BlogTable", () => {
   const mockMutate = vi.fn();
-  const mockPosts = [
+  const mockPosts: BlogPost[] = [
     {
       id: "post-1",
       title: "Artículo de prueba",
@@ -29,6 +30,7 @@ describe("BlogTable", () => {
       updatedAt: new Date(),
       authorId: "user-1",
       tags: ["tech"],
+      publishedAt: null,
     },
   ];
 
@@ -40,11 +42,11 @@ describe("BlogTable", () => {
   it("renders posts and destructive DeleteButton", () => {
     vi.mocked(useSWR).mockReturnValue({
       data: { success: true, data: mockPosts, meta: { total: 1, page: 1, limit: 10, totalPages: 1 } },
-      error: null,
+      error: undefined,
       isLoading: false,
       mutate: mockMutate,
       isValidating: false,
-    } as any);
+    } as unknown as ReturnType<typeof useSWR>);
 
     render(<BlogTable />);
 
@@ -68,11 +70,11 @@ describe("BlogTable", () => {
 
     vi.mocked(useSWR).mockReturnValue({
       data: { success: true, data: mockPosts, meta: { total: 1, page: 1, limit: 10, totalPages: 1 } },
-      error: null,
+      error: undefined,
       isLoading: false,
       mutate: mockMutate,
       isValidating: false,
-    } as any);
+    } as unknown as ReturnType<typeof useSWR>);
 
     render(<BlogTable />);
 
