@@ -41,20 +41,20 @@ export default function AdminDashboardClient({ userSession }: AdminDashboardClie
             bgColor: 'bg-orange-50',
         },
         {
-            title: 'Dev Hub',
-            description: 'Accede a logs, notas técnicas y actualizaciones de desarrollo para seguir de cerca las implementaciones recientes y cambios en la plataforma.',
-            icon: CodeXml,
-            href: '/admin/dev',
-            color: 'text-green-500',
-            bgColor: 'bg-green-50',
-        },
-        {
             title: 'Blog',
             description: 'Accede al dashboard de edición de artículos para el blog oficial.',
             icon: Newspaper,
             href: '/admin/blog',
             color: 'text-pink-500',
             bgColor: 'bg-pink-50',
+        },
+        {
+            title: 'Dev Hub',
+            description: 'Accede a logs, notas técnicas y actualizaciones de desarrollo para seguir de cerca las implementaciones recientes y cambios en la plataforma.',
+            icon: CodeXml,
+            href: '/admin/dev',
+            color: 'text-green-500',
+            bgColor: 'bg-green-50',
         },
     ];
 

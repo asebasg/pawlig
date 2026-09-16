@@ -87,7 +87,7 @@ export const USER_MENU_OPTIONS = {
     { label: "Adopciones", href: "/adopciones", icon: "PawPrint" },
     { label: "Productos", href: "/productos", icon: "ShoppingBag" },
     { label: "Albergues", href: "/albergues", icon: "Home" },
-    { label: "Blog", href: "/admin/blog", icon: "Newspaper" },
+    { label: "Blog Management", href: "/admin/blog", icon: "Newspaper" },
     { label: "Integrated Developer Hub", href: "/admin/dev", icon: "CodeXml" },
   ],
 } as const;
@@ -187,6 +187,7 @@ export const CLOUDINARY_FOLDERS = {
   PETS: "pets",
   PRODUCTS: "products",
   AVATARS: "avatars",
+  BLOG: "blog",
 } as const;
 
 export type CloudinaryFolder = (typeof CLOUDINARY_FOLDERS)[keyof typeof CLOUDINARY_FOLDERS];
