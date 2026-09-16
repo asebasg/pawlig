@@ -7,6 +7,8 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ArrowLeft, Calendar, Eye, User } from 'lucide-react';
 import { BlogCard } from '@/components/blog/blog-card';
+import { BlogArticleReader } from '@/components/blog/blog-article-reader';
+import { parseBlogContent } from '@/lib/utils/blog-content-parser';
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = await getBlogPostBySlug(params.slug);
@@ -16,6 +18,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   }
 
   const relatedPosts = await getRelatedBlogPosts(post.slug, 3);
+
+  const { contentWithIds, sections } = parseBlogContent(post.content);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 min-h-screen">
@@ -67,9 +71,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         </div>
       )}
 
-      <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none prose-zinc">
-        <div dangerouslySetInnerHTML={{ __html: post.content }} />
-      </div>
+      <BlogArticleReader contentHtml={contentWithIds} sections={sections} />
 
       {relatedPosts.length > 0 && (
         <div className="pt-12 border-t border-zinc-200 dark:border-zinc-800 mt-12">

@@ -645,3 +645,97 @@ Además de los estados de accesibilidad obligatorios por §5.13, verificar tras 
 - `Escape` cierra el panel y devuelve el foco al botón original (ya implementado por RareUI, verificar que persista tras el override de springs).
 - El botón raíz tiene `aria-label="Eliminar"` o equivalente descriptivo en español (regla §7 de `.rules.md` — UI en español).
 - Estados `aria-expanded` en el botón raíz para reflejar si el panel está abierto.
+
+---
+
+### 7.2 ScrollProgress — RareUI
+
+> **Fuente**: [rareui.com/components/scrollprogressindicator](https://www.rareui.com/components/scrollprogressindicator)
+> **Autor**: Swami Malode · `swamimalode07/rare-ui`
+> **Categoría RareUI**: Navigation / Display
+
+#### Descripción del Componente
+
+Un indicador flotante de progreso de lectura en forma de píldora que reporta visualmente la posición del lector en la página y se expande mediante resortes físicos a un menú de tabla de contenidos (ToC) tipo Surface 2 con desplazamiento suave hacia cada sección.
+
+#### Mecánica de Interacción (Behavior)
+
+1. **Estado idle (colapsado)**: Se presenta como una píldora flotante centrada en la parte inferior (`fixed bottom-6 left-1/2 -translate-x-1/2`). Presenta un medidor circular SVG cuyo perímetro (`pathLength`) se llena dinámicamente según el progreso de scroll, junto al título de la sección activa con animación de crossfade y leve desenfoque.
+2. **Click en la píldora**: Se expande fluidamente mediante un resorte físico (`springs.modal`) transformándose en una tarjeta Surface 2 que expone la lista de encabezados del artículo.
+3. **Selección de sección**: Al pulsar sobre cualquier elemento de la lista, la página realiza un `scrollIntoView` suave con offset de compensación de encabezado (`scroll-mt-20`), el indicador activo se desplaza con `springs.layout` (`layoutId`) y el menú se repliega automáticamente al pill colapsado.
+4. **Cierre manual**: Pulsar la tecla `Escape` o hacer click en cualquier área externa repliega el menú.
+
+La interacción es totalmente interruptible en todo instante (§0.3 de DESIGN.md).
+
+#### Props
+
+| Prop | Tipo | Descripción |
+|---|---|---|
+| `sections` | `ScrollProgressSection[]` | Array de secciones `{ id: string; label: string }`. Cada `id` debe coincidir con un elemento del DOM. Si está vacío o tiene < 2 ítems, el componente no se renderiza. |
+| `containerRef` | `React.RefObject<HTMLElement \| null>` | Contenedor de scroll a rastrear. Por defecto monitorea la ventana global (`window`). |
+| `offset` | `number` | Distancia en píxeles debajo del borde superior del scroller para marcar una sección como activa (por defecto `120`). |
+| `className` | `string` | Clases de Tailwind adicionales para reposicionar o ajustar la píldora raíz. |
+
+#### Instalación y Ubicación
+
+Instalado y adaptado en `components/ui/scroll-progress.tsx`, conforme a la estructura de primitivos UI de `.rules.md §3`.
+
+#### Uso Básico en el Proyecto
+
+```tsx
+"use client";
+
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+
+const sections = [
+  { id: "introduccion", label: "Introducción" },
+  { id: "cuidados", label: "Cuidados Esenciales" },
+  { id: "conclusion", label: "Conclusión" },
+];
+
+<ScrollProgress sections={sections} />
+```
+
+Para artículos de blog generados dinámicamente, se utiliza a través del contenedor [BlogArticleReader](file:///c:/Users/ultra/Proyectos/pawlig/components/blog/blog-article-reader.tsx) en conjunto con la utilidad [parseBlogContent](file:///c:/Users/ultra/Proyectos/pawlig/lib/utils/blog-content-parser.ts).
+
+---
+
+#### Mapa de Uso: Dónde Sí / Dónde No
+
+##### ✅ Contextos Aprobados — Contenidos Extensos y de Lectura
+| Contexto | Componente afectado | Motivo |
+|---|---|---|
+| **Artículos de blog** | `app/(public)/blog/[slug]/page.tsx` | Guías y lecturas educativas con múltiples encabezados; orienta al usuario y agiliza saltos de lectura. |
+| **Términos y condiciones / Privacidad** | `app/(public)/legal/terms/page.tsx` | Documentos legales largos estructurados en cláusulas numeradas. |
+| **Guías de adopción y onboarding** | Páginas de documentación de procesos | Proporciona referencia continua de avance al adoptante o voluntario. |
+
+##### ❌ Contextos Prohibidos — Vistas Operativas y Formularios
+| Contexto | Razón de exclusión |
+|---|---|
+| **Formularios y pantallas de autenticación** | Contenido compacto sin jerarquía de lectura; compite con los botones primarios (CTA) de acción. |
+| **Tablas y dashboards administrativos** | Entorpece la visibilidad de filas y controles flotantes o de paginación. |
+| **Artículos cortos (< 2 encabezados)** | Ausencia de suficiente jerarquía para justificar una tabla de contenidos. |
+
+---
+
+#### Ajuste de Springs y Tokens Canónicos (Reglas §5.5 y §5.7)
+
+1. **Reemplazo de Dependencia**: RareUI usa originalmente `motion/react` con constantes no canónicas. En PawLig se migró completamente a `framer-motion` y a los resortes de `lib/motion/springs.ts`:
+   - Expansión/Contracción dimensional (`width`, `height`, `borderRadius`): `springs.modal` (`bounce: 0.1, duration: 0.35`).
+   - Indicador de sección activa con `layoutId`: `springs.layout` (`bounce: 0.15, duration: 0.3`).
+   - Micro-interacciones táctiles en ítems: `springs.snap` (`bounce: 0, duration: 0.15`).
+   - Suavizado de scroll: `useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })`.
+2. **Superficie Surface 2 Glassmorphic**:
+   - `bg-white/85 dark:bg-zinc-900/85 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)]`.
+   - Incorpora la línea de luz ambiental canónica (`h-px bg-gradient-to-r from-transparent via-white/80 dark:via-white/20 to-transparent`).
+3. **Acento Institucional**:
+   - Trazo de progreso: `stroke-purple-600 dark:stroke-purple-400` con track `stroke-purple-100/80 dark:stroke-purple-950/40`.
+   - Punto de estado activo: `bg-purple-600 dark:bg-purple-400`.
+   - Pastilla de fondo de ítem activo: `bg-purple-50 dark:bg-purple-950/40 border border-purple-200/50 dark:border-purple-800/40`.
+
+#### Accesibilidad Requerida (§5.12–§5.15)
+
+- **Reducción de movimiento**: Respeta `useReducedMotion()`; si está activo, se omiten transiciones y filtros blur (`duration: 0`) y el desplazamiento se realiza con `behavior: "auto"`.
+- **Semántica ARIA**: Contenedor con `role="navigation"` y `aria-label="Progreso de lectura y secciones"`; botón pill con `aria-label` descriptivo y `aria-expanded={open}`.
+- **Teclado**: Atajo nativo de `Escape` para repliegue instantáneo y foco visible con anillo púrpura (`focus-visible:ring-purple-600`).
+
