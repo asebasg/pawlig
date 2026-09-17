@@ -219,12 +219,12 @@ export const TipTapEditor = React.memo(function TipTapEditor({
         <div className="relative flex-grow">
           <EditorContent
             editor={editor}
-            className="p-4 prose prose-sm dark:prose-invert max-w-none flex-grow focus:outline-none min-h-[250px]"
+            className="p-4 prose prose-sm dark:prose-invert max-w-none flex-grow focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:border-none [&_.ProseMirror]:ring-0 min-h-[250px]"
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
           />
 
-          {/* HUD flotante — caja negra con conteo de caracteres */}
+          {/* HUD flotante — contador inmersivo */}
           <AnimatePresence>
             {isFocused && (
               <motion.div
@@ -233,9 +233,9 @@ export const TipTapEditor = React.memo(function TipTapEditor({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={hudTransition}
-                className="absolute bottom-3 right-3 z-10 px-3 py-1.5 bg-zinc-900/90 backdrop-blur-sm rounded-lg pointer-events-none"
+                className="absolute bottom-2 right-3 z-10 px-2 py-1 pointer-events-none"
               >
-                <span className="text-[11px] font-medium text-zinc-300 tabular-nums">
+                <span className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 tabular-nums">
                   {charCount} {charCount === 1 ? "carácter" : "caracteres"}
                 </span>
               </motion.div>

@@ -287,7 +287,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
         const data = await response.json();
         throw new Error(data.error || "Error al eliminar la imagen");
       }
-      toast.success("Imagen eliminada del servidor.");
+      toast.success("Imagen eliminada correctamente.");
     } catch (error) {
       console.error("Error eliminando imagen de Cloudinary:", error);
       toast.error("La imagen se quitó de la galería, pero hubo un error al borrarla del servidor.");
@@ -366,10 +366,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
           )}
         </div>
 
-        {/* Extracto */}
+        {/* Descripción */}
         <div className="col-span-1 md:col-span-2">
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
-            Extracto *
+            Descripción del post *
           </label>
           <textarea
             {...form.register("excerpt")}
