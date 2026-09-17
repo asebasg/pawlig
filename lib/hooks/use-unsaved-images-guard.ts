@@ -98,7 +98,8 @@ export interface UseUnsavedImagesGuardOptions {
 
 /**
  * Construye el payload JSON para el endpoint de limpieza.
- * Filtra solo items con status "success", cloudinaryUrl válida y publicId derivable.
+ * Filtra solo items nuevos subidos en la sesión (file !== null), con status "success",
+ * cloudinaryUrl válida y publicId derivable, protegiendo imágenes precargadas de la BD.
  */
 function buildCleanupPayload(
   imageItems: ImageUploadItem[]
@@ -106,7 +107,7 @@ function buildCleanupPayload(
   return imageItems
     .filter(
       (item): item is ImageUploadItem & { cloudinaryUrl: string } =>
-        item.status === "success" && item.cloudinaryUrl !== null
+        item.status === "success" && item.cloudinaryUrl !== null && item.file !== null
     )
     .filter((item) => extractPublicId(item.cloudinaryUrl) !== null)
     .map((item) => ({ url: item.cloudinaryUrl }));

@@ -14,10 +14,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DeleteButton } from "@/components/ui/delete-button";
-import { Loader2, AlertCircle, X } from "lucide-react";
+import { Loader2, AlertCircle, X, Upload } from "lucide-react";
 import { MAX_FILE_SIZE, CLOUDINARY_FOLDERS } from "@/lib/constants";
 import type { ImageUploadItem } from "@/types/upload.types";
 import { extractPublicId } from "@/lib/utils/cloudinary-helpers";
+import { useUnsavedImagesGuard } from "@/lib/hooks/use-unsaved-images-guard";
+import { LeaveFormConfirmModal } from "@/components/modals/leave-form-confirm-modal";
+import { FormTimeoutModal } from "@/components/modals/form-timeout-modal";
 
 /**
  * Descripción: Formulario de creación/edición de artículos del blog.
@@ -43,40 +46,37 @@ const TagsInput = ({
   initialTags?: string[];
 }) => {
   const [inputValue, setInputValue] = useState("");
-  // La fuente de verdad son los valores almacenados en el formulario
   const tags = form.watch("tags") || [];
 
-  const addTag = (tag: string) => {
-    const trimmed = tag.trim();
-    if (trimmed && !tags.includes(trimmed)) {
-      form.setValue("tags", [...tags, trimmed], { shouldValidate: true });
-    }
-    setInputValue("");
-  };
-
   const removeTag = (indexToRemove: number) => {
-    const newTags = tags.filter((_, index) => index !== indexToRemove);
+    const newTags = tags.filter((_, i) => i !== indexToRemove);
     form.setValue("tags", newTags, { shouldValidate: true });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      addTag(inputValue);
-    } else if (e.key === "Backspace" && inputValue === "" && tags.length > 0) {
-      e.preventDefault();
+      const val = inputValue.trim();
+      if (val && !tags.includes(val)) {
+        if (tags.length >= 5) {
+          toast.error("Máximo 5 etiquetas.");
+          return;
+        }
+        form.setValue("tags", [...tags, val], { shouldValidate: true });
+        setInputValue("");
+      }
+    } else if (e.key === "Backspace" && !inputValue && tags.length > 0) {
       removeTag(tags.length - 1);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    // Si el usuario pega texto con comas
     if (val.includes(",")) {
-      const parts = val.split(",");
+      const parts = val.split(",").map((p) => p.trim());
       const newTags = [...tags];
-      parts.forEach((part, i) => {
-        const t = part.trim();
+      parts.forEach((t, i) => {
+        if (newTags.length >= 5) return;
         if (i === parts.length - 1) {
           setInputValue(t); // Lo último queda en el input
         } else if (t && !newTags.includes(t)) {
@@ -105,12 +105,11 @@ const TagsInput = ({
           {tags.map((tag, index) => (
             <motion.span
               key={tag}
-              layout
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={springs.snap}
-              className="inline-flex items-center gap-1.5 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2.5 py-1 rounded-lg text-xs font-medium"
+              className="inline-flex items-center gap-1 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 px-2.5 py-1 rounded-md text-xs font-medium"
             >
               {tag}
               <button
@@ -119,10 +118,9 @@ const TagsInput = ({
                   e.stopPropagation();
                   removeTag(index);
                 }}
-                className="hover:bg-purple-200/50 dark:hover:bg-purple-800/50 rounded-full p-0.5 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-600"
-                aria-label={`Eliminar etiqueta ${tag}`}
+                className="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-0.5 transition-colors focus:outline-none"
               >
-                <X size={14} strokeWidth={2} />
+                <X className="w-3 h-3" />
               </button>
             </motion.span>
           ))}
@@ -132,8 +130,9 @@ const TagsInput = ({
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="flex-1 bg-transparent min-w-[120px] focus:outline-none text-zinc-900 dark:text-zinc-50"
-          placeholder={tags.length === 0 ? "ej. Next.js, React, Tutorial" : ""}
+          placeholder={tags.length === 0 ? "Ej: nutrición, salud, perros..." : ""}
+          className="flex-1 min-w-[120px] bg-transparent focus:outline-none text-sm placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+          disabled={tags.length >= 5}
         />
       </div>
       {form.formState.errors.tags && (
@@ -160,6 +159,40 @@ export function BlogForm({ initialData }: BlogFormProps) {
 
   // Galería de imágenes insertadas en el artículo (para gestionar su eliminación)
   const [galleryItems, setGalleryItems] = useState<ImageUploadItem[]>([]);
+
+  // Estado de la imagen destacada
+  const [featuredItems, setFeaturedItems] = useState<ImageUploadItem[]>(
+    initialData?.featured
+      ? [
+          {
+            id: crypto.randomUUID(),
+            file: null,
+            status: "success",
+            cloudinaryUrl: initialData.featured,
+            error: null,
+            previewUrl: initialData.featured,
+          },
+        ]
+      : []
+  );
+
+  // Protección para limpiar imágenes no guardadas al salir o recargar
+  const {
+    markAsSubmitted,
+    requestNavigation,
+    showLeaveModal,
+    onCancelLeave,
+    onConfirmLeave,
+    registerActivity,
+    isLocked,
+    showTimeoutModal,
+  } = useUnsavedImagesGuard({ 
+    imageItems: [...galleryItems, ...featuredItems], 
+    setImageItems: (items) => {
+      setGalleryItems(items.filter(i => galleryItems.some(g => g.id === i.id)));
+      setFeaturedItems(items.filter(i => featuredItems.some(f => f.id === i.id)));
+    } 
+  });
 
   const form = useForm<z.input<typeof createBlogSchema>>({
     resolver: zodResolver(createBlogSchema),
@@ -295,6 +328,104 @@ export function BlogForm({ initialData }: BlogFormProps) {
   }, [galleryItems]);
 
   // ---------------------------------------------------------------------------
+  // Imagen Destacada
+  // ---------------------------------------------------------------------------
+
+  const handleFeaturedImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("La imagen excede el límite de 5MB.");
+      return;
+    }
+    if (!(ACCEPTED_IMAGE_TYPES_BLOG as readonly string[]).includes(file.type)) {
+      toast.error("Formato no válido. Usa JPEG, PNG o WEBP.");
+      return;
+    }
+
+    const newItem: ImageUploadItem = {
+      id: crypto.randomUUID(),
+      file,
+      status: "pending",
+      cloudinaryUrl: null,
+      error: null,
+      previewUrl: URL.createObjectURL(file),
+    };
+
+    setFeaturedItems([{ ...newItem, status: "uploading" }]);
+
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error("Error al leer el archivo"));
+        reader.readAsDataURL(file);
+      });
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64, folder: CLOUDINARY_FOLDERS.BLOG }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al subir imagen");
+      }
+
+      const data = await response.json();
+      const cloudinaryUrl = data.url as string;
+
+      setFeaturedItems([
+        {
+          ...newItem,
+          status: "success",
+          cloudinaryUrl,
+        },
+      ]);
+      
+      form.setValue("featured", cloudinaryUrl, { shouldValidate: true });
+      toast.success("Imagen destacada subida.");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Error desconocido";
+      setFeaturedItems([{ ...newItem, status: "error", error: errorMessage }]);
+      toast.error(`No se pudo subir la imagen: ${errorMessage}`);
+    } finally {
+      e.target.value = "";
+    }
+  }, [form]);
+
+  const removeFeaturedImage = useCallback(async (id: string) => {
+    const item = featuredItems.find((i) => i.id === id);
+    if (!item) return;
+
+    if (item.previewUrl && item.file !== null) {
+      URL.revokeObjectURL(item.previewUrl);
+    }
+
+    setFeaturedItems([]);
+    form.setValue("featured", "", { shouldValidate: true });
+
+    if (item.status !== "success" || !item.cloudinaryUrl) return;
+
+    try {
+      const publicId = extractPublicId(item.cloudinaryUrl);
+      if (!publicId) return;
+
+      const response = await fetch("/api/cloudinary/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicId, url: item.cloudinaryUrl }),
+      });
+      if (!response.ok) throw new Error("Error al eliminar la imagen");
+      toast.success("Imagen destacada eliminada.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error desconocido");
+    }
+  }, [featuredItems, form]);
+
+  // ---------------------------------------------------------------------------
   // onSubmit
   // ---------------------------------------------------------------------------
 
@@ -322,6 +453,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
           ? "Artículo actualizado correctamente"
           : "Artículo creado exitosamente"
       );
+      markAsSubmitted();
       router.push("/admin/blog");
       router.refresh();
     } catch (error) {
@@ -336,6 +468,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
 
   return (
     <motion.form
+      onInput={registerActivity}
       onSubmit={form.handleSubmit(onSubmit)}
       initial={{ opacity: 0, scale: 0.95, y: 16 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -485,21 +618,95 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
 
         {/* Imagen Destacada */}
-        <div>
+        <div className="col-span-1 md:col-span-2">
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
-            Imagen Destacada (URL)
+            Imagen Destacada
           </label>
-          <input
-            type="url"
-            {...form.register("featured")}
-            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
-            placeholder="https://ejemplo.com/imagen.jpg"
-          />
-          {form.formState.errors.featured && (
-            <p className="text-red-500 text-xs mt-1">
-              {form.formState.errors.featured.message}
-            </p>
-          )}
+          <p className="text-xs text-zinc-500 mb-3">
+            Opcional. Sube 1 foto para encabezar el artículo. Formatos: JPEG, PNG, WEBP.
+          </p>
+
+          {/* Grid de imagen destacada (max 1) */}
+          <div className="space-y-4">
+            {featuredItems.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {featuredItems.map((item) => (
+                  <div key={item.id} className="relative group">
+                    {/* Preview de la imagen */}
+                    {item.previewUrl && (
+                      <Image
+                        src={item.previewUrl}
+                        alt="Imagen Destacada"
+                        width={150}
+                        height={150}
+                        className={`w-full h-32 object-cover rounded-xl border-2 transition-all ${
+                          item.status === "error"
+                            ? "border-red-400 opacity-60"
+                            : item.status === "success"
+                            ? "border-green-300 dark:border-green-800"
+                            : "border-zinc-200 dark:border-zinc-700"
+                        }`}
+                      />
+                    )}
+
+                    {/* Overlay de estado: subiendo */}
+                    {(item.status === "uploading" || item.status === "pending") && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-xl">
+                        <Loader2 className="w-6 h-6 text-white animate-spin" />
+                      </div>
+                    )}
+
+                    {/* Overlay de estado: error */}
+                    {item.status === "error" && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-900/60 rounded-xl p-1">
+                        <AlertCircle className="w-5 h-5 text-red-300 mb-1" />
+                        <span className="text-xs text-red-200 text-center leading-tight line-clamp-2">
+                          {item.error}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Botón de eliminar */}
+                    <button
+                      type="button"
+                      onClick={() => removeFeaturedImage(item.id)}
+                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      aria-label="Eliminar foto"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Botón de upload */}
+            {featuredItems.length === 0 && (
+              <div>
+                <label
+                  htmlFor="featured-upload"
+                  className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-colors"
+                >
+                  <Upload className="w-6 h-6 text-zinc-500" />
+                  <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                    Seleccionar imagen
+                  </span>
+                </label>
+                <input
+                  id="featured-upload"
+                  type="file"
+                  accept={ACCEPTED_IMAGE_TYPES_BLOG.join(",")}
+                  onChange={handleFeaturedImageUpload}
+                  className="hidden"
+                />
+              </div>
+            )}
+            
+            <input type="hidden" {...form.register("featured")} />
+            {form.formState.errors.featured && (
+              <p className="text-sm text-red-600 mt-1">{form.formState.errors.featured.message}</p>
+            )}
+          </div>
         </div>
 
         {/* Estado */}
@@ -563,8 +770,9 @@ export function BlogForm({ initialData }: BlogFormProps) {
             whileTap={{ scale: 0.97 }}
             transition={springs.snap}
             type="button"
-            onClick={() => router.push("/admin/blog")}
-            className="px-4 h-12 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+            disabled={isLocked}
+            onClick={() => requestNavigation("/admin/blog")}
+            className="px-4 h-12 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancelar
           </motion.button>
@@ -572,8 +780,8 @@ export function BlogForm({ initialData }: BlogFormProps) {
             whileTap={{ scale: 0.97 }}
             transition={springs.snap}
             type="submit"
-            disabled={isLoading || isUploading}
-            className="bg-purple-600 text-white px-4 h-12 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 flex items-center gap-2"
+            disabled={isLoading || isUploading || isLocked}
+            className="bg-purple-600 text-white px-4 h-12 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 flex items-center gap-2"
           >
             {isLoading ? (
               <>
@@ -586,6 +794,14 @@ export function BlogForm({ initialData }: BlogFormProps) {
           </motion.button>
         </div>
       </div>
+
+      <LeaveFormConfirmModal
+        isOpen={showLeaveModal}
+        onCancel={onCancelLeave}
+        onConfirm={onConfirmLeave}
+      />
+      
+      <FormTimeoutModal isOpen={showTimeoutModal} />
     </motion.form>
   );
 }
