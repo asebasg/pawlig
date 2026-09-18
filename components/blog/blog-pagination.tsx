@@ -4,6 +4,8 @@ import React, { Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { springs } from "@/lib/motion/springs";
 
 /**
  * Descripción: Control de paginación para el blog, preservando otros parámetros de URL.
@@ -30,17 +32,23 @@ function PaginationContent({ totalPages }: BlogPaginationProps) {
 
   return (
     <div className="mt-12 flex items-center justify-center gap-2">
-      <Link
-        href={createPageUrl(Math.max(1, currentPage - 1))}
-        className={`flex items-center justify-center rounded-xl border border-zinc-200 p-2 transition-colors dark:border-zinc-800 ${
-          currentPage === 1
-            ? "pointer-events-none text-zinc-400 opacity-50"
-            : "bg-white text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
-        }`}
+      <motion.div
+        whileHover={currentPage === 1 ? undefined : { scale: 1.05 }}
+        whileTap={currentPage === 1 ? undefined : { scale: 0.95 }}
+        transition={springs.snap}
       >
-        <ChevronLeft className="h-5 w-5" />
-        <span className="sr-only">Página anterior</span>
-      </Link>
+        <Link
+          href={createPageUrl(Math.max(1, currentPage - 1))}
+          className={`flex items-center justify-center rounded-xl border border-zinc-200 p-2 transition-colors dark:border-zinc-800 ${
+            currentPage === 1
+              ? "pointer-events-none text-zinc-400 opacity-50"
+              : "bg-white text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          }`}
+        >
+          <ChevronLeft className="h-5 w-5" />
+          <span className="sr-only">Página anterior</span>
+        </Link>
+      </motion.div>
 
       <div className="flex items-center gap-1">
         {Array.from({ length: totalPages }).map((_, i) => {
@@ -48,32 +56,44 @@ function PaginationContent({ totalPages }: BlogPaginationProps) {
           const isActive = page === currentPage;
 
           return (
-            <Link
+            <motion.div
               key={page}
-              href={createPageUrl(page)}
-              className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
-              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={springs.snap}
             >
-              {page}
-            </Link>
+              <Link
+                href={createPageUrl(page)}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                }`}
+              >
+                {page}
+              </Link>
+            </motion.div>
           );
         })}
       </div>
 
-      <Link
-        href={createPageUrl(Math.min(totalPages, currentPage + 1))}
-        className={`flex items-center justify-center rounded-xl border border-zinc-200 p-2 transition-colors dark:border-zinc-800 ${
-          currentPage === totalPages
-            ? "pointer-events-none text-zinc-400 opacity-50"
-            : "bg-white text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
-        }`}
+      <motion.div
+        whileHover={currentPage === totalPages ? undefined : { scale: 1.05 }}
+        whileTap={currentPage === totalPages ? undefined : { scale: 0.95 }}
+        transition={springs.snap}
       >
-        <ChevronRight className="h-5 w-5" />
-        <span className="sr-only">Página siguiente</span>
-      </Link>
+        <Link
+          href={createPageUrl(Math.min(totalPages, currentPage + 1))}
+          className={`flex items-center justify-center rounded-xl border border-zinc-200 p-2 transition-colors dark:border-zinc-800 ${
+            currentPage === totalPages
+              ? "pointer-events-none text-zinc-400 opacity-50"
+              : "bg-white text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          }`}
+        >
+          <ChevronRight className="h-5 w-5" />
+          <span className="sr-only">Página siguiente</span>
+        </Link>
+      </motion.div>
     </div>
   );
 }

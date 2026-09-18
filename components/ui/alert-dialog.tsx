@@ -1,71 +1,97 @@
-import * as React from "react"
+"use client";
+
+import * as React from "react";
+import { createPortal } from "react-dom";
+
+/**
+ * Descripción: Componente base para diálogos modales de alerta y confirmación.
+ * Requiere: React y ReactDOM (createPortal).
+ * Implementa: Diálogos accesibles con portal a document.body y blur global de interfaz.
+ */
 
 const AlertDialogContext = React.createContext<{
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-}>({})
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}>({});
 
 const AlertDialog = ({
-    open,
-    onOpenChange,
-    children,
+  open,
+  onOpenChange,
+  children,
 }: {
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-    children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
 }) => {
-    return (
-        <AlertDialogContext.Provider value={{ open, onOpenChange }}>
-            {open && children}
-        </AlertDialogContext.Provider>
-    )
-}
+  React.useEffect(() => {
+    if (open) {
+      document.body.classList.add("modal-open");
+    } else {
+      document.body.classList.remove("modal-open");
+    }
+    return () => {
+      document.body.classList.remove("modal-open");
+    };
+  }, [open]);
+
+  return (
+    <AlertDialogContext.Provider value={{ open, onOpenChange }}>
+      {open && children}
+    </AlertDialogContext.Provider>
+  );
+};
 
 const AlertDialogTrigger = ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-    // Nota: Dado que esta implementación se controla a través de la raíz, el disparador podría ser redundante
-    // dependiendo del uso, pero lo incluimos por estructura.
-    // En modo controlado estricto, el padre maneja el estado de apertura.
-    // Renderizamos los hijos tal cual.
-    return <div {...props}>{children}</div>
-}
+  return <div {...props}>{children}</div>;
+};
 
 const AlertDialogPortal = ({
-    children,
-    ...props
+  children,
+  ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
-    return <div {...props}>{children}</div>
-}
+  return <div {...props}>{children}</div>;
+};
 
 const AlertDialogOverlay = React.forwardRef<
-    HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement>
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-    <div
-        className={`fixed inset-0 z-50 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 ${className || ""}`}
-        {...props}
-        ref={ref}
-    />
-))
-AlertDialogOverlay.displayName = "AlertDialogOverlay"
+  <div
+    className={`fixed inset-0 z-50 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 ${className || ""}`}
+    {...props}
+    ref={ref}
+  />
+));
+AlertDialogOverlay.displayName = "AlertDialogOverlay";
 
 const AlertDialogContent = React.forwardRef<
-    HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement>
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
-    const { onOpenChange } = React.useContext(AlertDialogContext)
+  const { onOpenChange } = React.useContext(AlertDialogContext);
+  const [isMounted, setIsMounted] = React.useState(false);
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <AlertDialogOverlay onClick={() => onOpenChange?.(false)} />
-            <div
-                ref={ref}
-                className={`relative z-50 grid w-full max-w-lg gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg md:w-full ${className || ""}`}
-                {...props}
-            />
-        </div>
-    )
-})
-AlertDialogContent.displayName = "AlertDialogContent"
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted || typeof document === "undefined") {
+    return null;
+  }
+
+  return createPortal(
+    <div data-portal-wrapper className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <AlertDialogOverlay onClick={() => onOpenChange?.(false)} />
+      <div
+        ref={ref}
+        className={`relative z-50 grid w-full max-w-lg gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg md:w-full ${className || ""}`}
+        {...props}
+      />
+    </div>,
+    document.body
+  );
+});
+AlertDialogContent.displayName = "AlertDialogContent";
 
 const AlertDialogHeader = ({
     className,
@@ -156,15 +182,36 @@ const AlertDialogCancel = React.forwardRef<
 AlertDialogCancel.displayName = "AlertDialogCancel"
 
 export {
-    AlertDialog,
-    AlertDialogPortal,
-    AlertDialogOverlay,
-    AlertDialogTrigger,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogFooter,
-    AlertDialogTitle,
-    AlertDialogDescription,
-    AlertDialogAction,
-    AlertDialogCancel,
-}
+  AlertDialog,
+  AlertDialogPortal,
+  AlertDialogOverlay,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+};
+
+/*
+ * ---------------------------------------------------------------------------
+ * NOTAS DE IMPLEMENTACIÓN
+ * ---------------------------------------------------------------------------
+ *
+ * Descripción General:
+ * Componente modal accesible que gestiona alertas y confirmaciones críticas.
+ *
+ * Lógica Clave:
+ * - createPortal: Renderiza el contenido del diálogo directamente en document.body
+ *   para evitar quedar atrapado en stacking contexts o contenedores con transformaciones CSS.
+ * - data-portal-wrapper: Atributo utilizado para aislar el modal del filtro blur
+ *   definido en globals.css cuando la clase modal-open está activa en el body.
+ * - modal-open: Agrega y remueve la clase en el body para aplicar desenfoque estructural
+ *   a los elementos de cabecera, navegación y pie de página de la aplicación.
+ *
+ * Dependencias Externas:
+ * - React y ReactDOM para el manejo de contexto y renderizado por portales.
+ *
+ */

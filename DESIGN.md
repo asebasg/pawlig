@@ -295,14 +295,26 @@ Extraído de `/profile`. Todo link de navegación "volver" debe seguir este patr
 
 ### Formularios e Inputs
 
-| Estado | Clases |
-|---|---|
-| Base | `h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm` |
-| Focus | `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950` |
-| Error | `border-red-400 focus-visible:ring-red-500` |
-| Disabled | `opacity-50 cursor-not-allowed bg-zinc-50 dark:bg-zinc-900` |
+La interacción con campos de texto se rige por los principios de **Response (§0.1)** y **Manipulación Directa (§0.2)** del estándar Apple adaptados a interfaces web: todo elemento interactivo debe proporcionar affordance visual inmediato ante el puntero (`hover`) y definición nítida de estado activo (`focus`), eliminando cualquier sensación de latencia.
 
-**Labels**: Estáticos, encima del input, `text-sm font-medium text-zinc-700 dark:text-zinc-200`.
+#### Contrato de Estados para Inputs y Contenedores Interactivos
+
+| Estado | Clases Tailwind | Principio Apple / Comportamiento |
+|---|---|---|
+| **Base** | `h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm transition-colors duration-150` | Reposo neutro; superficie de precisión con borde sutil de 1px |
+| **Hover** | `hover:border-zinc-300 dark:hover:border-zinc-600` | **OBLIGATORIO (§0.1 / §5.13)**: elevación sutil de contraste ante el puntero |
+| **Focus (Nativo)** | `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950` | Anillo de enfoque de precisión de 2px con offset de contraste |
+| **Focus (Contenedor)** | `focus-within:outline-none focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950` | **OBLIGATORIO** en wrappers compuestos (`TagsInput`, datepickers, multi-selects) |
+| **Error** | `border-red-400 focus-visible:ring-red-500 text-red-900 dark:text-red-200` | Retroalimentación destructiva inmediata (§2) |
+| **Disabled** | `opacity-50 cursor-not-allowed bg-zinc-50 dark:bg-zinc-900 pointer-events-none` | Estado inactivo bloqueado |
+
+**Labels**: Estáticos, inmediatamente encima del control, `text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1`.
+
+#### Reglas Contractuales para Formularios (Vinculantes §5)
+
+1. **Paridad de Contenedores Compuestos**: Todo contenedor que actúe visualmente como input (por ejemplo, `TagsInput` o selectores con chips interactivos) **DEBE** replicar exactamente el radio (`rounded-xl`), la transición de color (`transition-colors duration-150`), el estado `hover:` (`hover:border-zinc-300 dark:hover:border-zinc-600`) y el anillo `focus-within:ring-2 focus-within:ring-purple-600`.
+2. **Prohibición de `transition-all` en Cajas de Entrada**: Queda estrictamente prohibido utilizar `transition-all` en inputs o contenedores de entrada, ya que induce distorsiones geométricas en layout al cambiar estados. Se exige exclusivamente `transition-colors duration-150`.
+3. **Componente Primitivo de Referencia**: `components/ui/input.tsx` es la fuente única de verdad para inputs nativos en el proyecto. Todo formulario debe consumir este componente o replicar su especificación exacta sin discrepancias.
 
 ### Tablas y Listas
 
@@ -675,6 +687,8 @@ La interacción es totalmente interruptible en todo instante (§0.3 de DESIGN.md
 | `containerRef` | `React.RefObject<HTMLElement \| null>` | Contenedor de scroll a rastrear. Por defecto monitorea la ventana global (`window`). |
 | `offset` | `number` | Distancia en píxeles debajo del borde superior del scroller para marcar una sección como activa (por defecto `120`). |
 | `className` | `string` | Clases de Tailwind adicionales para reposicionar o ajustar la píldora raíz. |
+| `stopBeforeSelector` | `string` | Selector CSS del elemento ante el cual el componente frena su desplazamiento inferior (por defecto `'footer'`). |
+| `stopMargin` | `number` | Margen de separación en píxeles antes de tocar el elemento delimitador (por defecto `24`). |
 
 #### Instalación y Ubicación
 
@@ -725,9 +739,9 @@ Para artículos de blog generados dinámicamente, se utiliza a través del conte
    - Indicador de sección activa con `layoutId`: `springs.layout` (`bounce: 0.15, duration: 0.3`).
    - Micro-interacciones táctiles en ítems: `springs.snap` (`bounce: 0, duration: 0.15`).
    - Suavizado de scroll: `useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })`.
-2. **Superficie Surface 2 Glassmorphic**:
-   - `bg-white/85 dark:bg-zinc-900/85 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)]`.
-   - Incorpora la línea de luz ambiental canónica (`h-px bg-gradient-to-r from-transparent via-white/80 dark:via-white/20 to-transparent`).
+2. **Superficie Surface 2 Glassmorphic (Alto Contraste)**:
+   - `bg-white/95 dark:bg-zinc-900/85 backdrop-blur-2xl border border-zinc-200/80 dark:border-white/10 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.4)]`.
+   - Incorpora la línea de luz ambiental canónica adaptada (`h-px bg-gradient-to-r from-transparent via-zinc-200/60 dark:via-white/20 to-transparent`).
 3. **Acento Institucional**:
    - Trazo de progreso: `stroke-purple-600 dark:stroke-purple-400` con track `stroke-purple-100/80 dark:stroke-purple-950/40`.
    - Punto de estado activo: `bg-purple-600 dark:bg-purple-400`.

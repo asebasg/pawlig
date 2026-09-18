@@ -11,12 +11,12 @@ import { cva, type VariantProps } from "class-variance-authority";
  */
 
 const inputVariants = cva(
-  "block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-purple-600 sm:text-sm",
+  "h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
   {
     variants: {
       variant: {
-        default: "border-gray-300",
-        error: "border-pink-600 text-pink-600 focus:ring-pink-500",
+        default: "",
+        error: "border-red-400 focus-visible:ring-red-500 text-red-900 dark:text-red-200",
       },
     },
     defaultVariants: {
@@ -36,7 +36,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div>
         {label && (
-          <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor={id} className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
             {label}
           </label>
         )}

@@ -24,7 +24,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10 min-h-screen">
       <div className="mt-8">
-        <Link href="/blog" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 rounded-sm mb-6">
+        {/* Fallback: framer-motion no disponible en Server Component */}
+        <Link href="/blog" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 active:scale-[0.97] text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 rounded-sm mb-6">
           <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
           Volver al blog
         </Link>

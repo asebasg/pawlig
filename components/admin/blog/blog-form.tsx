@@ -95,7 +95,7 @@ const TagsInput = ({
         Etiquetas (presiona coma o Enter para añadir)
       </label>
       <div 
-        className="flex flex-wrap items-center gap-2 min-h-[40px] w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950 transition-all cursor-text"
+        className="flex flex-wrap items-center gap-2 min-h-[40px] w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 py-2 text-sm focus-within:outline-none focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950 transition-colors duration-150 cursor-text"
         onClick={(e) => {
           const input = e.currentTarget.querySelector('input');
           if (input) input.focus();
@@ -112,16 +112,20 @@ const TagsInput = ({
               className="inline-flex items-center gap-1 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 px-2.5 py-1 rounded-md text-xs font-medium"
             >
               {tag}
-              <button
+              <motion.button
                 type="button"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                transition={springs.snap}
                 onClick={(e) => {
                   e.stopPropagation();
                   removeTag(index);
                 }}
                 className="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-0.5 transition-colors focus:outline-none"
+                aria-label={`Eliminar etiqueta ${tag}`}
               >
                 <X className="w-3 h-3" />
-              </button>
+              </motion.button>
             </motion.span>
           ))}
         </AnimatePresence>
@@ -467,15 +471,16 @@ export function BlogForm({ initialData }: BlogFormProps) {
     editorImageItem?.status === "pending";
 
   return (
-    <motion.form
-      onInput={registerActivity}
-      onSubmit={form.handleSubmit(onSubmit)}
-      initial={{ opacity: 0, scale: 0.95, y: 16 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: 8 }}
-      transition={springs.modal}
-      className="space-y-6 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-[2rem] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] p-8 relative overflow-hidden"
-    >
+    <>
+      <motion.form
+        onInput={registerActivity}
+        onSubmit={form.handleSubmit(onSubmit)}
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 8 }}
+        transition={springs.modal}
+        className="space-y-6 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-[2rem] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] p-8 relative overflow-hidden"
+      >
       {/* Luz ambiental — obligatoria en toda Surface 2 */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
 
@@ -489,7 +494,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
           <input
             type="text"
             {...form.register("title")}
-            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150"
             placeholder="Título del artículo"
           />
           {form.formState.errors.title && (
@@ -506,7 +511,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
           </label>
           <textarea
             {...form.register("excerpt")}
-            className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 min-h-[5rem]"
+            className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150 min-h-[5rem]"
             placeholder="Breve resumen del artículo"
           />
           {form.formState.errors.excerpt && (
@@ -667,14 +672,17 @@ export function BlogForm({ initialData }: BlogFormProps) {
                     )}
 
                     {/* Botón de eliminar */}
-                    <button
+                    <motion.button
                       type="button"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={springs.snap}
                       onClick={() => removeFeaturedImage(item.id)}
                       className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500"
                       aria-label="Eliminar foto"
                     >
                       <X className="w-4 h-4" />
-                    </button>
+                    </motion.button>
                   </div>
                 ))}
               </div>
@@ -767,7 +775,8 @@ export function BlogForm({ initialData }: BlogFormProps) {
         </div>
         <div className="flex items-center gap-3">
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: isLocked ? 1 : 1.01 }}
+            whileTap={{ scale: isLocked ? 1 : 0.97 }}
             transition={springs.snap}
             type="button"
             disabled={isLocked}
@@ -777,7 +786,12 @@ export function BlogForm({ initialData }: BlogFormProps) {
             Cancelar
           </motion.button>
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileHover={{
+              scale: isLoading || isUploading || isLocked ? 1 : 1.01,
+            }}
+            whileTap={{
+              scale: isLoading || isUploading || isLocked ? 1 : 0.97,
+            }}
             transition={springs.snap}
             type="submit"
             disabled={isLoading || isUploading || isLocked}
@@ -794,15 +808,16 @@ export function BlogForm({ initialData }: BlogFormProps) {
           </motion.button>
         </div>
       </div>
-
-      <LeaveFormConfirmModal
-        isOpen={showLeaveModal}
-        onCancel={onCancelLeave}
-        onConfirm={onConfirmLeave}
-      />
-      
-      <FormTimeoutModal isOpen={showTimeoutModal} />
     </motion.form>
+
+    <LeaveFormConfirmModal
+      isOpen={showLeaveModal}
+      onCancel={onCancelLeave}
+      onConfirm={onConfirmLeave}
+    />
+
+    <FormTimeoutModal isOpen={showTimeoutModal} />
+  </>
   );
 }
 

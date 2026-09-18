@@ -137,7 +137,8 @@ export function TipTapLinkModal({
                   </div>
                   <motion.button
                     onClick={onClose}
-                    whileTap={{ scale: 0.93 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     transition={snapTransition}
                     className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors rounded-full p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
                     aria-label="Cerrar modal"
@@ -200,6 +201,7 @@ export function TipTapLinkModal({
                       <motion.button
                         type="button"
                         onClick={onClose}
+                        whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.97 }}
                         transition={snapTransition}
                         className="px-4 h-10 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
@@ -209,6 +211,7 @@ export function TipTapLinkModal({
                       <motion.button
                         type="button"
                         onClick={handleConfirm}
+                        whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.97 }}
                         transition={snapTransition}
                         className="bg-purple-600 text-white px-4 h-10 rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"

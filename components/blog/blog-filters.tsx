@@ -3,6 +3,8 @@
 import React, { useCallback, useState, useEffect, Suspense } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
+import { motion } from "framer-motion";
+import { springs } from "@/lib/motion/springs";
 
 /**
  * Descripción: Filtros de la página del blog (búsqueda, tags, orden).
@@ -85,8 +87,11 @@ function FiltersContent({ tags = [] }: BlogFiltersProps) {
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <button
+              <motion.button
                 key={tag}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={springs.snap}
                 onClick={() => handleTagClick(tag)}
                 className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   currentTag === tag
@@ -95,7 +100,7 @@ function FiltersContent({ tags = [] }: BlogFiltersProps) {
                 }`}
               >
                 {tag}
-              </button>
+              </motion.button>
             ))}
           </div>
         )}

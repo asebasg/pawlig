@@ -15,11 +15,17 @@ import { ScrollProgress, type ScrollProgressSection } from "@/components/ui/scro
 export interface BlogArticleReaderProps {
   contentHtml: string;
   sections?: ScrollProgressSection[];
+  /** Selector CSS del elemento ante el cual frenar el indicador de progreso (por defecto 'footer') */
+  stopBeforeSelector?: string;
+  /** Margen en px antes de tocar el elemento de freno (por defecto 24) */
+  stopMargin?: number;
 }
 
 export function BlogArticleReader({
   contentHtml,
   sections = [],
+  stopBeforeSelector = "footer",
+  stopMargin = 24,
 }: BlogArticleReaderProps) {
   // Solo se monta el indicador flotante si el artículo tiene 2 o más secciones definidas
   const showProgress = sections.length >= 2;
@@ -30,7 +36,13 @@ export function BlogArticleReader({
         <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
       </div>
 
-      {showProgress && <ScrollProgress sections={sections} />}
+      {showProgress && (
+        <ScrollProgress
+          sections={sections}
+          stopBeforeSelector={stopBeforeSelector}
+          stopMargin={stopMargin}
+        />
+      )}
     </div>
   );
 }

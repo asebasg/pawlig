@@ -43,6 +43,10 @@ export interface ScrollProgressProps extends React.ComponentProps<"div"> {
   sections?: ScrollProgressSection[];
   containerRef?: React.RefObject<HTMLElement | null>;
   offset?: number;
+  /** Selector CSS del elemento ante el cual el indicador debe frenar (ej: 'footer') */
+  stopBeforeSelector?: string;
+  /** Espacio en px que debe mantenerse entre el indicador y el borde superior del elemento de freno (por defecto 24) */
+  stopMargin?: number;
 }
 
 export function ScrollProgress({
@@ -50,6 +54,9 @@ export function ScrollProgress({
   sections = [],
   containerRef,
   offset = 120,
+  stopBeforeSelector = "footer",
+  stopMargin = 24,
+  style,
   ...props
 }: ScrollProgressProps) {
   const layoutId = React.useId();
@@ -66,6 +73,7 @@ export function ScrollProgress({
 
   const [activeId, setActiveId] = React.useState(sections[0]?.id);
   const [open, setOpen] = React.useState(false);
+  const [bottomOffset, setBottomOffset] = React.useState<number>(stopMargin);
 
   const scrollLock = React.useRef(false);
   const scrollLockTimer = React.useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -74,25 +82,41 @@ export function ScrollProgress({
     const scroller = containerRef?.current ?? window;
 
     const update = () => {
-      if (scrollLock.current) return;
-      const scrollY = containerRef?.current
-        ? containerRef.current.scrollTop
-        : typeof window !== "undefined"
-        ? window.scrollY
-        : 0;
+      if (!scrollLock.current) {
+        const scrollY = containerRef?.current
+          ? containerRef.current.scrollTop
+          : typeof window !== "undefined"
+          ? window.scrollY
+          : 0;
 
-      if (scrollY <= 10) {
-        setActiveId(sections[0]?.id);
-        return;
+        if (scrollY <= 10) {
+          setActiveId(sections[0]?.id);
+        } else {
+          const anchor =
+            (containerRef?.current?.getBoundingClientRect().top ?? 0) + offset;
+          const active = sections.findLast(({ id }) => {
+            const top = document.getElementById(id)?.getBoundingClientRect().top;
+            return top !== undefined && top <= anchor;
+          });
+          setActiveId(active?.id ?? sections[0]?.id);
+        }
       }
 
-      const anchor =
-        (containerRef?.current?.getBoundingClientRect().top ?? 0) + offset;
-      const active = sections.findLast(({ id }) => {
-        const top = document.getElementById(id)?.getBoundingClientRect().top;
-        return top !== undefined && top <= anchor;
-      });
-      setActiveId(active?.id ?? sections[0]?.id);
+      // Cálculo de tope ante footer u otro delimitador
+      if (stopBeforeSelector && typeof document !== "undefined") {
+        const targetEl = document.querySelector(stopBeforeSelector);
+        if (targetEl) {
+          const rect = targetEl.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+          // Si el borde superior del footer entra en el viewport
+          if (rect.top < viewportHeight) {
+            const overlap = viewportHeight - rect.top;
+            setBottomOffset(overlap + stopMargin);
+          } else {
+            setBottomOffset(stopMargin);
+          }
+        }
+      }
     };
 
     update();
@@ -102,7 +126,7 @@ export function ScrollProgress({
       scroller.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [sections, containerRef, offset]);
+  }, [sections, containerRef, offset, stopBeforeSelector, stopMargin]);
 
   const label = sections.find((s) => s.id === activeId)?.label;
 
@@ -198,7 +222,8 @@ export function ScrollProgress({
       role="navigation"
       aria-label="Progreso de lectura y secciones"
       data-slot="scroll-progress"
-      className={cn("fixed bottom-6 left-1/2 z-40 -translate-x-1/2", className)}
+      style={{ bottom: `${bottomOffset}px`, ...style }}
+      className={cn("fixed left-1/2 z-40 -translate-x-1/2", className)}
       {...props}
     >
       {/* Medición invisible de tamaños previos */}
@@ -236,9 +261,9 @@ export function ScrollProgress({
           data-slot="scroll-progress-surface"
           className={cn(
             "relative overflow-hidden",
-            "bg-white/85 dark:bg-zinc-900/85 backdrop-blur-2xl",
-            "border border-white/60 dark:border-white/10",
-            "shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.4)]"
+            "bg-white/95 dark:bg-zinc-900/85 backdrop-blur-2xl",
+            "border border-zinc-200/80 dark:border-white/10",
+            "shadow-[0_4px_24px_-4px_rgba(0,0,0,0.12),0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.4)]"
           )}
           initial={false}
           animate={{
@@ -249,7 +274,7 @@ export function ScrollProgress({
           transition={reduceMotion ? { duration: 0 } : springs.modal}
         >
           {/* Luz ambiental canónica en Surface 2 (DESIGN.md §1.193) */}
-          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/80 dark:via-white/20 to-transparent pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200/60 dark:via-white/20 to-transparent pointer-events-none" />
 
           <AnimatePresence initial={false} mode="popLayout">
             {open ? (

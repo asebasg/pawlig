@@ -117,8 +117,11 @@ export const TipTapEditor = React.memo(function TipTapEditor({
         {/* Toolbar */}
         <div className="border-b border-zinc-200 dark:border-zinc-700 p-2 flex gap-1 flex-wrap bg-zinc-50 dark:bg-zinc-800/50">
           {/* Negrita */}
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={springs.snap}
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
               editor.isActive("bold")
@@ -128,11 +131,14 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             title="Negrita"
           >
             <Bold size={16} />
-          </button>
+          </motion.button>
 
           {/* Cursiva */}
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={springs.snap}
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
               editor.isActive("italic")
@@ -142,11 +148,14 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             title="Cursiva"
           >
             <Italic size={16} />
-          </button>
+          </motion.button>
 
           {/* Lista con viñetas */}
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={springs.snap}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
               editor.isActive("bulletList")
@@ -156,11 +165,14 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             title="Lista con viñetas"
           >
             <List size={16} />
-          </button>
+          </motion.button>
 
           {/* Lista numerada */}
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={springs.snap}
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
               editor.isActive("orderedList")
@@ -170,14 +182,17 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             title="Lista numerada"
           >
             <ListOrdered size={16} />
-          </button>
+          </motion.button>
 
           {/* Separador */}
           <div className="w-px h-6 bg-zinc-300 dark:bg-zinc-600 mx-1 self-center" />
 
           {/* Insertar enlace — abre modal propio */}
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={springs.snap}
             onClick={openLinkModal}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
               editor.isActive("link")
@@ -187,11 +202,14 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             title="Insertar enlace"
           >
             <LinkIcon size={16} />
-          </button>
+          </motion.button>
 
           {/* Subir imagen a Cloudinary */}
-          <label
+          <motion.label
             htmlFor="tiptap-image-upload"
+            whileHover={{ scale: isUploading ? 1 : 1.05 }}
+            whileTap={{ scale: isUploading ? 1 : 0.95 }}
+            transition={springs.snap}
             className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
               isUploading
                 ? "opacity-50 cursor-not-allowed pointer-events-none"
@@ -204,7 +222,7 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             ) : (
               <ImageIcon size={16} />
             )}
-          </label>
+          </motion.label>
           <input
             id="tiptap-image-upload"
             type="file"
