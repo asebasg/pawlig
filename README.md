@@ -216,7 +216,7 @@ El stack tecnológico de PawLig ha sido seleccionado minuciosamente para garanti
 
 ### Base de Datos y ORM
 * **MongoDB Atlas:** Base de datos NoSQL flexible orientada a documentos persistida en la nube.
-* **Prisma ORM v6.2.1 (con cliente v6.19.3):** Capa de acceso a datos de alto rendimiento, autogenerada y type-safe para el control transaccional de MongoDB.
+* **Prisma ORM v6.2.1:** Capa de acceso a datos de alto rendimiento, autogenerada y type-safe para el control transaccional de MongoDB.
 
 ### Autenticación y Seguridad
 * **NextAuth.js v4.24.7:** Sistema seguro de autenticación y sesiones basado en roles de usuario (`ADMIN`, `SHELTER`, `VENDOR`, `ADOPTER`).
@@ -257,6 +257,7 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 │   ├── (auth)/               # Segmento de Autenticación (Login, Register, Unauthorized)
 │   │   ├── login/            # Componentes de servidor y páginas para inicio de sesión
 │   │   ├── register/         # Creación de cuentas públicas de adoptantes
+│   │   ├── reset-password/   # Restablecimiento seguro de contraseña mediante token
 │   │   └── unauthorized/     # Redirección en caso de accesos denegados por rol
 │   ├── (dashboard)/          # Paneles privados con accesos de seguridad por Rol
 │   │   ├── admin/            # Panel administrativo: métricas, desarrollo y Moderation Hub
@@ -287,6 +288,7 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 │   │   ├── nosotros/         # Información del equipo, misión y visión del proyecto
 │   │   ├── privacy/          # Políticas de privacidad y tratamiento de datos personales
 │   │   ├── productos/        # Marketplace público: galería de productos de bienestar animal
+│   │   ├── recursos/         # Recursos educativos y guías prácticas sobre bienestar animal
 │   │   └── terms/            # Términos y condiciones legales del servicio
 │   ├── api/                  # Endpoints RESTful de backend de la plataforma (Next.js API Routes)
 │   ├── fonts/                # Fuentes locales tipográficas optimizadas
