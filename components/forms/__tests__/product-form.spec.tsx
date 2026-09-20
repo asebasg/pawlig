@@ -98,8 +98,9 @@ describe("ProductForm - Upload de Imágenes (Fase 7)", () => {
 
     const fileInput = screen.getByLabelText(/Subir imágenes/i) as HTMLInputElement;
     
-    // Crear un archivo ficticio de 6MB
-    const bigFile = new File(["a".repeat(6 * 1024 * 1024)], "grande.png", { type: "image/png" });
+    // Crear un archivo ficticio de 6MB sin alojar 6MB de memoria
+    const bigFile = new File(["x"], "grande.png", { type: "image/png" });
+    Object.defineProperty(bigFile, "size", { value: 6 * 1024 * 1024 });
 
     await user.upload(fileInput, bigFile);
 
@@ -138,7 +139,8 @@ describe("ProductForm - Upload de Imágenes (Fase 7)", () => {
 
     const fileInput = screen.getByLabelText(/Subir imágenes/i) as HTMLInputElement;
     const validFile = new File(["valid image"], "buena.png", { type: "image/png" });
-    const invalidFile = new File(["a".repeat(6 * 1024 * 1024)], "pesada.png", { type: "image/png" });
+    const invalidFile = new File(["x"], "pesada.png", { type: "image/png" });
+    Object.defineProperty(invalidFile, "size", { value: 6 * 1024 * 1024 });
 
     await user.upload(fileInput, [validFile, invalidFile]);
 

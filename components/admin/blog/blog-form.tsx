@@ -292,14 +292,17 @@ export function BlogForm({ initialData }: BlogFormProps) {
           prev ? { ...prev, status: "error", error: errorMessage } : prev
         );
         toast.error(`No se pudo subir la imagen: ${errorMessage}`);
+        setTimeout(() => setEditorImageItem(null), 3000);
       } finally {
-        // Limpiar el item activo tras el proceso (exitoso o fallido)
-        setEditorImageItem(null);
         e.target.value = "";
       }
     },
     []
   );
+
+  const handleImageInserted = useCallback(() => {
+    setEditorImageItem(null);
+  }, []);
 
   // ---------------------------------------------------------------------------
   // removeGalleryImage — elimina imagen de Cloudinary y la quita de la galería
@@ -545,6 +548,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
                 onChange={field.onChange}
                 imageItem={editorImageItem}
                 onImageFileSelect={handleEditorImageUpload}
+                onImageInserted={handleImageInserted}
               />
             )}
           />

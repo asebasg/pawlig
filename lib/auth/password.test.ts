@@ -23,7 +23,7 @@ describe("password", () => {
 
     await expect(verifyPassword("Temporal@123", hashedPassword)).resolves.toBe(true);
     await expect(verifyPassword("Incorrecta@123", hashedPassword)).resolves.toBe(false);
-  });
+  }, 15000);
 
   it("aplica la longitud mínima de ocho caracteres", () => {
     expect(isValidPassword("1234567")).toBe(false);

@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/utils/db";
 import { BlogPost, AuditCategory, Prisma } from "@prisma/client";
 import { CreateBlogInput, UpdateBlogInput, BlogQueryInput } from "@/lib/validations/blog.schema";
+import { deleteImagesFromCloudinary } from "@/lib/cloudinary";
+import { extractImageUrlsFromHtml } from "@/lib/utils/blog-content-parser";
 
 /**
  * Servicio: BlogService
@@ -264,6 +266,11 @@ export async function updateBlogPost(
     publishedAt = new Date();
   }
 
+  // Identificar imágenes antiguas para detectar cuáles fueron removidas
+  const oldImages: string[] = [];
+  if (currentPost.featured) oldImages.push(currentPost.featured);
+  if (currentPost.content) oldImages.push(...extractImageUrlsFromHtml(currentPost.content));
+
   const updatedPost = await prisma.$transaction(async (tx) => {
     const post = await tx.blogPost.update({
       where: { id },
@@ -293,11 +300,21 @@ export async function updateBlogPost(
     return post;
   });
 
+  // Limpieza de imágenes desasociadas tras la actualización
+  const newImages: string[] = [];
+  if (updatedPost.featured) newImages.push(updatedPost.featured);
+  if (updatedPost.content) newImages.push(...extractImageUrlsFromHtml(updatedPost.content));
+
+  const removedImages = oldImages.filter((url) => !newImages.includes(url));
+  if (removedImages.length > 0) {
+    await deleteImagesFromCloudinary(removedImages);
+  }
+
   return updatedPost;
 }
 
 /**
- * Elimina un artículo.
+ * Elimina un artículo y destruye todas sus imágenes asociadas en Cloudinary.
  * 
  * @param {string} id ID del artículo.
  * @param {string} actorId ID del usuario que elimina.
@@ -315,6 +332,16 @@ export async function deleteBlogPost(
 ): Promise<void> {
   const currentPost = await prisma.blogPost.findUnique({ where: { id } });
   if (!currentPost) return;
+
+  // Recopilar todas las imágenes asociadas al post (destacada y cuerpo del artículo)
+  const imageUrls: string[] = [];
+  if (currentPost.featured) {
+    imageUrls.push(currentPost.featured);
+  }
+  if (currentPost.content) {
+    const embeddedUrls = extractImageUrlsFromHtml(currentPost.content);
+    imageUrls.push(...embeddedUrls);
+  }
 
   await prisma.$transaction(async (tx) => {
     await tx.blogPost.delete({ where: { id } });
@@ -335,6 +362,11 @@ export async function deleteBlogPost(
       },
     });
   });
+
+  // Eliminar imágenes de Cloudinary en cascada (fire-and-forget con promise capture)
+  if (imageUrls.length > 0) {
+    await deleteImagesFromCloudinary(imageUrls);
+  }
 }
 
 /**

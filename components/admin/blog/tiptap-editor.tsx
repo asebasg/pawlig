@@ -24,6 +24,8 @@ interface TipTapEditorProps {
   imageItem?: ImageUploadItem | null;
   /** Handler para procesar la selección de un archivo de imagen. */
   onImageFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Callback opcional notificado cuando se inserta con éxito la imagen en TipTap. */
+  onImageInserted?: () => void;
 }
 
 export const TipTapEditor = React.memo(function TipTapEditor({
@@ -31,6 +33,7 @@ export const TipTapEditor = React.memo(function TipTapEditor({
   onChange,
   imageItem,
   onImageFileSelect,
+  onImageInserted,
 }: TipTapEditorProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
@@ -74,8 +77,9 @@ export const TipTapEditor = React.memo(function TipTapEditor({
     ) {
       lastInsertedUrl.current = imageItem.cloudinaryUrl;
       editor.chain().focus().setImage({ src: imageItem.cloudinaryUrl }).run();
+      onImageInserted?.();
     }
-  }, [editor, imageItem]);
+  }, [editor, imageItem, onImageInserted]);
 
   const isUploading =
     imageItem?.status === "uploading" || imageItem?.status === "pending";

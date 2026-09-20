@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { parseBlogContent, slugifyHeading } from "@/lib/utils/blog-content-parser";
+import { parseBlogContent, slugifyHeading, extractImageUrlsFromHtml } from "@/lib/utils/blog-content-parser";
 
 /**
  * Pruebas unitarias: blog-content-parser
- * Descripción: Verifica la correcta extracción de encabezados, asignación de IDs únicos
- *   y clases de margen de scroll en el contenido de artículos.
+ * Descripción: Verifica la correcta extracción de encabezados, asignación de IDs únicos,
+ *   clases de margen de scroll y extracción de URLs de imágenes en artículos.
  * Requiere: Vitest.
- * Implementa: Pruebas unitarias de HU-Blog / Scroll Progress.
+ * Implementa: Pruebas unitarias de HU-Blog / Scroll Progress & Cloudinary cleanup.
  */
 
 describe("blog-content-parser", () => {
@@ -22,6 +22,37 @@ describe("blog-content-parser", () => {
     it("provides fallback for empty or non-alphanumeric text", () => {
       expect(slugifyHeading("???")).toBe("seccion");
       expect(slugifyHeading("")).toBe("seccion");
+    });
+  });
+
+  describe("extractImageUrlsFromHtml", () => {
+    it("returns empty array for empty or falsy HTML", () => {
+      expect(extractImageUrlsFromHtml("")).toEqual([]);
+      expect(extractImageUrlsFromHtml(null as unknown as string)).toEqual([]);
+    });
+
+    it("extracts image URLs embedded in img tags", () => {
+      const html = `
+        <p>Texto</p>
+        <img src="https://res.cloudinary.com/demo/image/upload/pawlig/blog/img1.png" alt="Img 1" />
+        <p>Más texto</p>
+        <img class="w-full" src="https://res.cloudinary.com/demo/image/upload/pawlig/blog/img2.jpg">
+      `;
+      const urls = extractImageUrlsFromHtml(html);
+      expect(urls).toEqual([
+        "https://res.cloudinary.com/demo/image/upload/pawlig/blog/img1.png",
+        "https://res.cloudinary.com/demo/image/upload/pawlig/blog/img2.jpg",
+      ]);
+    });
+
+    it("avoids duplicate URLs", () => {
+      const html = `
+        <img src="https://res.cloudinary.com/demo/image/upload/pawlig/blog/img1.png" />
+        <img src="https://res.cloudinary.com/demo/image/upload/pawlig/blog/img1.png" />
+      `;
+      expect(extractImageUrlsFromHtml(html)).toEqual([
+        "https://res.cloudinary.com/demo/image/upload/pawlig/blog/img1.png",
+      ]);
     });
   });
 

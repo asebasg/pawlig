@@ -31,7 +31,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         </Link>
 
         {post.tags && post.tags.length > 0 && (
-          <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
+          <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2 pointer-events-none">
             {post.tags.map((tag, i) => (
               <span key={i} className="px-3 py-1 bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 text-xs rounded-full font-medium whitespace-nowrap">
                 {tag}

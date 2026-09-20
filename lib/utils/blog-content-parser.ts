@@ -110,6 +110,30 @@ export function parseBlogContent(html: string): ParsedBlogContent {
   };
 }
 
+/**
+ * Extrae todas las URLs de imágenes (`<img src="...">`) presentes en una cadena HTML.
+ *
+ * @param {string} html Cadena HTML del artículo.
+ * @returns {string[]} Arreglo de URLs de imágenes únicas encontradas.
+ */
+export function extractImageUrlsFromHtml(html: string): string[] {
+  if (!html || typeof html !== "string") {
+    return [];
+  }
+
+  const imgRegex = /<img\s+[^>]*src=["']([^"']+)["']/gi;
+  const urls: string[] = [];
+  let match: RegExpExecArray | null;
+
+  while ((match = imgRegex.exec(html)) !== null) {
+    if (match[1] && !urls.includes(match[1])) {
+      urls.push(match[1]);
+    }
+  }
+
+  return urls;
+}
+
 /*
  * ---------------------------------------------------------------------------
  * NOTAS DE IMPLEMENTACIÓN
