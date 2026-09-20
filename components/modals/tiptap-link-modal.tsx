@@ -6,6 +6,7 @@ import { X, Link as LinkIcon } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 import { DeleteButton } from "@/components/ui/delete-button";
+import { Input } from "@/components/ui/input";
 
 /**
  * Descripción: Modal propio para insertar o editar un enlace en el editor TipTap.
@@ -150,14 +151,9 @@ export function TipTapLinkModal({
                 {/* Body */}
                 <div className="px-7 pt-5 pb-7 space-y-4">
                   <div>
-                    <label
-                      htmlFor="tiptap-link-url"
-                      className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1.5"
-                    >
-                      URL del enlace
-                    </label>
-                    <input
+                    <Input
                       id="tiptap-link-url"
+                      label="URL del enlace"
                       type="url"
                       value={url}
                       onChange={(e) => {
@@ -172,11 +168,7 @@ export function TipTapLinkModal({
                       }}
                       placeholder="https://ejemplo.com"
                       autoFocus
-                      className={`h-10 w-full rounded-xl border bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors ${
-                        error
-                          ? "border-red-400 dark:border-red-500 focus-visible:ring-red-500"
-                          : "border-zinc-200 dark:border-zinc-700"
-                      }`}
+                      variant={error ? "error" : "default"}
                     />
                     {error && (
                       <p className="text-red-500 dark:text-red-400 text-xs mt-1">{error}</p>

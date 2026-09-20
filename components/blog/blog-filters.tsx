@@ -5,6 +5,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
+import { Input } from "@/components/ui/input";
 
 /**
  * Descripción: Filtros de la página del blog (búsqueda, tags, orden).
@@ -73,13 +74,13 @@ function FiltersContent({ tags = [] }: BlogFiltersProps) {
   return (
     <div className="mb-8 flex w-full flex-col items-center justify-between gap-4 md:flex-row">
       <div className="relative w-full md:w-96">
-        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-zinc-400" />
-        <input
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 z-10" />
+        <Input
           type="text"
           placeholder="Buscar artículos..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="focus:ring-primary/50 w-full rounded-xl border border-zinc-200 bg-white py-2 pl-10 pr-4 text-zinc-900 focus:outline-none focus:ring-2 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+          className="pl-10"
         />
       </div>
 

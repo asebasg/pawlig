@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DeleteButton } from "@/components/ui/delete-button";
+import { Input } from "@/components/ui/input";
 import { Loader2, AlertCircle, X, Upload } from "lucide-react";
 import { MAX_FILE_SIZE, CLOUDINARY_FOLDERS } from "@/lib/constants";
 import type { ImageUploadItem } from "@/types/upload.types";
@@ -488,14 +489,13 @@ export function BlogForm({ initialData }: BlogFormProps) {
 
         {/* Título */}
         <div className="col-span-1 md:col-span-2">
-          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
-            Título *
-          </label>
-          <input
+          <Input
+            id="title"
+            label="Título *"
             type="text"
             {...form.register("title")}
-            className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150"
             placeholder="Título del artículo"
+            variant={form.formState.errors.title ? "error" : "default"}
           />
           {form.formState.errors.title && (
             <p className="text-red-500 text-xs mt-1">

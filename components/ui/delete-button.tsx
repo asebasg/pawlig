@@ -46,24 +46,33 @@ const VARIANTS: Record<DeleteButtonVariant, VariantStyle> = {
   default: {
     surface: "bg-zinc-100 dark:bg-zinc-800",
     recess: "bg-zinc-200/50 dark:bg-zinc-900/50",
-    glyph: "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200",
-    focus: "outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+    glyph:
+      "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200",
+    focus:
+      "outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
     accent: "text-purple-600 dark:text-purple-400",
-    circleFocus: "outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+    circleFocus:
+      "outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
   },
   destructive: {
-    surface: "bg-red-50/80 dark:bg-red-950/30 border border-red-200/60 dark:border-red-900/40",
+    surface:
+      "bg-red-50/80 dark:bg-red-950/30 border border-red-200/60 dark:border-red-900/40",
     recess: "bg-red-100/50 dark:bg-red-950/50",
-    glyph: "text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300",
-    focus: "outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+    glyph:
+      "text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300",
+    focus:
+      "outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
     accent: "text-red-600 dark:text-red-400",
-    circleFocus: "outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+    circleFocus:
+      "outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
   },
 };
 
 interface SizeStyle {
   tile: number;
   panel: number;
+  radiusClass: string;
+  panelLeftClass: string;
   containerClass: string;
   triggerClass: string;
   svgSize: number;
@@ -76,6 +85,8 @@ const SIZES: Record<DeleteButtonSize, SizeStyle> = {
   default: {
     tile: 48,
     panel: 84,
+    radiusClass: "rounded-2xl",
+    panelLeftClass: "left-12",
     containerClass: "h-12 rounded-2xl",
     triggerClass: "h-12 w-12 rounded-2xl",
     svgSize: 20,
@@ -86,6 +97,8 @@ const SIZES: Record<DeleteButtonSize, SizeStyle> = {
   sm: {
     tile: 36,
     panel: 68,
+    radiusClass: "rounded-xl",
+    panelLeftClass: "left-9",
     containerClass: "h-9 rounded-xl",
     triggerClass: "h-9 w-9 rounded-xl",
     svgSize: 16,
@@ -105,7 +118,11 @@ const ICON = {
 
 const panelMotion = {
   hidden: { opacity: 0, x: -6, transition: springs.snap },
-  shown: { opacity: 1, x: 0, transition: { ...springs.modal, staggerChildren: 0.07 } },
+  shown: {
+    opacity: 1,
+    x: 0,
+    transition: { ...springs.modal, staggerChildren: 0.07 },
+  },
 };
 
 const circleMotion = {
@@ -143,7 +160,7 @@ function Circle({
           "grid place-items-center rounded-full transition-colors duration-200",
           circleClass,
           "hover:bg-zinc-200 dark:hover:bg-zinc-700 bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50",
-          focusClass
+          focusClass,
         )}
       >
         <svg
@@ -253,9 +270,11 @@ export function DeleteButton({
         variantStyle.surface,
         variantStyle.glyph,
         disabled && "opacity-50 pointer-events-none",
-        className
+        className,
       )}
-      animate={{ width: open ? sizeStyle.tile + sizeStyle.panel : sizeStyle.tile }}
+      animate={{
+        width: open ? sizeStyle.tile + sizeStyle.panel : sizeStyle.tile,
+      }}
       transition={timing(springs.modal)}
       onKeyDown={(event) => {
         if (event.key === "Escape" && open) resolve("kept");
@@ -278,7 +297,7 @@ export function DeleteButton({
         className={cn(
           "relative z-10 grid place-items-center",
           sizeStyle.triggerClass,
-          variantStyle.focus
+          variantStyle.focus,
         )}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -333,52 +352,72 @@ export function DeleteButton({
       </motion.button>
 
       <span role="status" aria-live="polite" className="sr-only">
-        {status === "deleted" ? "Eliminado" : status === "kept" ? "Cancelado" : ""}
+        {status === "deleted"
+          ? "Eliminado"
+          : status === "kept"
+            ? "Cancelado"
+            : ""}
       </span>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            key="panel"
-            style={{ width: sizeStyle.panel }}
-            className={cn(
-              "absolute inset-y-0 right-0 flex items-center justify-center rounded-2xl",
-              sizeStyle.gapClass,
-              variantStyle.recess
-            )}
-            variants={reduced ? undefined : panelMotion}
-            initial="hidden"
-            animate="shown"
-            exit="hidden"
-          >
-            <span
-              aria-hidden
-              className={cn(
-                "absolute -left-1.25 top-1/2 z-20 h-2.5 w-1.5 -translate-y-1/2 [clip-path:polygon(100%_0,0_50%,100%_100%)]",
-                variantStyle.recess
-              )}
-            />
-            <Circle
-              label="Confirmar eliminación"
-              onClick={() => resolve("deleted")}
-              circleClass={sizeStyle.circleClass}
-              focusClass={variantStyle.circleFocus}
-              svgSize={sizeStyle.circleSvgSize}
-            >
-              <path d="M4 12.5 9.5 18 20 7" className={variantStyle.accent} stroke="currentColor" />
-            </Circle>
-            <Circle
-              label="Cancelar"
-              onClick={() => resolve("kept")}
-              circleClass={sizeStyle.circleClass}
-              focusClass="outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
-              svgSize={sizeStyle.circleSvgSize}
-            >
-              <path d="M6 6 18 18M18 6 6 18" className="text-zinc-600 dark:text-zinc-400" />
-            </Circle>
-          </motion.div>
+      {/* Capa de recorte: el panel nunca se dibuja fuera del contenedor mientras este anima su ancho */}
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 overflow-hidden",
+          sizeStyle.radiusClass,
         )}
-      </AnimatePresence>
+      >
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              key="panel"
+              style={{ width: sizeStyle.panel }}
+              className={cn(
+                "pointer-events-auto absolute inset-y-0 flex items-center justify-center rounded-2xl",
+                sizeStyle.panelLeftClass,
+                sizeStyle.gapClass,
+                variantStyle.recess,
+              )}
+              variants={reduced ? undefined : panelMotion}
+              initial="hidden"
+              animate="shown"
+              exit="hidden"
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "absolute -left-1 top-1/2 z-20 h-2.5 w-1.5 -translate-y-1/2 [clip-path:polygon(100%_0,0_50%,100%_100%)]",
+                  variantStyle.recess,
+                )}
+              />
+              <Circle
+                label="Confirmar eliminación"
+                onClick={() => resolve("deleted")}
+                circleClass={sizeStyle.circleClass}
+                focusClass={variantStyle.circleFocus}
+                svgSize={sizeStyle.circleSvgSize}
+              >
+                <path
+                  d="M4 12.5 9.5 18 20 7"
+                  className={variantStyle.accent}
+                  stroke="currentColor"
+                />
+              </Circle>
+              <Circle
+                label="Cancelar"
+                onClick={() => resolve("kept")}
+                circleClass={sizeStyle.circleClass}
+                focusClass="outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+                svgSize={sizeStyle.circleSvgSize}
+              >
+                <path
+                  d="M6 6 18 18M18 6 6 18"
+                  className="text-zinc-600 dark:text-zinc-400"
+                />
+              </Circle>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }
@@ -397,6 +436,12 @@ export default DeleteButton;
  * Lógica Clave:
  * - Soporte para variantes default (púrpura) y destructive (rojo eliminación).
  * - Soporte de tamaños default (h-12) y sm (h-9) para tablas y listas compactas.
+ * - El panel de confirmación se ancla por la izquierda (panelLeftClass, igual al
+ *   ancho del tile) dentro de una capa con overflow-hidden. Así nunca invade la
+ *   papelera mientras el contenedor anima su ancho, ni al abrir ni al cerrar.
+ *   La capa de recorte es independiente del contenedor para no cortar el anillo
+ *   de foco del botón principal.
+ * - panelLeftClass debe coincidir con tile (left-12 = 48px, left-9 = 36px).
  * - Animaciones impulsadas por framer-motion con resortes canónicos de springs.ts.
  * - Cumplimiento de WCAG AA y reducción de movimiento con useReducedMotion.
  *
