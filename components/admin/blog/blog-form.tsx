@@ -610,7 +610,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
                       {item.status === "success" && (
                         <DeleteButton
                           size="sm"
-                          variant="default"
+                          variant="destructive"
                           aria-label="Eliminar imagen del artículo"
                           onConfirm={() => removeGalleryImage(item.id)}
                         />
