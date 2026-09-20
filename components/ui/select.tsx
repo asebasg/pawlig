@@ -76,7 +76,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       className={cn(
         "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-2xl border border-white/60 bg-white/85 backdrop-blur-2xl text-gray-900 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.2)]",
-        "transition-[transform,opacity] duration-[350ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+        "transition-[transform,opacity] duration-[180ms] ease-[cubic-bezier(0.23,1,0.32,1)]",
         "data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
         "data-[state=closed]:scale-[0.95] data-[state=open]:scale-100",
         "data-[side=bottom]:origin-top data-[side=top]:origin-bottom data-[side=left]:origin-right data-[side=right]:origin-left",

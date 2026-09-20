@@ -87,9 +87,9 @@ export function BlogResources() {
           <Link
             key={resource.href}
             href={resource.href}
-            className="hover:border-primary/20 group flex h-full flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/50"
+            className="hover:border-primary/20 group flex h-full flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm active:scale-[0.98] transition-[transform,box-shadow,border-color] duration-200 ease-out hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900/50"
           >
-            <div className="bg-primary/5 group-hover:bg-primary/10 mb-4 flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-110">
+            <div className="bg-primary/5 group-hover:bg-primary/10 mb-4 flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] [@media(hover:hover)]:group-hover:scale-105">
               {resource.icon}
             </div>
             <h3 className="mb-2 text-xl font-semibold text-zinc-900 transition-colors group-hover:text-primary dark:text-zinc-50">
@@ -100,7 +100,7 @@ export function BlogResources() {
             </p>
             <div className="mt-auto flex items-center text-sm font-semibold text-primary">
               Explorar recurso
-              <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">
+              <span className="ml-2 inline-block transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] [@media(hover:hover)]:group-hover:translate-x-1">
                 →
               </span>
             </div>

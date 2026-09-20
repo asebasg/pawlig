@@ -29,13 +29,13 @@ export function BlogEmptyState({ mode }: BlogEmptyStateProps) {
         <div className="flex flex-col gap-4 sm:flex-row">
           <Link
             href="/adopciones"
-            className="hover:bg-primary/90 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors"
+            className="hover:bg-primary/90 inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 font-medium text-primary-foreground active:scale-[0.97] transition-[transform,background-color] duration-150 ease-out"
           >
             Conocer mascotas en adopción
           </Link>
           <Link
             href="/productos"
-            className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80"
+            className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 py-3 font-medium text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80 active:scale-[0.97] transition-[transform,background-color] duration-150 ease-out"
           >
             Explorar productos
           </Link>
@@ -58,7 +58,7 @@ export function BlogEmptyState({ mode }: BlogEmptyStateProps) {
       </p>
       <Link
         href="/blog"
-        className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 py-3 font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80"
+        className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 py-3 font-medium text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80 active:scale-[0.97] transition-[transform,background-color] duration-150 ease-out"
       >
         Limpiar filtros
       </Link>

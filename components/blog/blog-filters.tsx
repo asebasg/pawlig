@@ -3,9 +3,16 @@
 import React, { useCallback, useState, useEffect, Suspense } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * Descripción: Filtros de la página del blog (búsqueda, tags, orden).
@@ -67,9 +74,11 @@ function FiltersContent({ tags = [] }: BlogFiltersProps) {
     router.push(`${pathname}?${createQueryString("tag", newTag)}`);
   };
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    router.push(`${pathname}?${createQueryString("sort", e.target.value)}`);
+  const handleSortChange = (value: string) => {
+    router.push(`${pathname}?${createQueryString("sort", value)}`);
   };
+
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <div className="mb-8 flex w-full flex-col items-center justify-between gap-4 md:flex-row">
@@ -90,30 +99,38 @@ function FiltersContent({ tags = [] }: BlogFiltersProps) {
             {tags.map((tag) => (
               <motion.button
                 key={tag}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
                 transition={springs.snap}
                 onClick={() => handleTagClick(tag)}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                className={`relative rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   currentTag === tag
-                    ? "bg-primary text-primary-foreground"
+                    ? "text-primary-foreground"
                     : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                 }`}
               >
-                {tag}
+                {currentTag === tag && (
+                  <motion.div
+                    layoutId={shouldReduceMotion ? undefined : "activeBlogTag"}
+                    transition={springs.layout}
+                    className="absolute inset-0 z-0 rounded-lg bg-primary"
+                  />
+                )}
+                <span className="relative z-10">{tag}</span>
               </motion.button>
             ))}
           </div>
         )}
 
-        <select
-          value={currentSort}
-          onChange={handleSortChange}
-          className="focus:ring-primary/50 cursor-pointer rounded-xl border border-zinc-200 bg-white px-4 py-2 text-zinc-900 focus:outline-none focus:ring-2 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-        >
-          <option value="recent">Más recientes</option>
-          <option value="popular">Más leídos</option>
-        </select>
+        <Select value={currentSort} onValueChange={handleSortChange}>
+          <SelectTrigger className="w-full sm:w-[180px] rounded-xl border border-zinc-200 bg-white px-4 py-2 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50">
+            <SelectValue placeholder="Ordenar por" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="recent">Más recientes</SelectItem>
+            <SelectItem value="popular">Más leídos</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

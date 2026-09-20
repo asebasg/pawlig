@@ -20,7 +20,7 @@ export function BlogFeaturedCard({ post }: BlogFeaturedCardProps) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group mb-12 flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 md:flex-row"
+      className="group mb-12 flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm active:scale-[0.99] transition-[transform,box-shadow] duration-200 ease-out hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 md:flex-row"
     >
       {post.featured ? (
         <div className="relative h-64 w-full overflow-hidden md:h-auto md:w-1/2">
@@ -31,7 +31,7 @@ export function BlogFeaturedCard({ post }: BlogFeaturedCardProps) {
           <img
             src={post.featured}
             alt={post.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] [@media(hover:hover)]:group-hover:scale-105"
           />
         </div>
       ) : (

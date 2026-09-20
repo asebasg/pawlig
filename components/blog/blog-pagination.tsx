@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 
 /**
@@ -21,6 +21,7 @@ function PaginationContent({ totalPages }: BlogPaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
+  const shouldReduceMotion = useReducedMotion();
 
   if (totalPages <= 1) return null;
 
@@ -33,8 +34,12 @@ function PaginationContent({ totalPages }: BlogPaginationProps) {
   return (
     <div className="mt-12 flex items-center justify-center gap-2">
       <motion.div
-        whileHover={currentPage === 1 ? undefined : { scale: 1.05 }}
-        whileTap={currentPage === 1 ? undefined : { scale: 0.95 }}
+        whileHover={
+          currentPage === 1 || shouldReduceMotion ? undefined : { x: -2 }
+        }
+        whileTap={
+          currentPage === 1 || shouldReduceMotion ? undefined : { scale: 0.96 }
+        }
         transition={springs.snap}
       >
         <Link
@@ -58,19 +63,29 @@ function PaginationContent({ totalPages }: BlogPaginationProps) {
           return (
             <motion.div
               key={page}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.96 }}
               transition={springs.snap}
             >
               <Link
                 href={createPageUrl(page)}
-                className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-medium transition-colors ${
+                className={`relative flex h-10 w-10 items-center justify-center rounded-xl text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-primary text-primary-foreground"
+                    ? "text-primary-foreground"
                     : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
                 }`}
               >
-                {page}
+                {isActive && (
+                  <motion.div
+                    layoutId={shouldReduceMotion ? undefined : "activeBlogPage"}
+                    transition={springs.layout}
+                    className="absolute inset-0 -z-10 rounded-xl bg-primary"
+                  />
+                )}
+                {isActive && shouldReduceMotion && (
+                  <div className="absolute inset-0 -z-10 rounded-xl bg-primary" />
+                )}
+                <span className="relative z-10">{page}</span>
               </Link>
             </motion.div>
           );
@@ -78,8 +93,14 @@ function PaginationContent({ totalPages }: BlogPaginationProps) {
       </div>
 
       <motion.div
-        whileHover={currentPage === totalPages ? undefined : { scale: 1.05 }}
-        whileTap={currentPage === totalPages ? undefined : { scale: 0.95 }}
+        whileHover={
+          currentPage === totalPages || shouldReduceMotion ? undefined : { x: 2 }
+        }
+        whileTap={
+          currentPage === totalPages || shouldReduceMotion
+            ? undefined
+            : { scale: 0.96 }
+        }
         transition={springs.snap}
       >
         <Link

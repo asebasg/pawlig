@@ -14,14 +14,14 @@ export function BlogCard({ post }: BlogCardProps) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/80 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-zinc-900/80"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/80 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-zinc-900/80 active:scale-[0.98] transition-[transform,box-shadow] duration-200 ease-out hover:shadow-md"
     >
       {post.featured && (
         <div className="relative h-48 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
           <img
             src={post.featured}
             alt={post.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] [@media(hover:hover)]:group-hover:scale-105"
           />
         </div>
       )}
