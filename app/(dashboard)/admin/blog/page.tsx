@@ -33,7 +33,7 @@ export default async function AdminBlogPage() {
       {/* Fallback: framer-motion no disponible en Server Component */}
       <Link
         href="/admin"
-        className="inline-flex items-center gap-2 mb-2 text-primary hover:brightness-75 active:scale-[0.97] transition-all text-base font-semibold"
+        className="inline-flex items-center gap-2 mb-2 text-primary hover:scale-[1.02] hover:brightness-75 active:scale-[0.97] transition duration-300 ease-out text-base font-semibold"
       >
         <ArrowLeft className="w-4 h-4" />
         Volver al Dashboard
@@ -51,7 +51,7 @@ export default async function AdminBlogPage() {
         {/* Fallback: framer-motion no disponible en Server Component */}
         <Link
           href="/admin/blog/new"
-          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold hover:brightness-90 active:scale-[0.97] transition-all self-start sm:self-auto"
+          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-semibold hover:scale-[1.02] hover:brightness-90 active:scale-[0.97] transition duration-300 ease-out self-start sm:self-auto"
         >
           <PlusCircle className="w-4 h-4" />
           Nuevo Artículo

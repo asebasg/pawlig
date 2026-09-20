@@ -91,7 +91,7 @@ export function BlogTable() {
                 <div className="inline-flex items-center justify-end gap-3">
                   <Link 
                     href={`/admin/blog/${post.id}/edit`}
-                    className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 inline-flex items-center gap-1 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 rounded-md"
+                    className="text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 inline-flex items-center gap-1 hover:scale-[1.02] active:scale-[0.97] transition duration-300 ease-out text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 rounded-md"
                   >
                     <Edit className="w-4 h-4" strokeWidth={1.5} /> <span className="hidden sm:inline">Editar</span>
                   </Link>

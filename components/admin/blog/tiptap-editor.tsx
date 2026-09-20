@@ -119,8 +119,8 @@ export const TipTapEditor = React.memo(function TipTapEditor({
           {/* Negrita */}
           <motion.button
             type="button"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             transition={springs.snap}
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
@@ -136,8 +136,8 @@ export const TipTapEditor = React.memo(function TipTapEditor({
           {/* Cursiva */}
           <motion.button
             type="button"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             transition={springs.snap}
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
@@ -153,8 +153,8 @@ export const TipTapEditor = React.memo(function TipTapEditor({
           {/* Lista con viñetas */}
           <motion.button
             type="button"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             transition={springs.snap}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
@@ -170,8 +170,8 @@ export const TipTapEditor = React.memo(function TipTapEditor({
           {/* Lista numerada */}
           <motion.button
             type="button"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             transition={springs.snap}
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
@@ -190,8 +190,8 @@ export const TipTapEditor = React.memo(function TipTapEditor({
           {/* Insertar enlace — abre modal propio */}
           <motion.button
             type="button"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             transition={springs.snap}
             onClick={openLinkModal}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
@@ -207,8 +207,8 @@ export const TipTapEditor = React.memo(function TipTapEditor({
           {/* Subir imagen a Cloudinary */}
           <motion.label
             htmlFor="tiptap-image-upload"
-            whileHover={{ scale: isUploading ? 1 : 1.05 }}
-            whileTap={{ scale: isUploading ? 1 : 0.95 }}
+            whileHover={{ scale: isUploading ? 1 : 1.02 }}
+            whileTap={{ scale: isUploading ? 1 : 0.97 }}
             transition={springs.snap}
             className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
               isUploading

@@ -124,8 +124,8 @@ const TagsInput = ({
               {tag}
               <motion.button
                 type="button"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
                 transition={springs.snap}
                 onClick={(e) => {
                   e.stopPropagation();
