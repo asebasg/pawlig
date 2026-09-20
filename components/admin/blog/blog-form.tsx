@@ -101,7 +101,7 @@ const TagsInput = ({
       </label>
       <div 
         className={cn(
-          "flex flex-wrap items-center gap-2 min-h-[40px] w-full rounded-xl border bg-transparent px-3 py-2 text-sm focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950 transition-colors duration-150 cursor-text",
+          "flex flex-wrap items-center gap-2 min-h-[40px] w-full rounded-xl border bg-transparent px-3 py-2 text-sm focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950 transition-[color,background-color,border-color,box-shadow] duration-150 cursor-text",
           hasTagsError
             ? "border-red-400 focus-within:ring-red-500"
             : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-within:ring-purple-600"
@@ -518,7 +518,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
             aria-invalid={!!form.formState.errors.excerpt}
             aria-describedby={form.formState.errors.excerpt ? "excerpt-error" : undefined}
             className={cn(
-              "w-full rounded-xl border bg-transparent p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150 min-h-[5rem]",
+              "w-full rounded-xl border bg-transparent p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-[color,background-color,border-color,box-shadow] duration-150 min-h-[5rem]",
               form.formState.errors.excerpt
                 ? "border-red-400 focus-visible:ring-red-500 text-red-900 dark:text-red-200"
                 : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:ring-purple-600"
@@ -735,7 +735,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
             name="status"
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150">
+                <SelectTrigger className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-[color,background-color,border-color,box-shadow] duration-150">
                   <SelectValue placeholder="Selecciona un estado" />
                 </SelectTrigger>
                 <SelectContent>
