@@ -10,11 +10,12 @@ import { z } from "zod";
 import Image from "next/image";
 import { TipTapEditor } from "./tiptap-editor";
 import { createBlogSchema } from "@/lib/validations/blog.schema";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DeleteButton } from "@/components/ui/delete-button";
 import { Input } from "@/components/ui/input";
+import { InputErrorMessage } from "@/components/ui/input-error-message";
 import { Loader2, AlertCircle, X, Upload } from "lucide-react";
 import { MAX_FILE_SIZE, CLOUDINARY_FOLDERS } from "@/lib/constants";
 import type { ImageUploadItem } from "@/types/upload.types";
@@ -22,12 +23,13 @@ import { extractPublicId } from "@/lib/utils/cloudinary-helpers";
 import { useUnsavedImagesGuard } from "@/lib/hooks/use-unsaved-images-guard";
 import { LeaveFormConfirmModal } from "@/components/modals/leave-form-confirm-modal";
 import { FormTimeoutModal } from "@/components/modals/form-timeout-modal";
+import { cn } from "@/lib/utils";
 
 /**
- * Descripción: Formulario de creación/edición de artículos del blog.
- * Implementa: Surface 2 Glassmorphic (DESIGN.md), subida de imágenes
- *   al editor vía Cloudinary (patrón idéntico a pet-form y product-form),
- *   y DeleteButton para eliminación segura de imágenes y del artículo.
+ * Ruta/Componente/Servicio: Componente BlogForm
+ * Descripción: Formulario de creación y edición de artículos del blog con Surface 2 Glassmorphic y DeleteButton.
+ * Requiere: Objeto initialData opcional para modo edición.
+ * Implementa: DESIGN.md §1 (Surface 2), §3 (Contrato de Formularios), §5 y §7.1 (DeleteButton).
  */
 
 interface BlogFormProps {
@@ -90,13 +92,20 @@ const TagsInput = ({
     }
   };
 
+  const hasTagsError = !!form.formState.errors.tags;
+
   return (
     <>
       <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
         Etiquetas (presiona coma o Enter para añadir)
       </label>
       <div 
-        className="flex flex-wrap items-center gap-2 min-h-[40px] w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 py-2 text-sm focus-within:outline-none focus-within:ring-2 focus-within:ring-purple-600 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950 transition-colors duration-150 cursor-text"
+        className={cn(
+          "flex flex-wrap items-center gap-2 min-h-[40px] w-full rounded-xl border bg-transparent px-3 py-2 text-sm focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 dark:focus-within:ring-offset-zinc-950 transition-colors duration-150 cursor-text",
+          hasTagsError
+            ? "border-red-400 focus-within:ring-red-500"
+            : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-within:ring-purple-600"
+        )}
         onClick={(e) => {
           const input = e.currentTarget.querySelector('input');
           if (input) input.focus();
@@ -110,7 +119,7 @@ const TagsInput = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={springs.snap}
-              className="inline-flex items-center gap-1 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 px-2.5 py-1 rounded-md text-xs font-medium"
+              className="inline-flex items-center gap-1.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 px-3 py-1 rounded-full text-xs font-medium"
             >
               {tag}
               <motion.button
@@ -140,11 +149,10 @@ const TagsInput = ({
           disabled={tags.length >= 5}
         />
       </div>
-      {form.formState.errors.tags && (
-        <p className="text-red-500 text-xs mt-1">
-          {form.formState.errors.tags.message}
-        </p>
-      )}
+      <InputErrorMessage
+        id="tags-error"
+        message={form.formState.errors.tags?.message}
+      />
     </>
   );
 };
@@ -155,6 +163,7 @@ const TagsInput = ({
 
 export function BlogForm({ initialData }: BlogFormProps) {
   const router = useRouter();
+  const prefersReduced = useReducedMotion() ?? false;
   const [isLoading, setIsLoading] = useState(false);
 
   // Estado granular de la imagen actualmente en proceso de subida al editor
@@ -476,10 +485,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
       <motion.form
         onInput={registerActivity}
         onSubmit={form.handleSubmit(onSubmit)}
-        initial={{ opacity: 0, scale: 0.95, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 8 }}
-        transition={springs.modal}
+        initial={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 16 }}
+        animate={prefersReduced ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+        exit={prefersReduced ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 8 }}
+        transition={prefersReduced ? { duration: 0 } : springs.modal}
         className="space-y-6 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border border-white/60 dark:border-white/10 rounded-[2rem] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] p-8 relative overflow-hidden"
       >
       {/* Luz ambiental — obligatoria en toda Surface 2 */}
@@ -493,15 +502,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
             id="title"
             label="Título *"
             type="text"
-            {...form.register("title")}
             placeholder="Título del artículo"
-            variant={form.formState.errors.title ? "error" : "default"}
+            error={form.formState.errors.title?.message}
+            {...form.register("title")}
           />
-          {form.formState.errors.title && (
-            <p className="text-red-500 text-xs mt-1">
-              {form.formState.errors.title.message}
-            </p>
-          )}
         </div>
 
         {/* Descripción */}
@@ -511,14 +515,20 @@ export function BlogForm({ initialData }: BlogFormProps) {
           </label>
           <textarea
             {...form.register("excerpt")}
-            className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150 min-h-[5rem]"
+            aria-invalid={!!form.formState.errors.excerpt}
+            aria-describedby={form.formState.errors.excerpt ? "excerpt-error" : undefined}
+            className={cn(
+              "w-full rounded-xl border bg-transparent p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150 min-h-[5rem]",
+              form.formState.errors.excerpt
+                ? "border-red-400 focus-visible:ring-red-500 text-red-900 dark:text-red-200"
+                : "border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:ring-purple-600"
+            )}
             placeholder="Breve resumen del artículo"
           />
-          {form.formState.errors.excerpt && (
-            <p className="text-red-500 text-xs mt-1">
-              {form.formState.errors.excerpt.message}
-            </p>
-          )}
+          <InputErrorMessage
+            id="excerpt-error"
+            message={form.formState.errors.excerpt?.message}
+          />
         </div>
 
         {/* Contenido — Editor TipTap */}
@@ -538,11 +548,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
               />
             )}
           />
-          {form.formState.errors.content && (
-            <p className="text-red-500 text-xs mt-1">
-              {form.formState.errors.content.message}
-            </p>
-          )}
+          <InputErrorMessage
+            id="content-error"
+            message={form.formState.errors.content?.message}
+          />
 
           {/* Galería de archivos subidos al artículo */}
           <AnimatePresence>
@@ -644,13 +653,14 @@ export function BlogForm({ initialData }: BlogFormProps) {
                         alt="Imagen Destacada"
                         width={150}
                         height={150}
-                        className={`w-full h-32 object-cover rounded-xl border-2 transition-all ${
+                        className={cn(
+                          "w-full h-32 object-cover rounded-xl border-2 transition-colors duration-150",
                           item.status === "error"
                             ? "border-red-400 opacity-60"
                             : item.status === "success"
                             ? "border-green-300 dark:border-green-800"
                             : "border-zinc-200 dark:border-zinc-700"
-                        }`}
+                        )}
                       />
                     )}
 
@@ -671,18 +681,15 @@ export function BlogForm({ initialData }: BlogFormProps) {
                       </div>
                     )}
 
-                    {/* Botón de eliminar */}
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={springs.snap}
-                      onClick={() => removeFeaturedImage(item.id)}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500"
-                      aria-label="Eliminar foto"
-                    >
-                      <X className="w-4 h-4" />
-                    </motion.button>
+                    {/* DeleteButton — eliminación segura in-place */}
+                    <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                      <DeleteButton
+                        size="sm"
+                        variant="destructive"
+                        aria-label="Eliminar foto destacada"
+                        onConfirm={() => removeFeaturedImage(item.id)}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -711,9 +718,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
             )}
             
             <input type="hidden" {...form.register("featured")} />
-            {form.formState.errors.featured && (
-              <p className="text-sm text-red-600 mt-1">{form.formState.errors.featured.message}</p>
-            )}
+            <InputErrorMessage
+              id="featured-error"
+              message={form.formState.errors.featured?.message}
+            />
           </div>
         </div>
 
@@ -727,7 +735,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
             name="status"
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent px-3 text-sm focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none transition-all">
+                <SelectTrigger className="h-10 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 transition-colors duration-150">
                   <SelectValue placeholder="Selecciona un estado" />
                 </SelectTrigger>
                 <SelectContent>
@@ -752,6 +760,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
           {initialData && (
             <DeleteButton
               disabled={isLoading}
+              variant="destructive"
               aria-label="Eliminar artículo"
               onConfirm={async () => {
                 try {

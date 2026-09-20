@@ -2,12 +2,13 @@
 
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { InputErrorMessage } from "@/components/ui/input-error-message";
 
 /**
  * Ruta/Componente/Servicio: Componente Input
- * Descripción: Un componente de campo de entrada de texto reutilizable y accesible con variantes de estilo.
- * Requiere: -
- * Implementa: -
+ * Descripción: Un componente de campo de entrada de texto reutilizable y accesible con variantes de estilo y gestión automática de mensajes de error.
+ * Requiere: InputErrorMessage para renderizado accesible de mensajes de error.
+ * Implementa: DESIGN.md §2, §3 (Contrato de Formularios) y §5 (Accesibilidad).
  */
 
 const inputVariants = cva(
@@ -29,23 +30,47 @@ export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
   VariantProps<typeof inputVariants> {
   label?: string;
+  error?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, variant, label, id, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      label,
+      id,
+      error,
+      "aria-invalid": ariaInvalid,
+      "aria-describedby": ariaDescribedBy,
+      ...props
+    },
+    ref
+  ) => {
+    const computedVariant = variant ?? (error ? "error" : "default");
+    const errorId = id ? `${id}-error` : undefined;
+    const computedDescribedBy =
+      ariaDescribedBy ?? (error && errorId ? errorId : undefined);
+
     return (
       <div>
         {label && (
-          <label htmlFor={id} className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
+          <label
+            htmlFor={id}
+            className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1"
+          >
             {label}
           </label>
         )}
         <input
           id={id}
-          className={inputVariants({ variant, className })}
+          className={inputVariants({ variant: computedVariant, className })}
           ref={ref}
+          aria-invalid={ariaInvalid ?? !!error}
+          aria-describedby={computedDescribedBy}
           {...props}
         />
+        <InputErrorMessage id={errorId} message={error} />
       </div>
     );
   }
