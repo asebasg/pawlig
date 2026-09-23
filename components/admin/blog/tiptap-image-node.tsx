@@ -41,47 +41,48 @@ export function TipTapImageNode({
   }, [deleteNode, editor, src]);
 
   return (
-    <NodeViewWrapper
-      className={cn(
-        "relative my-6 block max-w-full rounded-2xl overflow-hidden border transition-[box-shadow,border-color] duration-200 group bg-zinc-50/80 dark:bg-zinc-900/80 backdrop-blur-md",
-        selected
-          ? "border-purple-600 ring-2 ring-purple-600 ring-offset-2 dark:ring-offset-zinc-950 shadow-md"
-          : "border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700",
-      )}
-      data-drag-handle
-    >
-      {/* Botón interactivo de arrastre visual en la esquina superior izquierda */}
+    <NodeViewWrapper className="my-6 flex justify-center w-full leading-none" data-drag-handle>
       <div
-        className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/60 dark:bg-black/70 backdrop-blur-md text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none select-none shadow-sm"
-        aria-hidden="true"
+        className={cn(
+          "relative inline-block max-w-full rounded-2xl overflow-hidden border transition-[box-shadow,border-color] duration-200 group bg-zinc-50/80 dark:bg-zinc-900/80 backdrop-blur-md",
+          selected
+            ? "border-purple-600 ring-2 ring-purple-600 ring-offset-2 dark:ring-offset-zinc-950 shadow-md"
+            : "border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700",
+        )}
       >
-        <GripVertical className="w-3.5 h-3.5" />
-        <span>Arrastrar</span>
-      </div>
+        {/* Botón interactivo de arrastre visual en la esquina superior izquierda */}
+        <div
+          className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/60 dark:bg-black/70 backdrop-blur-md text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none select-none shadow-sm"
+          aria-hidden="true"
+        >
+          <GripVertical className="w-3.5 h-3.5" />
+          <span>Arrastrar</span>
+        </div>
 
-      {/* Botón interactivo DeleteButton en la esquina superior derecha */}
-      <div className="absolute top-3 right-3 z-20" contentEditable={false}>
-        <DeleteButton
-          size="sm"
-          variant="destructive"
-          aria-label="Eliminar imagen del post"
-          onConfirm={handleDelete}
-        />
-      </div>
+        {/* Botón interactivo DeleteButton en la esquina superior derecha */}
+        <div className="absolute top-3 right-3 z-20" contentEditable={false}>
+          <DeleteButton
+            size="sm"
+            variant="destructive"
+            aria-label="Eliminar imagen del post"
+            onConfirm={handleDelete}
+          />
+        </div>
 
-      {src ? (
-        <Image
-          src={src}
-          alt={alt}
-          title={title}
-          width={0}
-          height={0}
-          sizes="100vw"
-          unoptimized
-          className="w-full max-h-[540px] h-auto object-cover rounded-2xl block select-none pointer-events-none"
-          draggable={false}
-        />
-      ) : null}
+        {src ? (
+          <Image
+            src={src}
+            alt={alt}
+            title={title}
+            width={0}
+            height={0}
+            sizes="(max-width: 768px) 100vw, 800px"
+            unoptimized
+            className="w-auto h-auto max-w-full max-h-[540px] block select-none pointer-events-none"
+            draggable={false}
+          />
+        ) : null}
+      </div>
     </NodeViewWrapper>
   );
 }

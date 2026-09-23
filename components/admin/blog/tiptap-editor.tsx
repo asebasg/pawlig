@@ -78,6 +78,8 @@ export const TipTapEditor = React.memo(function TipTapEditor({
       }),
     ],
     editorProps: {
+      scrollThreshold: { top: 120, bottom: 120, left: 0, right: 0 },
+      scrollMargin: { top: 80, bottom: 80, left: 0, right: 0 },
       handleKeyDown(view, event) {
         if (event.key === "Backspace" || event.key === "Delete") {
           const { state } = view;
@@ -130,6 +132,73 @@ export const TipTapEditor = React.memo(function TipTapEditor({
       onChange(editor.getHTML());
     },
   });
+
+  // Auto-scroll fluido al arrastrar elementos cerca de los bordes o al usar la rueda/scrollbar
+  useEffect(() => {
+    let animationFrameId: number | null = null;
+    let scrollSpeed = 0;
+
+    const EDGE_ZONE = 120; // Zona de activación en px desde el borde
+    const MAX_SPEED = 24;  // Velocidad máxima en px por frame
+
+    const handleDragOver = (e: DragEvent) => {
+      const clientY = e.clientY;
+      const windowHeight = window.innerHeight;
+
+      if (clientY < EDGE_ZONE) {
+        const factor = (EDGE_ZONE - Math.max(0, clientY)) / EDGE_ZONE;
+        scrollSpeed = -Math.round(factor * MAX_SPEED);
+      } else if (clientY > windowHeight - EDGE_ZONE) {
+        const factor = (clientY - (windowHeight - EDGE_ZONE)) / EDGE_ZONE;
+        scrollSpeed = Math.round(Math.min(1, factor) * MAX_SPEED);
+      } else {
+        scrollSpeed = 0;
+      }
+
+      if (scrollSpeed !== 0 && animationFrameId === null) {
+        const step = () => {
+          if (scrollSpeed !== 0) {
+            window.scrollBy({ top: scrollSpeed, behavior: "instant" as ScrollBehavior });
+            animationFrameId = requestAnimationFrame(step);
+          } else {
+            animationFrameId = null;
+          }
+        };
+        animationFrameId = requestAnimationFrame(step);
+      }
+    };
+
+    const stopAutoScroll = () => {
+      scrollSpeed = 0;
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    window.addEventListener("dragover", handleDragOver, { passive: true });
+    window.addEventListener("dragend", stopAutoScroll);
+    window.addEventListener("drop", stopAutoScroll);
+    window.addEventListener("dragleave", (e) => {
+      if (
+        e.clientX <= 0 ||
+        e.clientY <= 0 ||
+        e.clientX >= window.innerWidth ||
+        e.clientY >= window.innerHeight
+      ) {
+        stopAutoScroll();
+      }
+    });
+
+    return () => {
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("dragend", stopAutoScroll);
+      window.removeEventListener("drop", stopAutoScroll);
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (editor && editor.getHTML() !== value) {
