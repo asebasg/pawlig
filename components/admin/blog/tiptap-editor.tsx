@@ -1,20 +1,31 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, ReactNodeViewRenderer } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
-import { Bold, Italic, List, ListOrdered, Link as LinkIcon, Image as ImageIcon, Loader2 } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Loader2,
+} from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { springs } from "@/lib/motion/springs";
 import { TipTapLinkModal } from "@/components/modals/tiptap-link-modal";
+import { TipTapImageNode, type CustomImageStorage } from "./tiptap-image-node";
+import { NodeSelection } from "@tiptap/pm/state";
 import type { ImageUploadItem } from "@/types/upload.types";
 
 /**
  * Descripción: Editor de texto enriquecido TipTap para el formulario de blog.
  * Implementa: Subida de imágenes a Cloudinary vía props, modal propio para
- *   insertar URLs (reemplaza window.prompt), y HUD flotante de caracteres al foco.
+ *   insertar URLs (reemplaza window.prompt), HUD flotante de caracteres al foco,
+ *   nodo personalizado de imagen con DeleteButton in-place y bloqueo de Backspace.
  */
 
 interface TipTapEditorProps {
@@ -26,7 +37,21 @@ interface TipTapEditorProps {
   onImageFileSelect?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   /** Callback opcional notificado cuando se inserta con éxito la imagen en TipTap. */
   onImageInserted?: () => void;
+  /** Callback opcional cuando se elimina una imagen desde el botón de la imagen. */
+  onImageDelete?: (src: string) => void;
 }
+
+const CustomImage = Image.extend({
+  draggable: true,
+  addStorage() {
+    return {
+      onDeleteImage: null as ((src: string) => void) | null,
+    };
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(TipTapImageNode);
+  },
+});
 
 export const TipTapEditor = React.memo(function TipTapEditor({
   value,
@@ -34,6 +59,7 @@ export const TipTapEditor = React.memo(function TipTapEditor({
   imageItem,
   onImageFileSelect,
   onImageInserted,
+  onImageDelete,
 }: TipTapEditorProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [linkModalOpen, setLinkModalOpen] = useState(false);
@@ -46,11 +72,58 @@ export const TipTapEditor = React.memo(function TipTapEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image,
+      CustomImage,
       Link.configure({
         openOnClick: false,
       }),
     ],
+    editorProps: {
+      handleKeyDown(view, event) {
+        if (event.key === "Backspace" || event.key === "Delete") {
+          const { state } = view;
+          const { selection } = state;
+
+          // 1. Selección directa sobre el nodo de imagen (NodeSelection)
+          if (
+            selection instanceof NodeSelection &&
+            selection.node.type.name === "image"
+          ) {
+            return true; // Bloquea la eliminación por teclado
+          }
+
+          // 2. Cursor situado inmediatamente después de una imagen presionando Backspace
+          if (event.key === "Backspace" && selection.empty) {
+            const nodeBefore = selection.$from.nodeBefore;
+            if (nodeBefore && nodeBefore.type.name === "image") {
+              return true; // Bloquea borrar hacia atrás la imagen
+            }
+          }
+
+          // 3. Cursor situado inmediatamente antes de una imagen presionando Delete (Supr)
+          if (event.key === "Delete" && selection.empty) {
+            const nodeAfter = selection.$from.nodeAfter;
+            if (nodeAfter && nodeAfter.type.name === "image") {
+              return true; // Bloquea borrar hacia adelante la imagen
+            }
+          }
+
+          // 4. Selección de rango múltiple que abarca una imagen
+          if (!selection.empty) {
+            let containsImage = false;
+            state.doc.nodesBetween(selection.from, selection.to, (node) => {
+              if (node.type.name === "image") {
+                containsImage = true;
+                return false;
+              }
+            });
+            if (containsImage) {
+              return true; // Protege las imágenes contenidas en selecciones múltiples
+            }
+          }
+        }
+        return false;
+      },
+    },
     content: value,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
@@ -66,6 +139,16 @@ export const TipTapEditor = React.memo(function TipTapEditor({
       }
     }
   }, [value, editor]);
+
+  // Sincronizar handler de eliminación externa con el storage de la extensión
+  useEffect(() => {
+    const imageStorage = (
+      editor?.storage as { image?: CustomImageStorage } | undefined
+    )?.image;
+    if (imageStorage) {
+      imageStorage.onDeleteImage = onImageDelete ?? null;
+    }
+  }, [editor, onImageDelete]);
 
   // Cuando el padre completa la subida a Cloudinary, insertar la imagen
   useEffect(() => {
@@ -128,9 +211,7 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             transition={springs.snap}
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
-              editor.isActive("bold")
-                ? "bg-zinc-200 dark:bg-zinc-700"
-                : ""
+              editor.isActive("bold") ? "bg-zinc-200 dark:bg-zinc-700" : ""
             }`}
             title="Negrita"
           >
@@ -145,9 +226,7 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             transition={springs.snap}
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
-              editor.isActive("italic")
-                ? "bg-zinc-200 dark:bg-zinc-700"
-                : ""
+              editor.isActive("italic") ? "bg-zinc-200 dark:bg-zinc-700" : ""
             }`}
             title="Cursiva"
           >
@@ -199,9 +278,7 @@ export const TipTapEditor = React.memo(function TipTapEditor({
             transition={springs.snap}
             onClick={openLinkModal}
             className={`p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors ${
-              editor.isActive("link")
-                ? "bg-zinc-200 dark:bg-zinc-700"
-                : ""
+              editor.isActive("link") ? "bg-zinc-200 dark:bg-zinc-700" : ""
             }`}
             title="Insertar enlace"
           >
