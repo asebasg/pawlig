@@ -254,7 +254,7 @@ El repositorio de PawLig sigue las directrices arquitectónicas más estrictas d
 ```text
 ./
 ├── app/                      # Rutas de Next.js, APIs de Servidor y Segmentos del Sistema
-│   ├── (auth)/               # Segmento de Autenticación (Login, Register, Unauthorized)
+│   ├── (auth)/               # Segmento de Autenticación (Login, Register, Reset Password, Unauthorized)
 │   │   ├── login/            # Componentes de servidor y páginas para inicio de sesión
 │   │   ├── register/         # Creación de cuentas públicas de adoptantes
 │   │   ├── reset-password/   # Restablecimiento seguro de contraseña mediante token
