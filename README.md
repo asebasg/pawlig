@@ -228,6 +228,12 @@ El stack tecnológico de PawLig ha sido seleccionado minuciosamente para garanti
 * **Recharts v3.8.1:** Librería de visualización interactiva de datos y analíticas de negocio en React.
 * **Lucide React v0.554.0:** Conjunto unificado de iconos vectoriales SVG limpios y ligeros.
 
+### Formularios, Validación y Estado
+* **React Hook Form v7.66.1 & Zod v4.1.12:** Manejo de formularios complejos con validaciones declarativas, esquemas fuertemente tipados y alto rendimiento.
+* **Sonner v2.0.7:** Sistema de notificaciones toast intuitivas y accesibles para retroalimentación en tiempo real.
+* **SWR v2.4.1:** React Hooks para la obtención de datos remotos con almacenamiento en caché y revalidación en segundo plano.
+* **Framer Motion v13.1.1:** Biblioteca de animaciones fluidas e interactivas para interfaces de usuario.
+
 ### Servicios de Inteligencia Artificial
 * **Google Generative AI SDK (Gemini AI) v0.24.1:** Integración con el modelo `gemini-2.5-flash` para el refinamiento automático de descripciones y motivos de moderación administrativa.
 
